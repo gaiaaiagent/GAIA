@@ -1,7 +1,7 @@
 {
   "name": "Nexus",
   "plugins": [],
-  "clients": [],
+  "clients": ["discord"],
   "modelProvider": "anthropic",
   "settings": {
     "secrets": {
