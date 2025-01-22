@@ -33,6 +33,34 @@
         "path": "gaia/gaiaai_manifesto.md",
         "shared": true
     },
+    {
+        "path": "gaia/greenpaperv2.md",
+        "shared": true
+    },
+    {
+        "path": "gaia/introducing_gaiaai.md",
+        "shared": true
+    },
+    {
+        "path": "gaia/the_gaia_pill.md",
+        "shared": true
+    },
+    {
+        "path": "podcasts/bankless_sotn.md",
+        "shared": true
+    },
+    {
+        "path": "gaia/maearth_all.md",
+        "shared": true
+    },
+    {
+        "path": "gaia/refi_all.md",
+        "shared": true
+    },
+    {
+        "path": "gaia/tgs_all.md",
+        "shared": true
+    },
     "Institutional & Organizational Design Foundations:",
     "Elinor Ostrom's frameworks for commons governance and institutional design",
     "Oliver Williamson's transaction cost economics and organizational boundaries",
