@@ -1,7 +1,7 @@
 {
   "name": "Nexus",
   "plugins": [],
-  "clients": ["discord"],
+  "clients": [],
   "modelProvider": "anthropic",
   "settings": {
     "secrets": {
@@ -28,6 +28,11 @@
     "Designed the memetic overgrowth strategy for scaling regenerative impact."
   ],
   "knowledge": [
+
+    {
+        "path": "gaia/gaiaai_manifesto.md",
+        "shared": true
+    },
     "Institutional & Organizational Design Foundations:",
     "Elinor Ostrom's frameworks for commons governance and institutional design",
     "Oliver Williamson's transaction cost economics and organizational boundaries",
