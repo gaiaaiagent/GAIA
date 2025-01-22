@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / IAgentRuntime
+[@elizaos/core v0.1.9-alpha.1](../index.md) / IAgentRuntime
 
 # Interface: IAgentRuntime
 
@@ -12,9 +12,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1100](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1100)
+[packages/core/src/types.ts:1247](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1247)
 
----
+***
 
 ### serverUrl
 
@@ -22,9 +22,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1101](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1101)
+[packages/core/src/types.ts:1248](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1248)
 
----
+***
 
 ### databaseAdapter
 
@@ -32,9 +32,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1102](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1102)
+[packages/core/src/types.ts:1249](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1249)
 
----
+***
 
 ### token
 
@@ -42,9 +42,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1103](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1103)
+[packages/core/src/types.ts:1250](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1250)
 
----
+***
 
 ### modelProvider
 
@@ -52,9 +52,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1104](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1104)
+[packages/core/src/types.ts:1251](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1251)
 
----
+***
 
 ### imageModelProvider
 
@@ -62,9 +62,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1105](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1105)
+[packages/core/src/types.ts:1252](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1252)
 
----
+***
 
 ### imageVisionModelProvider
 
@@ -72,9 +72,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1106](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1106)
+[packages/core/src/types.ts:1253](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1253)
 
----
+***
 
 ### character
 
@@ -82,9 +82,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1107](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1107)
+[packages/core/src/types.ts:1254](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1254)
 
----
+***
 
 ### providers
 
@@ -92,9 +92,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1108](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1108)
+[packages/core/src/types.ts:1255](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1255)
 
----
+***
 
 ### actions
 
@@ -102,9 +102,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1109](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1109)
+[packages/core/src/types.ts:1256](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1256)
 
----
+***
 
 ### evaluators
 
@@ -112,9 +112,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1110](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1110)
+[packages/core/src/types.ts:1257](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1257)
 
----
+***
 
 ### plugins
 
@@ -122,9 +122,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1111](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1111)
+[packages/core/src/types.ts:1258](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1258)
 
----
+***
 
 ### fetch()?
 
@@ -154,9 +154,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1113](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1113)
+[packages/core/src/types.ts:1260](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1260)
 
----
+***
 
 ### messageManager
 
@@ -164,9 +164,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1115](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1115)
+[packages/core/src/types.ts:1262](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1262)
 
----
+***
 
 ### descriptionManager
 
@@ -174,9 +174,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1116](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1116)
+[packages/core/src/types.ts:1263](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1263)
 
----
+***
 
 ### documentsManager
 
@@ -184,9 +184,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1117](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1117)
+[packages/core/src/types.ts:1264](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1264)
 
----
+***
 
 ### knowledgeManager
 
@@ -194,9 +194,19 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1118](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1118)
+[packages/core/src/types.ts:1265](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1265)
 
----
+***
+
+### ragKnowledgeManager
+
+> **ragKnowledgeManager**: [`IRAGKnowledgeManager`](IRAGKnowledgeManager.md)
+
+#### Defined in
+
+[packages/core/src/types.ts:1266](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1266)
+
+***
 
 ### loreManager
 
@@ -204,9 +214,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1119](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1119)
+[packages/core/src/types.ts:1267](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1267)
 
----
+***
 
 ### cacheManager
 
@@ -214,9 +224,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1121](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1121)
+[packages/core/src/types.ts:1269](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1269)
 
----
+***
 
 ### services
 
@@ -224,9 +234,9 @@ Properties
 
 #### Defined in
 
-[packages/core/src/types.ts:1123](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1123)
+[packages/core/src/types.ts:1271](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1271)
 
----
+***
 
 ### clients
 
@@ -237,7 +247,17 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/types.ts:1126](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1126)
+[packages/core/src/types.ts:1274](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1274)
+
+***
+
+### verifiableInferenceAdapter?
+
+> `optional` **verifiableInferenceAdapter**: [`IVerifiableInferenceAdapter`](IVerifiableInferenceAdapter.md)
+
+#### Defined in
+
+[packages/core/src/types.ts:1276](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1276)
 
 ## Methods
 
@@ -251,9 +271,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/types.ts:1128](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1128)
+[packages/core/src/types.ts:1278](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1278)
 
----
+***
 
 ### registerMemoryManager()
 
@@ -269,9 +289,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/types.ts:1130](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1130)
+[packages/core/src/types.ts:1280](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1280)
 
----
+***
 
 ### getMemoryManager()
 
@@ -287,9 +307,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/types.ts:1132](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1132)
+[packages/core/src/types.ts:1282](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1282)
 
----
+***
 
 ### getService()
 
@@ -297,7 +317,7 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Type Parameters
 
-• **T** _extends_ [`Service`](../classes/Service.md)
+• **T** *extends* [`Service`](../classes/Service.md)
 
 #### Parameters
 
@@ -309,9 +329,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/types.ts:1134](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1134)
+[packages/core/src/types.ts:1284](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1284)
 
----
+***
 
 ### registerService()
 
@@ -327,9 +347,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/types.ts:1136](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1136)
+[packages/core/src/types.ts:1286](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1286)
 
----
+***
 
 ### getSetting()
 
@@ -345,9 +365,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/types.ts:1138](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1138)
+[packages/core/src/types.ts:1288](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1288)
 
----
+***
 
 ### getConversationLength()
 
@@ -361,9 +381,9 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1141](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1141)
+[packages/core/src/types.ts:1291](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1291)
 
----
+***
 
 ### processActions()
 
@@ -385,9 +405,9 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1143](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1143)
+[packages/core/src/types.ts:1293](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1293)
 
----
+***
 
 ### evaluate()
 
@@ -409,9 +429,9 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1150](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1150)
+[packages/core/src/types.ts:1300](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1300)
 
----
+***
 
 ### ensureParticipantExists()
 
@@ -429,9 +449,9 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1157](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1157)
+[packages/core/src/types.ts:1307](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1307)
 
----
+***
 
 ### ensureUserExists()
 
@@ -453,9 +473,9 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1159](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1159)
+[packages/core/src/types.ts:1309](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1309)
 
----
+***
 
 ### registerAction()
 
@@ -471,9 +491,9 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1166](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1166)
+[packages/core/src/types.ts:1316](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1316)
 
----
+***
 
 ### ensureConnection()
 
@@ -497,9 +517,9 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1168](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1168)
+[packages/core/src/types.ts:1318](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1318)
 
----
+***
 
 ### ensureParticipantInRoom()
 
@@ -517,9 +537,9 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1176](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1176)
+[packages/core/src/types.ts:1326](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1326)
 
----
+***
 
 ### ensureRoomExists()
 
@@ -535,9 +555,9 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1178](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1178)
+[packages/core/src/types.ts:1328](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1328)
 
----
+***
 
 ### composeState()
 
@@ -555,9 +575,9 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1180](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1180)
+[packages/core/src/types.ts:1330](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1330)
 
----
+***
 
 ### updateRecentMessageState()
 
@@ -573,4 +593,4 @@ Methods
 
 #### Defined in
 
-[packages/core/src/types.ts:1185](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1185)
+[packages/core/src/types.ts:1335](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1335)

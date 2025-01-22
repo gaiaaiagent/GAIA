@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / ISpeechService
+[@elizaos/core v0.1.9-alpha.1](../index.md) / ISpeechService
 
 # Interface: ISpeechService
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1090](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1090)
+[packages/core/src/types.ts:1237](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1237)
 
 ## Methods
 
@@ -48,9 +48,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1095](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1095)
+[packages/core/src/types.ts:1242](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1242)
 
----
+***
 
 ### getInstance()
 
@@ -62,9 +62,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1240](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1240)
+[packages/core/src/types.ts:1390](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1390)
 
----
+***
 
 ### generate()
 
@@ -82,4 +82,4 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1241](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1241)
+[packages/core/src/types.ts:1391](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1391)

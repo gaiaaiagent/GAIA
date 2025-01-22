@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / IMemoryManager
+[@elizaos/core v0.1.9-alpha.1](../index.md) / IMemoryManager
 
 # Interface: IMemoryManager
 
@@ -10,9 +10,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1021](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1021)
+[packages/core/src/types.ts:1135](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1135)
 
----
+***
 
 ### tableName
 
@@ -20,9 +20,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1022](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1022)
+[packages/core/src/types.ts:1136](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1136)
 
----
+***
 
 ### constructor
 
@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1023](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1023)
+[packages/core/src/types.ts:1137](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1137)
 
 ## Methods
 
@@ -48,9 +48,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1025](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1025)
+[packages/core/src/types.ts:1139](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1139)
 
----
+***
 
 ### getMemories()
 
@@ -76,9 +76,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1027](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1027)
+[packages/core/src/types.ts:1141](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1141)
 
----
+***
 
 ### getCachedEmbeddings()
 
@@ -94,9 +94,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1035](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1035)
+[packages/core/src/types.ts:1149](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1149)
 
----
+***
 
 ### getMemoryById()
 
@@ -112,9 +112,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1039](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1039)
+[packages/core/src/types.ts:1153](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1153)
 
----
+***
 
 ### getMemoriesByRoomIds()
 
@@ -126,15 +126,17 @@
 
 • **params.roomIds**: \`$\{string\}-$\{string\}-$\{string\}-$\{string\}-$\{string\}\`[]
 
+• **params.limit?**: `number`
+
 #### Returns
 
 `Promise`\<[`Memory`](Memory.md)[]\>
 
 #### Defined in
 
-[packages/core/src/types.ts:1040](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1040)
+[packages/core/src/types.ts:1154](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1154)
 
----
+***
 
 ### searchMemoriesByEmbedding()
 
@@ -146,7 +148,7 @@
 
 • **opts**
 
-• **opts.match_threshold?**: `number`
+• **opts.match\_threshold?**: `number`
 
 • **opts.count?**: `number`
 
@@ -160,9 +162,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1041](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1041)
+[packages/core/src/types.ts:1158](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1158)
 
----
+***
 
 ### createMemory()
 
@@ -180,9 +182,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1051](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1051)
+[packages/core/src/types.ts:1168](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1168)
 
----
+***
 
 ### removeMemory()
 
@@ -198,9 +200,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1053](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1053)
+[packages/core/src/types.ts:1170](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1170)
 
----
+***
 
 ### removeAllMemories()
 
@@ -216,9 +218,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1055](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1055)
+[packages/core/src/types.ts:1172](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1172)
 
----
+***
 
 ### countMemories()
 
@@ -236,4 +238,4 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1057](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1057)
+[packages/core/src/types.ts:1174](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1174)

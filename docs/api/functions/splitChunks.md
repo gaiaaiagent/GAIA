@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / splitChunks
+[@elizaos/core v0.1.9-alpha.1](../index.md) / splitChunks
 
 # Function: splitChunks()
 
@@ -24,8 +24,8 @@ Number of characters to overlap between chunks (default: 100)
 
 `Promise`\<`string`[]\>
 
-Promise resolving to an array of text chunks with bleed sections
+Promise resolving to array of text chunks with bleed sections
 
 ## Defined in
 
-[packages/core/src/generation.ts:881](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L881)
+[packages/core/src/generation.ts:1367](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1367)

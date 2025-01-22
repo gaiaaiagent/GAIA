@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / Clients
+[@elizaos/core v0.1.9-alpha.1](../index.md) / Clients
 
 # Enumeration: Clients
 
@@ -12,9 +12,9 @@ Available client platforms
 
 #### Defined in
 
-[packages/core/src/types.ts:620](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L620)
+[packages/core/src/types.ts:647](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L647)
 
----
+***
 
 ### DIRECT
 
@@ -22,9 +22,9 @@ Available client platforms
 
 #### Defined in
 
-[packages/core/src/types.ts:621](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L621)
+[packages/core/src/types.ts:648](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L648)
 
----
+***
 
 ### TWITTER
 
@@ -32,9 +32,9 @@ Available client platforms
 
 #### Defined in
 
-[packages/core/src/types.ts:622](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L622)
+[packages/core/src/types.ts:649](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L649)
 
----
+***
 
 ### TELEGRAM
 
@@ -42,9 +42,9 @@ Available client platforms
 
 #### Defined in
 
-[packages/core/src/types.ts:623](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L623)
+[packages/core/src/types.ts:650](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L650)
 
----
+***
 
 ### FARCASTER
 
@@ -52,9 +52,9 @@ Available client platforms
 
 #### Defined in
 
-[packages/core/src/types.ts:624](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L624)
+[packages/core/src/types.ts:651](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L651)
 
----
+***
 
 ### LENS
 
@@ -62,9 +62,9 @@ Available client platforms
 
 #### Defined in
 
-[packages/core/src/types.ts:625](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L625)
+[packages/core/src/types.ts:652](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L652)
 
----
+***
 
 ### AUTO
 
@@ -72,9 +72,9 @@ Available client platforms
 
 #### Defined in
 
-[packages/core/src/types.ts:626](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L626)
+[packages/core/src/types.ts:653](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L653)
 
----
+***
 
 ### SLACK
 
@@ -82,4 +82,24 @@ Available client platforms
 
 #### Defined in
 
-[packages/core/src/types.ts:627](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L627)
+[packages/core/src/types.ts:654](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L654)
+
+***
+
+### GITHUB
+
+> **GITHUB**: `"github"`
+
+#### Defined in
+
+[packages/core/src/types.ts:655](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L655)
+
+***
+
+### INSTAGRAM
+
+> **INSTAGRAM**: `"instagram"`
+
+#### Defined in
+
+[packages/core/src/types.ts:656](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L656)

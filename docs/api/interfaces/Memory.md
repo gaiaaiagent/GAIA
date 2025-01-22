@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / Memory
+[@elizaos/core v0.1.9-alpha.1](../index.md) / Memory
 
 # Interface: Memory
 
@@ -14,9 +14,9 @@ Optional unique identifier
 
 #### Defined in
 
-[packages/core/src/types.ts:338](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L338)
+[packages/core/src/types.ts:365](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L365)
 
----
+***
 
 ### userId
 
@@ -26,9 +26,9 @@ Associated user ID
 
 #### Defined in
 
-[packages/core/src/types.ts:341](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L341)
+[packages/core/src/types.ts:368](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L368)
 
----
+***
 
 ### agentId
 
@@ -38,9 +38,9 @@ Associated agent ID
 
 #### Defined in
 
-[packages/core/src/types.ts:344](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L344)
+[packages/core/src/types.ts:371](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L371)
 
----
+***
 
 ### createdAt?
 
@@ -50,9 +50,9 @@ Optional creation timestamp
 
 #### Defined in
 
-[packages/core/src/types.ts:347](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L347)
+[packages/core/src/types.ts:374](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L374)
 
----
+***
 
 ### content
 
@@ -62,9 +62,9 @@ Memory content
 
 #### Defined in
 
-[packages/core/src/types.ts:350](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L350)
+[packages/core/src/types.ts:377](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L377)
 
----
+***
 
 ### embedding?
 
@@ -74,9 +74,9 @@ Optional embedding vector
 
 #### Defined in
 
-[packages/core/src/types.ts:353](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L353)
+[packages/core/src/types.ts:380](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L380)
 
----
+***
 
 ### roomId
 
@@ -86,9 +86,9 @@ Associated room ID
 
 #### Defined in
 
-[packages/core/src/types.ts:356](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L356)
+[packages/core/src/types.ts:383](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L383)
 
----
+***
 
 ### unique?
 
@@ -98,9 +98,9 @@ Whether memory is unique
 
 #### Defined in
 
-[packages/core/src/types.ts:359](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L359)
+[packages/core/src/types.ts:386](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L386)
 
----
+***
 
 ### similarity?
 
@@ -110,4 +110,4 @@ Embedding similarity score
 
 #### Defined in
 
-[packages/core/src/types.ts:362](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L362)
+[packages/core/src/types.ts:389](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L389)

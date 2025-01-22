@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / Action
+[@elizaos/core v0.1.9-alpha.1](../index.md) / Action
 
 # Interface: Action
 
@@ -14,9 +14,9 @@ Similar action descriptions
 
 #### Defined in
 
-[packages/core/src/types.ts:409](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L409)
+[packages/core/src/types.ts:436](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L436)
 
----
+***
 
 ### description
 
@@ -26,9 +26,9 @@ Detailed description
 
 #### Defined in
 
-[packages/core/src/types.ts:412](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L412)
+[packages/core/src/types.ts:439](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L439)
 
----
+***
 
 ### examples
 
@@ -38,9 +38,9 @@ Example usages
 
 #### Defined in
 
-[packages/core/src/types.ts:415](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L415)
+[packages/core/src/types.ts:442](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L442)
 
----
+***
 
 ### handler
 
@@ -50,9 +50,9 @@ Handler function
 
 #### Defined in
 
-[packages/core/src/types.ts:418](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L418)
+[packages/core/src/types.ts:445](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L445)
 
----
+***
 
 ### name
 
@@ -62,9 +62,9 @@ Action name
 
 #### Defined in
 
-[packages/core/src/types.ts:421](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L421)
+[packages/core/src/types.ts:448](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L448)
 
----
+***
 
 ### validate
 
@@ -74,9 +74,9 @@ Validation function
 
 #### Defined in
 
-[packages/core/src/types.ts:424](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L424)
+[packages/core/src/types.ts:451](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L451)
 
----
+***
 
 ### suppressInitialMessage?
 
@@ -86,4 +86,4 @@ Whether to suppress the initial message when this action is used
 
 #### Defined in
 
-[packages/core/src/types.ts:427](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L427)
+[packages/core/src/types.ts:454](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L454)

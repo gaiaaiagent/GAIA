@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / Relationship
+[@elizaos/core v0.1.9-alpha.1](../index.md) / Relationship
 
 # Interface: Relationship
 
@@ -14,9 +14,9 @@ Unique identifier
 
 #### Defined in
 
-[packages/core/src/types.ts:487](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L487)
+[packages/core/src/types.ts:514](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L514)
 
----
+***
 
 ### userA
 
@@ -26,9 +26,9 @@ First user ID
 
 #### Defined in
 
-[packages/core/src/types.ts:490](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L490)
+[packages/core/src/types.ts:517](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L517)
 
----
+***
 
 ### userB
 
@@ -38,9 +38,9 @@ Second user ID
 
 #### Defined in
 
-[packages/core/src/types.ts:493](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L493)
+[packages/core/src/types.ts:520](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L520)
 
----
+***
 
 ### userId
 
@@ -50,9 +50,9 @@ Primary user ID
 
 #### Defined in
 
-[packages/core/src/types.ts:496](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L496)
+[packages/core/src/types.ts:523](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L523)
 
----
+***
 
 ### roomId
 
@@ -62,9 +62,9 @@ Associated room ID
 
 #### Defined in
 
-[packages/core/src/types.ts:499](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L499)
+[packages/core/src/types.ts:526](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L526)
 
----
+***
 
 ### status
 
@@ -74,9 +74,9 @@ Relationship status
 
 #### Defined in
 
-[packages/core/src/types.ts:502](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L502)
+[packages/core/src/types.ts:529](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L529)
 
----
+***
 
 ### createdAt?
 
@@ -86,4 +86,4 @@ Optional creation timestamp
 
 #### Defined in
 
-[packages/core/src/types.ts:505](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L505)
+[packages/core/src/types.ts:532](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L532)

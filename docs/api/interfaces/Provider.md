@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / Provider
+[@elizaos/core v0.1.9-alpha.1](../index.md) / Provider
 
 # Interface: Provider
 
@@ -26,4 +26,4 @@ Data retrieval function
 
 #### Defined in
 
-[packages/core/src/types.ts:475](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L475)
+[packages/core/src/types.ts:502](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L502)

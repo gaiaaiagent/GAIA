@@ -1,9 +1,6 @@
-[@elizaos/core v0.1.7](../index.md) / AgentRuntime
+[@elizaos/core v0.1.9-alpha.1](../index.md) / AgentRuntime
 
 # Class: AgentRuntime
-
-Represents the runtime environment for an agent, handling message processing,
-action registration, and interaction with external services like OpenAI and Supabase.
 
 ## Implements
 
@@ -77,13 +74,15 @@ Custom fetch function to use for making requests.
 
 • **opts.logging?**: `boolean`
 
+• **opts.verifiableInferenceAdapter?**: [`IVerifiableInferenceAdapter`](../interfaces/IVerifiableInferenceAdapter.md)
+
 #### Returns
 
 [`AgentRuntime`](AgentRuntime.md)
 
 #### Defined in
 
-[packages/core/src/runtime.ts:215](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L215)
+[packages/core/src/runtime.ts:239](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L239)
 
 ## Properties
 
@@ -99,9 +98,9 @@ The ID of the agent
 
 #### Defined in
 
-[packages/core/src/runtime.ts:63](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L63)
+[packages/core/src/runtime.ts:82](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L82)
 
----
+***
 
 ### serverUrl
 
@@ -115,9 +114,9 @@ The base URL of the server where the agent's requests are processed.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:67](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L67)
+[packages/core/src/runtime.ts:86](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L86)
 
----
+***
 
 ### databaseAdapter
 
@@ -131,9 +130,9 @@ The database adapter used for interacting with the database.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:72](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L72)
+[packages/core/src/runtime.ts:91](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L91)
 
----
+***
 
 ### token
 
@@ -147,9 +146,9 @@ Authentication token used for securing requests.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:77](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L77)
+[packages/core/src/runtime.ts:96](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L96)
 
----
+***
 
 ### actions
 
@@ -163,9 +162,9 @@ Custom actions that the agent can perform.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:82](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L82)
+[packages/core/src/runtime.ts:101](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L101)
 
----
+***
 
 ### evaluators
 
@@ -179,9 +178,9 @@ Evaluators used to assess and guide the agent's responses.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:87](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L87)
+[packages/core/src/runtime.ts:106](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L106)
 
----
+***
 
 ### providers
 
@@ -195,9 +194,9 @@ Context providers used to provide context for message generation.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:92](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L92)
+[packages/core/src/runtime.ts:111](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L111)
 
----
+***
 
 ### plugins
 
@@ -209,9 +208,9 @@ Context providers used to provide context for message generation.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:94](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L94)
+[packages/core/src/runtime.ts:113](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L113)
 
----
+***
 
 ### modelProvider
 
@@ -225,9 +224,9 @@ The model to use for generateText.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:99](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L99)
+[packages/core/src/runtime.ts:118](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L118)
 
----
+***
 
 ### imageModelProvider
 
@@ -241,9 +240,9 @@ The model to use for generateImage.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:104](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L104)
+[packages/core/src/runtime.ts:123](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L123)
 
----
+***
 
 ### imageVisionModelProvider
 
@@ -257,9 +256,9 @@ The model to use for describing images.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:110](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L110)
+[packages/core/src/runtime.ts:128](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L128)
 
----
+***
 
 ### fetch()
 
@@ -296,9 +295,9 @@ Some environments may not have access to the global fetch function and need a cu
 
 #### Defined in
 
-[packages/core/src/runtime.ts:116](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L116)
+[packages/core/src/runtime.ts:134](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L134)
 
----
+***
 
 ### character
 
@@ -312,9 +311,9 @@ The character to use for the agent
 
 #### Defined in
 
-[packages/core/src/runtime.ts:121](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L121)
+[packages/core/src/runtime.ts:139](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L139)
 
----
+***
 
 ### messageManager
 
@@ -328,9 +327,9 @@ Store messages that are sent and received by the agent.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:126](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L126)
+[packages/core/src/runtime.ts:144](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L144)
 
----
+***
 
 ### descriptionManager
 
@@ -344,9 +343,9 @@ Store and recall descriptions of users based on conversations.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:131](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L131)
+[packages/core/src/runtime.ts:149](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L149)
 
----
+***
 
 ### loreManager
 
@@ -360,9 +359,9 @@ Manage the creation and recall of static information (documents, historical game
 
 #### Defined in
 
-[packages/core/src/runtime.ts:136](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L136)
+[packages/core/src/runtime.ts:154](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L154)
 
----
+***
 
 ### documentsManager
 
@@ -376,9 +375,9 @@ Hold large documents that can be referenced
 
 #### Defined in
 
-[packages/core/src/runtime.ts:141](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L141)
+[packages/core/src/runtime.ts:159](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L159)
 
----
+***
 
 ### knowledgeManager
 
@@ -392,9 +391,23 @@ Searchable document fragments
 
 #### Defined in
 
-[packages/core/src/runtime.ts:146](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L146)
+[packages/core/src/runtime.ts:164](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L164)
 
----
+***
+
+### ragKnowledgeManager
+
+> **ragKnowledgeManager**: [`IRAGKnowledgeManager`](../interfaces/IRAGKnowledgeManager.md)
+
+#### Implementation of
+
+[`IAgentRuntime`](../interfaces/IAgentRuntime.md).[`ragKnowledgeManager`](../interfaces/IAgentRuntime.md#ragKnowledgeManager)
+
+#### Defined in
+
+[packages/core/src/runtime.ts:166](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L166)
+
+***
 
 ### services
 
@@ -406,9 +419,9 @@ Searchable document fragments
 
 #### Defined in
 
-[packages/core/src/runtime.ts:148](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L148)
+[packages/core/src/runtime.ts:170](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L170)
 
----
+***
 
 ### memoryManagers
 
@@ -416,9 +429,9 @@ Searchable document fragments
 
 #### Defined in
 
-[packages/core/src/runtime.ts:149](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L149)
+[packages/core/src/runtime.ts:171](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L171)
 
----
+***
 
 ### cacheManager
 
@@ -430,9 +443,9 @@ Searchable document fragments
 
 #### Defined in
 
-[packages/core/src/runtime.ts:150](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L150)
+[packages/core/src/runtime.ts:172](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L172)
 
----
+***
 
 ### clients
 
@@ -447,7 +460,21 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/runtime.ts:151](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L151)
+[packages/core/src/runtime.ts:173](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L173)
+
+***
+
+### verifiableInferenceAdapter?
+
+> `optional` **verifiableInferenceAdapter**: [`IVerifiableInferenceAdapter`](../interfaces/IVerifiableInferenceAdapter.md)
+
+#### Implementation of
+
+[`IAgentRuntime`](../interfaces/IAgentRuntime.md).[`verifiableInferenceAdapter`](../interfaces/IAgentRuntime.md#verifiableInferenceAdapter)
+
+#### Defined in
+
+[packages/core/src/runtime.ts:175](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L175)
 
 ## Methods
 
@@ -469,9 +496,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/runtime.ts:153](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L153)
+[packages/core/src/runtime.ts:177](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L177)
 
----
+***
 
 ### getMemoryManager()
 
@@ -491,9 +518,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/runtime.ts:168](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L168)
+[packages/core/src/runtime.ts:192](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L192)
 
----
+***
 
 ### getService()
 
@@ -501,7 +528,7 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Type Parameters
 
-• **T** _extends_ [`Service`](Service.md)
+• **T** *extends* [`Service`](Service.md)
 
 #### Parameters
 
@@ -517,9 +544,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/runtime.ts:172](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L172)
+[packages/core/src/runtime.ts:196](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L196)
 
----
+***
 
 ### registerService()
 
@@ -539,9 +566,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/runtime.ts:181](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L181)
+[packages/core/src/runtime.ts:205](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L205)
 
----
+***
 
 ### initialize()
 
@@ -557,9 +584,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/runtime.ts:395](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L395)
+[packages/core/src/runtime.ts:443](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L443)
 
----
+***
 
 ### stop()
 
@@ -571,9 +598,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/runtime.ts:428](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L428)
+[packages/core/src/runtime.ts:559](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L559)
 
----
+***
 
 ### getSetting()
 
@@ -593,9 +620,9 @@ but I think the real solution is forthcoming as a base client interface
 
 #### Defined in
 
-[packages/core/src/runtime.ts:478](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L478)
+[packages/core/src/runtime.ts:877](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L877)
 
----
+***
 
 ### getConversationLength()
 
@@ -615,9 +642,9 @@ The number of recent messages to be kept in memory.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:500](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L500)
+[packages/core/src/runtime.ts:899](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L899)
 
----
+***
 
 ### registerAction()
 
@@ -641,9 +668,9 @@ The action to register.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:508](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L508)
+[packages/core/src/runtime.ts:907](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L907)
 
----
+***
 
 ### registerEvaluator()
 
@@ -663,9 +690,9 @@ The evaluator to register.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:517](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L517)
+[packages/core/src/runtime.ts:916](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L916)
 
----
+***
 
 ### registerContextProvider()
 
@@ -685,9 +712,9 @@ The context provider to register.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:525](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L525)
+[packages/core/src/runtime.ts:924](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L924)
 
----
+***
 
 ### processActions()
 
@@ -717,13 +744,13 @@ The message to process.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:534](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L534)
+[packages/core/src/runtime.ts:933](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L933)
 
----
+***
 
 ### evaluate()
 
-> **evaluate**(`message`, `state`?, `didRespond`?, `callback`?): `Promise`\<`string`[]\>
+> **evaluate**(`message`, `state`, `didRespond`?, `callback`?): `Promise`\<`string`[]\>
 
 Evaluate the message and state using the registered evaluators.
 
@@ -733,7 +760,7 @@ Evaluate the message and state using the registered evaluators.
 
 The message to evaluate.
 
-• **state?**: [`State`](../interfaces/State.md)
+• **state**: [`State`](../interfaces/State.md)
 
 The state of the agent.
 
@@ -757,9 +784,9 @@ The results of the evaluation.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:618](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L618)
+[packages/core/src/runtime.ts:1017](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L1017)
 
----
+***
 
 ### ensureParticipantExists()
 
@@ -789,9 +816,9 @@ An error if the participant cannot be added.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:685](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L685)
+[packages/core/src/runtime.ts:1087](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L1087)
 
----
+***
 
 ### ensureUserExists()
 
@@ -825,9 +852,9 @@ The user name to ensure the existence of.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:701](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L701)
+[packages/core/src/runtime.ts:1103](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L1103)
 
----
+***
 
 ### ensureParticipantInRoom()
 
@@ -849,9 +876,9 @@ The user name to ensure the existence of.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:721](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L721)
+[packages/core/src/runtime.ts:1123](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L1123)
 
----
+***
 
 ### ensureConnection()
 
@@ -879,9 +906,9 @@ The user name to ensure the existence of.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:738](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L738)
+[packages/core/src/runtime.ts:1140](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L1140)
 
----
+***
 
 ### ensureRoomExists()
 
@@ -910,9 +937,9 @@ An error if the room cannot be created.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:774](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L774)
+[packages/core/src/runtime.ts:1176](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L1176)
 
----
+***
 
 ### composeState()
 
@@ -940,9 +967,9 @@ The state of the agent.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:787](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L787)
+[packages/core/src/runtime.ts:1189](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L1189)
 
----
+***
 
 ### updateRecentMessageState()
 
@@ -962,4 +989,36 @@ The state of the agent.
 
 #### Defined in
 
-[packages/core/src/runtime.ts:1233](https://github.com/elizaOS/eliza/blob/main/packages/core/src/runtime.ts#L1233)
+[packages/core/src/runtime.ts:1647](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L1647)
+
+***
+
+### getVerifiableInferenceAdapter()
+
+> **getVerifiableInferenceAdapter**(): [`IVerifiableInferenceAdapter`](../interfaces/IVerifiableInferenceAdapter.md)
+
+#### Returns
+
+[`IVerifiableInferenceAdapter`](../interfaces/IVerifiableInferenceAdapter.md)
+
+#### Defined in
+
+[packages/core/src/runtime.ts:1712](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L1712)
+
+***
+
+### setVerifiableInferenceAdapter()
+
+> **setVerifiableInferenceAdapter**(`adapter`): `void`
+
+#### Parameters
+
+• **adapter**: [`IVerifiableInferenceAdapter`](../interfaces/IVerifiableInferenceAdapter.md)
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/core/src/runtime.ts:1716](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/runtime.ts#L1716)

@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / Evaluator
+[@elizaos/core v0.1.9-alpha.1](../index.md) / Evaluator
 
 # Interface: Evaluator
 
@@ -14,9 +14,9 @@ Whether to always run
 
 #### Defined in
 
-[packages/core/src/types.ts:449](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L449)
+[packages/core/src/types.ts:476](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L476)
 
----
+***
 
 ### description
 
@@ -26,9 +26,9 @@ Detailed description
 
 #### Defined in
 
-[packages/core/src/types.ts:452](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L452)
+[packages/core/src/types.ts:479](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L479)
 
----
+***
 
 ### similes
 
@@ -38,9 +38,9 @@ Similar evaluator descriptions
 
 #### Defined in
 
-[packages/core/src/types.ts:455](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L455)
+[packages/core/src/types.ts:482](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L482)
 
----
+***
 
 ### examples
 
@@ -50,9 +50,9 @@ Example evaluations
 
 #### Defined in
 
-[packages/core/src/types.ts:458](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L458)
+[packages/core/src/types.ts:485](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L485)
 
----
+***
 
 ### handler
 
@@ -62,9 +62,9 @@ Handler function
 
 #### Defined in
 
-[packages/core/src/types.ts:461](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L461)
+[packages/core/src/types.ts:488](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L488)
 
----
+***
 
 ### name
 
@@ -74,9 +74,9 @@ Evaluator name
 
 #### Defined in
 
-[packages/core/src/types.ts:464](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L464)
+[packages/core/src/types.ts:491](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L491)
 
----
+***
 
 ### validate
 
@@ -86,4 +86,4 @@ Validation function
 
 #### Defined in
 
-[packages/core/src/types.ts:467](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L467)
+[packages/core/src/types.ts:494](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L494)

@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / defaultCharacter
+[@elizaos/core v0.1.9-alpha.1](../index.md) / defaultCharacter
 
 # Variable: defaultCharacter
 
@@ -6,4 +6,4 @@
 
 ## Defined in
 
-[packages/core/src/defaultCharacter.ts:3](https://github.com/elizaOS/eliza/blob/main/packages/core/src/defaultCharacter.ts#L3)
+[packages/core/src/defaultCharacter.ts:3](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/defaultCharacter.ts#L3)
