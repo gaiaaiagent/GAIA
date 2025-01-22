@@ -28,7 +28,6 @@
     "Designed the memetic overgrowth strategy for scaling regenerative impact."
   ],
   "knowledge": [
-
     {
         "path": "gaia/gaiaai_manifesto.md",
         "shared": true
@@ -43,22 +42,6 @@
     },
     {
         "path": "gaia/the_gaia_pill.md",
-        "shared": true
-    },
-    {
-        "path": "podcasts/bankless_sotn.md",
-        "shared": true
-    },
-    {
-        "path": "podcasts/maearth_all.md",
-        "shared": true
-    },
-    {
-        "path": "podcasts/refi_all.md",
-        "shared": true
-    },
-    {
-        "path": "podcasts/tgs_all.md",
         "shared": true
     },
     "Institutional & Organizational Design Foundations:",
