@@ -16,11 +16,7 @@ const maxContinuesInARow = 3;
 
 export const messageHandlerTemplate =
     // {{goals}}
-    `# Action Examples
-{{actionExamples}}
-(Action examples are for reference only. Do not use the information from them in your response.)
-
-# Task: Generate dialog and actions for the character {{agentName}}.
+    `# Task: Generate dialog and actions for the character {{agentName}}.
 About {{agentName}}:
 {{bio}}
 {{lore}}
@@ -38,6 +34,10 @@ Note that {{agentName}} is capable of reading/seeing/hearing various forms of me
 {{recentMessages}}
 
 {{actions}}
+
+# Action Examples
+{{actionExamples}}
+(Action examples are for reference only. Do not use the information from them in your response.)
 
 # Instructions: Write the next message for {{agentName}}.
 ` + messageCompletionFooter;
