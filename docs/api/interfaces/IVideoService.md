@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / IVideoService
+[@elizaos/core v0.1.8+build.1](../index.md) / IVideoService
 
 # Interface: IVideoService
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1090](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1090)
+[packages/core/src/types.ts:1169](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1169)
 
 ## Methods
 
@@ -48,9 +48,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1095](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1095)
+[packages/core/src/types.ts:1174](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1174)
 
----
+***
 
 ### isVideoUrl()
 
@@ -66,9 +66,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1204](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1204)
+[packages/core/src/types.ts:1286](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1286)
 
----
+***
 
 ### fetchVideoInfo()
 
@@ -84,9 +84,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1205](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1205)
+[packages/core/src/types.ts:1287](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1287)
 
----
+***
 
 ### downloadVideo()
 
@@ -102,9 +102,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1206](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1206)
+[packages/core/src/types.ts:1288](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1288)
 
----
+***
 
 ### processVideo()
 
@@ -122,4 +122,4 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1207](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1207)
+[packages/core/src/types.ts:1289](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1289)

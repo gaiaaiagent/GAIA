@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / MemoryManager
+[@elizaos/core v0.1.8+build.1](../index.md) / MemoryManager
 
 # Class: MemoryManager
 
@@ -36,7 +36,7 @@ The AgentRuntime instance associated with this manager.
 
 #### Defined in
 
-[packages/core/src/memory.ts:33](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L33)
+[packages/core/src/memory.ts:33](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L33)
 
 ## Properties
 
@@ -52,9 +52,9 @@ The AgentRuntime instance associated with this manager.
 
 #### Defined in
 
-[packages/core/src/memory.ts:20](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L20)
+[packages/core/src/memory.ts:20](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L20)
 
----
+***
 
 ### tableName
 
@@ -68,7 +68,7 @@ The name of the database table this manager operates on.
 
 #### Defined in
 
-[packages/core/src/memory.ts:25](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L25)
+[packages/core/src/memory.ts:25](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L25)
 
 ## Methods
 
@@ -102,9 +102,9 @@ Error if the memory content is empty
 
 #### Defined in
 
-[packages/core/src/memory.ts:52](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L52)
+[packages/core/src/memory.ts:52](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L52)
 
----
+***
 
 ### getMemories()
 
@@ -146,9 +146,9 @@ A Promise resolving to an array of Memory objects.
 
 #### Defined in
 
-[packages/core/src/memory.ts:87](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L87)
+[packages/core/src/memory.ts:87](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L87)
 
----
+***
 
 ### getCachedEmbeddings()
 
@@ -168,9 +168,9 @@ A Promise resolving to an array of Memory objects.
 
 #### Defined in
 
-[packages/core/src/memory.ts:111](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L111)
+[packages/core/src/memory.ts:111](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L111)
 
----
+***
 
 ### searchMemoriesByEmbedding()
 
@@ -188,7 +188,7 @@ The embedding vector to search with.
 
 Options including match threshold, count, user IDs, and uniqueness.
 
-• **opts.match_threshold?**: `number`
+• **opts.match\_threshold?**: `number`
 
 The similarity threshold for matching memories.
 
@@ -216,9 +216,9 @@ A Promise resolving to an array of Memory objects that match the embedding.
 
 #### Defined in
 
-[packages/core/src/memory.ts:137](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L137)
+[packages/core/src/memory.ts:137](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L137)
 
----
+***
 
 ### createMemory()
 
@@ -248,9 +248,9 @@ A Promise that resolves when the operation completes.
 
 #### Defined in
 
-[packages/core/src/memory.ts:172](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L172)
+[packages/core/src/memory.ts:172](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L172)
 
----
+***
 
 ### getMemoriesByRoomIds()
 
@@ -262,6 +262,8 @@ A Promise that resolves when the operation completes.
 
 • **params.roomIds**: \`$\{string\}-$\{string\}-$\{string\}-$\{string\}-$\{string\}\`[]
 
+• **params.limit?**: `number`
+
 #### Returns
 
 `Promise`\<[`Memory`](../interfaces/Memory.md)[]\>
@@ -272,9 +274,9 @@ A Promise that resolves when the operation completes.
 
 #### Defined in
 
-[packages/core/src/memory.ts:192](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L192)
+[packages/core/src/memory.ts:192](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L192)
 
----
+***
 
 ### getMemoryById()
 
@@ -294,9 +296,9 @@ A Promise that resolves when the operation completes.
 
 #### Defined in
 
-[packages/core/src/memory.ts:200](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L200)
+[packages/core/src/memory.ts:201](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L201)
 
----
+***
 
 ### removeMemory()
 
@@ -322,9 +324,9 @@ A Promise that resolves when the operation completes.
 
 #### Defined in
 
-[packages/core/src/memory.ts:211](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L211)
+[packages/core/src/memory.ts:212](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L212)
 
----
+***
 
 ### removeAllMemories()
 
@@ -350,9 +352,9 @@ A Promise that resolves when the operation completes.
 
 #### Defined in
 
-[packages/core/src/memory.ts:223](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L223)
+[packages/core/src/memory.ts:224](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L224)
 
----
+***
 
 ### countMemories()
 
@@ -382,4 +384,4 @@ A Promise resolving to the count of memories.
 
 #### Defined in
 
-[packages/core/src/memory.ts:236](https://github.com/elizaOS/eliza/blob/main/packages/core/src/memory.ts#L236)
+[packages/core/src/memory.ts:237](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/memory.ts#L237)

@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / EvaluationExample
+[@elizaos/core v0.1.8+build.1](../index.md) / EvaluationExample
 
 # Interface: EvaluationExample
 
@@ -14,9 +14,9 @@ Evaluation context
 
 #### Defined in
 
-[packages/core/src/types.ts:435](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L435)
+[packages/core/src/types.ts:458](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L458)
 
----
+***
 
 ### messages
 
@@ -26,9 +26,9 @@ Example messages
 
 #### Defined in
 
-[packages/core/src/types.ts:438](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L438)
+[packages/core/src/types.ts:461](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L461)
 
----
+***
 
 ### outcome
 
@@ -38,4 +38,4 @@ Expected outcome
 
 #### Defined in
 
-[packages/core/src/types.ts:441](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L441)
+[packages/core/src/types.ts:464](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L464)

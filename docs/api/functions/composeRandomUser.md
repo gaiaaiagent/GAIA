@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / composeRandomUser
+[@elizaos/core v0.1.8+build.1](../index.md) / composeRandomUser
 
 # Function: composeRandomUser()
 
@@ -36,4 +36,4 @@ const result = composeRandomUser({ template, length });
 
 ## Defined in
 
-[packages/core/src/context.ts:94](https://github.com/elizaOS/eliza/blob/main/packages/core/src/context.ts#L94)
+[packages/core/src/context.ts:105](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/context.ts#L105)

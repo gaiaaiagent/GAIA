@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / IDatabaseCacheAdapter
+[@elizaos/core v0.1.8+build.1](../index.md) / IDatabaseCacheAdapter
 
 # Interface: IDatabaseCacheAdapter
 
@@ -22,9 +22,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1006](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1006)
+[packages/core/src/types.ts:1056](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1056)
 
----
+***
 
 ### setCache()
 
@@ -46,9 +46,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1011](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1011)
+[packages/core/src/types.ts:1061](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1061)
 
----
+***
 
 ### deleteCache()
 
@@ -68,4 +68,4 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1017](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1017)
+[packages/core/src/types.ts:1067](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1067)

@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / SearchResult
+[@elizaos/core v0.1.8+build.1](../index.md) / SearchResult
 
 # Type Alias: SearchResult
 
@@ -32,4 +32,4 @@
 
 ## Defined in
 
-[packages/core/src/types.ts:1268](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1268)
+[packages/core/src/types.ts:1402](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1402)

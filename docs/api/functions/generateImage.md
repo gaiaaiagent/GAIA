@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / generateImage
+[@elizaos/core v0.1.8+build.1](../index.md) / generateImage
 
 # Function: generateImage()
 
@@ -52,4 +52,4 @@
 
 ## Defined in
 
-[packages/core/src/generation.ts:1126](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1126)
+[packages/core/src/generation.ts:1340](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1340)

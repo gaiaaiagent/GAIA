@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / createGoal
+[@elizaos/core v0.1.8+build.1](../index.md) / createGoal
 
 # Function: createGoal()
 
@@ -18,4 +18,4 @@
 
 ## Defined in
 
-[packages/core/src/goals.ts:55](https://github.com/elizaOS/eliza/blob/main/packages/core/src/goals.ts#L55)
+[packages/core/src/goals.ts:55](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/goals.ts#L55)

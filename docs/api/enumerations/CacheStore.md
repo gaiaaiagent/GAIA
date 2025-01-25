@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / CacheStore
+[@elizaos/core v0.1.8+build.1](../index.md) / CacheStore
 
 # Enumeration: CacheStore
 
@@ -10,9 +10,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1065](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1065)
+[packages/core/src/types.ts:1144](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1144)
 
----
+***
 
 ### DATABASE
 
@@ -20,9 +20,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1066](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1066)
+[packages/core/src/types.ts:1145](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1145)
 
----
+***
 
 ### FILESYSTEM
 
@@ -30,4 +30,4 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1067](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1067)
+[packages/core/src/types.ts:1146](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1146)

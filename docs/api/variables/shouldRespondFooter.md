@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / shouldRespondFooter
+[@elizaos/core v0.1.8+build.1](../index.md) / shouldRespondFooter
 
 # Variable: shouldRespondFooter
 
@@ -6,4 +6,4 @@
 
 ## Defined in
 
-[packages/core/src/parsing.ts:9](https://github.com/elizaOS/eliza/blob/main/packages/core/src/parsing.ts#L9)
+[packages/core/src/parsing.ts:9](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/parsing.ts#L9)

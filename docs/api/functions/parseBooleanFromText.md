@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / parseBooleanFromText
+[@elizaos/core v0.1.8+build.1](../index.md) / parseBooleanFromText
 
 # Function: parseBooleanFromText()
 
@@ -23,4 +23,4 @@ The input text to parse.
 
 ## Defined in
 
-[packages/core/src/parsing.ts:46](https://github.com/elizaOS/eliza/blob/main/packages/core/src/parsing.ts#L46)
+[packages/core/src/parsing.ts:46](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/parsing.ts#L46)

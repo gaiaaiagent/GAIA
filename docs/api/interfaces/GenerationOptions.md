@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / GenerationOptions
+[@elizaos/core v0.1.8+build.1](../index.md) / GenerationOptions
 
 # Interface: GenerationOptions
 
@@ -12,9 +12,9 @@ Configuration options for generating objects with a model.
 
 #### Defined in
 
-[packages/core/src/generation.ts:1516](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1516)
+[packages/core/src/generation.ts:1768](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1768)
 
----
+***
 
 ### context
 
@@ -22,9 +22,9 @@ Configuration options for generating objects with a model.
 
 #### Defined in
 
-[packages/core/src/generation.ts:1517](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1517)
+[packages/core/src/generation.ts:1769](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1769)
 
----
+***
 
 ### modelClass
 
@@ -32,9 +32,9 @@ Configuration options for generating objects with a model.
 
 #### Defined in
 
-[packages/core/src/generation.ts:1518](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1518)
+[packages/core/src/generation.ts:1770](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1770)
 
----
+***
 
 ### schema?
 
@@ -42,9 +42,9 @@ Configuration options for generating objects with a model.
 
 #### Defined in
 
-[packages/core/src/generation.ts:1519](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1519)
+[packages/core/src/generation.ts:1771](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1771)
 
----
+***
 
 ### schemaName?
 
@@ -52,9 +52,9 @@ Configuration options for generating objects with a model.
 
 #### Defined in
 
-[packages/core/src/generation.ts:1520](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1520)
+[packages/core/src/generation.ts:1772](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1772)
 
----
+***
 
 ### schemaDescription?
 
@@ -62,9 +62,9 @@ Configuration options for generating objects with a model.
 
 #### Defined in
 
-[packages/core/src/generation.ts:1521](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1521)
+[packages/core/src/generation.ts:1773](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1773)
 
----
+***
 
 ### stop?
 
@@ -72,9 +72,9 @@ Configuration options for generating objects with a model.
 
 #### Defined in
 
-[packages/core/src/generation.ts:1522](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1522)
+[packages/core/src/generation.ts:1774](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1774)
 
----
+***
 
 ### mode?
 
@@ -82,14 +82,44 @@ Configuration options for generating objects with a model.
 
 #### Defined in
 
-[packages/core/src/generation.ts:1523](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1523)
+[packages/core/src/generation.ts:1775](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1775)
 
----
+***
 
-### experimental_providerMetadata?
+### experimental\_providerMetadata?
 
-> `optional` **experimental_providerMetadata**: `Record`\<`string`, `unknown`\>
+> `optional` **experimental\_providerMetadata**: `Record`\<`string`, `unknown`\>
 
 #### Defined in
 
-[packages/core/src/generation.ts:1524](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1524)
+[packages/core/src/generation.ts:1776](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1776)
+
+***
+
+### verifiableInference?
+
+> `optional` **verifiableInference**: `boolean`
+
+#### Defined in
+
+[packages/core/src/generation.ts:1777](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1777)
+
+***
+
+### verifiableInferenceAdapter?
+
+> `optional` **verifiableInferenceAdapter**: [`IVerifiableInferenceAdapter`](IVerifiableInferenceAdapter.md)
+
+#### Defined in
+
+[packages/core/src/generation.ts:1778](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1778)
+
+***
+
+### verifiableInferenceOptions?
+
+> `optional` **verifiableInferenceOptions**: [`VerifiableInferenceOptions`](VerifiableInferenceOptions.md)
+
+#### Defined in
+
+[packages/core/src/generation.ts:1779](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1779)

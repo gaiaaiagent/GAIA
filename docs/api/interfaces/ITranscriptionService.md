@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / ITranscriptionService
+[@elizaos/core v0.1.8+build.1](../index.md) / ITranscriptionService
 
 # Interface: ITranscriptionService
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1090](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1090)
+[packages/core/src/types.ts:1169](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1169)
 
 ## Methods
 
@@ -48,9 +48,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1095](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1095)
+[packages/core/src/types.ts:1174](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1174)
 
----
+***
 
 ### transcribeAttachment()
 
@@ -66,9 +66,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1195](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1195)
+[packages/core/src/types.ts:1277](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1277)
 
----
+***
 
 ### transcribeAttachmentLocally()
 
@@ -84,9 +84,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1196](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1196)
+[packages/core/src/types.ts:1278](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1278)
 
----
+***
 
 ### transcribe()
 
@@ -102,9 +102,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1199](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1199)
+[packages/core/src/types.ts:1281](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1281)
 
----
+***
 
 ### transcribeLocally()
 
@@ -120,4 +120,4 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1200](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1200)
+[packages/core/src/types.ts:1282](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1282)

@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / generateText
+[@elizaos/core v0.1.8+build.1](../index.md) / generateText
 
 # Function: generateText()
 
@@ -18,7 +18,7 @@ The options for the generateText request.
 
 The context of the message to be completed.
 
-• **opts.modelClass**: `string`
+• **opts.modelClass**: [`ModelClass`](../enumerations/ModelClass.md)
 
 • **opts.tools?**: `Record`\<`string`, `Tool`\> = `{}`
 
@@ -32,6 +32,12 @@ A list of strings to stop the generateText at.
 
 • **opts.customSystemPrompt?**: `string`
 
+• **opts.verifiableInference?**: `boolean` = `...`
+
+• **opts.verifiableInferenceAdapter?**: [`IVerifiableInferenceAdapter`](../interfaces/IVerifiableInferenceAdapter.md)
+
+• **opts.verifiableInferenceOptions?**: [`VerifiableInferenceOptions`](../interfaces/VerifiableInferenceOptions.md)
+
 ## Returns
 
 `Promise`\<`string`\>
@@ -40,4 +46,4 @@ The completed message.
 
 ## Defined in
 
-[packages/core/src/generation.ts:170](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L170)
+[packages/core/src/generation.ts:237](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L237)

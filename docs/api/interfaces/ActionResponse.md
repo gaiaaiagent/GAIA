@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / ActionResponse
+[@elizaos/core v0.1.8+build.1](../index.md) / ActionResponse
 
 # Interface: ActionResponse
 
@@ -10,9 +10,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1311](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1311)
+[packages/core/src/types.ts:1470](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1470)
 
----
+***
 
 ### retweet
 
@@ -20,9 +20,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1312](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1312)
+[packages/core/src/types.ts:1471](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1471)
 
----
+***
 
 ### quote?
 
@@ -30,9 +30,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1313](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1313)
+[packages/core/src/types.ts:1472](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1472)
 
----
+***
 
 ### reply?
 
@@ -40,4 +40,4 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1314](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1314)
+[packages/core/src/types.ts:1473](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1473)

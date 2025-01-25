@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / knowledge
+[@elizaos/core v0.1.8+build.1](../index.md) / knowledge
 
 # Variable: knowledge
 
@@ -52,4 +52,4 @@
 
 ## Defined in
 
-[packages/core/src/knowledge.ts:150](https://github.com/elizaOS/eliza/blob/main/packages/core/src/knowledge.ts#L150)
+[packages/core/src/knowledge.ts:150](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/knowledge.ts#L150)

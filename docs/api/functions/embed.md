@@ -1,10 +1,10 @@
-[@elizaos/core v0.1.7](../index.md) / embed
+[@elizaos/core v0.1.8+build.1](../index.md) / embed
 
 # Function: embed()
 
 > **embed**(`runtime`, `input`): `Promise`\<`number`[]\>
 
-Gets embeddings from a remote API endpoint. Falls back to local BGE/384
+Gets embeddings from a remote API endpoint.  Falls back to local BGE/384
 
 ## Parameters
 
@@ -28,4 +28,4 @@ If the API request fails
 
 ## Defined in
 
-[packages/core/src/embedding.ts:162](https://github.com/elizaOS/eliza/blob/main/packages/core/src/embedding.ts#L162)
+[packages/core/src/embedding.ts:182](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/embedding.ts#L182)

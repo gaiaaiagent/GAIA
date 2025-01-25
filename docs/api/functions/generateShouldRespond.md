@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / generateShouldRespond
+[@elizaos/core v0.1.8+build.1](../index.md) / generateShouldRespond
 
 # Function: generateShouldRespond()
 
@@ -18,7 +18,7 @@ The options for the generateText request
 
 The context to evaluate for response
 
-• **opts.modelClass**: `string`
+• **opts.modelClass**: [`ModelClass`](../enumerations/ModelClass.md)
 
 ## Returns
 
@@ -28,4 +28,4 @@ Promise resolving to "RESPOND", "IGNORE", "STOP" or null
 
 ## Defined in
 
-[packages/core/src/generation.ts:826](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L826)
+[packages/core/src/generation.ts:1042](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1042)

@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / TranscriptionProvider
+[@elizaos/core v0.1.8+build.1](../index.md) / TranscriptionProvider
 
 # Enumeration: TranscriptionProvider
 
@@ -10,9 +10,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1327](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1327)
+[packages/core/src/types.ts:1549](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1549)
 
----
+***
 
 ### Deepgram
 
@@ -20,9 +20,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1328](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1328)
+[packages/core/src/types.ts:1550](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1550)
 
----
+***
 
 ### Local
 
@@ -30,4 +30,4 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1329](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1329)
+[packages/core/src/types.ts:1551](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1551)

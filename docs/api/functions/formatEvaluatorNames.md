@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / formatEvaluatorNames
+[@elizaos/core v0.1.8+build.1](../index.md) / formatEvaluatorNames
 
 # Function: formatEvaluatorNames()
 
@@ -20,4 +20,4 @@ A string that concatenates the names of all evaluators, each enclosed in single 
 
 ## Defined in
 
-[packages/core/src/evaluators.ts:30](https://github.com/elizaOS/eliza/blob/main/packages/core/src/evaluators.ts#L30)
+[packages/core/src/evaluators.ts:30](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/evaluators.ts#L30)

@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / CharacterSchema
+[@elizaos/core v0.1.8+build.1](../index.md) / CharacterSchema
 
 # Variable: CharacterSchema
 
@@ -22,7 +22,7 @@ Main Character schema
 
 ### modelProvider
 
-> **modelProvider**: `ZodNativeEnum`\<_typeof_ [`ModelProviderName`](../enumerations/ModelProviderName.md)\>
+> **modelProvider**: `ZodNativeEnum`\<*typeof* [`ModelProviderName`](../enumerations/ModelProviderName.md)\>
 
 ### modelEndpointOverride
 
@@ -58,11 +58,11 @@ Main Character schema
 
 ### knowledge
 
-> **knowledge**: `ZodOptional`\<`ZodArray`\<`ZodString`, `"many"`\>\>
+> **knowledge**: `ZodOptional`\<`ZodArray`\<`ZodUnion`\<[`ZodString`, `ZodObject`\<`object`, `"strip"`, `ZodTypeAny`, `object`, `object`\>]\>, `"many"`\>\>
 
 ### clients
 
-> **clients**: `ZodArray`\<`ZodNativeEnum`\<_typeof_ [`Clients`](../enumerations/Clients.md)\>, `"many"`\>
+> **clients**: `ZodArray`\<`ZodNativeEnum`\<*typeof* [`Clients`](../enumerations/Clients.md)\>, `"many"`\>
 
 ### plugins
 
@@ -102,6 +102,10 @@ Main Character schema
 
 > **nft**: `ZodOptional`\<`ZodObject`\<`object`, `"strip"`, `ZodTypeAny`, `object`, `object`\>\>
 
+### extends
+
+> **extends**: `ZodOptional`\<`ZodArray`\<`ZodString`, `"many"`\>\>
+
 ## Defined in
 
-[packages/core/src/environment.ts:66](https://github.com/elizaOS/eliza/blob/main/packages/core/src/environment.ts#L66)
+[packages/core/src/environment.ts:67](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/environment.ts#L67)

@@ -1,18 +1,18 @@
-[@elizaos/core v0.1.7](../index.md) / ServiceType
+[@elizaos/core v0.1.8+build.1](../index.md) / ServiceType
 
 # Enumeration: ServiceType
 
 ## Enumeration Members
 
-### IMAGE_DESCRIPTION
+### IMAGE\_DESCRIPTION
 
-> **IMAGE_DESCRIPTION**: `"image_description"`
+> **IMAGE\_DESCRIPTION**: `"image_description"`
 
 #### Defined in
 
-[packages/core/src/types.ts:1286](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1286)
+[packages/core/src/types.ts:1420](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1420)
 
----
+***
 
 ### TRANSCRIPTION
 
@@ -20,9 +20,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1287](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1287)
+[packages/core/src/types.ts:1421](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1421)
 
----
+***
 
 ### VIDEO
 
@@ -30,19 +30,19 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1288](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1288)
+[packages/core/src/types.ts:1422](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1422)
 
----
+***
 
-### TEXT_GENERATION
+### TEXT\_GENERATION
 
-> **TEXT_GENERATION**: `"text_generation"`
+> **TEXT\_GENERATION**: `"text_generation"`
 
 #### Defined in
 
-[packages/core/src/types.ts:1289](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1289)
+[packages/core/src/types.ts:1423](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1423)
 
----
+***
 
 ### BROWSER
 
@@ -50,19 +50,19 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1290](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1290)
+[packages/core/src/types.ts:1424](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1424)
 
----
+***
 
-### SPEECH_GENERATION
+### SPEECH\_GENERATION
 
-> **SPEECH_GENERATION**: `"speech_generation"`
+> **SPEECH\_GENERATION**: `"speech_generation"`
 
 #### Defined in
 
-[packages/core/src/types.ts:1291](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1291)
+[packages/core/src/types.ts:1425](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1425)
 
----
+***
 
 ### PDF
 
@@ -70,9 +70,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1292](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1292)
+[packages/core/src/types.ts:1426](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1426)
 
----
+***
 
 ### INTIFACE
 
@@ -80,19 +80,19 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1293](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1293)
+[packages/core/src/types.ts:1427](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1427)
 
----
+***
 
-### AWS_S3
+### AWS\_S3
 
-> **AWS_S3**: `"aws_s3"`
+> **AWS\_S3**: `"aws_s3"`
 
 #### Defined in
 
-[packages/core/src/types.ts:1294](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1294)
+[packages/core/src/types.ts:1428](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1428)
 
----
+***
 
 ### BUTTPLUG
 
@@ -100,9 +100,9 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1295](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1295)
+[packages/core/src/types.ts:1429](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1429)
 
----
+***
 
 ### SLACK
 
@@ -110,4 +110,34 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1296](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1296)
+[packages/core/src/types.ts:1430](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1430)
+
+***
+
+### IRYS
+
+> **IRYS**: `"irys"`
+
+#### Defined in
+
+[packages/core/src/types.ts:1431](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1431)
+
+***
+
+### TEE\_LOG
+
+> **TEE\_LOG**: `"tee_log"`
+
+#### Defined in
+
+[packages/core/src/types.ts:1432](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1432)
+
+***
+
+### GOPLUS\_SECURITY
+
+> **GOPLUS\_SECURITY**: `"goplus_security"`
+
+#### Defined in
+
+[packages/core/src/types.ts:1433](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1433)

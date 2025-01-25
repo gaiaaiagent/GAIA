@@ -1,4 +1,4 @@
-# @elizaos/core v0.1.7
+# @elizaos/core v0.1.8+build.1
 
 ## Enumerations
 
@@ -7,10 +7,14 @@
 - [ModelProviderName](enumerations/ModelProviderName.md)
 - [Clients](enumerations/Clients.md)
 - [CacheStore](enumerations/CacheStore.md)
+- [IrysMessageType](enumerations/IrysMessageType.md)
+- [IrysDataType](enumerations/IrysDataType.md)
 - [ServiceType](enumerations/ServiceType.md)
 - [LoggingLevel](enumerations/LoggingLevel.md)
+- [VerifiableInferenceProvider](enumerations/VerifiableInferenceProvider.md)
 - [TokenizerType](enumerations/TokenizerType.md)
 - [TranscriptionProvider](enumerations/TranscriptionProvider.md)
+- [ActionTimelineType](enumerations/ActionTimelineType.md)
 
 ## Classes
 
@@ -20,6 +24,7 @@
 - [CacheManager](classes/CacheManager.md)
 - [DatabaseAdapter](classes/DatabaseAdapter.md)
 - [MemoryManager](classes/MemoryManager.md)
+- [RAGKnowledgeManager](classes/RAGKnowledgeManager.md)
 - [AgentRuntime](classes/AgentRuntime.md)
 - [Service](classes/Service.md)
 
@@ -49,6 +54,7 @@
 - [IDatabaseAdapter](interfaces/IDatabaseAdapter.md)
 - [IDatabaseCacheAdapter](interfaces/IDatabaseCacheAdapter.md)
 - [IMemoryManager](interfaces/IMemoryManager.md)
+- [IRAGKnowledgeManager](interfaces/IRAGKnowledgeManager.md)
 - [ICacheManager](interfaces/ICacheManager.md)
 - [IAgentRuntime](interfaces/IAgentRuntime.md)
 - [IImageDescriptionService](interfaces/IImageDescriptionService.md)
@@ -59,8 +65,18 @@
 - [ISpeechService](interfaces/ISpeechService.md)
 - [IPdfService](interfaces/IPdfService.md)
 - [IAwsS3Service](interfaces/IAwsS3Service.md)
+- [UploadIrysResult](interfaces/UploadIrysResult.md)
+- [DataIrysFetchedFromGQL](interfaces/DataIrysFetchedFromGQL.md)
+- [GraphQLTag](interfaces/GraphQLTag.md)
+- [IrysTimestamp](interfaces/IrysTimestamp.md)
+- [IIrysService](interfaces/IIrysService.md)
+- [ITeeLogService](interfaces/ITeeLogService.md)
+- [RAGKnowledgeItem](interfaces/RAGKnowledgeItem.md)
 - [ActionResponse](interfaces/ActionResponse.md)
 - [ISlackService](interfaces/ISlackService.md)
+- [VerifiableInferenceOptions](interfaces/VerifiableInferenceOptions.md)
+- [VerifiableInferenceResult](interfaces/VerifiableInferenceResult.md)
+- [IVerifiableInferenceAdapter](interfaces/IVerifiableInferenceAdapter.md)
 
 ## Type Aliases
 
@@ -69,6 +85,9 @@
 - [EnvConfig](type-aliases/EnvConfig.md)
 - [CharacterConfig](type-aliases/CharacterConfig.md)
 - [UUID](type-aliases/UUID.md)
+- [ModelSettings](type-aliases/ModelSettings.md)
+- [ImageModelSettings](type-aliases/ImageModelSettings.md)
+- [EmbeddingModelSettings](type-aliases/EmbeddingModelSettings.md)
 - [Model](type-aliases/Model.md)
 - [Models](type-aliases/Models.md)
 - [Handler](type-aliases/Handler.md)
@@ -78,6 +97,7 @@
 - [Client](type-aliases/Client.md)
 - [Plugin](type-aliases/Plugin.md)
 - [TelemetrySettings](type-aliases/TelemetrySettings.md)
+- [TemplateType](type-aliases/TemplateType.md)
 - [Character](type-aliases/Character.md)
 - [CacheOptions](type-aliases/CacheOptions.md)
 - [SearchImage](type-aliases/SearchImage.md)
@@ -101,6 +121,7 @@
 - [stringArrayFooter](variables/stringArrayFooter.md)
 - [postActionResponseFooter](variables/postActionResponseFooter.md)
 - [settings](variables/settings.md)
+- [uuidSchema](variables/uuidSchema.md)
 
 ## Functions
 
@@ -143,13 +164,16 @@
 - [formatActors](functions/formatActors.md)
 - [formatMessages](functions/formatMessages.md)
 - [formatTimestamp](functions/formatTimestamp.md)
-- [getModel](functions/getModel.md)
+- [getModelSettings](functions/getModelSettings.md)
+- [getImageModelSettings](functions/getImageModelSettings.md)
+- [getEmbeddingModelSettings](functions/getEmbeddingModelSettings.md)
 - [getEndpoint](functions/getEndpoint.md)
 - [parseShouldRespondFromText](functions/parseShouldRespondFromText.md)
 - [parseBooleanFromText](functions/parseBooleanFromText.md)
 - [parseJsonArrayFromText](functions/parseJsonArrayFromText.md)
 - [parseJSONObjectFromText](functions/parseJSONObjectFromText.md)
 - [parseActionResponseFromText](functions/parseActionResponseFromText.md)
+- [truncateToCompleteSentence](functions/truncateToCompleteSentence.md)
 - [formatPosts](functions/formatPosts.md)
 - [getProviders](functions/getProviders.md)
 - [createRelationship](functions/createRelationship.md)
@@ -161,4 +185,5 @@
 - [loadEnvConfig](functions/loadEnvConfig.md)
 - [getEnvVariable](functions/getEnvVariable.md)
 - [hasEnvVariable](functions/hasEnvVariable.md)
+- [validateUuid](functions/validateUuid.md)
 - [stringToUuid](functions/stringToUuid.md)

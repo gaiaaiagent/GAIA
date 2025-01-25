@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / getEmbeddingConfig
+[@elizaos/core v0.1.8+build.1](../index.md) / getEmbeddingConfig
 
 # Function: getEmbeddingConfig()
 
@@ -10,4 +10,4 @@
 
 ## Defined in
 
-[packages/core/src/embedding.ts:33](https://github.com/elizaOS/eliza/blob/main/packages/core/src/embedding.ts#L33)
+[packages/core/src/embedding.ts:34](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/embedding.ts#L34)

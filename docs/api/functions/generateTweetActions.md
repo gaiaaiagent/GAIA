@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / generateTweetActions
+[@elizaos/core v0.1.8+build.1](../index.md) / generateTweetActions
 
 # Function: generateTweetActions()
 
@@ -12,7 +12,7 @@
 
 • **\_\_namedParameters.context**: `string`
 
-• **\_\_namedParameters.modelClass**: `string`
+• **\_\_namedParameters.modelClass**: [`ModelClass`](../enumerations/ModelClass.md)
 
 ## Returns
 
@@ -20,4 +20,4 @@
 
 ## Defined in
 
-[packages/core/src/generation.ts:1898](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1898)
+[packages/core/src/generation.ts:2237](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L2237)

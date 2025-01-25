@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / Model
+[@elizaos/core v0.1.8+build.1](../index.md) / Model
 
 # Type Alias: Model
 
@@ -14,96 +14,32 @@ Configuration for an AI model
 
 Optional API endpoint
 
-### settings
-
-> **settings**: `object`
-
-Model settings
-
-### settings.maxInputTokens
-
-> **maxInputTokens**: `number`
-
-Maximum input tokens
-
-### settings.maxOutputTokens
-
-> **maxOutputTokens**: `number`
-
-Maximum output tokens
-
-### settings.frequency_penalty?
-
-> `optional` **frequency_penalty**: `number`
-
-Optional frequency penalty
-
-### settings.presence_penalty?
-
-> `optional` **presence_penalty**: `number`
-
-Optional presence penalty
-
-### settings.repetition_penalty?
-
-> `optional` **repetition_penalty**: `number`
-
-Optional repetition penalty
-
-### settings.stop
-
-> **stop**: `string`[]
-
-Stop sequences
-
-### settings.temperature
-
-> **temperature**: `number`
-
-Temperature setting
-
-### settings.experimental_telemetry?
-
-> `optional` **experimental_telemetry**: [`TelemetrySettings`](TelemetrySettings.md)
-
-Optional telemetry configuration (experimental)
-
-### imageSettings?
-
-> `optional` **imageSettings**: `object`
-
-Optional image generation settings
-
-### imageSettings.steps?
-
-> `optional` **steps**: `number`
-
 ### model
 
 > **model**: `object`
 
 Model names by size class
 
-### model.small
+### model.small?
 
-> **small**: `string`
+> `optional` **small**: [`ModelSettings`](ModelSettings.md)
 
-### model.medium
+### model.medium?
 
-> **medium**: `string`
+> `optional` **medium**: [`ModelSettings`](ModelSettings.md)
 
-### model.large
+### model.large?
 
-> **large**: `string`
+> `optional` **large**: [`ModelSettings`](ModelSettings.md)
 
 ### model.embedding?
 
-> `optional` **embedding**: `string`
+> `optional` **embedding**: [`EmbeddingModelSettings`](EmbeddingModelSettings.md)
 
 ### model.image?
 
-> `optional` **image**: `string`
+> `optional` **image**: [`ImageModelSettings`](ImageModelSettings.md)
 
 ## Defined in
 
-[packages/core/src/types.ts:142](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L142)
+[packages/core/src/types.ts:186](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L186)

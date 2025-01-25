@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / IBrowserService
+[@elizaos/core v0.1.8+build.1](../index.md) / IBrowserService
 
 # Interface: IBrowserService
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:1090](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1090)
+[packages/core/src/types.ts:1169](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1169)
 
 ## Methods
 
@@ -48,9 +48,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1095](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1095)
+[packages/core/src/types.ts:1174](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1174)
 
----
+***
 
 ### closeBrowser()
 
@@ -62,9 +62,9 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1232](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1232)
+[packages/core/src/types.ts:1314](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1314)
 
----
+***
 
 ### getPageContent()
 
@@ -94,4 +94,4 @@ Add abstract initialize method that must be implemented by derived classes
 
 #### Defined in
 
-[packages/core/src/types.ts:1233](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L1233)
+[packages/core/src/types.ts:1315](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L1315)

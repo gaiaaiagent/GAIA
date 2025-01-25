@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / Account
+[@elizaos/core v0.1.8+build.1](../index.md) / Account
 
 # Interface: Account
 
@@ -14,9 +14,9 @@ Unique identifier
 
 #### Defined in
 
-[packages/core/src/types.ts:513](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L513)
+[packages/core/src/types.ts:536](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L536)
 
----
+***
 
 ### name
 
@@ -26,9 +26,9 @@ Display name
 
 #### Defined in
 
-[packages/core/src/types.ts:516](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L516)
+[packages/core/src/types.ts:539](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L539)
 
----
+***
 
 ### username
 
@@ -38,9 +38,9 @@ Username
 
 #### Defined in
 
-[packages/core/src/types.ts:519](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L519)
+[packages/core/src/types.ts:542](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L542)
 
----
+***
 
 ### details?
 
@@ -50,13 +50,13 @@ Optional additional details
 
 #### Index Signature
 
-\[`key`: `string`\]: `any`
+ \[`key`: `string`\]: `any`
 
 #### Defined in
 
-[packages/core/src/types.ts:522](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L522)
+[packages/core/src/types.ts:545](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L545)
 
----
+***
 
 ### email?
 
@@ -66,9 +66,9 @@ Optional email
 
 #### Defined in
 
-[packages/core/src/types.ts:525](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L525)
+[packages/core/src/types.ts:548](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L548)
 
----
+***
 
 ### avatarUrl?
 
@@ -78,4 +78,4 @@ Optional avatar URL
 
 #### Defined in
 
-[packages/core/src/types.ts:528](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L528)
+[packages/core/src/types.ts:551](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L551)

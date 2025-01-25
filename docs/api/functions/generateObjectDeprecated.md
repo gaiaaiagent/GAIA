@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / generateObjectDeprecated
+[@elizaos/core v0.1.8+build.1](../index.md) / generateObjectDeprecated
 
 # Function: generateObjectDeprecated()
 
@@ -12,7 +12,7 @@
 
 • **\_\_namedParameters.context**: `string`
 
-• **\_\_namedParameters.modelClass**: `string`
+• **\_\_namedParameters.modelClass**: [`ModelClass`](../enumerations/ModelClass.md)
 
 ## Returns
 
@@ -20,4 +20,4 @@
 
 ## Defined in
 
-[packages/core/src/generation.ts:1000](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L1000)
+[packages/core/src/generation.ts:1213](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1213)

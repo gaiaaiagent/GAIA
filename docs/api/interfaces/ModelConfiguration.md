@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / ModelConfiguration
+[@elizaos/core v0.1.8+build.1](../index.md) / ModelConfiguration
 
 # Interface: ModelConfiguration
 
@@ -10,39 +10,39 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:660](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L660)
+[packages/core/src/types.ts:684](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L684)
 
----
+***
 
-### max_response_length?
+### max\_response\_length?
 
-> `optional` **max_response_length**: `number`
-
-#### Defined in
-
-[packages/core/src/types.ts:661](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L661)
-
----
-
-### frequency_penalty?
-
-> `optional` **frequency_penalty**: `number`
+> `optional` **max\_response\_length**: `number`
 
 #### Defined in
 
-[packages/core/src/types.ts:662](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L662)
+[packages/core/src/types.ts:685](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L685)
 
----
+***
 
-### presence_penalty?
+### frequency\_penalty?
 
-> `optional` **presence_penalty**: `number`
+> `optional` **frequency\_penalty**: `number`
 
 #### Defined in
 
-[packages/core/src/types.ts:663](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L663)
+[packages/core/src/types.ts:686](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L686)
 
----
+***
+
+### presence\_penalty?
+
+> `optional` **presence\_penalty**: `number`
+
+#### Defined in
+
+[packages/core/src/types.ts:687](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L687)
+
+***
 
 ### maxInputTokens?
 
@@ -50,14 +50,14 @@
 
 #### Defined in
 
-[packages/core/src/types.ts:664](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L664)
+[packages/core/src/types.ts:688](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L688)
 
----
+***
 
-### experimental_telemetry?
+### experimental\_telemetry?
 
-> `optional` **experimental_telemetry**: [`TelemetrySettings`](../type-aliases/TelemetrySettings.md)
+> `optional` **experimental\_telemetry**: [`TelemetrySettings`](../type-aliases/TelemetrySettings.md)
 
 #### Defined in
 
-[packages/core/src/types.ts:665](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L665)
+[packages/core/src/types.ts:689](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L689)

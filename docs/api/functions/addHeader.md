@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / addHeader
+[@elizaos/core v0.1.8+build.1](../index.md) / addHeader
 
 # Function: addHeader()
 
@@ -39,4 +39,4 @@ const text = addHeader(header, body);
 
 ## Defined in
 
-[packages/core/src/context.ts:70](https://github.com/elizaOS/eliza/blob/main/packages/core/src/context.ts#L70)
+[packages/core/src/context.ts:81](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/context.ts#L81)

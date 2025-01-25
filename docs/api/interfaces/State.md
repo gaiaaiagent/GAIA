@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / State
+[@elizaos/core v0.1.8+build.1](../index.md) / State
 
 # Interface: State
 
@@ -6,7 +6,7 @@ Represents the current state/context of a conversation
 
 ## Indexable
 
-\[`key`: `string`\]: `unknown`
+ \[`key`: `string`\]: `unknown`
 
 ## Properties
 
@@ -18,9 +18,9 @@ ID of user who sent current message
 
 #### Defined in
 
-[packages/core/src/types.ts:253](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L253)
+[packages/core/src/types.ts:274](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L274)
 
----
+***
 
 ### agentId?
 
@@ -30,9 +30,9 @@ ID of agent in conversation
 
 #### Defined in
 
-[packages/core/src/types.ts:256](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L256)
+[packages/core/src/types.ts:277](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L277)
 
----
+***
 
 ### bio
 
@@ -42,9 +42,9 @@ Agent's biography
 
 #### Defined in
 
-[packages/core/src/types.ts:259](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L259)
+[packages/core/src/types.ts:280](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L280)
 
----
+***
 
 ### lore
 
@@ -54,9 +54,9 @@ Agent's background lore
 
 #### Defined in
 
-[packages/core/src/types.ts:262](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L262)
+[packages/core/src/types.ts:283](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L283)
 
----
+***
 
 ### messageDirections
 
@@ -66,9 +66,9 @@ Message handling directions
 
 #### Defined in
 
-[packages/core/src/types.ts:265](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L265)
+[packages/core/src/types.ts:286](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L286)
 
----
+***
 
 ### postDirections
 
@@ -78,9 +78,9 @@ Post handling directions
 
 #### Defined in
 
-[packages/core/src/types.ts:268](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L268)
+[packages/core/src/types.ts:289](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L289)
 
----
+***
 
 ### roomId
 
@@ -90,9 +90,9 @@ Current room/conversation ID
 
 #### Defined in
 
-[packages/core/src/types.ts:271](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L271)
+[packages/core/src/types.ts:292](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L292)
 
----
+***
 
 ### agentName?
 
@@ -102,9 +102,9 @@ Optional agent name
 
 #### Defined in
 
-[packages/core/src/types.ts:274](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L274)
+[packages/core/src/types.ts:295](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L295)
 
----
+***
 
 ### senderName?
 
@@ -114,9 +114,9 @@ Optional message sender name
 
 #### Defined in
 
-[packages/core/src/types.ts:277](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L277)
+[packages/core/src/types.ts:298](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L298)
 
----
+***
 
 ### actors
 
@@ -126,9 +126,9 @@ String representation of conversation actors
 
 #### Defined in
 
-[packages/core/src/types.ts:280](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L280)
+[packages/core/src/types.ts:301](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L301)
 
----
+***
 
 ### actorsData?
 
@@ -138,9 +138,9 @@ Optional array of actor objects
 
 #### Defined in
 
-[packages/core/src/types.ts:283](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L283)
+[packages/core/src/types.ts:304](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L304)
 
----
+***
 
 ### goals?
 
@@ -150,9 +150,9 @@ Optional string representation of goals
 
 #### Defined in
 
-[packages/core/src/types.ts:286](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L286)
+[packages/core/src/types.ts:307](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L307)
 
----
+***
 
 ### goalsData?
 
@@ -162,9 +162,9 @@ Optional array of goal objects
 
 #### Defined in
 
-[packages/core/src/types.ts:289](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L289)
+[packages/core/src/types.ts:310](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L310)
 
----
+***
 
 ### recentMessages
 
@@ -174,9 +174,9 @@ Recent message history as string
 
 #### Defined in
 
-[packages/core/src/types.ts:292](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L292)
+[packages/core/src/types.ts:313](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L313)
 
----
+***
 
 ### recentMessagesData
 
@@ -186,9 +186,9 @@ Recent message objects
 
 #### Defined in
 
-[packages/core/src/types.ts:295](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L295)
+[packages/core/src/types.ts:316](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L316)
 
----
+***
 
 ### actionNames?
 
@@ -198,9 +198,9 @@ Optional valid action names
 
 #### Defined in
 
-[packages/core/src/types.ts:298](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L298)
+[packages/core/src/types.ts:319](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L319)
 
----
+***
 
 ### actions?
 
@@ -210,9 +210,9 @@ Optional action descriptions
 
 #### Defined in
 
-[packages/core/src/types.ts:301](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L301)
+[packages/core/src/types.ts:322](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L322)
 
----
+***
 
 ### actionsData?
 
@@ -222,9 +222,9 @@ Optional action objects
 
 #### Defined in
 
-[packages/core/src/types.ts:304](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L304)
+[packages/core/src/types.ts:325](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L325)
 
----
+***
 
 ### actionExamples?
 
@@ -234,9 +234,9 @@ Optional action examples
 
 #### Defined in
 
-[packages/core/src/types.ts:307](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L307)
+[packages/core/src/types.ts:328](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L328)
 
----
+***
 
 ### providers?
 
@@ -246,9 +246,9 @@ Optional provider descriptions
 
 #### Defined in
 
-[packages/core/src/types.ts:310](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L310)
+[packages/core/src/types.ts:331](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L331)
 
----
+***
 
 ### responseData?
 
@@ -258,9 +258,9 @@ Optional response content
 
 #### Defined in
 
-[packages/core/src/types.ts:313](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L313)
+[packages/core/src/types.ts:334](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L334)
 
----
+***
 
 ### recentInteractionsData?
 
@@ -270,9 +270,9 @@ Optional recent interaction objects
 
 #### Defined in
 
-[packages/core/src/types.ts:316](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L316)
+[packages/core/src/types.ts:337](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L337)
 
----
+***
 
 ### recentInteractions?
 
@@ -282,9 +282,9 @@ Optional recent interactions string
 
 #### Defined in
 
-[packages/core/src/types.ts:319](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L319)
+[packages/core/src/types.ts:340](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L340)
 
----
+***
 
 ### formattedConversation?
 
@@ -294,9 +294,9 @@ Optional formatted conversation
 
 #### Defined in
 
-[packages/core/src/types.ts:322](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L322)
+[packages/core/src/types.ts:343](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L343)
 
----
+***
 
 ### knowledge?
 
@@ -306,9 +306,9 @@ Optional formatted knowledge
 
 #### Defined in
 
-[packages/core/src/types.ts:325](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L325)
+[packages/core/src/types.ts:346](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L346)
 
----
+***
 
 ### knowledgeData?
 
@@ -318,4 +318,16 @@ Optional knowledge data
 
 #### Defined in
 
-[packages/core/src/types.ts:327](https://github.com/elizaOS/eliza/blob/main/packages/core/src/types.ts#L327)
+[packages/core/src/types.ts:348](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L348)
+
+***
+
+### ragKnowledgeData?
+
+> `optional` **ragKnowledgeData**: [`RAGKnowledgeItem`](RAGKnowledgeItem.md)[]
+
+Optional knowledge data
+
+#### Defined in
+
+[packages/core/src/types.ts:350](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/types.ts#L350)

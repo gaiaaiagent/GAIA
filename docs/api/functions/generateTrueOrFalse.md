@@ -1,4 +1,4 @@
-[@elizaos/core v0.1.7](../index.md) / generateTrueOrFalse
+[@elizaos/core v0.1.8+build.1](../index.md) / generateTrueOrFalse
 
 # Function: generateTrueOrFalse()
 
@@ -18,7 +18,7 @@ The options for the generateText request
 
 The context to evaluate for the boolean response
 
-• **opts.modelClass**: `string`
+• **opts.modelClass**: [`ModelClass`](../enumerations/ModelClass.md)
 
 ## Returns
 
@@ -28,4 +28,4 @@ Promise resolving to a boolean value parsed from the model's response
 
 ## Defined in
 
-[packages/core/src/generation.ts:909](https://github.com/elizaOS/eliza/blob/main/packages/core/src/generation.ts#L909)
+[packages/core/src/generation.ts:1125](https://github.com/gaiaaiagent/GAIA/blob/main/packages/core/src/generation.ts#L1125)
