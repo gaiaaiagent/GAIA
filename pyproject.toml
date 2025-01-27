@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "gaia"
+version = "0.1.0"
+description = "Gaia mono repository."
+authors = ["Shawn Anderson <shawn@longtailfinancial.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+jupyter = "^1.1.1"
+pandas = "^2.2.3"
+sqlalchemy = "^2.0.37"
+hvplot = "^0.11.2"
+tabulator = "^1.53.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
