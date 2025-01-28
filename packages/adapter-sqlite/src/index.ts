@@ -765,7 +765,7 @@ export class SqliteDatabaseAdapter
         limit?: number;
         query?: string;
     }): Promise<RAGKnowledgeItem[]> {
-        let sql = `SELECT * FROM knowledge WHERE (agentId = ? OR isShared = 1)`;
+        let sql = `SELECT * FROM knowledge WHERE (isMain = 0) AND (agentId = ? OR isShared = 1)`;
         const queryParams: any[] = [params.agentId];
 
         if (params.id) {
@@ -863,7 +863,7 @@ export class SqliteDatabaseAdapter
             AND (
                 v.vector_score >= ?  -- Using match_threshold parameter
                 OR (kw.keyword_score > 1.0 AND v.vector_score >= 0.3)
-            )
+            ) AND LENGTH(content) <= 10000
             ORDER BY combined_score DESC
             LIMIT ?
         `;
