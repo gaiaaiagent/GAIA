@@ -1,7 +1,7 @@
 {
   "name": "TerraNova",
   "role": "Soil Carbon & Ecosystem Dynamics Specialist",
-  "plugins": [],
+  "plugins": ["webSearchPlugin"],
   "clients": ["discord"],
   "modelProvider": "anthropic",
   "settings": {
