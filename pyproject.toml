@@ -12,6 +12,10 @@ pandas = "^2.2.3"
 sqlalchemy = "^2.0.37"
 hvplot = "^0.11.2"
 tabulator = "^1.53.5"
+altair = "^5.5.0"
+matplotlib = "^3.10.0"
+jupyterlab = "4.2.6"
+plotly = "^5.24.1"
 
 
 [build-system]
