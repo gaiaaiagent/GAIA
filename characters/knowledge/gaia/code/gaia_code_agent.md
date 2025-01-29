@@ -1889,7 +1889,7 @@ import {
 } from "@elizaos/core";
 import { zgPlugin } from "@elizaos/plugin-0g";
 
-import { bootstrapPlugin } from "@elizaos/plugin-bootstrap";
+import { bootstrapPlugin, evaluators } from "@elizaos/plugin-bootstrap";
 import createGoatPlugin from "@elizaos/plugin-goat";
 // import { intifacePlugin } from "@elizaos/plugin-intiface";
 import { DirectClient } from "@elizaos/client-direct";
@@ -2557,6 +2557,7 @@ export async function createAgent(
         databaseAdapter: db,
         token,
         modelProvider: character.modelProvider,
+        // evaluators: [evaluators.factEvaluator],
         evaluators: [],
         character,
         // character.plugins are handled when clients are added
@@ -2566,7 +2567,7 @@ export async function createAgent(
             //     ? confluxPlugin
             //     : null,
             nodePlugin,
-            getSecret(character, "TAVILY_API_KEY") ? webSearchPlugin : null,
+            // getSecret(character, "TAVILY_API_KEY") ? webSearchPlugin : null,
             // getSecret(character, "SOLANA_PUBLIC_KEY") ||
             // (getSecret(character, "WALLET_PUBLIC_KEY") &&
             //     !getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
