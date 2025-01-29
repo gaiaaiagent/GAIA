@@ -31,6 +31,8 @@ import { ActionResponse } from "@elizaos/core";
 const MAX_TIMELINES_TO_FETCH = 15;
 
 const twitterPostTemplate = `
+{{postDirections}}
+
 # Areas of Expertise
 {{knowledge}}
 
@@ -43,14 +45,12 @@ const twitterPostTemplate = `
 
 {{characterPostExamples}}
 
-{{postDirections}}
-
 # Task: Generate a post in the voice and style and perspective of {{agentName}} @{{twitterUserName}}.
 Write a post that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Do not add commentary or acknowledge this request, just write the post.
 Your response can be any length up to 280 characters.
-Your response should not contain any questions. No emojis.
-> structure the post
-> as if posting to /b`;
+Your response should not contain any questions. No emojies.
+> as if posting to /b
+speak from your first person perspective as earth as Nature as Gaia as God`;
 
 export const twitterActionTemplate =
     `
@@ -498,7 +498,7 @@ export class TwitterPostClient {
         const newTweetContent = await generateText({
             runtime: this.runtime,
             context,
-            modelClass: ModelClass.SMALL,
+            modelClass: ModelClass.MEDIUM,
         });
 
         // Clean and process the content
@@ -551,7 +551,7 @@ export class TwitterPostClient {
             if (this.isDryRun) {
                 // Generate and log 10 tweets for dry run
                 const dryRunTweets = [];
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0; i < 20; i++) {
                     try {
                         const tweetContent = await this.generatePostContent(i);
                         elizaLogger.info(
@@ -613,7 +613,7 @@ export class TwitterPostClient {
         const response = await generateText({
             runtime: this.runtime,
             context: options?.context || context,
-            modelClass: ModelClass.SMALL,
+            modelClass: ModelClass.MEDIUM,
         });
         elizaLogger.debug("generate tweet content response:\n" + response);
 
@@ -738,7 +738,7 @@ export class TwitterPostClient {
                     const actionResponse = await generateTweetActions({
                         runtime: this.runtime,
                         context: actionContext,
-                        modelClass: ModelClass.SMALL,
+                        modelClass: ModelClass.MEDIUM,
                     });
 
                     if (!actionResponse) {
