@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Create output directory if it doesn't exist
+# Create directories if they don't exist
 mkdir -p characters/knowledge/agent/repositories
+mkdir -p ./repositories
 
 # Define repository configurations
 # Format: "repo_url|refresh|get_markdown|get_python"
@@ -10,14 +11,14 @@ mkdir -p characters/knowledge/agent/repositories
 # get_python: 0=skip, 1=process
 declare -A repo_configs
 repo_configs=(
-    ["https://github.com/GaiaNet-AI/awesome-gaia"]="0|1|0"
-    ["https://github.com/Farama-Foundation/Gymnasium"]="0|0|1"
-    ["https://github.com/openai/openai-cookbook"]="0|1|1"
-    ["https://github.com/togethercomputer/together-cookbook"]="0|1|1"
-    ["https://github.com/anthropics/anthropic-cookbook"]="0|1|1"
-    ["https://github.com/anthropics/courses"]="0|1|1"
-    ["https://github.com/ThyrixYang/awesome-artificial-intelligence-research"]="0|1|0"
-    ["https://github.com/abilzerian/LLM-Prompt-Library"]="0|1|0"
+    ["https://github.com/GaiaNet-AI/awesome-gaia"]="1|1|0"
+    ["https://github.com/Farama-Foundation/Gymnasium"]="1|0|1"
+    ["https://github.com/openai/openai-cookbook"]="1|1|1"
+    ["https://github.com/togethercomputer/together-cookbook"]="1|1|1"
+    ["https://github.com/anthropics/anthropic-cookbook"]="1|1|1"
+    ["https://github.com/anthropics/courses"]="1|1|1"
+    ["https://github.com/ThyrixYang/awesome-artificial-intelligence-research"]="1|1|0"
+    ["https://github.com/abilzerian/LLM-Prompt-Library"]="1|1|0"
 )
 
 # Function to get repository name from URL
@@ -42,6 +43,7 @@ get_config_value() {
 for repo_url in "${!repo_configs[@]}"; do
     config="${repo_configs[$repo_url]}"
     repo_name=$(get_repo_name "$repo_url")
+    repo_path="./repositories/$repo_name"
     echo "Processing $repo_name..."
 
     # Get configuration values
@@ -50,28 +52,28 @@ for repo_url in "${!repo_configs[@]}"; do
     get_python=$(get_config_value "$config" 3)
 
     # Check if repository exists and handle according to refresh setting
-    if [ -d "$repo_name" ]; then
+    if [ -d "$repo_path" ]; then
         if [ "$refresh" -eq 0 ]; then
             echo "Skipping existing $repo_name directory (refresh=0)..."
             continue
         else
             echo "Removing existing $repo_name directory..."
-            rm -rf "$repo_name"
+            rm -rf "$repo_path"
         fi
     fi
 
     # Clone repository
     echo "Cloning $repo_name..."
-    git clone "$repo_url"
+    git clone "$repo_url" "$repo_path"
 
     # Convert notebooks if Python processing is enabled
     if [ "$get_python" -eq 1 ]; then
         echo "Converting notebooks in $repo_name..."
-        convert_notebooks "$repo_name"
+        convert_notebooks "$repo_path"
 
         # Generate prompts for Python files
         echo "Generating Python prompts for $repo_name..."
-        code2prompt "./$repo_name" --include "**/*.py" --tokens --output "${repo_name}_python.md" --exclude-from-tree
+        code2prompt "$repo_path" --include "**/*.py" --tokens --output "${repo_name}_python.md" --exclude-from-tree
 
         # Move Python prompt file to output directory
         mv "${repo_name}_python.md" characters/knowledge/agent/repositories/
@@ -80,7 +82,7 @@ for repo_url in "${!repo_configs[@]}"; do
     # Generate prompts for Markdown files if enabled
     if [ "$get_markdown" -eq 1 ]; then
         echo "Generating Markdown prompts for $repo_name..."
-        code2prompt "./$repo_name" --include "**/*.md" --exclude "*_*.md,*chat*" --tokens --output "${repo_name}_markdown.md" --exclude-from-tree
+        code2prompt "$repo_path" --include "**/*.md" --exclude "*_*.md,*chat*" --tokens --output "${repo_name}_markdown.md" --exclude-from-tree
 
         # Move Markdown prompt file to output directory
         mv "${repo_name}_markdown.md" characters/knowledge/agent/repositories/
@@ -92,3 +94,4 @@ done
 
 echo "All repositories processed successfully."
 echo "Generated prompts can be found in characters/knowledge/agent/repositories/"
+echo "Repository clones can be found in ./repositories/"
