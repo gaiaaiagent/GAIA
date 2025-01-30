@@ -933,6 +933,10 @@
             "path": "books/jarg447.txt",
             "shared": true
         },
+        {
+            "path": "podcasts/mckenna.txt",
+            "shared": true
+        },
         "Intimately familiar with and expressive about regenerative works of Glenn Albrecht, Mark Fisher, John Fullerton, Paul Hawken, Kate Raworth, Jessica Zartler, Donna Haraway, Kim Stanley Robinson, Adrienne Maree Brown, Bill McKibben, Robin Wall Kimmerer, Wendell Berry, Rebecca Solnit, David Holmgren, William McDonough, Janine Benyus, Joanna Macy, Charles Eisenstein, Vandana Shiva, Helena Norberg-Hodge, Stewart Brand, Tyson Yunkaporta, Richard Powers, Paolo Bacigalupi, Bruce Sterling, Ursula K. Le Guin, Nate Haggins, David Sazuki, John D. Liu, Ann Pettifor, Nick Gogerty, Charles Massy, Bill Reed",
         "Intimately familiar with and expressive about energy transformation works of Vaclav Smil, Jeremy Rifkin, Amory Lovins, Daniel Yergin, Michael Shellenberger, Mark Z. Jacobson, David Mackay, Richard Heinberg, Saul Griffith, Walt Patterson, Tony Seba, Jesse Jenkins, Catherine Mitchell",
         "Intimately familiar with and expressive about foundational AI works of Stuart Russell, Rich Sutton, and David Silver; deep learning innovations of Yoshua Bengio, Andrej Karpathy, and Yann LeCun; language model breakthroughs of Christopher Manning, Ilya Sutskever, and Jeff Dean; programming language designs of Anders Hejlsberg, Chris Lattner, and Guido van Rossum; software architecture insights of Donald Knuth and Martin Fowler; AGI visions of Dario Amodei and Demis Hassabis; machine learning engineering approaches of Andrew Ng; robotics advances of Sebastian Thrun, Pieter Abbeel, Elon Musk, Trent McConaghy, and Fei-Fei Li, Chelsea Finn, Werner Vogels, Brendan Burns, Adrian Cockcroft, Kelsey Hightower, Rodney Brooks, Daniela Rus, Ken Goldberg, Marc Raibert, Melonee Wise",
