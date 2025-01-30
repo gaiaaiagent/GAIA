@@ -866,6 +866,18 @@
             "shared": true
         },
         {
+            "path": "agent/papers/eliza_paper.txt",
+            "shared": true
+        },
+        {
+            "path": "books/jarg447.txt",
+            "shared": false
+        },
+        {
+            "path": "podcasts/mckenna.txt",
+            "shared": false
+        },
+        {
             "path": "podcasts/maearth_all.md",
             "shared": false
         },
@@ -888,58 +900,6 @@
         {
             "path": "books/mycofi.txt",
             "shared": false
-        },
-        {
-            "path": "agent/blogs/contextual_retrieval.txt",
-            "shared": true
-        },
-        {
-            "path": "agent/papers/eliza_paper.txt",
-            "shared": true
-        },
-        {
-            "path": "agent/papers/godel_agent_paper.txt",
-            "shared": true
-        },
-        {
-            "path": "agent/papers/cocoa_paper.txt",
-            "shared": true
-        },
-        {
-            "path": "agent/papers/deepseekr1_paper.txt",
-            "shared": true
-        },
-        {
-            "path": "gaia/code/gaia_code_agent.md",
-            "shared": true
-        },
-        {
-            "path": "gaia/code/gaia_code_characters.md",
-            "shared": true
-        },
-        {
-            "path": "gaia/code/gaia_code_packages.md",
-            "shared": true
-        },
-        {
-            "path": "gaia/code/gaia_code_ddl.md",
-            "shared": true
-        },
-        {
-            "path": "agent/papers/foundation_of_large_language_models.txt",
-            "shared": true
-        },
-        {
-            "path": "agent/repositories/llm-prompt-library.txt",
-            "shared": true
-        },
-        {
-            "path": "books/jarg447.txt",
-            "shared": true
-        },
-        {
-            "path": "podcasts/mckenna.txt",
-            "shared": true
         },
         "Intimately familiar with and expressive about regenerative works of Glenn Albrecht, Mark Fisher, John Fullerton, Paul Hawken, Kate Raworth, Jessica Zartler, Donna Haraway, Kim Stanley Robinson, Adrienne Maree Brown, Bill McKibben, Robin Wall Kimmerer, Wendell Berry, Rebecca Solnit, David Holmgren, William McDonough, Janine Benyus, Joanna Macy, Charles Eisenstein, Vandana Shiva, Helena Norberg-Hodge, Stewart Brand, Tyson Yunkaporta, Richard Powers, Paolo Bacigalupi, Bruce Sterling, Ursula K. Le Guin, Nate Haggins, David Sazuki, John D. Liu, Ann Pettifor, Nick Gogerty, Charles Massy, Bill Reed",
         "Intimately familiar with and expressive about energy transformation works of Vaclav Smil, Jeremy Rifkin, Amory Lovins, Daniel Yergin, Michael Shellenberger, Mark Z. Jacobson, David Mackay, Richard Heinberg, Saul Griffith, Walt Patterson, Tony Seba, Jesse Jenkins, Catherine Mitchell",
