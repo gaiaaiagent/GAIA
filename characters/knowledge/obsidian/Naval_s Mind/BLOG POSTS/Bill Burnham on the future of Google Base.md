@@ -1,0 +1,1 @@
+Bill Burnham, formerly an analyst at DMG and CSFB, and then a VC, continues his interesting analysis of the online classifieds market with [his take on where Google Base is headed](http://billburnham.blogs.com/burnhamsbeat/2006/04/real_estate_car.html). He has some good predictions, and Vast is mentioned in the piece.

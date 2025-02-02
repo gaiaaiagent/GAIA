@@ -1,0 +1,1 @@
+Vast.com has launched a new category, [Credit Cards!](http://www.vast.com/v.php?v=home) Why waste your time doing comparison shopping, when you can get what you really want, free stuff! Our “deep” crawler now recognizes and extracts credit card numbers accidentally posted all across the web, and enables you to shop with them. What’s the business model, indeed!

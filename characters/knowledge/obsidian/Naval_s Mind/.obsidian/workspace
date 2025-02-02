@@ -1,0 +1,97 @@
+{
+  "main": {
+    "id": "766fc6d6c4c1196b",
+    "type": "split",
+    "children": [
+      {
+        "id": "35bf5132f92193c4",
+        "type": "leaf",
+        "state": {
+          "type": "empty",
+          "state": {}
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "df101f20529a7822",
+    "type": "split",
+    "children": [
+      {
+        "id": "2540cd14c5d4b20b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "63ee45184f06acaf",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "cd12965f27429e33",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": " Finding Time to Invest in Yourself",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "byModifiedTime"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "6e932bade0eb3d5d",
+    "type": "split",
+    "children": [
+      {
+        "id": "512a92fddd4b1a19",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f46581206c29ba3a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 100
+  },
+  "active": "35bf5132f92193c4",
+  "lastOpenFiles": [
+    "Navalmanack/5. IMPORTANT NOTES ON THIS BOOK (DISCLAIMER).md",
+    "Guest Interviews/Intellectual Curiosity & 3 STEP LIFE FRAMEWORK.md",
+    "Guest Interviews/Fireside Chat with Naval Ravikant - New Frontiers 2019.md",
+    "Guest Interviews/BLOCKCON - Day 2 (Oct 11) - Fireside Chat Nassim Nicholas Taleb & Naval Ravikant.md",
+    "Guest Interviews/JOE ROGAN.md",
+    "Guest Interviews/Fireside Chat with Naval Ravikant and Neal Stephenson  Blockstack Summit 2019.md",
+    "Guest Interviews/20VC AngelList's Naval Ravikant on The Secrets To Success At Seed, Why Micro VC Is The Return of Traditional Series A & Why We Will See The Unbundling Of Traditional VC Brands.md",
+    "Guest Interviews/A Conversation with Naval Ravikant and Ryan Shea Blockstack Summit 2017.md",
+    "Guest Interviews/The Tim Ferriss Show Naval Ravikant on Happiness Hacks and The 5 Chimps Theory.md",
+    "Guest Interviews/The Tim Ferriss ShowThe Evolutionary Angel, Naval Ravikant.md"
+  ]
+}

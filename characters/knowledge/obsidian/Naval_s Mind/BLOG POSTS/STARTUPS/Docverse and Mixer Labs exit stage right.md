@@ -1,0 +1,1 @@
+Congratulations to portfolio companies [DocVerse](http://techcrunch.com/2010/03/05/google-acquires-docverse-to-further-office-arms-race/) (now at Google) and [Mixer Labs](http://blog.twitter.com/2009/12/mixing-it-up-at-795-folsom-st.html) (now at Twitter). The best part was getting to know and work with people that I genuinely liked and now consider friends.

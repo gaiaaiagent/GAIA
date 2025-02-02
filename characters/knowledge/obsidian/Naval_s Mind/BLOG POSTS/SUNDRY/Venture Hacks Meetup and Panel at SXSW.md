@@ -1,0 +1,7 @@
+For those of you going to SXSW, I’ll be on the [Seed Combinators Panel](http://my.sxsw.com/e/387) on Monday March 15 3:30pm. I’m joining [Paul Graham](http://www.paulgraham.com/), [David Cohen](http://www.techstars.org/mentors/dcohen/), [Marc Nathan](http://twitter.com/marc1919), and [Joshua Baer](http://austinpreneur.com/) to talk about YStars, TechCombinators, SeedBoxes, and the like. Here’s the [Plancast](http://plancast.com/a/14ba) if you want me to “count you in.”
+
+I’m also throwing a **meetup** on **Sunday**March 14 **5-7pm** in the Four Seasons Lobby Lounge at [98 San Jacinto Blvd](http://maps.google.com/maps/place?cid=1610221185715858428&q=Four+Seasons+Hotel+Austin,+98+San+Jacinto+Boulevard,+Austin,+TX+78701&hl=en&cd=1&ei=ubyaS9OYIJH4iAPg69zDAw&sig2=qRkm7TKDu1v3Q8RwJSH20g&sll=30.262087,-97.741713&sspn=0.02313,0.038418&ie=UTF8&ll=30.292127,-97.769308&spn=0,0&z=14&iwloc=A).
+
+If you’re a Venture Hacker, please come talk to me about your startup and venture hacking at these two events. I’m looking forward to pressing the flesh and kissing some babies.
+
+Please RSVP on [Facebook](http://www.facebook.com/event.php?eid=357556860903) xor [Plancast](http://plancast.com/a/1vm5) so we can get a headcount. Gracias.

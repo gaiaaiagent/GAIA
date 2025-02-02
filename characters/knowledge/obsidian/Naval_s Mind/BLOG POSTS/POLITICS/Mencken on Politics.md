@@ -1,0 +1,1 @@
+“_The whole aim of practical politics is to keep the populace alarmed (and hence clamorous to be led to safety) by menacing it with an endless series of hobgoblins, all of them imaginary._ ” –H. L. Mencken

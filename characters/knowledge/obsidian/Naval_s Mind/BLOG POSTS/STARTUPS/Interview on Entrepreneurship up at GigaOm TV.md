@@ -1,0 +1,1 @@
+[Check out the full article, and watch the video.](http://gigaom.com/2010/05/13/video-want-to-be-an-entrepreneur-listen-to-naval-ravikant/)

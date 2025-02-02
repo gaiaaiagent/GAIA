@@ -1,0 +1,1 @@
+Just take a look at the domain name sales on DNJournal – Fish.com goes for over [$1 Million](http://www.dnjournal.com/domainsales.htm)! Alarm clock, otherwise a great resource, is still living in the pre-bubble days, when [domain sales of $100k were news](http://www.thealarmclock.com/mt/archives/2005/12/six_figure_blog.html).
