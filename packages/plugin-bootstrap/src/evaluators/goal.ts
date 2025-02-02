@@ -55,6 +55,7 @@ async function handler(
     state: State | undefined,
     options: { [key: string]: unknown } = { onlyInProgress: true }
 ): Promise<Goal[]> {
+    console.log("Running goal handler...");
     state = (await runtime.composeState(message)) as State;
     const context = composeContext({
         state,
@@ -121,13 +122,15 @@ export const goalEvaluator: Evaluator = {
         message: Memory
     ): Promise<boolean> => {
         // Check if there are active goals that could potentially be updated
+        console.log("Running goal validator...");
         const goals = await getGoals({
             runtime,
             count: 1,
             onlyInProgress: true,
             roomId: message.roomId,
         });
-        return goals.length > 0;
+        // return goals.length > 0;
+        return true;
     },
     description:
         "Analyze the conversation and update the status of the goals based on the new information provided.",

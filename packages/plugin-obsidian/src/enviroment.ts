@@ -17,11 +17,12 @@ export async function validateObsidianConfig(
     runtime: IAgentRuntime
 ): Promise<ObsidianConfig> {
     try {
+        console.log("Validating obsidian config...");
         const config = {
             OBSIDIAN_API_URL:
                 runtime.getSetting("OBSIDIAN_API_URL") ||
                 process.env.OBSIDIAN_API_URL ||
-                null,
+                'http://127.0.0.1:27123',
             OBSIDIAN_API_PORT:
                 runtime.getSetting("OBSIDIAN_API_PORT") ||
                 process.env.OBSIDIAN_API_PORT ||

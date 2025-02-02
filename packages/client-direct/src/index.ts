@@ -326,7 +326,10 @@ export class DirectClient {
                     }
                 );
 
-                await runtime.evaluate(memory, state);
+                console.log("In direct client, about to evaluate...");
+                // console.log(runtime);
+                console.log(runtime.evaluate);
+                await runtime.evaluate(memory, state, true);
 
                 // Check if we should suppress the initial message
                 const action = runtime.actions.find(

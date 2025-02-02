@@ -266,31 +266,30 @@ export class RAGKnowledgeManager implements IRAGKnowledgeManager {
             // Process main document
             const processedContent = this.preprocess(item.content.text);
 
-            // Don't embed entire documents
-            // const mainEmbeddingArray = await embed(
-            //     this.runtime,
-            //     processedContent
-            // );
+            const mainEmbeddingArray = await embed(
+                this.runtime,
+                processedContent
+            );
             //
-            // const mainEmbedding = new Float32Array(mainEmbeddingArray);
+            const mainEmbedding = new Float32Array(mainEmbeddingArray);
             //
             // // Create main document
-            // await this.runtime.databaseAdapter.createKnowledge({
-            //     id: item.id,
-            //     agentId: this.runtime.agentId,
-            //     content: {
-            //         text: item.content.text,
-            //         metadata: {
-            //             ...item.content.metadata,
-            //             isMain: true,
-            //         },
-            //     },
-            //     embedding: mainEmbedding,
-            //     createdAt: Date.now(),
-            // });
+            await this.runtime.databaseAdapter.createKnowledge({
+                id: item.id,
+                agentId: this.runtime.agentId,
+                content: {
+                    text: item.content.text,
+                    metadata: {
+                        ...item.content.metadata,
+                        isMain: true,
+                    },
+                },
+                embedding: mainEmbedding,
+                createdAt: Date.now(),
+            });
 
             // Generate and store chunks
-            const chunks = await splitChunks(processedContent, 512, 20);
+            const chunks = await splitChunks(processedContent, 1500, 50);
 
             for (const [index, chunk] of chunks.entries()) {
                 const chunkEmbeddingArray = await embed(this.runtime, chunk);
@@ -378,39 +377,39 @@ export class RAGKnowledgeManager implements IRAGKnowledgeManager {
             );
 
             // Step 1: Preprocessing
-            //const preprocessStart = Date.now();
+            // const preprocessStart = Date.now();
             const processedContent = this.preprocess(content);
             timeMarker("Preprocessing");
 
             // Step 2: Main document embedding
-            // const mainEmbeddingArray = await embed(
-            //     this.runtime,
-            //     processedContent
-            // );
-            // const mainEmbedding = new Float32Array(mainEmbeddingArray);
+            const mainEmbeddingArray = await embed(
+                this.runtime,
+                processedContent
+            );
+            const mainEmbedding = new Float32Array(mainEmbeddingArray);
             timeMarker("Main embedding");
 
             // Step 3: Create main document
-            // await this.runtime.databaseAdapter.createKnowledge({
-            //     id: stringToUuid(file.path),
-            //     agentId: this.runtime.agentId,
-            //     content: {
-            //         text: content,
-            //         metadata: {
-            //             source: file.path,
-            //             type: file.type,
-            //             isShared: file.isShared || false,
-            //         },
-            //     },
-            //     embedding: mainEmbedding,
-            //     createdAt: Date.now(),
-            // });
+            await this.runtime.databaseAdapter.createKnowledge({
+                id: stringToUuid(file.path),
+                agentId: this.runtime.agentId,
+                content: {
+                    text: content,
+                    metadata: {
+                        source: file.path,
+                        type: file.type,
+                        isShared: file.isShared || false,
+                    },
+                },
+                embedding: mainEmbedding,
+                createdAt: Date.now(),
+            });
             timeMarker("Main document storage");
 
-            elizaLogger.info("SKIPPED MAIN DOCUMENT EMBEDDING");
+            // elizaLogger.info("SKIPPED MAIN DOCUMENT EMBEDDING");
 
             // Step 4: Generate chunks
-            const chunks = await splitChunks(processedContent, 512, 20);
+            const chunks = await splitChunks(processedContent, 2048, 50);
             const totalChunks = chunks.length;
             elizaLogger.info(`Generated ${totalChunks} chunks`);
             timeMarker("Chunk generation");

@@ -89,9 +89,13 @@ export async function trimTokens(
 
     const tokenizerModel = runtime.getSetting("TOKENIZER_MODEL");
     const tokenizerType = runtime.getSetting("TOKENIZER_TYPE");
+    console.log(
+        `tokenizerModel: ${tokenizerModel}, tokenizerType: ${tokenizerType}`
+    )
 
     if (!tokenizerModel || !tokenizerType) {
         // Default to TikToken truncation using the "gpt-4o" model if tokenizer settings are not defined
+        console.log("Using default tokenizer: gpt-4o");
         return truncateTiktoken("gpt-4o", context, maxTokens);
     }
 
@@ -149,13 +153,22 @@ async function truncateTiktoken(
         // Encode the text into tokens
         const tokens = encoding.encode(context);
 
+        console.log(
+            `tokens.length: ${tokens.length}, maxTokens: ${maxTokens}`
+        );
+
         // If already within limits, return unchanged
         if (tokens.length <= maxTokens) {
+            console.log("No truncation needed - Already within limits");
             return context;
         }
 
         // Keep the most recent tokens by slicing from the end
         const truncatedTokens = tokens.slice(-maxTokens);
+
+        console.log(
+            `truncatedTokens.length: ${truncatedTokens.length}, maxTokens: ${maxTokens}`
+        );
 
         // Decode back to text - js-tiktoken decode() returns a string directly
         return encoding.decode(truncatedTokens);
@@ -514,8 +527,15 @@ export async function generateText({
         elizaLogger.debug(
             `Trimming context to max length of ${max_context_length} tokens.`
         );
-
         context = await trimTokens(context, max_context_length, runtime);
+
+        console.log(
+            `System: \n\n${runtime.character.system}`
+        );
+
+        console.log(
+            `Context: \n\n${context}`
+        );
 
         let response: string;
 
@@ -1368,8 +1388,8 @@ export async function generateShouldRespond({
  */
 export async function splitChunks(
     content: string,
-    chunkSize = 512,
-    bleed = 20
+    chunkSize: number = 2048,
+    bleed: number = 100
 ): Promise<string[]> {
     elizaLogger.debug(`[splitChunks] Starting text split`);
 
@@ -1588,7 +1608,7 @@ export async function generateMessageResponse({
     const max_context_length = modelSettings.maxInputTokens;
 
     context = await trimTokens(context, max_context_length, runtime);
-    elizaLogger.log("Context:", context);
+    elizaLogger.debug("Context:", context);
     let retryLength = 1000; // exponential backoff
     while (true) {
         try {

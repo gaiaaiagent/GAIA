@@ -2,7 +2,7 @@
   "name": "Astraea",
   "plugins": ["webSearchPlugin"],
   "clients": ["discord"],
-  "modelProvider": "grok",
+  "modelProvider": "anthropic",
   "settings": {
     "secrets": {},
     "voice": {

@@ -75,7 +75,7 @@ export class AgentRuntime implements IAgentRuntime {
      * Default count for recent messages to be kept in memory.
      * @private
      */
-    readonly #conversationLength = 32 as number;
+    readonly #conversationLength = 16 as number;
     /**
      * The ID of the agent
      */
@@ -1074,17 +1074,22 @@ export class AgentRuntime implements IAgentRuntime {
         didRespond?: boolean,
         callback?: HandlerCallback,
     ) {
+        elizaLogger.log("Evaluate...")
         const evaluatorPromises = this.evaluators.map(
             async (evaluator: Evaluator) => {
-                elizaLogger.log("Evaluating", evaluator.name);
+                elizaLogger.log("Evaluating:", evaluator.name);
                 if (!evaluator.handler) {
+                    elizaLogger.log("No handler found.");
                     return null;
                 }
                 if (!didRespond && !evaluator.alwaysRun) {
+                    elizaLogger.log("Not didRespond and not alwaysRun.");
                     return null;
                 }
                 const result = await evaluator.validate(this, message, state);
+                elizaLogger.log("Result:", result);
                 if (result) {
+                    console.log("Validation passed. Proceeding with evaluator...")
                     return evaluator;
                 }
                 return null;
@@ -1092,9 +1097,11 @@ export class AgentRuntime implements IAgentRuntime {
         );
 
         const resolvedEvaluators = await Promise.all(evaluatorPromises);
+        console.log("Resolved evaluators:", resolvedEvaluators);
         const evaluatorsData = resolvedEvaluators.filter(
             (evaluator): evaluator is Evaluator => evaluator !== null,
         );
+        console.log("Evaluators data:", evaluatorsData);
 
         // if there are no evaluators this frame, return
         if (!evaluatorsData || evaluatorsData.length === 0) {
@@ -1453,7 +1460,7 @@ Text: ${attachment.text}
             // get three random bio strings and join them with " "
             bio = bio
                 .sort(() => 0.5 - Math.random())
-                .slice(0, 3)
+                .slice(0, 5)
                 .join(" ");
         }
 
@@ -1469,7 +1476,7 @@ Text: ${attachment.text}
             knowledgeData = await this.ragKnowledgeManager.getKnowledge({
                 query: message.content.text,
                 conversationContext: recentContext,
-                limit: 10,
+                limit: 5,
             });
 
             formattedKnowledge = formatKnowledge(knowledgeData);

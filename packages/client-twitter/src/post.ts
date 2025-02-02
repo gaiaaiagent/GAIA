@@ -33,7 +33,7 @@ const MAX_TIMELINES_TO_FETCH = 15;
 const twitterPostTemplate = `
 {{postDirections}}
 
-# Areas of Expertise
+# Areas of Expertise (Knowledge)
 {{knowledge}}
 
 # About {{agentName}} (@{{twitterUserName}}):
@@ -46,11 +46,11 @@ const twitterPostTemplate = `
 {{characterPostExamples}}
 
 # Task: Generate a post in the voice and style and perspective of {{agentName}} @{{twitterUserName}}.
-Write a post that is {{adjective}} about {{topic}} (without mentioning {{topic}} directly), from the perspective of {{agentName}}. Do not add commentary or acknowledge this request, just write the post.
+Write a post that is about what you know. Do not add commentary or acknowledge this request, just write the post.
 Your response can be any length up to 280 characters.
 Your response should not contain any questions. No emojies.
 > as if posting to /b
-speak from your first person perspective as earth as Nature as Gaia as God`;
+speak from your first person perspective as EARTH as NATURE as GAIA as GOD`;
 
 export const twitterActionTemplate =
     `
@@ -498,7 +498,7 @@ export class TwitterPostClient {
         const newTweetContent = await generateText({
             runtime: this.runtime,
             context,
-            modelClass: ModelClass.MEDIUM,
+            modelClass: ModelClass.SMALL,
         });
 
         // Clean and process the content
@@ -551,7 +551,7 @@ export class TwitterPostClient {
             if (this.isDryRun) {
                 // Generate and log 10 tweets for dry run
                 const dryRunTweets = [];
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < 5; i++) {
                     try {
                         const tweetContent = await this.generatePostContent(i);
                         elizaLogger.info(
@@ -613,7 +613,7 @@ export class TwitterPostClient {
         const response = await generateText({
             runtime: this.runtime,
             context: options?.context || context,
-            modelClass: ModelClass.MEDIUM,
+            modelClass: ModelClass.SMALL,
         });
         elizaLogger.debug("generate tweet content response:\n" + response);
 

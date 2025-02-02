@@ -67,8 +67,8 @@ async function get(
 async function set(
     runtime: AgentRuntime,
     item: KnowledgeItem,
-    chunkSize = 512,
-    bleed = 20
+    chunkSize: number = 2048,
+    bleed: number = 100
 ) {
     await runtime.documentsManager.createMemory({
         id: item.id,

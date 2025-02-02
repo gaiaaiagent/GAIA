@@ -49,7 +49,7 @@ let obsidianInstance: ObsidianProvider | undefined;
 
 export async function getObsidian(runtime: IAgentRuntime): Promise<ObsidianProvider> {
     if (!obsidianInstance) {
-        elizaLogger.debug("Creating new ObsidianProvider instance");
+        elizaLogger.info("Creating new ObsidianProvider instance");
         const config = await validateObsidianConfig(runtime);
         obsidianInstance = await ObsidianProvider.create(
             runtime as AgentRuntime,

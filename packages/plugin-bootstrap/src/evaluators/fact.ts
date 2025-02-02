@@ -2,11 +2,12 @@ import { composeContext } from "@elizaos/core";
 import { generateObjectArray } from "@elizaos/core";
 import { MemoryManager } from "@elizaos/core";
 import {
-    type ActionExample,
-    type IAgentRuntime,
-    type Memory,
+    ActionExample,
+    IAgentRuntime,
+    Memory,
     ModelClass,
-    type Evaluator,
+    Evaluator,
+    elizaLogger,
 } from "@elizaos/core";
 
 export const formatFacts = (facts: Memory[]) => {
@@ -22,7 +23,7 @@ const factsTemplate =
     `TASK: Extract Claims from the conversation as an array of claims in JSON format.
 
 # START OF EXAMPLES
-These are examples of the expected output of this task:
+These are an examples of the expected output of this task:
 {{evaluationExamples}}
 # END OF EXAMPLES
 
@@ -36,7 +37,7 @@ Extract any claims from the conversation that are not already present in the lis
 - For true facts about the world or the character that do not change, set the claim type to 'fact'
 - For facts that are true but change over time, set the claim type to 'status'
 - For non-facts, set the type to 'opinion'
-- 'opinion' includes non-factual opinions and also includes the character's thoughts, feelings, judgments or recommendations
+- 'opinion' inlcudes non-factual opinions and also includes the character's thoughts, feelings, judgments or recommendations
 - Include any factual detail, including where the user lives, works, or goes to school, what they do for a living, their hobbies, and any other relevant information
 
 Recent Messages:
@@ -52,8 +53,10 @@ Response should be a JSON object array inside a JSON markdown block. Correct res
 \`\`\``;
 
 async function handler(runtime: IAgentRuntime, message: Memory) {
+    elizaLogger.info('Starting fact extraction...');
     const state = await runtime.composeState(message);
 
+    // elizaLogger.info('State:', state);
     const { agentId, roomId } = state;
 
     const context = composeContext({
@@ -61,11 +64,15 @@ async function handler(runtime: IAgentRuntime, message: Memory) {
         template: runtime.character.templates?.factsTemplate || factsTemplate,
     });
 
+    elizaLogger.info('Facts Context:', context);
+
     const facts = await generateObjectArray({
         runtime,
         context,
         modelClass: ModelClass.LARGE,
     });
+
+    console.info("Facts Extracted:\n", facts);
 
     const factsManager = new MemoryManager({
         runtime,
@@ -114,18 +121,15 @@ export const factEvaluator: Evaluator = {
         "EXTRACT_CLAIM",
         "EXTRACT_INFORMATION",
     ],
-    validate: async (
-        runtime: IAgentRuntime,
-
-        message: Memory
-    ): Promise<boolean> => {
+    validate: async (runtime: IAgentRuntime, message: Memory): Promise<boolean> => {
+        // Get recent messages with options
         const messageCount = (await runtime.messageManager.countMemories(
-            message.roomId
+            message.roomId,
+            false
         )) as number;
 
-        const reflectionCount = Math.ceil(runtime.getConversationLength() / 2);
-
-        return messageCount % reflectionCount === 0;
+        console.log(`Fact Evaluator Validation:\n- Messages Retrieved: ${messageCount}\n`);
+        return true;
     },
     description:
         "Extract factual information about the people in the conversation, the current events in the world, and anything else that might be important to remember.",

@@ -29,6 +29,7 @@ export const getActiveNoteAction: Action = {
         "Retrieve and display the content of the currently active note in Obsidian",
     validate: async (runtime: IAgentRuntime) => {
         try {
+            elizaLogger.info("Attempting to load obsidian");
             const obsidian = await getObsidian(runtime);
             await obsidian.connect();
             return true;

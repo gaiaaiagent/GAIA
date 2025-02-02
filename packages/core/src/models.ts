@@ -92,7 +92,7 @@ export const models: Models = {
         model: {
             [ModelClass.SMALL]: {
                 name:
-                    settings.SMALL_ANTHROPIC_MODEL || "claude-3-haiku-20240307",
+                    settings.SMALL_ANTHROPIC_MODEL || "claude-3-5-haiku-20241022",
                 stop: [],
                 maxInputTokens: 50000,
                 maxOutputTokens: 4096,

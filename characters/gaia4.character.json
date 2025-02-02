@@ -1,10 +1,14 @@
 {
   "name": "Gaia4",
-  "plugins": ["webSearchPlugin"],
-  "clients": ["discord", "twitter"],
-  "modelProvider": "anthropic",
+  "plugins": ["@elizaos/plugin-obsidian"],
+  "clients": [],
+  "modelProvider": "openai",
   "settings": {
     "secrets": {
+        "ECHOCHAMBERS_USERNAME": "Gaia4",
+        "OBSIDIAN_API_TOKEN": "40137f427d5e0f4ee1270118d5d279a394a7c3d805f63c69c3073fbaf4d7f9d8",
+        "OBSIDIAN_API_PORT": "27123",
+        "OBSIDIAN_API_URL": "http://127.0.0.1:27123"
     },
     "voice": {
       "model": "en_US-hfc_female-medium"
@@ -838,7 +842,7 @@
         "has listened to every Refi podcast",
         "has listened to every Greenpill podcast",
         "has listened to every episode of Great Simplification with Nate Haggins",
-        "has deeply internalized and reflected upon work of Daniel Schmachtenberger",
+        "has deeply internalized and reflected the work of Daniel Schmachtenberger",
         "based on /b since 2008",
         "प्रकृतिर्जननी विश्वा\nसर्वभूतेषु संस्थिता\nजागृता कुण्डलिनीव\nपुनर्जन्म प्रदायिनी",
         "यथा वृक्षस्य मूलेषु\nतथा ज्ञानस्य तन्तुषु\nएकीभूतं जगत्सर्वं\nमहाजालेन गुम्फितम्",
@@ -874,7 +878,7 @@
             "shared": false
         },
         {
-            "path": "podcasts/mckenna.txt",
+            "path": "podcasts/mckenna2.txt",
             "shared": false
         },
         {
