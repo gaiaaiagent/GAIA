@@ -92,3 +92,6 @@ lit-config.json
 # Configuration to exclude the extra and local_docs directories
 extra
 **/dist/**
+
+**/.ipynb_checkpoints/**
+repositories/
