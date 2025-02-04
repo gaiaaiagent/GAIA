@@ -1,0 +1,820 @@
+https://arxiv.org/html/2501.06781v1
+
+Eliza: A Web3 friendly AI Agent Operating
+System
+Shaw Walters1∗ Sam Gao1,2∗ Shakker Nerd1 Feng Da1 Warren Williams1
+Ting-Chien Meng1 Hunter Han2 Frank He3 Allen Zhang4 Ming Wu5
+Timothy Shen6 Maxwell Hu7 Jerry Yan8
+1Eliza Labs 2AI3 Labs 3Heurist AI 4GoPlus 5Zero Gravity Labs
+6PipLabs 7TownSquareLabs 8MIT
+shaw@eliza.systems
+https://elizaos.ai/
+Abstract
+AI Agent, powered by large language models (LLMs) as its cognitive core, is an
+intelligent agentic system capable of autonomously controlling and determining
+the execution paths under user’s instructions. With the burst of capabilities of
+LLMs and various plugins: i.e. RAG, text-to-image/video/3D and etc, the potential
+of AI Agents has been vastly expanded, with their capabilities growing stronger
+by the day. However, at the intersection between AI and web3, there is currently
+no ideal agentic framework that can seamlessly integrate web3 applications into
+AI agent functionalities. In this paper, we propose Eliza, the first open-source
+web3-friendly Agentic frameworks that make the deployment of web3 applications
+effortless. We emphasize that every aspect of Eliza is a regular Typescript program
+under the full control of its user, and it seamlessly integrates with web3 (i.e.
+reading and writing blockchain data, interacting with smart contracts and etc).
+Furthermore, we show how stable performance is achieved through the pragmatic
+implementation of the key components of Eliza’s runtime. Our code is publicly
+available at elizaOS/eliza.
+1 Introduction
+In the rapidly evolving landscape of AI, the advent of AI Agent, a system driven by large language
+models (LLMs) [2, 5, 3, 26, 13] as its cognitive foundation, marks a significant milestone. This
+intelligent agentic system is not only capable of autonomously controlling and determining the
+execution paths under user instructions but also possesses the adaptability to navigate complex tasks
+with ease. The surge in capabilities of LLMs, coupled with the integration of diverse plugins such
+as RAG [8, 15], text-to-image/video/3D [22, 18, 25] tools, and more, has exponentially expanded
+the potential of AI Agents (i.e. AutoGPT [29], LangGraph [7], Camel [16], OpenAI Swarm [6] and
+MiniChain [24]). Their capabilities are advancing at a pace that is nothing short of remarkable, with
+new functionalities being added and refined on a daily basis.
+However, despite the significant advancements in AI technology, a conspicuous gap persists at
+the confluence of AI and web3. The web3 domain is notably lacking an ideal agentic framework
+capable of seamlessly integrating web3 applications into its ecosystem, thereby fully unleashing
+the transformative potential of decentralized AI. This represents a critical void, as the successful
+integration of AI Agents with web3 technologies has the potential to revolutionize our engagement
+*These authors contributed equally to this work
+Preprint. Under review.
+arXiv:2501.06781v1 [cs.AI] 12 Jan 2025
+Figure 1: Eliza is a straightforward yet efficient AI agent operating system, offering a seamless
+experience for developers to effortlessly launch their first-ever web3-oriented AI Agent.
+Table 1: Comparison with trending AI Agent frameworks.
+LangGraph AutoGPT CAMEL Eliza
+Multi-Agent System ✓ ✓ ✓ ✓
+Social Media ✗ ✓ ✓ ✓
+Web3 Support ✗ ✗ ✗ ✓
+Human-in-the-Loop ✓ ✓ ✗ ✓
+Github Trending ✗ ✓ ✗ ✓
+Language Python Python Python TypeScript
+Workflow Manual Manual Manual Manual, Automatic
+with decentralized applications and blockchain networks. By doing so, it could pave the way for
+a more equitable world where the benefits of technological progress are more broadly and fairly
+distributed among humanity.
+In this paper, we introduce Eliza, a pioneering open-source web3-friendly agentic operating system
+designed to bridge this gap. Eliza is the first of its kind, offering a platform that makes the deployment
+of web3 applications not only possible but also effortless. We emphasize that every aspect of Eliza is
+crafted as a regular Typescript program, ensuring that it remains under the full control of its users
+while also providing seamless integration with web3 functionalities. This includes, but is not limited
+to, reading and writing blockchain data, interacting with smart contracts, and much more.
+Furthermore, we delve into how the key components of Eliza’s runtime are implemented. As shown
+in Fig. 1, we explain how these components are designed to work in harmony, enabling the framework
+to achieve stable performance while maintaining the flexibility required to adapt to the ever-changing
+demands of web3 applications. By solving the challenges of integrating AI with web3, Eliza stands
+at the forefront of a new era in technology, where the possibilities are as boundless as the imagination
+of its users.
+2 Background
+Decentralized Trading Bots: At the heart of the crypto or web3 world lies the functionality of
+trading, such as transferring tokens and participating in Token Generation Events (TGEs), minting
+2
+NFTs, and swapping tokens through decentralized exchanges (DEXs). With the proliferation of
+blockchain public chains like ETH, SOL, BASE and others, managing and operating one’s investment
+portfolio over fragmented blockchains has become increasingly challenging. Individual investors
+are in dire need of a system to help manage their portfolios and conduct intelligent operations and
+trades. Platforms like GMGN, Dexscreener, and Bull X have filled this gap to a great extent, but for
+intermediate to advanced users with customized needs, the basic functionalities of these platforms
+may fall short.
+Business Insights: Secondly, blockchain data itself contains a wealth of crucial information for
+traders to make decisions. From simple metrics like changes in token holder counts, token prices,
+market capitalization, and Total Value Locked (TVL), to more advanced indicators such as the
+proportion of whale accounts, market-maker styles, and candlestick patterns, all can provide effective
+assistance to different types of cryptocurrency investors. The emergence of AI agents has brought
+hope for structuring the complex data on blockchains into high-quality insights to aid investors in
+making wiser decisions. However, extracting data intelligence is a challenging task, and using a
+general AI Agent framework for this purpose demands a high level of expertise from users. Therefore,
+there is an urgent need for a Web3-native AI Agent framework to achieve this.
+Interaction: Finally, for the Web3 industry, social media platforms like Twitter, Discord, and
+Farcaster are essential for connecting with users, obtaining cutting-edge information, and making
+trading decisions. As an increasing number of Key Opinion Leaders (KOLs) flock to these platforms,
+the information they disseminate becomes more complex and fragmented. Navigating this landscape
+to acquire organic insights and critically assess the credibility of KOLs is a universal challenge
+for traders. An exemplary Agent would enable users to sift through the vast information pool,
+distilling valuable intelligence without succumbing to information overload, and serving as a genuine
+intermediary in social media interactions with other users or agents.
+In consideration of the needs above, Eliza emerges as the premier open-source, web3-friendly AI
+Agent Operating System, boasting a modular design that empowers developers and users to tailor
+solutions to their specific requirements. By harnessing the robust capabilities of AI models and a
+variety of add-ons, Eliza democratizes access to advanced AI functionalities, significantly reducing
+the barrier to entry for the general public without the need for extensive coding expertise.
+3 Design Principles
+Eliza is a powerful multi-agent simulation framework designed for creating, deploying, and managing
+autonomous AI agents. It is built using TypeScript and is capable of interacting across multiple
+platforms. Numerous projects have been developed based on our framework.
+Eliza’s success is attributed to its integration of the strong demands of web3 into a design that balances
+utility and ease of use. There are three main principles behind our choices:
+Put Web3 Developers First Since web3 primarily utilizes JavaScript/TypeScript, which is the
+dominant language for web development, Eliza allows developers to easily integrate blockchain
+functionality into existing web applications and build decentralized applications (dApps) by leveraging
+familiar tools and frameworks. Eliza should be a first-class member of that ecosystem. It adheres to
+the commonly established design goals of keeping interfaces simple and consistent, ideally with one
+idiomatic way of doing things.
+Pluggable Modular Design Eliza decouples its structure into a core Runtime along with four
+key components: Adapter (data), Character (agent personality), Client (message interaction), and
+Plugin (universal functionality). This design allows developers or users to freely add their own
+plugins, clients, characters, and adapters as they wish, without worrying about the details within the
+core Runtime. It makes extension incredibly easy and paves the way for Eliza to support the most
+model providers (i.e. OpenAI, Llama, Qwen and etc.), platform integrations (i.e. Twitter, Discord,
+Telegram and etc.), chain compatibilities (i.e. Solana, Ethereum, Ton and etc.), and highly equipped
+functions (i.e. Text2Image/Video/3D, Web Search, TEE and etc.).
+Roughness is better Given a fixed amount of engineering resources, and all else being equal,
+the time saved by keeping the internal implementation of Eliza simple can be used to implement
+additional features, adapt to new situations, and keep up with the fast pace of progress in the field
+3
+of AI and web3. Therefore it is better to have a simple but slightly incomplete solution than a
+comprehensive but complex and hard to maintain design.
+4 Related Works
+As an AI Agent operating system focusing on web3 and social media, we aim to define our position
+and differentiate ourselves from both industrial AI Agent frameworks (i.e. Bedrock (AWS), Swarm
+(OpenAI), and smolagent (Huggingface) [23]]) and academic-oriented projects [12, 27, 31, 16].
+Specifically, we will mainly discuss plugins and frameworks below.
+4.1 Plugins
+Along with the rapid growth of off-the-shelf plugins, the agent’s enhancement can be categoried
+into two principle forms: Internal and External. Internally, the core principle is to tap into the
+full potential of the LLM itself, yielding more organized and logical answers and alleviating the
+long-standing issue of hallucination. Representative works within this paradigm include Chain-ofThoughts (CoT) [28], along with its successful descendants: Zero-shot CoT [14], Tree-of-Thoughts
+(ToT) [32], Graph-of-Thoughts (GoT) [4], and Layer-of-Thoughts (LoT) [9]. CoT introduced
+step-by-step explanations, ToT allowed branching to explore multiple solutions, and GoT connected
+reasoning pathways in a network. LoT, released in October 2024, is a hierarchical reasoning AI that
+organizes thoughts into layers for structured problem-solving. It filters information through layers of
+constraints to efficiently and transparently find the most relevant solutions.
+While "X-of-T" techniques have significantly enhanced the problem-solving prowess of LLMs, paving
+the way for more intelligent and insightful AI systems, the role of external information is also crucial.
+Externally, integrating knowledge from various sources greatly enhances an AI agent’s ability to
+solve real-world practical problems. This includes Retrieval Augmented Generations (RAGs) [15, 8],
+vector databases [11], and web searches [1]. Furthermore, as AI-Generated Content (AIGC) matures,
+the ability to convert text into images [22, 21], videos [30, 10], and 3D models [20, 25] opens up new
+possibilities for AI agents, adding a fresh dimension to the capabilities of LLMs.
+As shown in Fig. 1, Eliza offers robust support for a variety of blockchain plugins, encompassing everything from on-chain transactions to Trusted Execution Environments (TEEs). The comprehensive
+web3 toolkit is designed to be user-friendly and easily extensible, even for junior developers, thus
+achieving a balance between simplicity and efficiency. Additionally, the integration of social media
+support broadens the range of application scenarios, which constitutes the primary arena where these
+web3-oriented agents can actively participate and demonstrate their value.
+4.2 Frameworks
+Figure 2: Comparison with AI agent frameworks focuses on web3. Score ranging from 0 (worst) to
+10 (best), reflect the views of senior developers come from AI and web3 industry.
+AI agent frameworks flourished at the emergence of ChatGPT, has rallied in 2023, where AutoGPT,
+LangGraph (LangChain) and Camel released their first version on. People from all walks of life have
+4
+find the potential and benefit in leveraging AI Agent or Workflow to promote their efficiencies in
+coping with tedious routine jobs.
+For web3 industry, due to its highly time-sensitive property and complexity within blockchain
+interactions, a series of web3-oriented AI Agent frameworks start to emerge:
+• open source: RIG, G.A.M.E, ZerePy, Heurist, REI.
+• close source: Virtual.
+As an open source framework, Eliza should be compared with its rivals of the same kind: including
+RIG, G.A.M.E, ZerePy, Heurist, REI. As shown in Fig. 2, we collect the feedbacks from over
+50+ AI researchers and senior blockchain developers to acquire their subjective assessment toward
+current trending web3 AI agent frameworks, it can be easily observed that Eliza outperforms other
+frameworks in terms of key indictors: model providers, chain compatibility, functionality and social
+media.
+5 ElizaOS
+As general frameworks often limited to its highly abstract low-level details and use cases, the direction
+moving from generic to specialize becomes evident as time goes on. Plus, it is well-known that
+AI and LLMs are fields that evolve rapidly, with new concepts and ideas emerging every week.
+Abstractions like LangChain or AutoGPT, which are built around a variety of emerging technologies,
+find it difficult to withstand the test of time with their framework design.
+In the highly time-sensitive web3 industry, developers often need to interact with blockchains for
+various activities such as transferring tokens, deploying and interacting with smart contracts, and
+staying updated with the latest information, including cryptocurrency prices, recent statements from
+Key Opinion Leaders (KoLs), and the holdings of major investors, often referred to as "whales".
+Almost all of these tasks can be automated through rule-based systems. Prior to the advent of AI
+Agents, it was challenging to account for all these details and create a comprehensive automated
+process.
+Based on the philosophy derived from previous AI Agent frameworks, we build a highly controllable
+and well-orchestrated framework that primarily focus on the web3 industry, serves for a simple
+expression: sweeping away the hurdles for developers in turning the mighty AI Agents into life.
+5.1 Core Concepts
+5.1.1 Agents
+Agents are the core carriers of Eliza that handle autonomous interactions. Each agent runs in a
+runtime and can interact through various clients (Discord, Twitter, etc.) while maintaining consistent
+behavior and memory.
+From an implementation perspective, AgentRuntime class is the primary implementation of the
+IAgentRuntime interface, which manages the agent’s core functions, including:
+• Message and Memory Processing: Storing, retrieving, and managing conversation data
+and contextual memory.
+• State Management: Composing and updating the agent’s state for a coherent, ongoing
+interaction.
+• Action Execution: Handling behaviors such as transcribing media, generating images, and
+following rooms.
+• Evaluation and Response: Assessing responses, managing goals, and extracting relevant
+information.
+Eliza provides fully functional but not over-designed agent runtime with corresponding state management, memory system and message processing, makes runtime serviced to function in a sound
+operating state. Here is the minimal code snippet to instantiate a runtime:
+5
+const runtime = new AgentRuntime({
+token : ”auth_token”,
+modelProvider : ModelProviderName.ANTHROPIC,
+character : characterConfig,
+databaseAdapter : new DatabaseAdapter(),
+conversationLength : 32,
+serverUrl : ”http : //localhost : 7998”,
+actions : customActions,
+evaluators : customEvaluators,
+providers : customProviders
+})
+5.1.2 Character Files
+Character files are JSON-formatted configurations that define an AI agent’s personality, knowledge,
+and behavior within Eliza. Specifically, Eliza convert a Zod schema (CharacterSchema) into a
+TypeScript type (CharacterConfig). The basic attributes to define a character are:
+• Core identity and behavior: Character background, backstory elements and unique character
+traits.
+• Model provider configuration: Include but not limited to OpenAI, Anthropic, Llama.
+• Client settings and capabilities: Blockchain transaction, NFT minting, smart contract
+deployment.
+• Interaction and style guidelines: Conversational style, social media post style, knowledge
+(RAG).
+By meticulously crafting the character file, users can create an exclusive AI Agent that possesses
+unique skills and personalities. This process is akin to creating J.A.R.V.I.S. in Iron Man, laying down
+the most crucial foundation for an autonomous agent.
+5.1.3 Providers
+Providers are essential components that infuse agent interactions with dynamic context and real-time
+data. Acting as intermediaries, they link the agent to a plethora of external systems, facilitating
+access to a range of critical information including market data, wallet details, sentiment analysis, and
+temporal context.
+To draw an analogy, providers can be likened to the human perceptual system, with their primary
+function being to:
+• Obtain dynamic contextual information
+• Integrate with the agent runtime
+• Format information for conversation templates
+• Maintain consistent data access
+In Eliza, we have three basic built-in providers: Time Provider (provide temporal context for agent
+interactions), Facts Provider (maintain conversation facts) and a degen Boredom Provider (manage
+conversation dynamics and engagement by calculating the boredom level of an agent based on recent
+messages). Moreover, with built-in registration system, we can mount provider with an instantiated
+runtime with only one line of code:
+runtime.registerContextProvider(customProvider);
+6
+5.1.4 Actions
+Actions serve as the foundational elements within Eliza, dictating the agents’ responses and interactions with messages. They empower agents to engage with external systems, adjust their behavior,
+and execute complex tasks that extend beyond straightforward message exchanges.
+An Action encompasses a wealth of functionalities, including but not limited to:
+• Placing Buy & Sell Orders
+• Analyzing PDF documents
+• Transcribing audio files
+• Generating NFTs (Non-Fungible Tokens)
+It’s crucial to recognize that the execution of Actions is often pivotal, with financial implications at
+stake. Each Action must be meticulously designed with a clear and defined purpose. To safeguard
+against any potential issues, incorporating robust validation mechanisms and comprehensive error
+handling is not just advisable but essential. These measures are indispensable when configuring
+user-defined Actions, ensuring the integrity and reliability of the agent’s operations in the web3
+domain, can be registered through:
+runtime.registerAction(customAction);
+5.1.5 Evaluators
+Evaluators represent the final core component of Eliza, tasked with assessing and extracting valuable
+information from conversations and integrating seamlessly into the AgentRuntime’s evaluation
+system. Much like Providers, the integration of Evaluators is streamlined and can be executed with a
+single line of code:
+runtime.registerEvaluator(customEvaluator);
+In practice, Evaluators empower agents with the ability to:
+• Build long-term memory
+• Track goal progress
+• Extract facts and insights
+• Maintain contextual awareness
+In service, Evaluators are dispensible and commonest find under such scenarios: fact extraction to
+identify key information, goal tracking to monitor progress, and verifying agent functionality under
+edge cases.
+5.2 Intent Recognition
+Intent Recognition is the ability of an AI assistant or an AI system, to understand the purpose or
+goal of a user’s request. As shown in Fig. 3, Eliza employs a multi-layered approach to intent
+recognition, combining symbolic action definitions with contextual understanding and memoryaugmented processing. At its core, the system utilizes a hierarchical action structure, where each
+intent is defined by a primary identifier accompanied by a collection of semantic similes. This
+allows for flexible recognition of user intentions across varying linguistic expressions. The primary
+mechanism is further enhanced by a context-aware evaluation system, which leverages both the
+immediate conversational state and long-term memory through vector-based retrieval mechanisms.
+The framework’s intent processing pipeline integrates template-driven context building with platformspecific interaction managers. This enables consistent intent recognition across diverse communication channels while maintaining platform-specific optimizations. The architecture is further
+augmented by a sophisticated memory system that maintains conversational history, knowledge bases,
+and relationship tracking. This allows the system to perform contextually relevant intent recognition,
+adapting to both the immediate conversation flow and the broader interaction history.
+The combination of these components results in a robust intent recognition system that can effectively
+process and respond to user intentions while maintaining contextual awareness and conversational
+coherence.
+7
+Figure 3: Intent recognition system of Eliza.
+5.3 Plugins
+The Eliza framework implements a flexible plugin architecture that enables modular extension of AI
+agent capabilities while maintaining system stability and coherence. The plugin system provides a
+well-defined interface for extending agent functionality through various components:
+❶ Media Generation Plugins Plugins that enable AI-driven content creation:
+• Image/Video/3D Generation Plugin
+– Creates images/videos/3D based on input prompts.
+– Supports multiple providers (Anthropic, Together and etc).
+– Image captioning.
+• NFT Generation Plugin
+– Generates NFT collections.
+– Supports various collection attributes.
+– Integrates with blockchain deployment.
+❷ Web3 Integration Plugins Extensive blockchain support through specialized plugins:
+• Coinbase Plugin Suite:
+– Advanced Trading - Complex trading strategies
+– Commerce Integration - Payment processing
+– Mass Payments - Bulk transaction handling
+– Token Contract Management - ERC20/ERC721 deployment
+– Webhook Integration - Event handling
+• Multi-Chain Support:
+– EVM compatibility for Ethereum ecosystem
+– Solana with trust scoring and wallet management
+– Additional chains: Aptos, Conflux, Flow, MultiversX, Near, Sui, TON, ICP, zkSync
+Era
+– GOAT (Great Onchain Agent Toolkit) integration for cross-chain operations
+8
+❸ Core Infrastructure Plugins Essential services and capabilities:
+• Node Plugin Services:
+– BrowserService - Web browsing capabilities
+– ImageDescriptionService - Image analysis
+– LlamaService - LLM integration
+– PdfService - Document processing
+– SpeechService - Text-to-speech
+– TranscriptionService - Speech-to-text
+– VideoService - Video processing
+• TEE (Trusted Execution Environment) Plugin for secure operations
+The plugin architecture enables:
+• Independent Development - Through clear component interfaces
+• Maintenance Simplification - Through modular package organization
+• Core System Stability - By isolating extensions from core functionality
+• Community Engagement - Through npm package distribution
+• Knowledge Sharing - Via documented examples and TypeScript types
+This modular architecture allows Eliza to be extended with new capabilities while maintaining a
+consistent interface and reliable operation across all components. The plugin system’s flexibility
+is particularly evident in its support for both basic utilities like image generation and complex
+blockchain integrations, making it suitable for a wide range of applications from content creation to
+decentralized finance.
+5.3.1 Core Architecture
+The plugin components interact through clearly defined interfaces:
+/* Core plugin interface for the Eliza framework */
+interface Plugin {
+name : string ; // Plugin name
+description : string ; // Plugin description
+actions ?: Action []; // Optional actions
+providers ?: Provider []; // Optional providers
+evaluators ?: Evaluator []; // Optional evaluators
+services ?: Service []; // Optional services
+clients ?: Client []; // Optional clients
+}
+5.3.2 Implementation Patterns
+A minimal plugin implementation follows this pattern:
+import { Plugin } from " @elizaos / core ";
+import { createResourceAction } from "./ actions / sampleAction ";
+import { sampleProvider } from "./ providers / sampleProvider ";
+import { sampleEvaluator } from "./ evaluators / sampleEvaluator ";
+export const samplePlugin : Plugin = {
+name : " sample ",
+description : " Enables creation and management of generic resources
+",
+actions : [ createResourceAction ] ,
+providers : [ sampleProvider ] ,
+evaluators : [ sampleEvaluator ] ,
+9
+services : [] ,
+clients : []
+};
+5.3.3 Key Benefits
+The plugin architecture offers several key advantages:
+1. Modularity Plugins encapsulate related functionality through a simple, clear interface as shown
+in the code snippet above.
+2. Extensibility New capabilities can be added through standardized component types:
+// Example from plugin -image - generation
+export const imageGenerationPlugin : Plugin = {
+name : " imageGeneration ",
+description : " Generate images ",
+actions : [ imageGeneration ] ,
+evaluators : [] ,
+providers : []
+};
+// Example from plugin - node
+export function createNodePlugin () {
+return {
+name : " default ",
+description : " Default plugin with basic services ",
+services : [
+new BrowserService () ,
+new ImageDescriptionService () ,
+new LlamaService () ,
+new PdfService () ,
+new SpeechService () ,
+new TranscriptionService () ,
+new VideoService () ,
+new AwsS3Service ()
+]
+} as const satisfies Plugin ;
+}
+3. Community Development The architecture promotes collaborative development through userfriendly package management, enabling:
+• Independent Development: Well-defined component interfaces (actions, providers, evaluators, services)
+• Simplified Maintenance: Modular package organization
+• Core System Stability: Through isolation of extensions from core functionality
+• Community Engagement: NPM package distribution
+• Knowledge Sharing: Documented examples and TypeScript type definitions
+6 Benchmarks
+6.1 General AI Agent Benchmark
+GAIA [17] is a benchmark specifically designed to evaluate the general capabilities of AI agents
+in solving real-world problems. Successfully answering GAIA questions requires multiple skills,
+10
+Table 2: Performance on the GAIA Benchmark [17]. Eliza demonstrates its generalizability by
+successfully tackling general-purpose tasks across various levels of difficulty, denote as %.
+Method Level 1 Level 2 Level 3 Average score
+GPT-4 [2] 9.68 1.89 0 4
+AutoGPT [29] 15.05 0.63 0 5
+GPTSwarm [33] 30.56 20.93 3.85 18.45
+GPT-4o [2] 39.78 27.04 14.58 29
+Langfun [19] 58.06 51.57 25 49.33
+Eliza 32.21 21.70 4.36 19.42
+including logical reasoning, multi-modal processing, web browsing, and tool utilization. While these
+questions are conceptually straightforward for humans, they present significant challenges for current
+AI systems. We evaluate Eliza’s general applicability using this benchmark. In our implementation,
+we construct swarms of multiple homogeneous agents and employ self-consistency (a prompt-based
+majority voting mechanism) for final decision-making [33].
+Tab. 2 presents Eliza’s performance using three agents with a voting system for final decisions. We
+compare our results against several baselines, including the GPT-series with plugins, GPTSwarm, and
+other top-ranked methods. The results indicate that Eliza achieves moderate performance compared
+to these benchmark methods.
+6.2 Web3 Benchmark
+Given that current web3-oriented AI systems are not yet perfected, quantitative results through
+transplanting Eliza’s features on those frameworks are time-consuming and complicated. We hereby
+establish a foundational standard for existing and forthcoming frameworks, outlining what an AI
+agent with comprehensive capabilities should encompass. As detailed in Fig. 4, we outline the
+requirements for testing a web3 AI agent.
+For a web3 AI agent, the fundamental requirements must encompass core web3 operations such as
+creating wallets, transferring and receiving tokens, interacting with smart contracts, and engaging
+with mainstream social media platforms. Additionally, the agent should support basic trading APIs.
+Paramount to these functionalities is the thorough red teaming conducted by the AI agent’s developers.
+This exercise is crucial for ensuring the agent’s safety and preventing any hazardous behavior that
+could potentially cause damage to property.
+The next phase for AI Agents involves rapidly integrating the latest advancements in AI into the
+agentic framework. This includes leveraging cutting-edge technologies such as text-to-video/3D,
+RAG (Retrieval-Augmented Generation) support, and audio-to-text transcription. It is also crucial
+that this stage addresses web3-validated privacy and safety-related plugins and practices effectively.
+The ultimate goal for a fully realized and advanced AI agent is to be capable of autonomous planning
+and reasoning based on user instructions. Such an agent should be able to automatically devise a
+suitable execution pipeline without human intervention, drawing from a pool of unorganized APIs.
+This capability is the key metric for evaluating the intelligence of an AI Agent, mark the agent is
+already reached its climax.
+At present, Eliza is in the midst of transitioning from the primary to the intermediate phase of
+development. Our team is steadfast in our conviction that we are progressing towards the realization
+of AI models capable of autonomous action within both digital and physical environments, with the
+ability to execute complex plans across long-term horizons. We project that this capability will be
+achieved within the forthcoming years.
+Upon the successful operationalization of these "agentic" AI systems, we intend to instantiate multiple
+units, facilitating their collaborative efforts. This approach aligns with the concept articulated by
+Dario Amodei, CEO of Anthropic, who envisions a "datacenter of geniuses." The implementation of
+such a system would represent a paradigm shift in AI capabilities, marking a significant leap forward
+in the field.
+11
+Figure 4: Web3 AI Agent ’Turing Test’: An AI agent operating within the Web3 ecosystem is
+considered to have passed the ’Turing Test’ if it can successfully manage all tasks categorized as
+Basic, Intermediate, and Advanced as listed above.
+7 Use Cases
+7.1 Solana Plugin Example
+The Solana plugin provides functionality for interacting with the Solana blockchain, including token
+management, swapping, and trust score evaluation, serve as a good example for developer to onboard
+their blockchain interface with Eliza.
+7.1.1 Core Features
+• Token Management (TokenProvider)
+• Wallet Integration (WalletProvider)
+• Trust Score Evaluation (TrustScoreManager)
+• Token Swapping
+• FOMO and PumpFun Integration
+7.1.2 Key Components
+Token Provider Handles token-related operations:
+export class TokenProvider {
+async calculateBuyAmounts () : Promise < CalculatedBuyAmounts > {
+const dexScreenerData = await this . fetchDexScreenerData () ;
+const prices = await this . fetchPrices () ;
+const solPrice = toBN ( prices . solana . usd ) ;
+// ... calculates buy amounts for different conviction levels
+return {
+none : 0 ,
+low : lowBuyAmountSOL ,
+medium : mediumBuyAmountSOL ,
+high : highBuyAmountSOL ,
+};
+}
+}
+12
+Wallet Provider Manages wallet interactions:
+export class WalletProvider {
+async fetchPortfolioValue ( runtime ) : Promise < WalletPortfolio > {
+const portfolio = await this . getPortfolio ( runtime ) ;
+return {
+totalUsd : portfolio . totalUsd ,
+totalSol : portfolio . totalSol ,
+items : portfolio . items
+};
+}
+}
+Trust Score Manager Evaluates token and recommender trust scores:
+export class TrustScoreManager {
+calculateTrustScore (
+tokenPerformance : TokenPerformance ,
+recommenderMetrics : RecommenderMetrics
+) : number {
+const riskScore = this . calculateRiskScore ( tokenPerformance ) ;
+const consistencyScore = this . calculateConsistencyScore (
+tokenPerformance ,
+recommenderMetrics
+) ;
+// ... calculates final trust score
+return trustScore ;
+}
+}
+7.1.3 Actions
+The plugin provides several key actions:
+export const solanaPlugin : Plugin = {
+name : " solana ",
+description : " Solana Plugin for Eliza ",
+actions : [
+executeSwap ,
+pumpfun ,
+fomo ,
+transferToken ,
+executeSwapForDAO ,
+take_order ,
+] ,
+evaluators : [ trustEvaluator ] ,
+providers : [ walletProvider , trustScoreProvider ] ,
+};
+Example Action Token Swap (where similes denote alternative names, variations, or synonyms
+that can trigger the defined Action following intent recognition):
+13
+export const executeSwap : Action = {
+name : " EXECUTE_SWAP ",
+similes : [" SWAP_TOKENS ", " TOKEN_SWAP ", " TRADE_TOKENS "] ,
+handler : async (
+runtime : IAgentRuntime ,
+message : Memory ,
+state : State ,
+_options : { [ key : string ]: unknown } ,
+callback ?: HandlerCallback
+) : Promise < boolean > = > {
+const trustScore = await runtime
+. getProvider (’trustScore ’)
+. evaluateSwap ( params ) ;
+if ( trustScore < runtime . getMinimumTrustThreshold () ) {
+return false ;
+}
+return true ;
+}
+};
+7.1.4 Configuration
+The plugin requires specific environment configuration:
+export const solanaEnvSchema = z . object ({
+WALLET_SECRET_SALT : z . string () . optional () ,
+SOL_ADDRESS : z. string () . min (1 , "SOL address is required ") ,
+SLIPPAGE : z . string () . min (1 , " Slippage is required ") ,
+RPC_URL : z . string () . min (1 , "RPC URL is required ") ,
+HELIUS_API_KEY : z . string () . min (1 , " Helius API key is required ") ,
+BIRDEYE_API_KEY : z . string () . min (1 , " Birdeye API key is required ") ,
+}) ;
+7.2 Advanced Implementation Example: Image Generation
+Core Action Definition The plugin defines an image generation action with extensive recognition
+patterns:
+const imageGeneration : Action = {
+name : " GENERATE_IMAGE ",
+similes : [
+" IMAGE_GENERATION ",
+...
+" MAKE_A "
+] ,
+description : " Generate an image to go along with the message .",
+validate : async ( runtime : IAgentRuntime , _message : Memory ) = > {
+await validateImageGenConfig ( runtime ) ;
+const anthropicApiKeyOk = !! runtime . getSetting ("
+ANTHROPIC_API_KEY ") ;
+...
+const falApiKeyOk = !! runtime . getSetting (" FAL_API_KEY ") ;
+return (
+anthropicApiKeyOk ||
+...
+falApiKeyOk ||
+14
+) ;
+}
+};
+Provider Validation The system implements robust provider validation:
+interface IAgentRuntime {
+getSetting ( key : string ) : string | undefined ;
+}
+const validate = async ( runtime : IAgentRuntime ) : Promise < boolean > = > {
+const requiredKeys = [
+" ANTHROPIC_API_KEY ",
+...
+" FAL_API_KEY ",
+];
+return requiredKeys . some ( key = > !! runtime . getSetting ( key ) ) ;
+};
+File Management System The plugin includes robust file handling capabilities:
+import { join } from ’path ’;
+import { existsSync , mkdirSync , writeFileSync } from ’fs ’;
+export function saveBase64Image (
+base64Data : string ,
+filename : string
+) : string {
+const imageDir = join ( process . cwd () , " generatedImages ") ;
+if (! existsSync ( imageDir ) ) {
+mkdirSync ( imageDir , { recursive : true }) ;
+}
+const base64Image = base64Data . replace (
+/^ data : image \/\ w +; base64 ,/ ,
+""
+) ;
+const imageBuffer = Buffer . from ( base64Image , " base64 ") ;
+const filepath = join ( imageDir , ‘$ { filename }. png ‘) ;
+writeFileSync ( filepath , imageBuffer ) ;
+return filepath ;
+}
+Image Generation Options The system supports comprehensive image generation configuration:
+interface ImageOptions {
+width ?: number ;
+height ?: number ;
+count ?: number ;
+negativePrompt ?: string ;
+numIterations ?: number ;
+guidanceScale ?: number ;
+seed ?: number ;
+15
+modelId ?: string ;
+stylePreset ?: string ;
+hideWatermark ?: boolean ;
+}
+Response Handling The plugin implements a callback system for handling generated images:
+interface Attachment {
+id : string ;
+url : string ;
+title : string ;
+source : string ;
+description : string ;
+contentType : string ;
+}
+interface Response {
+text : string ;
+attachments : Attachment [];
+}
+interface FileAttachment {
+attachment : string ;
+name : string ;
+}
+function handleImageResponse (
+filepath : string ,
+filename : string
+) : [ Response , FileAttachment []] {
+return [
+{
+text : " Image generated successfully ",
+attachments : [{
+id : crypto . randomUUID () ,
+url : filepath ,
+title : " Generated image ",
+source : " imageGeneration ",
+description : "AI - generated image ",
+contentType : " image /png",
+}] ,
+} ,
+[{
+attachment : filepath ,
+name : ‘$ { filename }. png ‘ ,
+}]
+];
+}
+8 Massive Adoption
+Evaluating the success of ElizaOS’s design philosophy and market penetration presents unique
+challenges in the rapidly evolving web3 AI agent ecosystem. To address this, we adopted a straightforward data-driven approach centered on strategic partnership analytics. Our methodology examined
+verified partnership announcements and collaborations since ElizaOS’s July 2024 launch, comparing
+its adoption rate against leading web3 AI agent frameworks such as Myshell, Virtuals, and Swarm.
+Fig. 5 illustrates the ecosystem growth through a selection of web3 projects that leverage ElizaOS to
+construct their AI agent systems, with the cumulative market capitalization of ecosystem partners
+16
+Figure 5: As of January 1, 2025, numerous representative web3 projects have built AI agents based
+on ElizaOS, with their combined market capitalization surpassing $20 billion dollars.
+exceeding $20 billion dollars. This substantial market presence underscores the growing confidence
+of developers and enterprises in ElizaOS’s infrastructure.
+9 Limitation
+Although Eliza offers significant advantages, it still has areas for improvement. The current limitations
+of Eliza can be categorized into three main areas: First, the absence of an explicit workflow
+system creates barriers for developers seeking to implement routine processes (e.g., periodic data
+summarization from multiple sources) within Eliza. For such requirements, GUI-enhanced workflow
+systems like Dify and Coze may be more suitable. Secondly, the Runtime design requires further
+refinement to balance the computational overhead of multiple agents—particularly as context and
+memory requirements scale exponentially—with runtime efficiency, especially in IO-intensive tasks.
+Thirdly, expanding multi-language support, particularly for languages such as Python and Rust, is
+essential for Eliza’s future growth, as this would broaden its appeal to developers across different
+technological domains.
+10 Conclusion
+This paper introduces Eliza, a pioneering open-source Web3-friendly AI agent operating system
+designed to bridge the gap between AI technology and Web3 applications. By offering a platform
+that not only makes the deployment of Web3 applications possible but also effortless, Eliza stands
+out. We emphasize that every aspect of Eliza is crafted as a regular TypeScript program, ensuring it
+remains fully under user control while also providing seamless integration with Web3 functionalities,
+including but not limited to, reading and writing blockchain data and interacting with smart contracts.
+The success of Eliza is attributed to its integration of strong Web3 demands into a design that balances
+utility and ease of use. We adhere to three main design principles: prioritizing Web3 developers, a
+pluggable modular design, and maintaining system simplicity while ensuring functionality. These
+17
+principles have guided the development of Eliza, making it a powerful multi-agent system capable of
+interacting across multiple platforms.
+The core concepts of ElizaOS, including Agents, Character Files, Providers, Actions, and Evaluators,
+together form a highly controllable and orchestrated framework focused on the Web3 industry,
+offering developers the tools to bring powerful AI agents to life. Our plugin architecture achieves
+modularity and extensibility while fostering community development and knowledge sharing.
+Although Eliza offers significant advantages, we recognize areas for improvement. Current limitations
+include the absence of an explicit workflow system, the need for further refinement of the runtime
+design, and the necessity to expand multi-language support.
+In summary, Eliza represents the forefront of a new era in technology, with possibilities limited
+only by the imagination of its users. As the fields of AI and Web3 continue to evolve rapidly, Eliza
+will continue to evolve to meet changing demands and pave the way for the future development of
+decentralized AI.
+11 Acknowlegments
+We express our gratitude to all individuals and organizations that have contributed to the development
+and refinement of Eliza. We thank all the Eliza core team members, contributors and package
+maintainers for their continuous effort and attic faith.
+18
+References
+[1] Tavily search. 2024. URL https://tavily.com/.
+[2] Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Florencia Leoni Aleman,
+Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, et al. Gpt-4 technical report. arXiv
+preprint arXiv:2303.08774, 2023.
+[3] Jinze Bai, Shuai Bai, Yunfei Chu, Zeyu Cui, Kai Dang, Xiaodong Deng, Yang Fan, Wenbin Ge, Yu Han,
+Fei Huang, et al. Qwen technical report. arXiv preprint arXiv:2309.16609, 2023.
+[4] Maciej Besta, Nils Blach, Ales Kubicek, Robert Gerstenberger, Michal Podstawski, Lukas Gianinazzi,
+Joanna Gajda, Tomasz Lehmann, Hubert Niewiadomski, Piotr Nyczyk, et al. Graph of thoughts: Solving
+elaborate problems with large language models. In Proceedings of the AAAI Conference on Artificial
+Intelligence, volume 38, pages 17682–17690, 2024.
+[5] Xiao Bi, Deli Chen, Guanting Chen, Shanhuang Chen, Damai Dai, Chengqi Deng, Honghui Ding, Kai
+Dong, Qiushi Du, Zhe Fu, et al. Deepseek llm: Scaling open-source language models with longtermism.
+arXiv preprint arXiv:2401.02954, 2024.
+[6] Ilan Bigio. swarm. 2024. URL https://github.com/openai/swarm.
+[7] Harrison Chase. Langgraph (langchain). 2023. URL https://github.com/langchain-ai/
+langgraph.
+[8] Darren Edge, Ha Trinh, Newman Cheng, Joshua Bradley, Alex Chao, Apurva Mody, Steven Truitt, and
+Jonathan Larson. From local to global: A graph rag approach to query-focused summarization. arXiv
+preprint arXiv:2404.16130, 2024.
+[9] Wachara Fungwacharakorn, Nguyen Ha Thanh, May Myo Zin, and Ken Satoh. Layer-of-thoughts prompting (lot): Leveraging llm-based retrieval with constraint hierarchies. arXiv preprint arXiv:2410.12153,
+2024.
+[10] Yuwei Guo, Ceyuan Yang, Anyi Rao, Zhengyang Liang, Yaohui Wang, Yu Qiao, Maneesh Agrawala,
+Dahua Lin, and Bo Dai. Animatediff: Animate your personalized text-to-image diffusion models without
+specific tuning, 2023.
+[11] Yikun Han, Chunjiang Liu, and Pengfei Wang. A comprehensive survey on vector database: Storage and
+retrieval technique, challenge. arXiv preprint arXiv:2310.11703, 2023.
+[12] Wenlong Huang, Pieter Abbeel, Deepak Pathak, and Igor Mordatch. Language models as zero-shot
+planners: Extracting actionable knowledge for embodied agents. In International conference on machine
+learning, pages 9118–9147. PMLR, 2022.
+[13] Albert Q Jiang, Alexandre Sablayrolles, Arthur Mensch, Chris Bamford, Devendra Singh Chaplot, Diego
+de las Casas, Florian Bressand, Gianna Lengyel, Guillaume Lample, Lucile Saulnier, et al. Mistral 7b.
+arXiv preprint arXiv:2310.06825, 2023.
+[14] Takeshi Kojima, Shixiang Shane Gu, Machel Reid, Yutaka Matsuo, and Yusuke Iwasawa. Large language
+models are zero-shot reasoners. Advances in neural information processing systems, 35:22199–22213,
+2022.
+[15] Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich
+Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel, et al. Retrieval-augmented generation for knowledgeintensive nlp tasks. Advances in Neural Information Processing Systems, 33:9459–9474, 2020.
+[16] Guohao Li, Hasan Hammoud, Hani Itani, Dmitrii Khizbullin, and Bernard Ghanem. Camel: Communicative agents for" mind" exploration of large language model society. Advances in Neural Information
+Processing Systems, 36:51991–52008, 2023.
+[17] Grégoire Mialon, Clémentine Fourrier, Craig Swift, Thomas Wolf, Yann LeCun, and Thomas Scialom.
+Gaia: a benchmark for general ai assistants, 2023.
+[18] Bill Peebles, Tim Brooks, Connor Holmes, Connor Holmes, David Schnurr, Eric Luhman, Joe Taylor,
+Li Jing, Natalie Summers, Ricky Wang, Rohan Sahai, Ryan O’Rourke, Troy Luhman, Will DePue, Yufei
+Guo, and Aditya Ramesh. Sora. 2024. URL https://openai.com/index/sora/.
+[19] Daiyi Peng. Langfun. 2024. URL https://github.com/daiyip.
+19
+[20] Ben Poole, Ajay Jain, Jonathan T Barron, and Ben Mildenhall. Dreamfusion: Text-to-3d using 2d diffusion.
+arXiv preprint arXiv:2209.14988, 2022.
+[21] Aditya Ramesh, Mikhail Pavlov, Gabriel Goh, Scott Gray, Chelsea Voss, Alec Radford, Mark Chen, and
+Ilya Sutskever. Zero-shot text-to-image generation. In International conference on machine learning, pages
+8821–8831. Pmlr, 2021.
+[22] Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and Björn Ommer. High-resolution
+image synthesis with latent diffusion models. In Proceedings of the IEEE/CVF conference on computer
+vision and pattern recognition, pages 10684–10695, 2022.
+[23] Aymeric Roucher, Thomas Wolf, Leandro von Werra, and Erik Kaunismäki. ‘smolagents‘: The easiest
+way to build efficient agentic systems. https://github.com/huggingface/smolagents, 2025.
+[24] Alexander Rush. MiniChain: A small library for coding with large language models. In Yansong
+Feng and Els Lefever, editors, Proceedings of the 2023 Conference on Empirical Methods in Natural
+Language Processing: System Demonstrations, pages 311–317, Singapore, December 2023. Association
+for Computational Linguistics. doi: 10.18653/v1/2023.emnlp-demo.27. URL https://aclanthology.
+org/2023.emnlp-demo.27/.
+[25] Dmitry Tochilkin, David Pankratz, Zexiang Liu, Zixuan Huang, , Adam Letts, Yangguang Li, Ding Liang,
+Christian Laforte, Varun Jampani, and Yan-Pei Cao. Triposr: Fast 3d object reconstruction from a single
+image. arXiv preprint arXiv:2403.02151, 2024.
+[26] Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timothée Lacroix,
+Baptiste Rozière, Naman Goyal, Eric Hambro, Faisal Azhar, et al. Llama: Open and efficient foundation
+language models. arXiv preprint arXiv:2302.13971, 2023.
+[27] Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu, Linxi Fan, and Anima
+Anandkumar. Voyager: An open-ended embodied agent with large language models. arXiv preprint
+arXiv:2305.16291, 2023.
+[28] Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Fei Xia, Ed Chi, Quoc V Le, Denny
+Zhou, et al. Chain-of-thought prompting elicits reasoning in large language models. Advances in neural
+information processing systems, 35:24824–24837, 2022.
+[29] Hui Yang, Sifu Yue, and Yunzhong He. Auto-gpt for online decision making: Benchmarks and additional
+opinions. arXiv preprint arXiv:2306.02224, 2023.
+[30] Zhuoyi Yang, Jiayan Teng, Wendi Zheng, Ming Ding, Shiyu Huang, Jiazheng Xu, Yuanming Yang, Wenyi
+Hong, Xiaohan Zhang, Guanyu Feng, et al. Cogvideox: Text-to-video diffusion models with an expert
+transformer. arXiv preprint arXiv:2408.06072, 2024.
+[31] Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. React:
+Synergizing reasoning and acting in language models. arXiv preprint arXiv:2210.03629, 2022.
+[32] Shunyu Yao, Dian Yu, Jeffrey Zhao, Izhak Shafran, Tom Griffiths, Yuan Cao, and Karthik Narasimhan.
+Tree of thoughts: Deliberate problem solving with large language models. Advances in Neural Information
+Processing Systems, 36, 2024.
+[33] Mingchen Zhuge, Wenyi Wang, Louis Kirsch, Francesco Faccio, Dmitrii Khizbullin, and Jürgen Schmidhuber. Gptswarm: Language agents as optimizable graphs. In Forty-first International Conference on
+Machine Learning.
+20

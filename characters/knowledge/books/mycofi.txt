@@ -1,0 +1,1153 @@
+
+Mycelial Design Patterns
+for Web3 and Beyond
+Exploring MycoFi: Mycelial Design Patterns for Web3 and Beyond guides readers on
+an underground exploration into the world wise web of mycelial networks, the most
+prolifi c producers of public goods on Earth. This book examines how the evolutionary
+adaptability of fungi could help us imagine biomimetic alternatives to status-quo
+economic systems that demand infi nite growth on a fi nite planet.
+If there is any hope for a transition away from extraction, domination, and planetary
+overshoot, towards regeneration, equity, and planetary healing, our economies must
+be realigned with nature’s ecologies - and for that, we can’t a! ord to ignore what
+mushrooms have to teach us. If we aim to design regenerative economies, what better
+place to start than with the thriving evolutionary patterns of nature?
+MycoFi translates six design patterns of mycelial ecologies to Web3 economies:
+Network Infrastructure • Fractal Nature • Emergent Coordination
+Dynamic Flow • Mutual Reciprocity • Polycentric Pluralism
+“Fungi invite us to participate in a commons-based economy where resources are metabolized,
+shared, and regenerated simultaneously through the very same process. MycoFi is less about how
+to imitate them than how to join in the dance.“
+Douglas Rushko! , author and host of Team Human
+“Nature is a magical long-term, stable code base, with time for revisions and optimization. More
+recently, our attention spans have gotten shorter and we’ve forgotten how to listen deeply and pay
+attention to the truth around us. Hopefully, this work will provide another reminder that the answers
+have always been there. Let’s listen together.”
+Amber Case, author of Calm Technology
+“Mycelial networks are the foundation from which natural systems thrive. Obligation networks are
+the foundation from which social systems thrive. MycoFi is a beautiful recognition of the confl uence
+of the natural and social worlds, of our mutual interdependence, of our obligations to take care of
+the planet and each other, and of how much more we still have to learn from the humble mushroom.”
+Ethan Buchman, co-founder of Cosmos and CEO of Informal Systems
+E X P L O R I N G
+MYCOFI
+
+2
+3
+E X P L O R I N G M Y C O F I
+4
+Written by Jeff Emmett & Jessica Zartler
+Foreword by Scott Morris
+5
+E x p l o r i n g M y c o F i
+A MYC OPUNK PUBLICATION
+FROM THE GREENPILL NETWORK
+Mycelial Design Patterns
+for Web3 and Beyond
+6
+Coordination by Owocki
+Design by Laura Helen Winn
+Illustration by Biux
+PRODUCED FOR THE GITCOIN ECOSYSTEM
+Exploring MycoFi: Mycelial Design Patterns for Web3 and Beyond is licensed under CC BY-SA 4.0.
+To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/
+7
+
+8
+9
+CONTENTS
+12
+16
+20
+24
+26
+34
+44
+52
+60
+68
+74
+80
+82
+A Note from the Creators
+Foreword
+Uncovering Nature’s Economic Blueprints
+Mycelial Design Patterns
+Design Pattern 1: Network Infrastructure
+Design Pattern 2: Fractal Nature
+Design Pattern 3: Emergent Coordination
+Design Pattern 4: Dynamic Flow
+Design Pattern 5: Mutual Reciprocity
+Design Pattern 6: Polycentric Pluralism
+Join the Mycelial Revolution
+Gratitude & Acknowledgments
+Appendix
+10
+“MycoFi beautifully illustrates and underscores that mycelium’s design is borne from the universe.
+The organization of mycelium is a previously proven evolutionarily successful structure at scales
+found throughout nature. Its inherent wisdom of sharing resources, building guilds - and thus -
+communities is an economic and cosmological model for us to depend upon and learn from. From
+these mycelial-like structures, we have a launching pad for our continued evolution based on
+cooperation, resilience, and discovery. The very nature of mycelium allows it to evolve and not only
+respond to catastrophia but to build systems that are highly adaptive and ever-lasting. By learning
+from mycelium, our species can achieve the next quantum level in our evolution.”
+Paul Stamets, renowned mycologist and author of Mycelium Running
+“Metaphor is a powerful tool for the imagination, giving us the sca!olding to create new structures
+in our minds. This book lays out a powerful mycelial metaphor to help us reimagine our financial and
+economic life.”
+Brett Scott, author of CloudMoney and Altered States of Monetary Consciousness
+“This is economics on mushrooms. The fungi kingdom is the banner bearer for regeneration. This
+book invites us to observe the patterns of deep fungal regeneration as we endeavor to redesign our
+economic relationships with mutuality, collaboration and regeneration in mind.“
+Greg Landua, co-founder and CEO of Regen Network
+“So glad to see how Mutualist thinking and design are being located from the roots to the emergent
+horizons. We can be neither pessimists nor optimists - rather be those who toil in the matter at hand
+committed to that which repairs the world.”
+Sara Horowitz, author of Mutualism: Building the Next Economy from the Ground Up
+“This book takes you on a journey to explore nature’s public goods infrastructure,
+and what we can learn for building the socio-technical systems of the future.
+Maybe we’ll find out we’ve been Mycopunks all along!”
+Angela Kreitenweis, founder of Token Engineering Academy
+11
+“MycoFi helps us move beyond the representational thinking hindering crypto by drawing on
+the lessons we can learn from the ancient economic mycelial networks that have run nature for
+millennia. Mushrooms show us that we are and always have been the inter-connected parts of one
+organism that must create symbiotic ways of co-existence with ourselves and the rest of the natural
+world to continue surviving on a planet wrought with man-made degeneration.”
+Josh Davila, author of Blockchain Radicals: How Capitalism Ruined Crypto and How to Fix It
+“This book (and the community it emerges from) is a fun and playful way into the tools and
+mindsets of this practice, recommended especially if you are, perhaps, coming to see yourself as
+a confluencer, sovereignty guardian, rhizome of diplomatic gardens, steward for Mother Earth and
+all her children; giver of care, compassion, and integrities; practitioner of trust, choreographer of
+commoning; or caller of ancient, renewed and emergent memes.”
+Tony (OpenTony) Lai, researcher & editor, Stanford Journal of Blockchain Law & Policy
+“Great intro to how Web3 networks and other human-made systems can benefit from
+biomimicry and system thinking.”
+Shermin Voshmgir, author of Token Economy
+“MycoFi takes the reader below the surface of Web3 to explore diverse and intricate economic
+networks. Ecological Economics (generally) and mycelial networks (specifically) share a pluralistic
+view on value. The same nutrient can be both a waste product when and where it’s in excess, and
+a resource when and where it’s necessary for a biochemical process. Moving away from a single
+notion of value (money) and towards nutrients flowing over physically distributed and biologically
+diverse networks is a key conceptual shift from neoclassical to ecological economics.”
+Michael Zargham, Chief Engineer at BlockScience
+12
+A N o t e f r o m
+the Creators
+13
+This book is a creative excursion into the nexus between
+mushrooms, economics, and technology. It explores six mycelial
+design patterns and their potential applications to address
+modern challenges in political economics, using Web3 tools as
+emancipatory technologies.
+Many of the ideas expressed in this book were inspired by
+countless authors, researchers, and developers, drawing from
+extensive bodies of research on the fascinating capabilities of
+mycelium and distributed ledger technologies. This book presents
+a fungal remix of some of those concepts, oriented toward a
+Web3 audience. For those interested in further reading, you can
+fi nd a series of links and references in the appendix.
+While we take an optimistic outlook in these pages, we aim to
+avoid the ì appeal to natureî fallacy ≠ the oversimplifi ed perspective
+that everything natural is good for us. Instead, we seek to identify
+and unpack useful, pro≠ social patterns that could be applied in
+contexts where they increase collective fl ourishing.
+MycoFi is fundamentally a pluralistic and emergent meme,
+requiring many voices to interweave a polyphonic chorus ≠
+including those who came before, as well as those yet to come. If
+you feel the call to contribute to the growing folklore of mycelial
+solutions, we have included information on connecting with
+communities of change≠ makers in the last chapter. We o! er this
+book as one step to an ecology of mind nurtured in the world of
+mycelial intelligence and all it has to teach us. There is so much
+more to be written, experienced, and embodied, and we warmly
+invite you to join in the exploration.
+14
+15
+16
+Foreword
+17
+As someone who has been involved in designing and implementing alternative
+economic systems since 2009, I have developed a special appreciation for ideas
+and frameworks that accelerate the process of learning how to think in more holistic,
+integrative, nature≠ aligned terms, especially as applied to designing systems for sharing
+resources intentionally. My earliest work was in community currencies, which have
+served humanity for ages by doing like the mushrooms do: helping meet local needs
+with local resources and strengthening communities in times of crisis. In other words,
+providing #RealValue.
+For those curious, the term ì MycoFiî fi rst emerged at an event on Collaborative
+Finance, aka ì CoFiî in May 2023. Je! and I were coming up with ideas for session
+proposals for the participant≠ led portions of the agenda when the term emerged as a
+suggestion based on my combined appreciation for Je! í s legendary love of all things
+mycelial and the way it juxtaposed the themes of collaborative fi nancial networks and
+mycelial networks.
+This book is simultaneously a light≠ hearted, fun introduction to mycelial networks
+and some of their genuinely surprising capabilities, and a serious invitation to draw
+inspiration from them as we design the resource coordination networks of the future. In
+a space that so often seems easily distracted by the shiny, new, and fi nancially lucrative,
+ití s all the more important that we keep a path devoted to the work of designing
+systems that address the survival≠ scale challenges we face as a species.
+I believe MycoFi is a timely idea because it presents us with a way of thinking about
+purpose≠ based networks and political economic systems which are more rooted in
+community. I see it as a biomimetic pattern language that helps us gain a better sense
+of how to rewire the circuitry of our economies so they serve the needs of humanity, the
+biosphere, and all stakeholders for mutual benefi t with the long≠ term in mind. If thatí s
+your jam, youí re holding the right book.
+Hydrate, meditate, take the green pill, and may the Force be with you always.
+Scott Morris
+@TheTokenJedi
+
+
+20
+introduction
+U n c o v e r i n g
+N a t u r e í s E c o n o m i c
+Blueprints
+21
+Designing from Fungal Foundations
+In our search for regenerative economic design patterns, the answers
+we seek may be hidden right beneath our feet. Over billions of years
+of evolution, mushrooms - and the underground mycelial networks to
+which they belong - have been iterating design patterns for distributed,
+autonomous infrastructures used for intelligent resource distribution
+and collective signaling between countless living organisms worldwide.
+Decades of study into the interaction patterns of mycelial networks
+in natural ecologies have o! ered us a glimpse into a cooperative
+underground world where resources fl ow dynamically between fl ora,
+fauna, and funga to generate thriving ecosystems.1 If Web3 technology
+holds the potential to craft new economic paradigms, mycelial design
+patterns may just show us the way back to a more ecological future.
+Mycelium as Nature’s
+Public Goods Infrastructure
+As one of the oldest and largest organisms alive, mycelium is a grand
+architect of nature. Fungi were among the planet’s earliest multicellular
+lifeforms, and along with their algae symbiotes, they terraformed planet
+Earth from a ball of cooled magma into the green paradise we know
+today.2 Mycelia form underground in a structure of networked tubes, which
+provide the “pipes” for a large proportion of nutrient distribution within and
+between most plants worldwide. From the earliest days of life on Earth,
+fungi have been breaking rock and networking through the soil, building
+a vast and interconnected mesh across the face of the planet. Like most
+well-operating public goods infrastructure, they remain underground and
+almost entirely invisible, even as they serve as a keystone network of
+species sustaining life on Earth.
+22
+Mushrooms Leak So Much Alpha
+Adaptively evolving to shifting climates, food sources, and ecological epochs,
+mushrooms not only provide essential services for all life on Earth through their
+distributed infrastructure, but they have demonstrated an evolutionarily honed
+capability for collective coherence and intelligent resource allocation in genetically
+diverse collectives. They transact resources using market-like exchange mechanisms
+with trading partners, address free rider problems in permissionless networks, and
+take advantage of arbitrage opportunities in the remediation of damaged ecosystems.
+They display strategies of mutual reciprocity with their trading partners, even keeping
+stumps and other non-producing members of the forest alive in what is essentially an
+underground economic support network. If nature has any alpha to guide us toward a
+fl ourishing future, perhaps the mushrooms will let us in on the drop.
+MycoFi is Economic Biomimicry
+With their pivotal role in the fl ow of nutrients in natural ecosystems, mycelial networks
+are the physical
+medium on
+which nature’s
+economies
+run. These
+organisms o! er
+us a conceptual
+bridge between
+economies and
+ecologies - two
+realms that we
+must reconnect
+to have any
+chance of
+surviving on this
+planet for the long term.
+MycoFi is a movement to consciously apply lessons from the mycelial world to
+cryptoeconomics, and encourage Web3 builders to “think like a mushroom” about
+the systems they are designing. Incorporating nature’s evolutionary design patterns
+into our economies could alleviate much of the disharmony we see between
+human economies and nature’s ecologies, gesturing towards a future of economic
+permaculture.3 This is also the basic premise of ecological economics4 - that we
+must move away from singular notions of value and orient our economies to refl ect
+the interdependent coevolution of multiple forms of value fl ows, just as we see in
+nature. In that sense, this book can be considered a beginner’s guide to ecological
+economics, seen through the eyes of fungi.
+MycoFi
+ReFi
+DeFi
+CoFi
+23
+MycoFi’s Memetic Lineage
+Memes play an important role in guiding the shape of forthcoming ideas and
+technology. From Decentralized Finance (DeFi) to Regenerative Finance (ReFi)
+to Collaborative Finance (CoFi), MycoFi builds on a rich lineage of memetic
+concepts and open-source tooling.
+DeFi Decentralized Finance envisions a world beyond the rigid ine& ciencies
+and monoculture of centralized fi nance, for people to “become their
+own banks” and start anew in the infi nite gardens of Ethereum and other
+blockchains. DeFi saw the rise of tools like Aave, Balancer, Curve Finance,
+and Uniswap, where many degen fortunes were made and lost.
+Regenerative Finance is a call to use the newfound power of DeFi towards
+all forms of planetary regeneration, a song of redemption to transmute
+DeFi degens into ReFi regens. This movement aims to use the magic of
+token issuance to solve for public goods funding and realign incentives
+toward positive-sum outcomes. ReFi was led by mystical collectives
+like Regen Network, ReFiDAO, ReFi Spring, Optimism, Gitcoin, and the
+GreenPill Network, among many others.
+ReFi
+Collaborative Finance seeks to complement the existing, centralized
+economic models by proposing systems of mutual obligation clearing,
+where networked debts cancel each other out in a harmonious cycle.
+CoFi found resonance in the hearts of those dreaming of a world woven
+together without an unhealthy addiction to fi nance. The meme fi rst
+emerged in the Cosmos ecosystem, appealing to complementary currency
+activists and crypto commoners already practicing similar tactics.
+CoFi
+It is from these memetic mycelial threads that MycoFi is woven. The
+concept of mycelial fi nance beckons us to learn from the ancient wisdom
+of nature, interlacing economic design patterns with the rhythm of life
+forms that have adaptively co-evolved over billions of years on this planet.
+Like spores on the wind, MycoFi fi rst emerged as a playful jest to tickle the
+CoFi vines but quickly sprouted into its own vibrant memetic tapestry of
+inspiration for regenerative economic design.
+MycoFi
+24
+Mycelial Design Patterns
+If we were to ask this ancient, sentient network its secrets, perhaps it would whisper
+to us of design patterns it has iterated in the depths of deep time, patterns such as:
+Network Infrastructure
+“We are the mycelial networks, the ancient weavers of nature’s
+oldest decentralized web. Our threads stretch across the world,
+silently sharing resources with all, creating life’s sustaining mesh.”
+Fractal Nature
+“In us, the fractal patterns of the cosmos are echoed. With minimal
+energy, we replicate these universal designs of self-similarity, from
+the smallest seashell to the vastest galaxy.”
+Adaptive Sense and Response
+“At the edge of the known, we, the mycelium, innovate without
+requiring permission from our ancient roots. Here we thrive, at the
+frontier, adapting to the mysteries of life.”
+Dynamic Flow
+“Our network pulses with life, a never-ending flow of resources.
+Like a symphony, nourishment courses through us, shared freely,
+never still, never hoarded.”
+Mutual Reciprocity
+“In our world, a delicate balance of give-and-take prevails. We the
+funga, alongside flora and fauna, partake in a life-sustaining dance,
+each exchange nurturing the reciprocal cycle of existence.”
+Polycentric Pluralism
+“Within us thrives diversity, a celebration of life’s myriad of forms.
+Responsive and varied, each part of our network contributes its
+unique voice to the chorus of nature.”
+25
+This book will cover each of these patterns in turn, fi rst from a mycelial
+mindset to understand how mushrooms demonstrate them, then looking at
+a few myco-mimetic examples of that pattern at work in the Web3 space,
+and ending with some imaginative provocations of what a more fungal
+future could look like in Web3 and beyond.
+MOLOCH ON MUSHROOMS
+Moloch is the god of coordination failures.
+Mushrooms are the epitome of coordination in nature.
+What would happen to Moloch on mushrooms?
+26
+design pattern one
+N e t w o r k
+Infrastructure
+27
+Natureís Oldest Networks
+When it comes to network infrastructure, mushrooms have no equal. Mycelium is
+natureí s oldest and most
+interconnected network,
+one that supports the
+entirety of life on Earth
+through the resources
+and information that
+fl ow through its veins.
+As infrastructures of
+positive≠ sum reciprocity
+and regeneration tested
+by untold millennia of
+natural selection, their
+patterns are a true gift
+from our eldest genetic ancestors.
+Networking in the Wood≠ Wide≠ Web
+Although mushrooms are often all we see aboveground, fungi are complex entities
+of underground
+networks, which
+grow toadstools
+much like apple
+trees grow apples.
+ Mycelium grows
+underground by
+extending thread≠
+like fi laments called
+hyphae into the soil,
+which interconnect
+with other hyphae
+and network into
+a mycelial mesh.
+These connections form with more than 90 percent of trees and plants worldwide,
+leading biologists to lovingly dub these mycelial networks the ì wood≠ wide≠ webî . In
+the language of complex systems and graph theory, the trees are the ì nodesî in this
+network, and mycelial connections are the ì edgesî in between them.
+the mycelial mindset
+28
+In the realm of natural adaptability,
+fungi are in a league of their own. They
+can eat plastic, oil spills, and cigarette
+butts, and they thrive in environments
+as diverse as underwater realms,
+scorching heat, and even outer space.
+Remarkably, fungi have even been found
+fl ourishing in hostile environments such
+as fuel tanks and even radioactive zones
+like Chernobyl. Radiotrophic mushrooms
+have evolved the astonishing capability
+to use radioactivity as a power source!
+FUN-GAL FACTS
+MycoFi is the Economy of the Forest
+Hyphae are composed of long chains of individual cells, making them like tiny pipes
+routed all over the planet’s surface. These pipes are not just a communication network
+for the mycelium itself but are also essential for the redistribution of resources from
+decomposing matter to a host of other lifeforms where they provide life-sustaining
+nutrition. Mycelial networks have an uncanny ability to sense demand for particular
+resources across their many interconnections, and intelligently route the supply of
+nutrients to where they are needed most.
+29
+Blockchains are Coordinative Infrastructures
+Bitcoin has been referred to as a mycelial organism.5 Indeed, one of the core value
+propositions of blockchain technology is based on the use of distributed network
+architectures to serve as coordination
+substrates for new forms of organizing.
+This o! ers us a unique opportunity to
+rethink many of the power asymmetries
+we see in legacy systems, some of
+which were the inspiration for blockchain
+technology in the fi rst place. Every time
+technology has opened a path toward
+new coordinative infrastructures ≠ from
+the printing press to the telegraph, to
+the internet ≠ the world has experienced
+massive shifts in geopolitical structure. Distributed ledger technology holds the same
+potential for paradigmatic and socio≠ evolutionary shifts.6
+DAOs as Digital Fungi
+Mammals are more closely related to
+fungi than to any other kingdom of life.
+A key di! erence is that while mammals
+internalize digestion by putting food
+into their bodies, mycelia externalize
+it by putting their bodies into the food,
+breaking down and consuming the
+environment around them. Some of the
+nutrients are absorbed and transported
+throughout the mycelial network to
+other organisms, while other nutrients
+are left to enrich the soil, enabling
+new life to form and thrive. When a
+mushroom feasts, it is a communal
+banquet ≠ a public good for the whole ecology.
+In contrast to ì mammalianî private corporations that enclose resources and
+intellectual property within the ì boundaries of the fi rmî , decentralized autonomous
+organizations (DAOs) could be considered the mycelia of the digital world; they
+network amongst themselves and expand into emergent collaborations
+to build shared value through open≠ source tooling and an ethos of
+permissionless participation.
+myco≠mimicry in web3 Created by Floret
+from the Noun Project
+30
+imagining
+fungal
+futures
+Created by Floret
+from the Noun Project
+31
+Economic Resilience via Mesh Stability
+Imagine a future where community economies based on localized production are
+connected in a vibrant tapestry of interwoven currencies. While a single mycelial
+thread can be broken with ease, when woven together into a pluralistic mesh, they
+have vastly greater strength and collective stability. This network infrastructure
+of economic solidarity helps mitigate the community impacts of fi nancially-driven
+boom and bust cycles that are so common in the global economy. It also increases
+community resilience against other unpredictable shocks like pandemics or climate
+disasters, which are all the more likely in an age of geopolitical uncertainty.
+These interconnected economic networks reduce fi nancial risks for creatives and
+entrepreneurs, for example by giving them access to a! ordable credit from their
+community mutual credit systems. Re-localized supply chains prioritize the basic
+needs of the many over the luxuries of the few, with MycoFi economic mechanisms
+programmed to ensure that fi nance remains in service to the production of real value,
+rather than the other way around.
+32
+33
+34
+design pattern two
+Fractal Nature
+35
+A Universal Constant of Self≠ Similarity
+If we look across the universe, from the tiniest cells to the most massive stellar
+bodies, there is one pattern that remains constant ≠ fractals. We can see their
+unfolding symmetry in the designs of
+nature when we compare the branching
+of mycelial hyphae with the branching of
+neurons in the brain, or when we observe
+the unfurling pattern of fi ddlehead ferns or Romanesco broccofl ower. Fractals display
+self≠ similar shapes that can be seen when moving between scales. When you look
+closer and closer at a fractal, you see a replica of the whole within it.
+the mycelial mindset
+36
+Nature’s Automation Algorithms
+The elegance of nature’s designs is
+due to their fractal nature - an encoded
+pattern that produces emergent
+complexity through the repetition of a
+simple pattern. Design-wise, this enables
+a highly e& cient replication process that
+allows simple processes to unfold into
+emergent outcomes - nature’s ultimate
+automation algorithm. In the mycelial
+lifecycle, spores branch into hyphae,
+which themselves branch into networks
+of greater and greater interconnections
+- a process that results in not only
+a highly functioning coordinative
+infrastructure but a beautiful complexity
+that evolves of its own accord.7
+T R A N S C E N D I N G T H E
+I L L U S I ON OF S E PA R AT I ON
+The separation between the self and the collective may be a blurrier boundary than
+we once thought.8 After all, what is an individual but the culmination of smaller pieces
+working together as an intelligence greater than the sum of its parts? Are each of
+our voices not a chorus themselves, speaking for the collective interest of the billions
+of cells - human, bacterial, fungal - that comprise our “self” in the fi rst place?
+When we examine mycelial networks in nature, we see the same relational magic
+between the part and the whole at work. Is a thriving fungal ecosystem a plethora
+of genetic individuals fi tting specifi c niches and needs in a collective, or is it one
+entity connected through a nervous system of distributed mycelia? Can it be both?
+Mushrooms invite us to see beyond the divide between the individual and
+the collective, to become part of a symphony greater than ourselves.
+37
+Symbiogenesis as a Fractal Scaling Strategy
+Symbiogenesis speaks of a prehistoric merger wherein the earliest multicellular fungal organisms absorbed a single-celled bacteria into itself, o! ering
+protection in exchange for energy production. Over billions of years of
+specialization, this endosymbiotic merger resulted in the standard arrangement
+of most living things, whose cells are powered by internal mitochondria. This
+evolutionary upgrade revolutionized the capacity for cells to serve as stable
+building blocks for the emergence of higher orders of complexity over many
+scales - with cells composing into tissues, tissues into organs, and organs into
+lifeforms that even acquire a consciousness of their own. Symbiogenesis set
+into motion a chain of fractal evolution, starting from a single cell and resulting in
+the explosion of complex lifeforms on Earth.
+38
+Smart Contracts & Nested NFTs
+Some blockchain primitives like smart contracts and non≠ fungible tokens
+(NFTs) express similar properties to fungií s fractal potential. Smart contracts
+are encoded to be self≠ executing and permissionless network connectors,
+enabling more rapid and automated resource exchange. They can be
+deployed at di! erent layers in an ecosystem of institutional ecologies, and
+even at various scales ≠ within or between individuals, DAOs, or even DAOs
+of DAOs. The composable nature of these contracts can also support
+automating operational or repetitive tasks, allowing humans to focus on
+higher≠ order system governance. NFTs can be programmed to own or house
+other NFTs with rule sets that enable conditional triggers when certain criteria
+are met. These fractal assemblages can be applied to countless use cases,
+from tokenizing natural assets to establishing identity and reputation within
+and between digital communities.
+myco≠mimicry in web3 Created by Floret
+from the Noun Project
+39
+DAOs All the Way Down
+DAOs are another example of fractal possibility in Web3. The same institutional
+ecologies of governance and economic patterns deployed via smart contracts
+could be applied on many levels: to DAOs themselves, to workstreams within
+DAOs functioning as sub-DAOs, or even to groups of DAOs that coordinate as
+meta-DAOs. Nesting DAOs as functional sub-units allows for skill specialization
+among members and o! ers economies of scale in coordinating resources toward
+collective outcomes. The fractal nature of sub-DAOs can increase autonomy9
+among members to more e& ciently explore new areas of innovation and value
+fl ow, which feed back to the larger institutional ecology.
+40
+imagining
+ fungal
+ futures
+Created by Floret
+from the Noun Project
+41
+Endosymbiotic Finance
+Imagine a future where the economic power of an organization comes from
+its own internalized energy, rather than having to rely on outside sources of
+extractive fi nance. In the same way that cells absorbed the power-generating
+capabilities of mitochondria, MycoFi proposes endosymbiotic fi nance as the
+process by which organizations internalize the capacity to produce and store
+their own economic power, rather than having to submit to the high costs of
+external fi nance provided by banks. This capability for endogenous credit
+issuance enables organizations to have tighter feedback loops between their
+evolving needs for capital and their ability to issue vouchers backed by their
+own productive capacity. This process of organizational symbiogenesis will see
+DAOs and other myco-organizations continue to “absorb” the useful functions
+of fi nance, steadily reducing the power asymmetries that have allowed external
+fi nance to become the proverbial “tail that wags the dog” of the real economy.
+Endosymbiotic Finance
+Imagine a future where the economic power of an organization comes from
+its own internalized energy, rather than having to rely on outside sources of
+extractive fi nance. In the same way that cells absorbed the power-generating
+capabilities of mitochondria, MycoFi proposes endosymbiotic fi nance as the
+process by which organizations internalize the capacity to produce and store
+their own economic power, rather than having to submit to the high costs of
+external fi nance provided by banks. This capability for endogenous credit
+issuance enables organizations to have tighter feedback loops between their
+evolving needs for capital and their ability to issue vouchers backed by their
+own productive capacity. This process of organizational symbiogenesis will see
+DAOs and other myco-organizations continue to “absorb” the useful functions
+of fi nance, steadily reducing the power asymmetries that have allowed external
+fi nance to become the proverbial “tail that wags the dog” of the real economy.
+42
+43
+44
+design pattern three
+Emergent
+Coordination
+45
+Edge≠ based Intelligence
+The nature of fungal networks gives them an incredible capacity for adaptive
+sense and response to stimuli within their environment. This gives them a knack for
+emergent coordination
+in fi nding food or
+defending against
+disease ≠ even cancer.
+Rather than making
+decisions with a
+brain at the ì centerî
+of the organism
+and propagating
+coordination signals
+to the ì edgesî of
+the network ≠ as you
+might expect in a
+hierarchical organization
+≠ mushrooms show us
+how advantageous it can be to process information from the edges of the network,
+where new opportunities and threats
+are most likely to arise.
+Wisdom of the Crowd
+Hyphae are constantly exploring
+their environment without waiting for
+direction from some central authority.
+Every branch of a mycelial network is
+fully empowered to search for food
+in any direction, merging with other
+hyphae along the way. The resulting
+mesh then doubles down on e! ective
+pathways while pruning those less
+promising, leading to the emergent
+growth of a network that is intimately
+adapted to transporting resources
+through its environment.
+the mycelial mindset
+46
+Quadratic Funding
+The Gitcoin Grants13 platform leverages edge≠ based
+intelligence to distribute a large pool of matching funds
+via Quadratic Funding.14 The Grants protocol elicits the
+ì wisdom of the crowdî via individual donations to donorí s
+favorite projects, donations which are then quadratically
+matched from a central donor pool. With hundreds of
+thousands of ì sensorsî (donors), the Grants protocol not
+only takes in signals from the edges of the network to
+assess worthy projects, but it
+also quadratically amplifi es that signal with matching funds from sponsor
+organizations ≠ the broader the support, the bigger the match.
+The Grants platform has empowered emergent coordination around the creation
+of essential tooling and infrastructure on multiple blockchains and continues
+to expand its funding capacity by supporting grant rounds hosted by diverse
+communities and token ecosystems.
+Quorum Sensing and Collective Coherence
+Fungi have also been studied for their incredible capacity for ì quorum sensingî , a
+tactic for coordinating behavior using various biological and environmental cues.10
+Given their structure as a distributed network of cellular threads, determining where
+one individual begins and ends is no easy feat. Despite this lack of a decision≠ making
+ì centerî , mycelia are capable of collectively deciding upon and achieving goals with
+remarkable creativity and ingenuity. They have even demonstrated the ability to store
+memory, such as the geographic location of past food sources.11 Their capacity to
+store information improves their capability for emergent coordination.
+myco≠mimicry in web3
+Created by Floret
+from the Noun Project
+47
+T H E M O L DY P ROF E S S OR
+Slime molds, once classifi ed as fungi
+because of their similar characteristics,
+are so e! ective at decision-making
+that they have even been granted
+honorary positions at post-secondary
+institutions, where they have weighed
+in on the design and validation of rail
+networks and other policy decisions.12
+Neural Quorum Governance
+In collaborations between Stellar Development Foundation15
+and BlockScience16, Neural Quorum Governance (NQG)17 is
+proposed as a composable new method for balancing the
+specialized knowledge of experts while maintaining broad
+democratic input. NQG works like a delegated democratic
+system, but instead of only
+delegating to one representative,
+you can designate an anonymized
+“quorum” of members to vote collectively on your behalf.
+The quorum members can even be weighted in a “neuron”
+according to their expertise, past voting history, reputation,
+or other available parameters. This kind of tooling o! ers
+a richer democratic space for the network to source
+contextually appropriate knowledge and weigh it proportionally in policy decisions,
+resulting in better emergent decision-making on behalf of the organization.
+48
+imagining
+fungal
+futures
+Created by Floret
+from the Noun Project
+49
+Adaptive, Breathing Myco-Organizations
+Imagine a future where DAOs have evolved to become emergent mycoorganizations, capable of collectively adapting to changes in their environment
+through the real-time consensus of their constituents. Total Value Flowed has
+replaced Total Value Locked as a key metric of ecosystemic health. Their dynamic
+issuance18 token economies breathe with life, expanding and contracting in supply
+to accommodate the emergent demand for the real value they produce. This not
+only allows these myco-organizations to expand their capacity to fund emergent
+collaborations, but it also allows them to contract safely and predictably, unlike the
+zombifi ed institutions under late-stage capitalism that can only grow forever until
+they collapse unpredictably.
+50
+51
+52
+design pattern four
+Dynamic Flow
+53
+Natureís Greatest Arbitrageurs
+Contrary to the wealth≠ hoarding that is characteristic of fi at economies, mycelial
+economies are all about fl ow. All natural ecologies involve fl ows of resources from one
+form or location into another, whether they are streams of energy, water, nutrients, or
+biomass. Fungi induce many of these fl ows by acting as natureí s arbitrageurs, using
+their extensive networks of hyphal pipes as intelligent distribution infrastructure to
+move resources from where they are abundant to where they are in higher demand19 ≠
+a conductor of natureí s symphony of resources.
+Flows of the Forest
+Though it may appear still on the surface, a forest ecosystem is alive with fl ows.
+Fungi play a vital role in supporting the health of these ecosystems by continuously
+exchanging nutrients from the soil with sugars photosynthesized by trees and then
+distributing those resources throughout their many branches. Along with the fl ow of
+nutrients that can provide life≠ saving sustenance for neighboring trees or plants that
+are not able to produce for themselves, plants also pass messages and warnings
+between one another, increasing the collective immunity of the forest against threats
+and other environmental factors.20
+the mycelial mindset
+54
+CLIMATE CHAMP-IGNONS
+Mushrooms aren’t all fl ow - they are also one of the largest sources of carbon
+sequestration on the planet! Mushrooms assimilate carbon dioxide from the
+atmosphere into their hyphae, moving it deep below ground where they lock it
+into the soil. A recent study estimates that more than 13 billion metric tons of
+CO2 from terrestrial plants are passed on to underground mycelial networks
+each year, equivalent to about 36 percent of global fossil fuel emissions!21
+55
+Dynamic Issuance & Fund Streaming Protocols
+Like mycelial networks, some Web3 builders have realized
+the importance of the dynamic issuance and real≠ time
+circulation of resources in productive ecosystems.
+Protocols like Inverter Network22 and Radicle Drips23 o!er
+the capability to create programmable fl ows of resources
+within and between Web3≠ enabled
+organizations, like the polycentric
+circulatory systems of nutrients in
+an ecology.
+These could be used as fund streaming tools to
+pay DAO contributors based on outcomes, split
+royalties among creators, or support subscription
+memberships for open≠ source dependencies. Flow≠
+based networks o!er the capability to keep up with real≠ time demand for
+services, and dynamic issuance o!ers the adaptive capacity for a token
+economy to respond with a proportional shift in available supply to match.
+Conviction Voting
+Flowing resources is one thing, but fl owing the governance of those
+resources is a new realm of exploration
+recently opened up by blockchain
+technology. Conviction Voting24 (CV) is a
+dynamic governance primitive developed
+in collaboration between Commons
+Stack,25 BlockScience, 1Hive,26 and the
+Token Engineering
+Commons.27 It
+aggregates the real≠
+time preference signals of a group of individuals into
+a measure of collective ì convictionî towards group
+priorities, similar to the way neurons power up and
+fi re to form the distributed intelligence of the brain.
+CV can be used to rank community preferences,
+distribute funding, or even to dynamically weight the
+delegation of voting power in DAOs.
+myco≠mimicry in web3 Created by Floret
+from the Noun Project
+56
+imagining
+fungal
+futures
+Created by Floret
+from the Noun Project
+57
+Vote Streaming in Fluid Democracy
+Imagine a future where we could give regular input and feedback to our collective
+governance processes, and it had a direct and proportional impact on policy-making
+and resource allocation. Instead of voting once every four years, in a fl uid democracy,
+we vote in real-time on issues that are important to us - or we delegate our clout
+to people we trust, and then re-delegate if and when those people break our trust.
+Di! erent policies can pass at varying speeds and the rate of fl ow or “viscosity” of
+collective decision-making is now a tunable parameter. Unlocking the dynamic fl ow of
+governance over shared resources could level up our societal institutions to enable
+them to collectively adapt and address the myriad challenges they face.
+58
+59
+60
+design pattern five
+Mutual Reciprocity
+61
+The Relational Exchange of Fungal Finance
+Many traditions and indigenous ways of knowing have long recognized that all good
+things in nature are rooted in reciprocity and relationship. Ongoing research into
+mycelial relationships with trees and plants suggests that an evolutionary strategy of
+mutual reciprocity can build stronger, more trusting exchange partnerships.28
+Mycorrhizal Solidarity Networks
+One of the most mutually benefi cial fungi is the mycorrhizal variety, which
+interconnects with the underground rhizomes of plants. Mycorrhizal relationships
+are the epitome of solidarity networks in forest ecosystems, not only displaying
+reciprocity in the exchange of messages and warnings, but also in feeding stumps
+of trees that can no longer photosynthesize for themselves, allowing them to live on
+for decades. Mycelium acts like an extended nervous system of the forest, such that
+trees can even recognize and communicate with kin via their hyphal roots. These
+networks also enhance disease resistance in forest ecosystems and encourage
+collective adaptation to threats, increasing their overall systemic resilience.29
+Weaving Kingdoms into Partnership
+Myceliumí s web of mutual support with other organisms is pivotal in natural
+ecosystems. Roughly three≠ quarters of a plantí s roots are actually mycelial
+tendrils, greatly extending the reach and surface area of roots to absorb
+nutrients. Many trees have even evolved to leave space within their roots for the
+mycorrhizal hyphae to grow into ≠ a display of mutually benefi cial relationships
+between di! erent kingdoms of life.
+the mycelial mindset
+62
+Learning from Mycelial Market Makers
+Ongoing research shows that fungi have evolved methods to identify and eliminate
+free riders from their resource distribution networks and double down on mutually
+benefi cial trade partnerships. They also dynamically adjust their exchange rates for
+the resources they trade with trees, based on their relative scarcity in one location
+over another.30 These mycelial market makers are a fascinating glimpse of resource
+exchange in nature that could hold many important lessons for us.
+Indigenous Economics31 is a fi eld of economic study that explores the
+resource management practices, theories, and philosophies of indigenous
+peoples around the globe and throughout history. It builds on the communal
+values of multigenerational thinking, ecological sustainability, and our
+intricate connection with the environment. This approach recognizes the
+importance of maintaining the interconnection and relations between all
+living things - an economy beyond tokens of value and quantifi cation.
+AN HOMAGE TO INDIGENOUS ECONOMICS
+The Hiawatha Belt of the Haudenosaunee Nation - since fashioned into a flag -
+carries deep meaning and significance. The wampum belt also functioned as a ledger
+recording the founding of the Haudenosaunee Confederacy, when five warring
+nations buried their weapons of war to live in peace.32
+Given that animals branched o! from fungi in the evolutionary tree of life,
+mushrooms are one of our closest genetic ancestors, and thus also a part
+of our indigenous heritage. As with many other topics in this book, there
+is much more to explore on the deep wisdom of Indigenous Economics.
+Our intention in bringing this up here is to show gratitude and respect
+to indigenous peoples and elders for stewarding this wisdom.
+MycoFi sees Indigenous Economics and asks: how can we re-root
+economics in the health and wealth of our planet and all living beings?
+63
+Collaborative Finance (CoFi)
+CoFi33 is a relatively new meme in the Web3 space,
+but it is based on practices that have been around
+for decades. CoFi focuses on creating greater
+economic e& ciency by clearing debts within
+a network through a harmonious cycle where
+participantsí obligations cancel each other out
+without a single token changing hands. This kind
+of liquidity≠ saving mechanism paired with mutual
+credit clearing could save businesses as much as
+50 percent of their need for cash to settle those
+same debts, representing signifi cant savings in terms of operating costs,
+especially in high interest≠ rate environments.34
+Giveth GIVbacks
+The GIVeconomy aims to reward, empower, and encourage altruism and
+those who donate to causes on the Giveth platform.35 This hard≠ codes
+reciprocity into an on≠ chain economic model, much like the network strategies
+employed by our mycelial kin. The Giveth Galaxy
+builders have been iterating on a giving economy
+where those who donate to purpose≠ driven projects
+get $GIV tokens in exchange. Giveth participants
+can also stake their tokens for charity and earn in
+kind, creating an ecosystem of collective support,
+abundance, and pro≠ social value creation.
+myco≠mimicry in web3 Created by Floret
+from the Noun Project
+64
+imagining
+fungal
+futures
+Created by Floret
+from the Noun Project
+65
+Institutionalized Generosity Networks
+Imagine a future where mutual reciprocity can be encoded into the basic
+economic interaction patterns between us all. Where peer-to-peer mutual credit
+lines interconnect everyone on the planet, and generosity is institutionalized
+through networks of mutual aid and pay-it-forward universal basic income (UBI).
+In this age of material abundance, no one is left wanting food, water, or shelter
+due to a lack of access to an artifi cially scarce fi nancial unit. Networks of trust
+lines between us and our communities are public infrastructure that make access
+to money no di! erent than access to water or electricity - you just draw what you
+need from the network, and pay for what you use. Just like the mycelial solidarity
+network of the forest, in the MycoFi future, our economic systems ensure that
+everyone’s basic needs are met by default.
+66
+67
+68
+design pattern six
+P o l y c e n t r i c
+Pluralism
+69
+Diversity Breeds Resilience
+Fungal wisdom and evolutionary biology point to diversity and plurality as a key
+pattern for survival. The mycelial capacity for diversity is beautifully expressed in
+the jaw≠ dropping 20,000+ distinct genders some mushrooms have evolved for
+reproduction.36 Genetically unique fungi are densely interconnected with each other
+and innumerable plants, overlapping and melting into diverse polycentric collectives.
+They are also capable of impressive localized specialization, with cells being able to
+spin up unique alchemical capabilities such as defense centers that produce penicillin
+or other enzymes to battle hostile bacteria in the soil. This makes fungi one of the
+most resilient lifeforms on the planet.
+Myco≠ Economic Permaculture
+The mycorrhizal networksí display of
+economic permaculture holds up a useful
+mirror to compare with our anthropocentric
+fi at economies. State≠ enforced currency
+monocultures crowd out other forms of peer≠
+to≠ peer exchange and impose a system of
+artifi cial scarcity, which leads to a situation
+where the private fi nancial system can extract
+heavy tolls from our inability to transact
+with each other. In reality, it is the invisible
+economy, rooted in diversity, generosity,
+and abundance ≠ the networks of mutual
+aid, obligations, IOUs, credits, favors, and the largely invisible labor of caregivers
+(predominantly women37) ≠ that truly makes the world go round.
+Supporting Diverse, Thriving Ecosystems
+Forest ecologies contain overlapping layers of interdependent processes carried
+out by innumerable di! erent species of plants and animals ≠ the very defi nition of
+polycentrism. Underlying every thriving ecosystem are the mycorrhizal networks
+≠ luckily, mushrooms never put all of their resources in one hyphal basket. The
+fungi kingdomí s ability to express and exchange di! erent forms of value ensures
+the dynamic cyclicality of resources being distributed as needed through these
+ecosystems. True champions of pluralism and diversity, they remind us to maintain
+heterogeneity and expressivity in our systems ≠ not just to survive, but to fl ourish!
+the mycelial mindset
+70
+NATURE ’S MOST PROLIFIC AIRDROP
+Many mushrooms reproduce using spores, tiny packets of genetic
+information that fl oat through the air like nature’s everlasting airdrop.
+Spores can be launched into the air with the same force as rocketships,
+where they ride the winds to great heights and even play a crucial role
+in cloud formation, a! ecting weather and rainfall patterns worldwide.38
+71
+Radical xChangeís Plural Voting
+Pluralism has been a rallying cry among the Radical xChange39 community, where
+Plural Voting40 (also called Quadratic Voting, or QV) was recently popularized. QV
+is a voting method that allows voters to express the intensity of their preferences
+in collective decisions, which can greatly mitigate tyranny≠ of≠ the≠ majority and
+factional control problems in traditional voting systems. Plural Voting o! ers an
+important step into alternative voting systems that could increase the plurality of
+decision≠ making in society.
+Community Currencies & Asset Vouchers
+Economic pluralism is on full display in the innovative work of Grassroots
+Economics41 and Circles Coop42. Grassroots Economics is a non≠ profi t foundation
+working with marginalized communities on Community Asset Vouchers (CAVs).
+CAVs allow communities to issue vouchers backed by their own production,
+and to use those to enable greater exchange of goods and services in the local
+economy. Similarly, Circles UBI allows communities to issue credit amongst each
+other, in order to enable exchange in the absence of fi at currency. These systems
+enable communities to incubate locally≠ led projects and businesses with reduced
+dependency on scarce national currency and greater resilience against market
+volatility, innovating on decades of work in complementary currency systems.
+myco≠mimicry in web3 Created by Floret
+from the Noun Project
+72
+imagining
+fungal
+futures
+Created by Floret
+from the Noun Project
+73
+Collective Flourishing by Expanding Expressivity
+Imagine a future where local currencies, as multidimensional expressions of value,
+can be braided together in synergistic meta-economies. A multitude of locallycentered yet globally connected ecosystems, whose members transact in sovereign
+economic solidarity. These currencies are designed to align value with values, such
+that the culmination of economic interactions manifests the outcomes we want to
+see in the world. Diverse forms of value are expressed through a plurality of options
+for exchange, breaking through the imposed scarcity of economic monoculture like
+mushrooms fruiting through asphalt. MycoFi shows us how we might deconstruct the
+constraints of the past, and embrace the permaculture economic future.
+74
+J o i n t h e
+Mycelial Revolution
+75
+Composting Capitalism
+Some say mushrooms are “having a moment”, with interest growing in fungi due to
+the advances they o! er in life-saving medicines, bioremediation, materials sciences,
+permaculture design, and so much more.44 But that’s only the tip of the toadstool! The
+reality is that mushrooms are facilitating a movement, one that is capable of changing
+the face of entire planets - a continuous revolution they have been instigating since
+the dawn of multicellular life on Earth. MycoFi o! ers us the opportunity to leverage
+fungi’s transformative power to compost the decaying monolith that is late-stage
+capitalism, decomposing what no longer serves us and transmuting it into new life.45
+A Blueprint for Healthier Economics
+In these mycelial design patterns, we fi nd not just a blueprint for healthier economics,
+but a call to join in the dance of evolution; to a melody played on the strings of
+the universe itself. Rather than “exiting” our legacy systems and increasing our
+segregation and isolation, MycoFi suggests that we root deeper into our communities
+to fi nd reconnection and common cause in a mutually abundant future. Much like
+the mushrooms that appear after forest fi res to rehabilitate torched landscapes,
+MycoFi shows us how we might come together to heal the economic trauma that has
+been visited upon our damaged societal ecosystems. Mushrooms invite us to chart
+new paths around the limitations of monoculture currencies, inspiring us to dream in
+altered states of monetary consciousness.46
+76
+Underground Networking Strategy
+The fungal strategy is so successful in part because fungi tunnel underground,
+gathering strength and sharing resources safely out of sight of predators. When
+the time is right, mushrooms perform another of their impressive miracles.
+Leveraging hydraulic force and producing powerful digestive enzymes on the
+tip of the fruiting bodies, mushrooms can push forward with surprising speed
+through seemingly insurmountable barriers, even fruiting straight through
+asphalt in a single night. There is a Potawatomi word for the force with which
+mushrooms exert when they fruit: Puhpowee!47
+The Puhpowee is Yours!
+Now it’s your turn. As our mycelial exploration draws to a close, we hope the
+ideas expressed in this book stick with you like spores of inspiration. Perhaps
+some of those spores will take root, branch into hyphal tendrils of curiosity, and
+even mushroom into some form of creative expression, spreading spores of their
+own through the stories you tell, the actions you take, or the tools you #buidl.
+Each of us has a part to play in our collective future, and mushrooms show us
+that together, we have great strength to a! ect change.
+77
+Root into your body, and feel the coherence of the billions
+of microscopic organisms that comprise you. Root into your
+community, and dream of new ways we can merge our voices
+in collective wisdom. Root into the land, and tread lightly on this
+precious planet, for she is our great mother and our only home.
+78
+Let’s Get Rooted, Mycopunk
+Solarpunk? Lunarpunk? Meet Mycopunk! This liminal aesthetic dissolves
+and integrates dualism and dichotomy into its pluralist mesh, welcoming
+regenerative radicals and changemakers of all stripes. If taking part in
+the mycelial revolution sounds like your vibe, consider this: one does not
+simply become a Mycopunk. One can only come to realize one was a
+Mycopunk all along.
+linktr.ee/MycoFi
+Join the community and contribute your two spores:
+79
+80
+81
+Gratitude & Acknowledgments
+This book would not have been possible without the spread of ideas
+through a vibrant and interconnected network of changemakers and
+research colleagues who are too numerous to name, but who have all left
+their mark on the words in this book.
+A special thank you for edits contributed by Scott Morris, Exeunt, Tamara
+Helenius, OpenTony, Matthew Slater, Cart Reed, and Tineasha Emmett.
+We are also grateful to the Crypto Commons and CoFi communities for
+the generative spaces they hold that inspire so much creativity.
+We extend our deepest gratitude to the researchers and authors like
+Paul Stamets, Suzanne Simard, and Merlin Sheldrake who motivated
+the authors’ journeys into the fi eld of mycology. Also for the unending
+inspiration from Michael Zargham and the multidisciplinary team at
+BlockScience, whose research continually explores the edges of the
+known. We would also like to thank all of the projects that were mentioned
+in this book, including all those we didn’t have space to name! There is
+so much more that could be said about each of these projects and the
+ecosystems they are evolving in. We’ve included links in the appendix
+below so you can continue on deeper explorations.
+Thanks to the Lichenpunks for eroding the solid rock of the status quo
+into fertile soil for imaginative exploration, and to the Mycopunks who
+emerged to manifest a world of fungal solutions to the challenges of
+the Anthropocene. And of course, to the mushrooms…without whose
+regenerative wisdom we might not even exist!
+82
+APPENDIX
+References to sources cited within the text of this book can be
+found below. A digital version of these references can also be
+found at bit.ly/mycofi-appendix, or via this QR code:
+1. Mycelium Running, Paul Stamets: https://fungi.com/products/mycelium-running
+2. Entangled Life, Merlin Sheldrake: https://www.merlinsheldrake.com/entangled-life
+3. From Monoculture to Permaculture Currencies: A Glimpse of the Myco-Economic Future, Je! Emmett:
+https://allthingsdecent.substack.com/p/mycoeconomics-and-permaculture-currencies
+4. Toward an Ecological Monetary Theory, Joe Ament: https://www.mdpi.com/2071-1050/11/3/923
+5. Bitcoin is a Decentralized Organism (Mycelium), Brandon Quittem: https://medium.com/@
+BrandonQuittem/bitcoin-is-a-decentralized-organism-mycelium-part-1-3-6ec58cdcfaa6
+6. The Dawn of the Regenaissance, Jessica Zartler: https://jessicazartler.medium.
+com/the-dawn-of-the-regenaissance-a3be40da5331
+7. Hyphal and Mycelial consciousness: the Concept of the Fungal Mind, Nicholas
+P. Money: https://pubmed.ncbi.nlm.nih.gov/33766303/
+8. The Computational Boundary of a “Self”: Developmental Bioelectricity Drives Multicellularity and ScaleFree Cognition, Michael Levin: https://www.frontiersin.org/articles/10.3389/fpsyg.2019.02688/full
+9. Disambiguating Autonomy: Ceding Control in Favor of Coordination, Michael
+Zargham et al: https://blog.block.science/disambiguating-autonomy/
+10. Quorum Sensing: its Role in Microbial Social Networking, Angkita Sharma et al: https://
+www.sciencedirect.com/science/article/pii/S0923250820300577
+11. Physarum on the faculty: https://www.hampshire.edu/academics/faculty/physarum-mold
+12. Ecological Memory and Relocation Decisions in Fungal Mycelial Networks, Yu
+Fukasawa, et al: https://www.nature.com/articles/s41396-019-0536-3
+13. Gitcoin Grants: https://grants.gitcoin.co/
+14. Quadratic Funding: https://www.wtfisqf.com/
+15. Stellar Development Foundation: https://stellar.org/foundation
+16. BlockScience: https://block.science/
+17. Introducing Neural Quorum Governance, Danilo Bernardineli and Jakob Hackel:
+https://blog.block.science/introducing-neural-quorum-governance/
+18. Exploring Bonding Curves: Di!erentiating Primary and Secondary Automated Market Makers, Je! Emmett et al: https://
+mirror.xyz/0x8fF6Fe58b468B1F18d2C54e2B0870b4e847C730d/1Pxl_fbIPifIQ4_y0xoJGZGEk70qfOM3Gi9nWycm-8k
+19. Mycorrhizal Markets, Firms, and Co-Ops, Ronald Noë and E. Toby Kiers: https://tobykiers.com/
+wp-content/uploads/2018/10/Noe%CC%88-Kiers-2018-Mycorrhizal-markets-TREE.pdf
+20. Mycorrhizal Mycelium as a Global Carbon Pool, Heidi-Jayne Hawkins: https://pubmed.ncbi.nlm.nih.gov/37279689/
+21. Fantastic Fungi, Paul Stamets et al: https://fungi.com/products/fantastic-fungi
+22. Inverter Network: https://www.inverter.network/
+23. Drips Network: https://www.drips.network/
+24. Conviction Voting: A Novel Continuous Decision Making Alternative to Governance, Je! Emmett: https://blog.
+giveth.io/conviction-voting-a-novel-continuous-decision-making-alternative-to-governance-aa746cfb9475
+25. Commons Stack: https://www.commonsstack.org/
+83
+26. 1Hive: https://1hive.org/
+27. Token Engineering Commons: https://tecommons.org/
+28. Reciprocal Rewards Stabilize Cooperation in the Mycorrhizal Symbiosis, E.
+Toby Kiers et al: https://pubmed.ncbi.nlm.nih.gov/21836016/
+29. Finding the Mother Tree, Suzanne Simard: https://suzannesimard.com/finding-the-mother-tree-book/
+30. Mycorrhizal Fungi Respond to Resource Inequality by Moving Phosphorus from Rich to Poor Patches Across Networks,
+Matthew D. Whiteside et al: https://tobykiers.com/wp-content/uploads/2019/06/Current-Biology-Whiteside-2019.pdf
+31. Indigenomics Institute: https://indigenomicsinstitute.com/
+32. A brief history of the Hiawatha Belt by the Onondaga Nation https://www.
+onondaganation.org/culture/wampum/hiawatha-belt/
+33. Collaborative Finance: https://cofi.informal.systems/about
+34. Liquidity-Saving through Obligation-Clearing and Mutual Credit: An E!ective Monetary Innovation for
+SMEs in Times of Crisis, Tomaž Fleischman et al: https://www.mdpi.com/1911-8074/13/12/295
+35. Giveth Galaxy: https://giveth.io/
+36. What a Mushroom Lives For: Matsutake and the Worlds They Make, Michael Hathaway:
+https://www.michaeljhathaway.net/what-a-mushroom-lives-for
+37. If Women Counted: A New Feminist Economics, Marilyn Waring: https://www.
+marilynwaring.com/publications/if-women-counted.asp
+38. Mushrooms as Rainmakers: How Spores Act as Nuclei for Raindrops, Maribeth O.
+Hassett et al: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4624964/
+39. Radical xChange: https://www.radicalxchange.org/
+40. Plural Voting: https://www.radicalxchange.org/concepts/plural-voting/
+41. Grassroots Economics https://www.grassrootseconomics.org/
+42. Circles Coop: https://joincircles.net/
+43. Community Asset Vouchers https://www.grassrootseconomics.org/pages/how-it-works
+44. In Search of Mycotopia, Doug Bierend: https://www.chelseagreen.com/product/in-search-of-mycotopia-paperback/
+45. The Mushroom at the End of the World, Anna Lowenhaupt-Tsing: https://press.princeton.
+edu/books/paperback/9780691220550/the-mushroom-at-the-end-of-the-world
+46. Altered States of Monetary Consciousness, Brett Scott: https://alteredstatesof.money/
+47. Braiding Sweetgrass, Robin Wall Kimmerer: https://www.robinwallkimmerer.com/books
+
+
+
+
