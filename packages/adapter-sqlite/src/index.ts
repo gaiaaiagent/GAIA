@@ -765,7 +765,7 @@ export class SqliteDatabaseAdapter
         limit?: number;
         query?: string;
     }): Promise<RAGKnowledgeItem[]> {
-        let sql = `SELECT * FROM knowledge WHERE (agentId = ? OR isShared = 1)`;
+        let sql = `SELECT * FROM knowledge WHERE (isMain = 0) AND (agentId = ? OR isShared = 1)`;
         const queryParams: any[] = [params.agentId];
 
         if (params.id) {
