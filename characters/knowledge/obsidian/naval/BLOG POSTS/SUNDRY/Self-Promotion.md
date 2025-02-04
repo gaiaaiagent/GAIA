@@ -1,0 +1,3 @@
+BusinessWeek [includes me](http://images.businessweek.com/ss/10/02/0225_angel_investors/23.htm) on a “Smart Money” [list](http://bwnt.businessweek.com/interactive_reports/future_of_tech_2010/). Thanks guys!
+
+[![](https://i1.wp.com/nav.al/wp-content/uploads/2010/02/screen-shot-2010-02-26-at-5-22-04-pm.png?resize=448%2C672 "Screen shot 2010-02-26 at 5.22.04 PM")](http://images.businessweek.com/ss/10/02/0225_angel_investors/23.htm)

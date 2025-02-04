@@ -1,0 +1,3 @@
+![43F05E0F-CA33-41CA-95F2-E8895F4A5881.jpg](https://i0.wp.com/nav.al/wp-content/uploads/2009/10/43f05e0f-ca33-41ca-95f2-e8895f4a5881.jpg?resize=500%2C128)
+
+At STIRR events, VCs fly business class, but entrepreneurs fly coach ![🙂](https://s.w.org/images/core/emoji/13.1.0/svg/1f642.svg) I have a similar rule – whenever I go to coffee / lunch / dinner for business, the person who has raised more money pays…

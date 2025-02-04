@@ -1,0 +1,1 @@
+“The foundation of cooperation is not really trust, but the durability of the relationship.” – Robert Axelrod
