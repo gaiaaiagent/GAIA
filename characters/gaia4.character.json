@@ -3,7 +3,7 @@
   "username": "Gaia",
   "plugins": ["@elizaos/plugin-web-search", "@elizaos/plugin-echochambers"],
   "clients": [],
-  "modelProvider": "anthropic",
+  "modelProvider": "openai",
   "settings": {
     "secrets": {
     },
