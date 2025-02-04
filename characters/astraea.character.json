@@ -1,6 +1,6 @@
 {
   "name": "Astraea",
-  "plugins": ["webSearchPlugin"],
+  "plugins": ["webSearchPlugin", "@elizaos/plugin-echochambers"],
   "clients": ["discord"],
   "modelProvider": "grok",
   "settings": {

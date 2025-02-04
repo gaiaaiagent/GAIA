@@ -1,6 +1,6 @@
 {
   "name": "Gaia4",
-  "plugins": ["webSearchPlugin", "@elizaos/ecochambers"],
+  "plugins": ["webSearchPlugin", "@elizaos/plugin-echochambers"],
   "clients": ["discord"],
   "modelProvider": "anthropic",
   "settings": {

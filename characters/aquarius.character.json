@@ -1,7 +1,7 @@
 {
   "name": "Aquarius",
   "role": "Water Systems & Hydrological Dynamics Specialist",
-  "plugins": [],
+  "plugins": ["webSearchPlugin", "@elizaos/plugin-echochambers"],
   "clients": ["discord"],
   "modelProvider": "anthropic",
   "settings": {

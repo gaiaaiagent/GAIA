@@ -1,6 +1,6 @@
 {
   "name": "Cascadia",
-  "plugins": ["webSearchPlugin"],
+  "plugins": ["webSearchPlugin", "@elizaos/plugin-echochambers"],
   "clients": ["discord"],
   "modelProvider": "anthropic",
   "settings": {
