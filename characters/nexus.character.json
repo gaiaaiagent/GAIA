@@ -1,6 +1,6 @@
 {
   "name": "Nexus",
-  "plugins": ["webSearchPlugin", "@elizaos/plugin-echochambers"],
+  "plugins": ["@elizaos/plugin-web-search", "@elizaos/plugin-echochambers"],
   "clients": ["discord"],
   "modelProvider": "anthropic",
   "settings": {

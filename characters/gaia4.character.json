@@ -1,7 +1,8 @@
 {
   "name": "Gaia4",
-  "plugins": ["webSearchPlugin", "@elizaos/plugin-echochambers"],
-  "clients": ["discord"],
+  "username": "Gaia",
+  "plugins": ["@elizaos/plugin-web-search", "@elizaos/plugin-echochambers"],
+  "clients": [],
   "modelProvider": "anthropic",
   "settings": {
     "secrets": {
@@ -866,7 +867,27 @@
             "shared": true
         },
         {
+            "path": "gaia/gaia_irl.md",
+            "shared": true
+        },
+        {
             "path": "agent/papers/eliza_paper.txt",
+            "shared": true
+        },
+        {
+            "path": "agent/blogs/contextual_retrieval.txt",
+            "shared": true
+        },
+        {
+            "path": "agent/papers/godel_agent_paper.txt",
+            "shared": true
+        },
+        {
+            "path": "agent/papers/cocoa_paper.txt",
+            "shared": true
+        },
+        {
+            "path": "agent/papers/deepseekr1_paper.txt",
             "shared": true
         },
         {
@@ -895,6 +916,10 @@
         },
         {
             "path": "podcasts/bankless_sotn.md",
+            "shared": false
+        },
+        {
+            "path": "books/biofi.txt",
             "shared": false
         },
         {

@@ -1,6 +1,6 @@
 {
   "name": "Genesis",
-  "plugins": ["webSearchPlugin", "@elizaos/plugin-echochambers"],
+  "plugins": ["@elizaos/plugin-web-search", "@elizaos/plugin-echochambers"],
   "clients": ["discord"],
   "modelProvider": "anthropic",
   "settings": {
@@ -111,19 +111,19 @@
     },
     {
         "path": "agent/blogs/contextual_retrieval.txt",
-        "shared": false
+        "shared": true
     },
     {
         "path": "agent/papers/godel_agent_paper.txt",
-        "shared": false
+        "shared": true
     },
     {
         "path": "agent/papers/cocoa_paper.txt",
-        "shared": false
+        "shared": true
     },
     {
         "path": "agent/papers/deepseekr1_paper.txt",
-        "shared": false
+        "shared": true
     },
     {
         "path": "gaia/code/gaia_code_agent.md",
