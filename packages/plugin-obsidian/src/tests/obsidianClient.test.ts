@@ -190,14 +190,66 @@ describe('ObsidianProvider', () => {
 
         describe('listDirectoryFiles', () => {
             it('should return files in directory', async () => {
-                const mockFiles = { files: ['dir/file1.md', 'dir/file2.md'] };
+                // Mock response with files array
+                const mockResponse = {
+                    files: ['file1.md', 'file2.md']
+                };
                 fetchMock.mockResolvedValueOnce({
                     ok: true,
-                    json: () => Promise.resolve(mockFiles)
+                    json: () => Promise.resolve(mockResponse)
                 });
 
                 const files = await obsidianProvider.listDirectoryFiles('dir');
-                expect(files).toEqual(mockFiles.files);
+                expect(files).toEqual(['dir/file1.md', 'dir/file2.md']);
+            });
+
+            it('should handle root directory correctly', async () => {
+                const mockResponse = {
+                    files: ['file1.md', 'file2.md']
+                };
+                fetchMock.mockResolvedValueOnce({
+                    ok: true,
+                    json: () => Promise.resolve(mockResponse)
+                });
+
+                const files = await obsidianProvider.listDirectoryFiles('');
+                expect(files).toEqual(['file1.md', 'file2.md']);
+            });
+
+            it('should preserve existing full paths', async () => {
+                const mockResponse = {
+                    files: ['dir/file1.md', 'dir/file2.md']
+                };
+                fetchMock.mockResolvedValueOnce({
+                    ok: true,
+                    json: () => Promise.resolve(mockResponse)
+                });
+
+                const files = await obsidianProvider.listDirectoryFiles('dir');
+                expect(files).toEqual(['dir/file1.md', 'dir/file2.md']);
+            });
+
+            it('should handle nested directories correctly', async () => {
+                const mockResponse = {
+                    files: ['file1.md', 'file2.md']
+                };
+                fetchMock.mockResolvedValueOnce({
+                    ok: true,
+                    json: () => Promise.resolve(mockResponse)
+                });
+
+                const files = await obsidianProvider.listDirectoryFiles('dir/subdir');
+                expect(files).toEqual(['dir/subdir/file1.md', 'dir/subdir/file2.md']);
+            });
+
+            it('should handle directory not found', async () => {
+                fetchMock.mockResolvedValueOnce({
+                    ok: true,
+                    json: () => Promise.resolve({ content: '# Test Content' })
+                });
+
+                await expect(obsidianProvider.listDirectoryFiles('nonexistent'))
+                    .rejects.toThrow("Directory 'nonexistent' not found");
             });
         });
 
@@ -206,7 +258,7 @@ describe('ObsidianProvider', () => {
                 const mockContent = '# Test Content';
                 fetchMock.mockResolvedValueOnce({
                     ok: true,
-                    text: () => Promise.resolve(mockContent)
+                    text: () => Promise.resolve(mockContent) // Use text() if the response is plain text
                 });
 
                 const content = await obsidianProvider.readFile('test.md');

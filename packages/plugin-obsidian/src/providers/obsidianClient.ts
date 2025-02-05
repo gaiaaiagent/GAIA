@@ -246,16 +246,16 @@ export class ObsidianProvider {
      * @param directoryPath - The path to the directory within the vault.
      * @returns A promise that resolves to an array of file paths.
      */
+// In ObsidianProvider class
     async listDirectoryFiles(directoryPath: string): Promise<string[]> {
         if (!this.connected) {
             await this.connect();
         }
 
-        if (directoryPath.match(/\/$/)) {
-            directoryPath = `${directoryPath.replace(/\/$/, "")}`;
-        }
-
         try {
+            // Clean up directory path - remove leading and trailing slashes
+            directoryPath = directoryPath.replace(/^\/+|\/+$/g, '');
+
             const response = await fetch(
                 `${this.host_url}/vault/${encodeURIComponent(directoryPath)}/`,
                 {
@@ -267,17 +267,30 @@ export class ObsidianProvider {
             );
 
             if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error(`Directory '${directoryPath}' not found`);
+                }
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const vaultDirectory: Record<string, string[]> = await response.json();
-            return vaultDirectory.files as string[];
+            const files = vaultDirectory.files || [];
+
+            // If no files are found, throw an error
+            if (files.length === 0) {
+                throw new Error(`Directory '${directoryPath}' not found`);
+            }
+
+            // Rest of the existing code remains the same...
+            return files.map(file => file.includes('/')
+                ? file // File already has a path
+                : directoryPath ? `${directoryPath}/${file}` : file
+            );
         } catch (error) {
             elizaLogger.error("Failed to list directory contents:", error.message);
             throw error;
         }
     }
-
     /**
      * Retrieves the content of a specific file from the vault.
      * @param path - The path to the file within the vault.
@@ -289,29 +302,24 @@ export class ObsidianProvider {
         }
 
         try {
-            const response = await fetch(
-                `${this.host_url}/vault/${encodeURIComponent(path)}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${this.token}`,
-                        accept: "text/markdown",
-                        "Content-Type": "text/markdown",
-                    },
-                }
-            );
+            const response = await fetch(`${this.host_url}/vault/${encodeURIComponent(path)}`, {
+                headers: {
+                    Authorization: `Bearer ${this.token}`,
+                    accept: "text/plain", // Adjust the accept header if necessary
+                },
+            });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const content: string = await response.text();
+            const content = await response.text(); // Use text() instead of json()
             return content;
         } catch (error) {
-            elizaLogger.error("Failed to read file content:", error.message);
+            elizaLogger.error(`Failed to read file content for ${path}:`, error.message);
             throw error;
         }
     }
-
 
     /**
      * Opens a file in Obsidian by its path.
@@ -401,25 +409,42 @@ export class ObsidianProvider {
         if (!this.connected) {
             await this.connect();
         }
-
         try {
-            const response = await fetch(
-                `${this.host_url}/vault/${encodeURIComponent(path)}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        Authorization: `Bearer ${this.token}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ content, line: lineNumber }),
-                }
-            );
+            // Ensure path is properly formatted
+            const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
 
+            const requestUrl = `${this.host_url}/vault/${encodeURIComponent(normalizedPath)}`;
+
+            const headers = {
+                Authorization: `Bearer ${this.token}`,
+                "Content-Type": "text/markdown", // Changed from application/json
+                "Operation": "replace",
+                "Target-Type": "heading",
+                "Target": "0",
+            };
+
+            const response = await fetch(requestUrl, {
+                method: "PATCH",
+                headers: headers,
+                body: content // Send content directly as a string
+            });
+
+            // Log response details for debugging
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                elizaLogger.error("Patch File Response Error:", {
+                    status: response.status,
+                    statusText: response.statusText,
+                    errorText
+                });
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
             }
         } catch (error) {
-            elizaLogger.error("Failed to patch file content:", error.message);
+            elizaLogger.error("Failed to patch file content:", {
+                errorMessage: error.message,
+                path,
+                contentLength: content.length
+            });
             throw error;
         }
     }
