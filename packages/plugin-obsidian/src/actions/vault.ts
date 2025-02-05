@@ -1,3 +1,4 @@
+// src/actions/vault.ts
 import {
     type Action,
     type HandlerCallback,
@@ -6,7 +7,12 @@ import {
     type State,
     elizaLogger,
 } from "@elizaos/core";
-import { getObsidian }  from "../helper";
+import { getObsidian } from "../helper";
+
+interface DirectoryStructure {
+    files: string[];
+    directories: { [key: string]: DirectoryStructure };
+}
 
 export const listAllFilesAction: Action = {
     name: "LIST_ALL",
@@ -49,37 +55,26 @@ export const listAllFilesAction: Action = {
 
         try {
             elizaLogger.info("Fetching list of all files from vault");
-
-            const files: string[] = await obsidian.listFiles();
+            const files: string[] = await obsidian.getAllFiles();
             elizaLogger.info(`Successfully retrieved ${files.length} files`);
 
-            // Group files by directory for better organization
-            const filesByDirectory: { [key: string]: string[] } = {};
+            // Build directory tree structure
+            const directoryTree = buildDirectoryTree(files);
 
-            for (const file of files) {
-                const directory = file.split('/').slice(0, -1).join('/') || '/';
-                if (!filesByDirectory[directory]) {
-                    filesByDirectory[directory] = [];
-                }
-                filesByDirectory[directory].push(file.split('/').pop() || file);
-            }
+            // Format the directory tree for display
+            const formattedTree = formatDirectoryTree(directoryTree);
 
-
-            // Format the files list into a readable tree structure
-            const formattedFiles = files.length > 0
-                ? Object.entries(filesByDirectory)
-                    .map(([directory, files]) =>
-                        `${directory === '/' ? 'Root' : directory}:\n${files.map(file => `  - ${file}`).join('\n')}`)
-                    .join('\n\n')
-                : "No files found in the vault";
+            // Get file statistics
+            const stats = getFileStatistics(files);
 
             if (callback) {
                 callback({
-                    text: `Found ${files.length} files in the vault:\n\n${formattedFiles}`,
+                    text: `Found ${files.length} files in the vault:\n\n${formattedTree}\n\n${formatStatistics(stats)}`,
                     metadata: {
                         count: files.length,
                         files: files,
-                        filesByDirectory: filesByDirectory,
+                        directoryTree: directoryTree,
+                        statistics: stats
                     },
                 });
             }
@@ -128,3 +123,95 @@ export const listAllFilesAction: Action = {
         ],
     ],
 };
+
+function buildDirectoryTree(files: string[]): DirectoryStructure {
+    const root: DirectoryStructure = { files: [], directories: {} };
+
+    for (const filePath of files) {
+        const parts = filePath.split('/');
+        const fileName = parts.pop() || '';
+        let currentLevel = root;
+
+        // Build directory structure
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            if (!part) continue;
+
+            if (!currentLevel.directories[part]) {
+                currentLevel.directories[part] = { files: [], directories: {} };
+            }
+            currentLevel = currentLevel.directories[part];
+        }
+
+        // Add file to current directory level
+        currentLevel.files.push(fileName);
+    }
+
+    return root;
+}
+
+function formatDirectoryTree(tree: DirectoryStructure, prefix = '', level = 0): string {
+    let output = '';
+    const indent = '  '.repeat(level);
+
+    // Add files at current level
+    for (const file of tree.files.sort()) {
+        output += `${indent}📄 ${file}\n`;
+    }
+
+    // Recursively add subdirectories
+    for (const [dirName, subTree] of Object.entries(tree.directories).sort()) {
+        output += `${indent}📁 ${dirName}/\n`;
+        output += formatDirectoryTree(subTree, prefix + dirName + '/', level + 1);
+    }
+
+    return output;
+}
+
+interface FileStatistics {
+    totalFiles: number;
+    byExtension: { [key: string]: number };
+    maxDepth: number;
+    topDirectories: { [key: string]: number };
+}
+
+function getFileStatistics(files: string[]): FileStatistics {
+    const stats: FileStatistics = {
+        totalFiles: files.length,
+        byExtension: {},
+        maxDepth: 0,
+        topDirectories: {}
+    };
+
+    for (const file of files) {
+        // Count files by extension
+        const ext = file.split('.').pop() || 'no-extension';
+        stats.byExtension[ext] = (stats.byExtension[ext] || 0) + 1;
+
+        // Calculate max directory depth
+        const depth = file.split('/').length - 1;
+        stats.maxDepth = Math.max(stats.maxDepth, depth);
+
+        // Count files per top-level directory
+        const topDir = file.split('/')[0] || 'root';
+        stats.topDirectories[topDir] = (stats.topDirectories[topDir] || 0) + 1;
+    }
+
+    return stats;
+}
+
+function formatStatistics(stats: FileStatistics): string {
+    return `📊 Vault Statistics:
+• Total Files: ${stats.totalFiles}
+• Maximum Directory Depth: ${stats.maxDepth}
+• Files by Extension:${Object.entries(stats.byExtension)
+        .sort(([, a], [, b]) => b - a)
+        .map(([ext, count]) => `\n  - ${ext}: ${count}`)
+        .join('')}
+• Top-level Directories:${Object.entries(stats.topDirectories)
+        .sort(([, a], [, b]) => b - a)
+        .map(([dir, count]) => `\n  - ${dir}: ${count} files`)
+        .join('')}`;
+}
+
+export default listAllFilesAction;
