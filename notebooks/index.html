@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <style>
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            d3.json("data.json").then((data) => {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                const svg = d3
+                    .create("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("viewBox", [0, 0, width, height]);
+
+                const zoom = d3
+                    .zoom()
+                    .scaleExtent([0.1, 10])
+                    .on("zoom", zoomed);
+
+                const g = svg.append("g");
+                svg.call(zoom);
+
+                function zoomed(event) {
+                    g.attr("transform", event.transform);
+                }
+
+                const simulation = d3
+                    .forceSimulation(data.nodes)
+                    .force(
+                        "link",
+                        d3
+                            .forceLink(data.links)
+                            .id((d) => d.id)
+                            .distance(20)
+                    )
+                    .force("charge", d3.forceManyBody().strength(-30))
+                    .force("center", d3.forceCenter(width / 2, height / 2));
+
+                const colorScale = d3
+                    .scaleOrdinal()
+                    .domain([
+                        "agent",
+                        "account",
+                        "room",
+                        "memory_fact",
+                        "memory_message",
+                    ])
+                    .range([
+                        "#ff7f0e",
+                        "#1f77b4",
+                        "#2ca02c",
+                        "#9467bd",
+                        "#8c564b",
+                    ]);
+
+                const link = g
+                    .append("g")
+                    .attr("stroke", "#999")
+                    .attr("stroke-opacity", 0.6)
+                    .selectAll()
+                    .data(data.links)
+                    .join("line");
+
+                const node = g
+                    .append("g")
+                    .attr("stroke", "#fff")
+                    .attr("stroke-width", 1.5)
+                    .selectAll()
+                    .data(data.nodes)
+                    .join("circle")
+                    .attr("r", (d) =>
+                        d.type === "agent" ? 10 : d.type === "room" ? 5 : 3
+                    )
+                    .attr("fill", (d) => colorScale(d.type))
+                    .call(drag(simulation));
+
+                node.append("title").text((d) => d.name || d.id);
+
+                node.on("mouseover", (event, d) => {
+                    const tooltip = svg
+                        .append("text")
+                        .attr("class", "tooltip")
+                        .attr("x", d.x)
+                        .attr("y", d.y - 20)
+                        .attr("text-anchor", "middle")
+                        .text(d.name || d.id);
+
+                    d3.select(event.currentTarget).attr(
+                        "r",
+                        d.type === "agent" ? 15 : d.type === "room" ? 10 : 5
+                    );
+                }).on("mouseout", (event, d) => {
+                    svg.selectAll("text.tooltip").remove();
+                    d3.select(event.currentTarget).attr(
+                        "r",
+                        d.type === "agent" ? 10 : d.type === "room" ? 5 : 3
+                    );
+                });
+
+                // Create legend
+                const legend = svg
+                    .append("g")
+                    .attr("transform", `translate(20, 20)`);
+
+                legend
+                    .selectAll("rect")
+                    .data([
+                        "agent",
+                        "account",
+                        "room",
+                        "memory_fact",
+                        "memory_message",
+                    ])
+                    .enter()
+                    .append("rect")
+                    .attr("width", 15)
+                    .attr("height", 15)
+                    .attr("x", 0)
+                    .attr("y", (d, i) => i * 20)
+                    .attr("fill", (d) => colorScale(d));
+
+                legend
+                    .selectAll("text")
+                    .data([
+                        "Agents",
+                        "Accounts",
+                        "Rooms",
+                        "Memory Facts",
+                        "Memory Messages",
+                    ])
+                    .enter()
+                    .append("text")
+                    .attr("x", 20)
+                    .attr("y", (d, i) => i * 20 + 12)
+                    .text((d) => d);
+
+                simulation.on("tick", () => {
+                    link.attr("x1", (d) => d.source.x)
+                        .attr("y1", (d) => d.source.y)
+                        .attr("x2", (d) => d.target.x)
+                        .attr("y2", (d) => d.target.y);
+                    node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+                });
+
+                function drag(simulation) {
+                    return d3
+                        .drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                        .on("end", dragended);
+                    function dragstarted(event) {
+                        if (!event.active)
+                            simulation.alphaTarget(0.3).restart();
+                        event.subject.fx = event.subject.x;
+                        event.subject.fy = event.subject.y;
+                    }
+                    function dragged(event) {
+                        event.subject.fx = event.x;
+                        event.subject.fy = event.y;
+                    }
+                    function dragended(event) {
+                        if (!event.active) simulation.alphaTarget(0);
+                        event.subject.fx = null;
+                        event.subject.fy = null;
+                    }
+                }
+
+                document.body.appendChild(svg.node());
+            });
+        </script>
+    </body>
+</html>
