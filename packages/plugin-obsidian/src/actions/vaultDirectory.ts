@@ -1,3 +1,4 @@
+// src/actions/vaultDirectory.ts
 import {
     type Action,
     type HandlerCallback,
@@ -6,7 +7,7 @@ import {
     type State,
     elizaLogger,
 } from "@elizaos/core";
-import { getObsidian }  from "../helper";
+import { getObsidian } from "../helper";
 
 export const listDirectoryAction: Action = {
     name: "LIST_DIRECTORY",
@@ -46,44 +47,57 @@ export const listDirectoryAction: Action = {
         const obsidian = await getObsidian(runtime);
 
         try {
-            let directoryPath = "";
-            const text = message.content.text;
+            // Get the raw text from the message
+            const text = message.content.text as string;
+            elizaLogger.debug(`Processing directory listing request: "${text}"`);
 
-            // Extract directory path from various text formats
-            if (text) {
-                const patterns = [
-                    /^(?:List|Show|View)\s+(?:directory|folder|files in|dir)\s+(.+)$/i,
-                    /^(?:List|Show|View)\s+(.+)\s+(?:directory|folder|files)$/i,
-                    /^(?:ls|dir)\s+(.+)$/i
-                ];
+            // Extract directory path using different patterns
+            let directoryPath: string | null = null;
 
-                for (const pattern of patterns) {
-                    const match = text.match(pattern);
-                    if (match) {
-                        directoryPath = match[1].trim();
-                        break;
-                    }
+            // Command patterns with explicit groups for commands and paths
+            const commandPatterns = [
+                /^LIST_DIRECTORY\s+(.+)$/i,
+                /^(?:List|Show|View)\s+(?:directory|folder|files\s+in)\s+(.+)$/i,
+                /^(?:List|Show|View)\s+(.+)\s+(?:directory|folder|files)$/i,
+                /^(?:ls|dir)\s+(.+)$/i
+            ];
+
+            // Try each command pattern
+            for (const pattern of commandPatterns) {
+                const match = text.match(pattern);
+                if (match) {
+                    directoryPath = match[1].trim();
+                    break;
                 }
             }
 
-            // Fallback to explicit path if provided
-            if (!directoryPath && message.content.path) {
-                directoryPath = message.content.path as string;
+            // If no pattern matched, use the raw text if it doesn't look like a command
+            if (!directoryPath && !/^(?:List|Show|View|ls|dir)\s/i.test(text.trim())) {
+                directoryPath = text.trim();
             }
 
+            // Validation
             if (!directoryPath) {
                 throw new Error(
                     "Directory path is required. Use format: 'List directory PATH' or 'Show files in PATH'"
                 );
             }
 
+            // Clean up directory path
+            // Remove trailing slash if present
+            directoryPath = directoryPath.replace(/\/$/, '');
+
             elizaLogger.info(`Listing files in directory: ${directoryPath}`);
-            const files: string[] = await obsidian.listDirectoryFiles(directoryPath);
+            const files = await obsidian.listDirectoryFiles(directoryPath);
             elizaLogger.info(`Successfully retrieved ${files.length} files`);
 
-            // Format the files list into a readable string
+            // Format the files list into a readable string with icons
             const formattedFiles = files.length > 0
-                ? files.map(file => `- ${file}`).join('\n')
+                ? files.map(file => {
+                    const isDirectory = file.endsWith('/');
+                    const icon = isDirectory ? '📁' : '📄';
+                    return `${icon} ${file}`;
+                }).join('\n')
                 : "No files found in the directory";
 
             if (callback) {
