@@ -131,6 +131,7 @@
         "@elizaos/plugin-dkg": "workspace:*",
         "@elizaos/plugin-email": "workspace:*",
         "@elizaos/plugin-sei": "workspace:*",
+        "@elizaos/plugin-safe": "workspace:*",
         "@elizaos/plugin-omniflix": "workspace:*",
         "@elizaos/plugin-suno": "workspace:*",
         "@elizaos/plugin-udio": "workspace:*",

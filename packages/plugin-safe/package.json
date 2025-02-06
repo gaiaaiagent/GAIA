@@ -1,0 +1,23 @@
+{
+    "name": "@elizaos/plugin-safe",
+    "version": "0.1.0",
+    "type": "module",
+    "main": "dist/index.js",
+    "module": "dist/index.js", 
+    "types": "dist/index.d.ts",
+    "files": ["dist"],
+    "dependencies": {
+      "@elizaos/core": "workspace:*",
+      "@safe-global/relay-kit": "^1.0.0"
+    },
+    "devDependencies": {
+      "@safe-global/api-kit": "^2.5.8",
+      "@safe-global/protocol-kit": "5.2.1-alpha.0",
+      "@safe-global/safe-core-sdk-types": "^5.1.0",
+      "tsup": "^7.0.0",
+      "typescript": "^5.0.0"
+    },
+    "scripts": {
+      "build": "tsup --format esm --dts"
+    }
+  }
