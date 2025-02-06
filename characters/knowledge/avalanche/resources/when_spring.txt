@@ -1,0 +1,1333 @@
+When is Spring coming? A Security Analysis of Avalanche
+Consensus
+Ignacio Amores-Sesar
+University of Bern*
+ignacio.amores@unibe.ch
+Christian Cachin
+University of Bern*
+christian.cachin@unibe.ch
+Enrico Tedeschi
+The Artic University of Norway†
+enrico.tedeschi@uit.no
+10th October, 2022
+Abstract
+Avalanche is a blockchain consensus protocol with exceptionally low latency and high throughput.
+This has swiftly established the corresponding token as a top-tier cryptocurrency. Avalanche achieves
+such remarkable metrics by substituting proof of work with a random sampling mechanism. The
+protocol also differs from Bitcoin, Ethereum, and many others by forming a directed acyclic graph
+(DAG) instead of a chain. It does not totally order all transactions, establishes a partial order among
+them, and accepts transactions in the DAG that satisfy specific properties. Such parallelism is widely
+regarded as a technique that increases the efficiency of consensus.
+Despite its success, Avalanche consensus lacks a complete abstract specification and a matching formal analysis. To address this drawback, this work provides first a detailed formulation of
+Avalanche through pseudocode. This includes features that are omitted from the original whitepaper
+or are only vaguely explained in the documentation. Second, the paper gives an analysis of the formal
+properties fulfilled by Avalanche in the sense of a generic broadcast protocol that only orders related
+transactions. Last but not least, the analysis reveals a vulnerability that affects the liveness of the
+protocol. A possible solution that addresses the problem is also proposed.
+1 Introduction
+The Avalanche blockchain with its fast and scalable consensus protocol is one of the most prominent alternatives to first-generation networks like Bitcoin and Ethereum that consume huge amounts of energy.
+Its AVAX token is ranked 14th according to market capitalization in August 2022 [8]. Avalanche offers a
+protocol with high throughput, low latency, excellent scalability, and a lightweight client. In contrast to
+many well-established distributed ledgers, Avalanche is not backed by proof of work. Instead, Avalanche
+bases its security on a deliberately metastable mechanism that operates by repeatedly sampling the network, guiding the honest parties to a common output. This allows Avalanche to reach a peak throughput
+of up to 20’000 transactions per second with a latency of less than half a second [28].
+This novel mechanism imposes stricter security constraints on Avalanche compared to other networks. Traditional Byzantine fault-tolerant consensus tolerates up to a third of the parties to be corrupted [23] and proof-of-work protocols make similar assumptions in terms of mining power [12, 11].
+Avalanche, however, can tolerate only up to O(
+√
+n) malicious parties. Furthermore, the transactions in
+the “exchange chain” of Avalanche (see below) are not totally ordered, in contrast to most other cryptocurrencies, which implement a form of atomic broadcast [5]. As the protocol is structured around a
+*
+Institute of Computer Science, University of Bern, Neubruckstrasse 10, 3012 CH-Bern, Switzerland. ¨
+†
+Institute of Computer Science, The Artic University of Norway, Hansine Hansens vei 54, 6050 NO-Langnes, Norway.
+1
+arXiv:2210.03423v1 [cs.DC] 7 Oct 2022
+directed acyclic graph (DAG) instead of a chain, it permits some parallelism. Thus, the parties may
+output the same transactions in a different order, unless these transactions causally depend on each other.
+Only the latter must be ordered in the same way.
+The consensus protocol of a blockchain is of crucial importance for its security and for the stability
+of the corresponding digital assets. Analyzing such protocols has become an important topic in current
+research. Although Bitcoin appeared first without formal arguments, its security has been widely understood and analyzed meanwhile. The importance of proving the properties of blockchain protocols has
+been recognized for a long time [7].
+However, there are still protocols released today without the backing of formal security arguments.
+The Avalanche whitepaper [28] introduces a family of consensus protocols and offers rigorous security
+proofs for some of them. Yet the Avalanche protocol itself and the related Snowman protocol, which
+power the platform, are not analyzed. Besides, several key features of this protocol are either omitted or
+described only vaguely.
+In this paper, we explain the Avalanche consensus protocol in detail. We describe it abstractly
+through pseudocode and highlight features that may be overlooked in the whitepaper (Sections 3–4).
+Furthermore, we use our insights to formally establish safety properties of Avalanche. Per contra, we
+also identify a weakness that affects its liveness. In particular, Avalanche suffers from a vulnerability in
+how it accepts transactions that allows an adversary to delay targeted transactions by several orders of
+magnitude (Section 5), which may render the protocol useless in practice. The problem results from dependencies that exist among the votes on different transactions issued by honest parties; the whitepaper
+does not address them. The attack may be mounted by a single malicious party with some insight into
+the network topology. Finally, we suggest a modification to the Avalanche protocol that would prevent
+our attacks from succeeding and reinstantiate liveness of the protocol (Section 6). This version, which
+we call Glacier, restricts the sampling choices in order to break the dependencies, but also eliminates the
+parallelism featured by Avalanche.
+The vulnerability has been acknowledged by the Avalanche developers. The deployed version of the
+protocol differes however from the protocol in the whitepaper in a crucial way. It implements another
+measure that prevents the problem, as we explain as well (in Appendix B).
+2 Related work
+Despite Avalanche’s tremendous success, there is no independent research on its security. Recall that
+Avalanche introduces the “snow family” of consensus protocols based on sampling [28, 3]: Slush,
+Snowflake, and Snowball. Detailed proofs about liveness and safety for the snow-family of algorithms
+are given. The Avalanche protocol for asset exchange, however, lacks such a meticulous analysis. The
+dissertation of Yin [31] describes Avalanche as well, but does not analyze its security in more detail
+either.
+Recall that Nakamoto introduced Bitcoin [22] without any formal analysis. This has been corrected
+by a long line of research, which established the conditions under which it is secure (e.g., by Garay,
+Kiayias, and Leonardos [12, 13] and by Eyal and Sirer [11]).
+The consensus mechanisms that stand behind the best-known cryptocurrencies are meanwhile properly understood. Some of them, like the proof-of-stake protocols of Algorand [14] and the Ouroboros
+family that powers the Cardano blockchain [16, 9], did apply sound design principles by first introducing
+and analyzing the protocols and only later implementing them.
+Many others, however, have still followed the heuristic approach: they released code first and were
+confronted with concerns about their security later. This includes Ripple [2, 1] and NEO [30], in which
+several vulnerabilities have been found, or Solana, which halted multiple times in 2021–2022. Stellar
+comes with a formal model [20], but it has also been criticized [17].
+Protocols based on DAGs have potentially higher throughput than those based on chains. Notable
+examples include PHANTOM and GHOSTDAG [26], the Tangle of IOTA (www.iota.org), Conflux [19], and others [15]. However, they are also more complex to understand and susceptible to a wider
+2
+range of attacks than those that use a chain. Relevant examples of this kind are the IOTA protocol [21],
+which has also failed repeatedly in practice [29] and PHANTOM [26], for which a vulnerability has been
+shown [18] in an early version of the protocol.
+3 Model
+3.1 Avalanche platform
+We briefly review the architecture of the Avalanche platform [3]. It consists of three separate built-in
+blockchains, the exchange or X-Chain, the platform or P-Chain, and the contract or C-Chain. Additionally there are a number of subnets. In order to participate in the protocols and validate transactions, a
+party needs to stake at least 2’000 AVAX (about 50’000 USD in August 2022 [8]).
+The exchange chain or X-Chain secures and stores transactions that trade digital assets, such as the
+native AVAX token. This chain implements a variant of the Avalanche consensus protocol that only
+partially orders the transactions and that is the focus of this work. All information given here refers to
+the original specification of Avalanche [28].
+The platform chain or P-Chain secures platform primitives; it manages all other chains, designates
+parties to become validators or removes them again from the validator list, and creates or deletes wallets.
+The P-Chain implements the Snowman consensus protocol: this is a special case of Avalanche consensus
+that always provides total order, like traditional blockchains. It is not explained in the whitepaper and
+we do not describe it further here.
+The C-Chain hosts smart contracts and runs transactions on an Ethereum Virtual Machine (EVM).
+It also implements the Snowman consensus protocol of Avalanche and totally orders all transactions and
+blocks.
+3.2 Communication and adversary
+We now abstract the Avalanche consensus protocol and consider a network of n parties N = {p, q, . . . }
+that communicate with each other by sending messages. An adversary may corrupt up to f of these
+parties and cause them to behave maliciously and diverge arbitrarily from the protocol. Non-corrupted
+parties are known as honest, messages and transactions sent by them are referred to as honest. Analogously, corrupted parties send malicious transactions and messages. The parties may access a low-level
+functionality for sending messages over authenticated point-to-point links between each pair of parties.
+In the protocol, this functionality is accessed by two events send and receive. Parties may also access
+a second low-level functionality for broadcasting messages through the network by gossiping, accessed
+by the two events gossip and hear in the protocol. Both primitives are subject to network and timing
+assumptions. We assume partial synchrony, as in the original Avalanche whitepaper [28]. Messages are
+delivered according to an exponential distribution, that is, the amount of time between the sending and
+the receiving of a message follows an exponential distribution with unknown parameter to the parties.
+However, messages from corrupted parties are not affected by this delay and will be delivered as fast as
+the adversary decides. This model differs from the traditional definition of partial synchrony [10], since
+the adversary does not possess the ability to delay honest messages as it pleases.
+3.3 Abstractions
+The payload transactions of Avalanche are submitted by users and built according to the unspent transaction output (UTXO) model of Bitcoin [22]. A payload transaction tx contains a set of inputs, a set of
+outputs, and a number of digital signatures. Every input refers to a position in the output of a transaction
+executed earlier; this output is thereby spent (or consumed) and distributed among the outputs of tx. The
+balance of a user is given by the set of unspent outputs of all transactions (UTXOs) executed by the
+user (i.e., assigned to public keys controlled by that user). A payload transaction is valid if it is properly
+3
+authenticated and none of the inputs that it consumes has been consumed yet (according to the view of
+the party executing the validation).
+Blockchain protocols are generally formalized as atomic broadcast, since every party running the
+protocol outputs the same ordered list of transactions. However, the transaction sequences output by
+two different parties running Avalanche may not be exactly the same because Avalanche allows more
+flexibility and does not require a total order. Avalanche only orders transactions that causally depend on
+each other. Thus, we abstract Avalanche as a generic broadcast according to Pedone and Schiper [24],
+in which the total-order property holds only for related transactions as follows.
+Definition 1. Two payloads tx and tx0
+are said to be related, denoted by tx ∼ tx0
+, if tx consumes an output
+of tx0 or vice versa.
+Our generic broadcast primitive is accessed through the events broadcast(tx) and deliver(tx). Similar to other blockchain consensus protocols, it defines an “external” validity property and introduces a
+predicate V that determines whether a transaction is valid [6].
+Definition 2. A payload tx satisfies the validity predicate of Avalanche if all the cryptographic requirements are fulfilled and there is no other delivered payload with any input in common with tx.
+For the remainder of this work, we fix the external validation predicate V to check the validity of
+payloads according to the logic of UTXO mentioned before.
+Since Avalanche is a randomized protocol, the properties of our broadcast abstraction need to be
+fulfilled only with all but negligible probability.
+Definition 3. A protocol solves validated generic broadcast with validity predicate V and relation ∼ if
+it satisfies the following conditions, except with negligible probability:
+Validity. If a honest party broadcasts a payload transaction tx, then it eventually delivers tx.
+Agreement. If a honest party delivers a payload transaction tx, then all honest parties eventually deliver tx.
+Integrity. For any payload transaction tx, every honest party delivers tx at most once, and only if tx was
+previously broadcast by some party.
+Partial order. If honest parties p and q both deliver payload transactions tx and tx0
+such that tx ∼ tx0
+,
+then p delivers tx before tx0
+if and only if q delivers tx before tx0
+.
+External validity. If a honest party delivers a payload transaction tx, then V (tx) = TRUE.
+Note that different instantiations of the relation ∼ transform the generic broadcast primitive into wellknown primitives. For instance, when no pair of transactions are related, generic broadcast degenerates
+to reliable broadcast. Whereas when every two transactions are related, generic broadcast transforms
+into atomic broadcast. In our context, broadcasting corresponds to submitting a payload transaction to
+the network, whereas delivering corresponds to accepting a payload and appending it to the ledger.
+The Avalanche protocol augments payload transactions to protocol transactions. A protocol transaction additionally contains a set of references to previously executed protocol transactions, together with
+further attributes regarding the execution. A protocol transaction in the implementation contains a batch
+of payload transactions, but this feature of Avalanche is ignored here, since it affects only efficiency.
+Throughout this paper, transaction refers to a protocol transaction, unless the opposite is indicated, and
+payload means simply a payload transaction.
+A transaction references one or multiple previous transactions, unlike longest-chain protocols, in
+which each transaction has a unique parent [22]. An execution of the Avalanche protocol will therefore
+create a directed acyclic graph (DAG) that forms its ledger data structure.
+Given a protocol transaction T, all transactions that it references are called the parents of T and
+denoted by parents(T). The parents of T together with the parents of those, recursively, are called the
+ancestors of T, denoted by ancestors(T). Analogously, the transactions that have T as parent are called
+4
+T1
+T2 T3
+T4 T5 T6
+T7 T8
+u1 u2
+u3
+u7
+u6
+u8
+u3
+u10
+u9
+u11
+u13
+u15
+u19
+u20
+u12
+u13
+u21
+u9
+u12
+u5
+u16
+u17
+u18
+u2 u3 u4 u5
+Tag Input Output
+Figure 1. The UTXO model, conflicting transactions, and related transactions in Avalanche. The eight
+transactions are labeled T1, ..., T8. Each transaction is divided into three parts: the left part is a tag Ti
+to
+identify the transaction, the middle part is its set of inputs, and the right part is its set of outputs. The
+solid arrows indicate the references added by the protocol, showing the parents of each transaction. For
+instance, T5 references T2 and T3 and has them as parents. The dashed double-arrows indicate related
+transactions. For example, T5 and T2 are related because u3 is created by T2 and consumed by T5. The
+conflict sets are denoted by the shaded (red) rectangles. As illustrated, conflict sets can be symmetric, as
+for T4 and T5, where the conflict sets are identical (conflictSet[T4] = conflictSet[T5]) or asymmetric, as
+for T6, T7, and T8 where conflictSet[T6] ∪ conflictSet[T7] = conflictSet[T8].
+the children of T and are denoted by children(T). Finally, the children of T together with their recursive
+set of children are called the descendants of T, denoted by descendants(T).
+Note that two payload transactions tx1 and tx2 in Avalanche that consume the same input are not
+related, unless the condition of Definition 1 is fulfilled. However, two Avalanche payloads consuming
+the same output conflict. For each transaction T, Avalanche maintains a set conflictSet[T] of transactions
+that conflict with T.
+4 A description of the Avalanche protocol
+Avalanche’s best-known quality is its efficiency. Permissionless consensus protocols, such as those of
+Bitcoin and Ethereum, are traditionally slow, suffer from low throughput and high latency, and consume
+large amounts of energy, due to their use of proof-of-work (PoW). Avalanche substitutes PoW with a
+random sampling mechanism that runs at network speed and that has every party adjust its preference to
+that of a (perceived) majority in the system. Avalanche also differs from more traditional blockchains by
+forming a DAG of transactions instead of a chain.
+4.1 Overview
+Avalanche is structured around its polling mechanism. In a nutshell, party u repeatedly selects a transaction T and sends a query about it to k randomly selected parties in the network. If a majority of
+them send a positive reply, the query is successful and the transaction contributes to the security of other
+transactions. Otherwise, the transaction is still processed but does not contribute to the security of any
+other transactions. Then the party selects a new transaction and repeats the procedure. A bounded number of such polls may execute concurrently. Throughout this work the terms “poll” and “query” are
+interchangeable.
+In more detail, the protocol operates like this. Through the gossip functionality, every party is aware
+of the network membership N . A party locally stores all those transactions processed by the network
+5
+that it knows. The transactions form a DAG through their references as described in the previous section.
+Whenever a user submits a payload transaction tx to the network, the user actually submits it through
+a party u. Then, u randomly selects a number of leaf nodes from a part of the DAG known as the
+virtuous frontier; these are the leaf nodes that are not part of any conflicting set. Party u then extends tx
+with references to the selected nodes and thereby creates a transaction T from the payload transaction tx.
+Next, u sends a QUERY message with T to k randomly, according to stake, chosen parties in the network
+and waits for their replies in the form of VOTE messages. When a party receives a query for T and if
+T and its ancestors are preferred, then the party replies with a positive vote. The answer to this query
+depends exclusively on the status of T and its ancestors according to the local view of the party that
+replies. Moreover, the definition of preferred is non-trivial and will be explained further below. If the
+polling party receives more than α > k
+2
+positive votes, the poll is defined to be successful.
+Every party u running the Avalanche protocol sorts transactions of its DAG into conflict sets.
+Definition 4. The conflict set conflictSet[T] of a given transaction T is the set of transactions that have
+an input in common with T (including T itself).
+Note that even if two transaction T and T
+0
+consume one common transaction output and thus conflict,
+their conflict sets conflictSet[T] and conflictSet[T
+0
+] can differ, since T may consume outputs of further
+transactions. (In Figure 1, for example, T8 conflicts with T6 and T7, although T7 conflicts with T8 but
+not with T6.)
+Decisions on accepting transactions are made as follows. For each of its conflict sets, a party selects one transaction and designates it as preferred. This designation is parametrized by a confidence
+value d[T] of T, which is updated after each transaction query. If the confidence value of some conflicting transaction T
+∗
+surpasses d[T], then T
+∗ becomes the preferred transaction in the conflict set.
+It has been shown [27, 28] that regardless of the initial distribution of such confidence values and
+preferences of transactions, this mechanism converges. For the transactions of one conflict set considered
+in isolation, this implies that all honest parties eventually prefer the same transaction from their local
+conflict sets. (The actual protocol has to respect also dependencies among the transactions; we return to
+this later.)
+To illustrate this phenomenon, assume that there exist only two transactions T and T
+0
+and that half
+of the parties prefer T, whereas the other half prefers T
+0
+. This is the worst-case scenario. Randomness
+in sampling breaks the tie. Without loss of generality, assume that parties with preferred transaction T
+are queried more often. Hence, more parties consider T as preferred as a consequence. Furthermore,
+the next time when a party samples again, the probability of hitting a party that prefers T is higher than
+hitting one that prefers T
+0
+. This is the “snowball” effect that leads to ever more parties preferring T until
+every party prefers T.
+This preferred transaction is the candidate for acceptance and incorporation into the ledger. The
+procedure is parametrized by a confidence counter for each conflict set, which reflects the probability
+that T is the preferred transaction in the local view of the party. The party increments the confidence
+counter whenever it receives a positive vote to a query on a descendant of T; the counter is reset to zero
+whenever such a query obtains a negative vote. When this counter overcomes a given threshold, T is
+accepted and its payload is added to the ledger. We now present a detailed description of the protocol
+and refer to the pseudocode in Algorithm 1–4.
+4.2 Data structures
+The information presented here has been taken from the whitepaper [28], the source code [4], or the
+official documentation [3].
+Notation. We introduce the notation used in the remaining sections including the pseudocode. For
+a variable a and a set S, the notation a
+R← S denotes sampling a uniformly at random from S. We
+frequently use hashmap data structures: A hashmap associates keys in a set K with values in V and is
+6
+denoted by HashMap[K → V]. For a hashmap F, the notation F[K] returns the entry stored under
+key K ∈ K; referencing an unassigned key gives a special value ⊥.
+We make use of timers throughout the protocol description. Timers are created in a stopped state.
+When a timer has been started, it produces a timeout event once after a given duration has expired and
+then stops. A timer can be (re)started arbitrarily many times. Stopping a timer is idempotent.
+Global parameters. We recall that we model Avalanche as run by an immutable set of parties N
+of size n. There are more three global parameters: the number k of parties queried in every poll, the
+majority threshold α > k
+2
+for each poll, and the maximum number maxPoll of concurrent polls.
+Local variables. Queried transactions are stored in a set Q, the subset R ⊂ Q is defined to be the
+set of repollable transactions, a feature that is not explained in the original paper [28]. The number of
+active polls is tracked in a variable conPoll. The parents of a transaction are selected from the virtuous
+frontier, VF, defined as the set of all non-conflicting transactions that have no known descendant and
+whose ancestors are preferred in their respective conflict sets. A transaction is non-conflicting if there is
+no transaction in the local DAG spending any of its inputs. For completeness, we recall that conflicting
+transactions are sorted in conflictSet[T] formed by transactions that conflict with T, i.e., transactions
+which have some input in common with T.
+Transactions bear several attributes related to queries and transaction preference. A confidence value
+d[T] is defined to be the number of positive queries of T and its descendants. Given a conflict set
+conflictSet[T], the variable pref[conflictSet[T]], called preferred transaction, stores the transaction with
+the highest confidence value in conflictSet[T]. The variable last[conflictSet[T]] denotes which transaction
+was the preferred one in conflictSet[T] after the most recent update of the preferences. The preferred
+transaction is the candidate for acceptance in each conflict set, the acceptance is modeled by a counter
+cnt[conflictSet[T]]. Once accepted, a transaction remains the preferred one in its conflict set forever.
+4.3 Detailed description
+Each transaction does through three phases during the consensus protocol: query of transactions, reply
+to queries, and update of preferences. All of the previous phases call the same set of functions.
+Functions. The function updateDAG(T) sorts the transactions in the corresponding conflict sets. The
+function preferred(T) (L 98) outputs TRUE if T is the preferred transaction in its conflict set and FALSE
+otherwise. The function stronglyPreferred(T) (L 100) outputs TRUE if and only if T, and everyone of its
+ancestors is the preferred transaction in its respective conflict set.
+The function acceptable(T) (L 102) determines whether T can be accepted and its payload added
+to the ledger or not. Transaction T is considered accepted when one of the two following conditions is
+fulfilled:
+• T is the unique transaction in its conflict set, all the transactions referenced by T are considered
+accepted, and cnt[conflictSet[T]] is greater or equal than β1.
+• cnt[conflictSet[T]] is greater or equal than β2.
+Finally, the function updateRepollable() (L 106) updates the set of repollable transactions. A transaction
+T is repollable if T has already been accepted; or all its ancestors are preferred, a transaction in its
+conflict set has not already been accepted, and no parent has been rejected
+Transaction query. A party in Avalanche progresses only by querying transactions. In each of these
+queries, party u selects a random transaction T (L 33), from the set of transactions that u has not previously queried by u. Then, it samples a random subset S[T] ⊂ N of k parties from the set of parties
+running the Avalanche protocol and sends each a [QUERY, T] message. In the implementation of the
+protocol, u performs numPoll simultaneous queries. The repoll functionality (L 33–48) consists of performing several simultaneous transactions. When u does not know of any transaction that has not been
+7
+queried, u queries a transaction that has not been accepted yet. The main idea behind this functionality
+is to utilize the network when this is not saturated. The repoll functionality (L 33–48) constitutes one of
+the most notable changes from Avalanche’s whitepaper [28].
+Query reply. Whenever u receives a query message with transaction T, party u replies with a message
+[VOTE, u, T,stronglyPreferred(T)] containing the output of the binary function stronglyPreferred(T) according to its local view (L 100).
+Update of preferences. Party u collects the replies [VOTE, v, T,stronglyPreferred(T)], and counts the
+number of positive votes. On the one hand, if the number of positive votes overcomes the threshold α
+(L 53), the query is considered successful. In this case party u loops over T and all its ancestors T
+0
+,
+increasing the confidence level d[T
+0
+] by one. If T
+0
+is the preferred transaction in its conflict set, then
+party u increases the counter for transaction cnt[conflictSet[T
+0
+]] by one. Subsequently, u checks whether
+T
+0 has also previously been the preferred transaction in its conflict set. And when T
+0
+is not the preferred transaction according to the most recent query, party u will set the counter to one (L 53–67), in
+order to ensure that cnt[conflictSet[T
+0
+]] correctly reflects the number of consecutive successful queries of
+descendants of T
+0
+.
+On the other hand, if u receives more than k − α negative votes, party u loops also over T and
+its ancestors, and sets their counters cnt[conflictSet[T
+0
+]] to zero as if to indicate that T
+0
+and the other
+transactions should not be accepted yet. (L 68–73).
+Acceptance of transactions. Party u accepts transaction T when its counter cnt[conflictSet[T]] reaches
+a certain threshold β1 or β2. If T is the only transaction in its conflicting set and all its parents have
+already been accepted, then u accepts T if cnt[conflictSet[T]] ≥ β1, otherwise u waits until the counter
+overcomes a higher value β2.
+No-op transactions. The local DAG is modified whenever a poll is finalized. In particular, only the
+queried transaction ans its ancestors are modified. Avalanche makes use of no-op transactions to modify
+all the transactions in the DAG. After finalizing a poll, party u queries the network with all the transactions in the virtuous frontier whose state has not been modified, in a sequential manner.
+4.4 Life of a transaction
+We follow an honest transaction T through the protocol. The user submits the payload transaction tx to
+some party u, then u adds references refs to the payload transaction, creating a transaction T = (tx,refs).
+These references point to transactions in the virtuous frontier VF. Transaction T is then gossiped through
+the network and added to the set of known transactions T (L 22–28). Party u may also hear about new
+transactions through this gossip functionality. Whenever this is the case, u add the transaction to its set
+of known transactions T (L 29–32).
+Party u eventually selects T to be processed. When this happens, u samples k random parties from
+the network and stores them in S[T]. Party u queries parties in S[T] with T and starts a timer timeout[T].
+T is added to Q (L 33–48).
+Parties queried with T reply with the value of the function stronglyPreferred(T) (L 100). This
+function answers positively (TRUE) if T is strongly preferred, i.e., if T and all of its ancestors are the
+preferred transaction inside each respective conflict set. A negative answer (FALSE) is returned if either
+T or any of its ancestors fail to satisfy these conditions.
+Party u then stores the answer from party v to the query in the variable votes[T][v].
+• If u receives more than α positive votes, u runs over all the ancestors of T. If the ancestor T
+0
+was the most recent (or “last”) preferred transaction in its conflict set, its counter is increased by
+one. Otherwise, T
+0 becomes the most recent preferred transaction and its counter is reset to one
+(L 53–67).
+8
+• If u receives at least k − α FALSE votes, u resets the counter for acceptance of all its ancestors
+cnt[T
+0
+] ← 0 (L 68–73).
+• If timer timeout[T] is triggered before the query is completed, the query is aborted instead. The
+votes are reset and every party is removed from the set S[T], so no later reply can be considered
+(L 80–83).
+In parallel to the previous procedure, party u may perform up to conPoll concurrent queries of different transactions.
+Once T has been queried, it awaits in the local view of party u to be accepted. Since by assumption
+T is honest, conflictSet[T] = {T}. Hence T is accepted when cnt
+conflictSet[T]
+
+reaches β1, if all the
+ancestors of T are already accepted, or β2 otherwise (L 102–104). We recall that cnt[conflictSet[T]]
+is incremented whenever a query involving a descendant of T is successful. However, when a nondescendant of T is queried, it may trigger a no-op transaction (L 35) that is a descendant of T.
+If there is no new transaction waiting to be queried, i.e., T \ Q is empty, the party proceeds with a
+repollable transaction (L 40–42). A repollable transaction is one that has not been previously accepted
+but it is a candidate to be accepted (L 106–110).
+5 Security analysis
+Avalanche deviates from the established PoW protocols and uses a different structure. Its security guarantees must be assessed differently. The bedrock of security for Avalanche is random sampling.
+5.1 From Snowball to Avalanche
+The Avalanche protocol family includes Slush, Snowflake, and Snowball [28] that implement singledecision Byzantine consensus. Every party proposes a value and every party must eventually decide the
+Algorithm 1 Avalanche (party u), state
+Global parameters and state
+1: N // set of parties
+2: maxPoll ∈ N // maximum number of concurrent polls, default value 4
+3: k ∈ N // number of parties queried in each poll, default value 20
+4: α ∈ {d k+1
+2
+e, ..., k} // majority threshold for queries, default value 15
+5: β1 ∈ N // threshold for early acceptance, default value 15
+6: β2 ∈ N // threshold for acceptance, default value 150
+7: T ← ∅ // set of known transactions
+8: Q ⊂ T ← ∅ // set of queried transactions
+9: R ⊂ Q ← ∅ // set of repollable transactions
+10: D ⊂ T ← ∅ // set of no-op transactions to be queried
+11: VF ⊂ Q ← ∅ // set of transactions in the virtuous frontier
+12: conPoll ∈ N ← 0 // number of concurrent polls performed
+13: conflictSet : HashMap[T → 2
+T
+] // conflict set
+14: S : HashMap[T → N ] // set of sampled parties to be queried with a transaction
+15: votes : HashMap[T × N → {FALSE, TRUE}] // variable to store the replies of queries
+16: d : HashMap[T → N] // confidence value of a transaction
+17: pref : HashMap[2T → T ] // preferred transaction in the conflict set
+18: last : HashMap[2T → T ] // preferred transaction in the last query
+19: cnt : HashMap[2T → N] // counter for acceptance of the conflict set
+20: accepted : HashMap[T → {FALSE, TRUE}] // indicator that a transaction is accepted
+21: timer : HashMap[T → {timers}] // timer for the query of transactions
+9
+Algorithm 2 Avalanche (party u), part 1
+22: upon broadcast(tx) do
+23: if V (tx) then
+24: T ← (tx, VF) // up to a maximum number of parents
+25: T ← T ∪ {T}
+26: accepted[T] ← FALSE
+27: updateDAG(T)
+28: gossip message [BROADCAST, T]
+29: upon hearing message [BROADCAST, T] do
+30: if T 6∈ T do
+31: T ← T ∪ {T}
+32: accepted[T] ← FALSE
+33: upon conPoll < maxPoll do
+34: conPoll ← conPoll + 1
+35: if D 6= ∅ then // prefer no-op transactions
+36: T ← least recent transaction in D
+37: else if T \ Q 6= ∅ then // take any not yet queried transaction
+38: T
+R← T \ Q
+39: d[T] ← 0
+40: else // all transaction queried already, take one of them
+41: updateRepollable()
+42: T
+R← R
+43: S[T] ← sample(N \ {u}, k) // sample k parties randomly according to stake
+44: send message [QUERY, T] to all parties v ∈ S[T]
+45: D ← D ∪ {(⊥, VF \ {T})} // create a no-op transaction
+46: start timer[T] // duration ∆query
+47: Q ← Q ∪ {T}
+48: updateDAG(T)
+49: upon receiving message [QUERY, T] from party v do
+50: send message [VOTE, u, T,stronglyPreferred(T)] to party v
+51: upon receiving message [VOTE, v, T, w] such that v ∈ S[T] do // w is the vote
+52: votes[T, v] ← w // w ∈ {FALSE, TRUE}
+10
+Algorithm 3 Avalanche (party u), part 2
+53: upon ∃T ∈ T such that
+
+{v ∈ S[T] | votes[T, v] = TRUE}
+
+ ≥ α do // query of T is successful
+54: stop timer[T]
+55: votes[T, ∗] ← ⊥ // remove all entries in votes for T
+56: S[T] ← [ ] // reset S for T
+57: d[T] ← d[T] + 1
+58: for T
+0 ∈ ancestors(T) do // all ancestors of T
+59: d[T
+0
+] ← d[T
+0
+] + 1
+60: if d[T
+0
+] > d[pref[conflictSet[T
+0
+]]] then
+61: pref[conflictSet[T
+0
+]] ← T
+0
+62: if T
+0 6= last[conflictSet[T
+0
+]] then
+63: last[conflictSet[T
+0
+]] ← T
+0
+64: cnt[conflictSet[T
+0
+]] ← 1
+65: else
+66: cnt[conflictSet[T
+0
+]] ← cnt[conflictSet[T
+0
+]] + 1
+67: conPoll ← conPoll − 1
+68: upon ∃T ∈ T such that
+
+{v ∈ S[T] | votes[T, v] = FALSE}
+
+ > k − α do // query of T failed
+69: stop timer[T]
+70: votes[T, ∗] ← ⊥ // remove all entries in votes for T
+71: S[T] ← [ ] // reset S for T
+72: for T
+0 ∈ ancestors(T) do // all ancestors of T
+73: cnt[conflictSet[T
+0
+]] ← 0
+74: upon ∃T ∈ T such that acceptable(T) ∧ ¬accepted[T] do // T can be accepted
+75: (tx, parents) ← T
+76: if V (tx) then
+77: accepted[T] ← TRUE
+78: deliver tx
+80: upon timeout from timer[T] do // not enough votes on T received
+81: Q ← Q \ {T}
+82: votes[T, ∗] ← ⊥ // remove all entries in votes for T
+83: S[T] ← [ ] // do not consider more votes from this query
+11
+Algorithm 4 Avalanche, auxiliary functions
+84: function updateDAG(T)
+85: VF ← set of non-conflicting leaves in the DAG
+86: conflictSet[T] ← ∅
+87: for T
+0 ∈ T such that T
+0 6= T and T
+0 has a common input with T do
+88: conflictSet[T] ← conflictSet[T] ∪ {T
+0}
+89: conflictSet[T
+0
+] ← conflictSet[T
+0
+] ∪ {T}
+90: if conflictSet[T] = ∅ then // T is non-conflicting
+91: pref[conflictSet[T]] ← T
+92: last[conflictSet[T]] ← T
+93: cnt[conflictSet[T]] ← 0
+94: conflictSet[T] ← conflictSet[T] ∪ {T}
+95: function getParents(T)
+96: (tx, parents) ← T
+97: return parents // set of parents stored in T
+98: function preferred(T)
+99: return T
+?= pref[conflictSet[T]]
+100: function stronglyPreferred(T)
+101: return V
+T0∈ancestors(T)
+preferred(T
+0
+)
+102: function acceptable(T)
+103: return 
+conflictSet[T]
+
+ = 1 ∧ cnt
+conflictSet[T]
+
+≥ β1
+
+∧
+V
+T0∈ parents(T)
+acceptable(T
+0
+)
+104: ∨ cnt
+conflictSet[T]
+
+≥ β2
+105: function isRejected(T)
+return ∃T
+0 ∈ T such that ∀T
+0 ∈ conflictSet[T] \ {T} : acceptable(T
+0
+)
+106: function updateRepollable()
+107: R ← ∅
+108: for T ∈ T do
+109: if acceptable(T) ∨
+V
+T0∈ parents(T)
+stronglyPreferred(T
+0
+) ∧ ¬isRejected(T
+0
+) then
+110: R ← R ∪ {T}
+1
+same value for an instance. The Avalanche protocol itself provides a “payment system” [28, Sec. V]; we
+model it here as generic broadcast.
+The whitepaper [28] meticulously analyzes the three consensus protocols. It shows that as long
+as f = O(
+√
+n), the consensus protocols are live and safe [28] based on the analysis of random sampling [25]. On the other hand, an adversary controlling more than Θ(√
+n) parties may have the ability to
+keep the network in a bivalent state.
+However, the Avalanche protocol itself is introduced without a rigorous analysis. The most precise
+statement about it is that “it is easy to see that, at worst, Avalanche will degenerate into separate instances of Snowball, and thus provide the same liveness guarantee for virtuous transactions” [28, p. 9].
+In fact, it is easy to see that this is wrong because every vote on a transaction in Avalanche is linked to
+the vote on its ancestors. The vote on a descendant T
+0 of T depends on the state of T.
+We address this situation here through the description in the previous section and by giving a formal
+description of Snowball in Appendix A. We notice that one can isolate single executions of Snowball that
+occur inside Avalanche as follows. Consider an execution of Avalanche and a transaction T and define
+an equivalent execution of Snowball as the execution in which every party u proposes the value 1 if T is
+preferred in their local view, proposes 0 if another transaction is, and does not propose otherwise. Every
+party also selects the same parties in each round of snowball and for a query with T, for a query with a
+transaction that conflicts with T, or for any query with a descendant of these two.
+Lemma 1. If party u delivers an honest transaction in Avalanche, then u decided 1 in the equivalent
+execution of Snowball with threshold β1. Furthermore, u delivers a conflicting transaction in Avalanche,
+then u decides 1 in Snowball with threshold β2.
+Proof. By construction of the Avalanche and Snowball protocols in the whitepaper [28], the counter for
+acceptance of value 1 in Snowball is always greater or equal than the counter for acceptance in Avalanche.
+Since a successful query in Avalanche implies a successful query in Snowball, if an honest transaction
+in Avalanche is delivered, the counter in the equivalent Snowball instance is at least β1. Analogously, if
+a conflicting transaction in Avalanche is delivered, then the counter in Snowball is at least β2. Hence, a
+party in Snowball would decide 1 with the respective thresholds.
+Looking ahead, we will introduce a modification of Avalanche that ensures the complete equivalence
+between Snowball and Avalanche. We first assert some safety properties of the Avalanche protocol.
+Theorem 2. Avalanche satisfies integrity, partial order, and external validity of a generic broadcast for
+payload transactions under relation ∼ and UTXO-validity.
+Proof. The proof is structured by property:
+Integrity. We show that every payload is delivered at most once. A payload tx may potentially be
+delivered multiple times in two ways: different protocol transactions that both carry tx may be
+accepted or tx is delivered multiple times as payload of the same protocol transaction.
+First, we consider the possibility of accepting two different transactions T1 and T2 carrying tx.
+Assume that party u accepts transaction T1 and party v accepts transaction T2. By definition, T1
+and T2 are conflicting because they spend the same inputs. Using Lemma 1, party u and v decide
+differently in the equivalent execution in Snowball, which contradicts agreement property of the
+Snowball consensus [28].
+The second option is that one protocol transaction T that contains tx is accepted multiple times.
+However, this is not possible either because tx is delivered only if accepted[T] = FALSE; variable
+accepted[T] is set to TRUE when transaction T is accepted (L 74–78).
+Partial order. Avalanches satisfies partial order because no payload is valid unless all payloads creating
+its inputs have been delivered (L 74–78). Transactions T and T
+0
+are related according to Definition 1 if and only if T has as input (i.e., spends) at least one output of T
+0
+, or vice versa. This
+implies that related transactions are delivered in the same order for any party.
+13
+External validity. The external validity property follows from L 74, as a payload transaction can only
+be delivered if it is valid, i.e., its inputs have not been previously spent and the cryptographic
+requirements are satisfied.
+Theorem 2 shows that Avalanche satisfies the safety properties of a generic broadcast in the presence
+of an adversary controlling O(
+√
+n) parties. A hypothetical adversary controlling more than Ω(√
+n)
+parties could violate safety. It is not completely obvious how an adversary could achieve that. Such an
+adversary would broadcast two conflicting transactions T1 and T2. As we already discussed, and also
+explained in the whitepaper of Avalanche [28], such an adversary can keep the network in a bivalent state,
+so the adversary keeps the network divided into two parts: parties in part P1 consider T1 preferred, and
+parties in part P2 prefer T2. The adversary behaves as preferring T1 when communicating with parties is
+P1 and as preferring T2 when communicating with parties in P2. Eventually, a party u ∈ P1 will query
+only parties in P1 or the adversary for β2 queries in a row. Thus, u will accept transaction T1. Similarly,
+a party v ∈ P2 will eventually accept transaction T2. Party u will deliver the payload contained in T1
+and v the payload contained in T2, hence violating agreement.
+An adversary controlling at most O(
+√
+n) can also violate agreement, but the required behavior is
+more sophisticated, as we explain next.
+5.2 Delaying transaction acceptance
+An adversary aims to prevent that a party u accepts an honest transaction T. A necessary precondition
+for this is cnt[conflictSet[T]] ≥ β1. Note that whenever a descendant of T is queried, cnt[conflictSet[T]]
+is modified. If the query is successful (L 53), then cnt[conflictSet[T]] is incremented by one. If the query
+is unsuccessful, cnt[conflictSet[T]] is reset to zero. Remark, however, cnt[conflictSet[T]] cannot be reset
+to one as a result of another transaction becoming the preferred in conflictSet[T] (L 62) because T is
+honest, as there exist no transaction conflicting with T.
+Our adversary thus proceeds by sending to u a series of cleverly generated transactions that reference T. We describe these steps that will delay the acceptance of T.
+1. Preparation phase. The adversary submits conflicting transactions T1 and T2. For simplicity, we
+assume that she submits first T1 and then T2, so the preferred transaction in both conflict sets will
+be T1. The adversary then waits until the target transaction T is submitted.
+2. Main phase. The adversary repeatedly sends malicious transactions referencing the target T and
+T2 to u. These transactions are valid but they reference a particular set of transactions.
+3. Searching phase. Concurrently to the main phase, the adversary looks for transactions containing
+the same payload as T. If some are found, she references them as well from the newly generated
+transactions.
+For simplicity, we assume that the adversary knows the acceptance counter of T at u, so she can send
+a malicious transaction whenever T is close to being accepted. In practice, she can guess this only with
+a certain probability, which will degrade the success rate of the attack. We also assume that the query of
+an honest transaction is always successful, which is the worst case for the adversary.
+After u submits T, the adversary starts the main phase of the attack. If u queries an honest transaction Tˆ, and if Tˆ references a descendant of T, then cnt[conflictSet[T]] increases by one. If it does
+not, then Tˆ may cause u to submit a no-op transaction referencing a descendant of T. Hence, honest
+transactions always increase cnt[conflictSet[T]] by one, this is the worst case for an adversary aiming to
+delay the acceptance of T.
+If u queries a malicious transaction Tˆ, honest parties reply with their value of stronglyPreferred(Tˆ).
+Since T2 is an ancestor of Tˆ and not the preferred transaction in its conflict set (as we have assumed
+that T1 is preferred), all queried parties return FALSE. Thus, u sets acceptance counter of every ancestor of Tˆ to zero (L 68), in particular, cnt[conflictSet[T]] ← 0. However, since Tˆ does not reference
+14
+Algorithm 5 Liveness attack: Delaying transaction T
+Initialization
+111: create two conflicting transactions T1 and T2
+112: gossip two messages [BROADCAST, T1] and [BROADCAST, T2]
+113: A ← ∅
+114:upon hearing message [BROADCAST, T] do // target transaction
+115: A ← {T}
+116:upon cnt[conflictSet[T]] = b
+β1
+2
+c in the local view of u do
+117: create Tˆ such that T2 ∈ ancestors(Tˆ) and for all T
+0 ∈ A, also T
+0 ∈ ancestors(Tˆ)
+118: send message [BROADCAST, Tˆ] to party u // pretend to gossip the message
+119:upon hearing message [BROADCAST, T˜] such T˜ and T contain the same payload do
+120: A ← A ∪ {T˜}
+the virtuous frontier, u submits a no-op transaction that references a descendant of T, thus increasing
+cnt[conflictSet[T]] to one.
+We show that when the number of transactions is low, in particular when |T \Q| ≤ 1 for every party,
+then Avalanche may lose liveness.
+Theorem 3. Avalanche does not satisfy validity nor agreement of generic broadcast with relation ∼ with
+one single malicious party if |T \ Q| ≤ 1 for every party.
+Proof. We consider again the adversary described above that targets T and u.
+• Validity. Whenever cnt[conflictSet[T]] in the local view of u reaches b
+β1
+2
+c, the adversary sends
+a malicious transaction to party u, who immediately queries it (since |T \ Q| ≤ 1). It follows
+that u sets cnt[conflictSet[T]] to zero and increases it intermediately afterwards, due to a no-op
+transaction. This process repeats indefinitely over time and prevents u from delivering the payload
+in T.
+• Agreement. Assume that an honest party broadcasts the payload contained in T. The adversary
+forces a violation of agreement by finding honest parties u and v such that cnt[conflictSet[T]] =
+β1 − 1 at v and cnt[conflictSet[T]] < β1 − 1 at u (such parties exist because in the absence of an
+adversary, as cnt[conflictSet[T]] increases monotonically over time). The adversary then sends an
+honest transaction Th that references T to v and a malicious transaction Tm, as described before,
+to u. On the one hand, party v queries Th, increments cnt[conflictSet[T]] to β1, accepts transaction
+T, and delivers the payload. On the other hand, party u queries Tm and sets cnt[conflictSet[T]] to
+one. After that, the adversary behaves as discussed before. Notice that v has delivered the payload
+within T but u will never do so.
+An adversary may thus cause Avalanche to violate validity and agreement. For this attack, however,
+the number of transactions in the network must be low, in particular, |T \ Q| ≤ 1. In July 2022,
+the Avalanche network processed an average of 647238 transactions per day1
+. Assuming two seconds
+per query, four times the value observed in our local implementation, the recommended values of 30
+transactions per batch, and four concurrent polls, the condition |T \ Q| ≤ 1 is satisfied 88% of the time.
+However, the adversary still needs to know the value of the counter for acceptance of the different
+parties.
+1https://subnets.avax.network/stats/network
+15
+5.3 A more general attack
+We may relax the assumption of knowing the acceptance counters and also send the malicious transaction to more parties through gossip. After selecting a target transaction, the adversary continuously
+gossips malicious transactions to the network instead of sending them only to one party. For analyzing
+the performance of this attack, our figure of merit will be the number of transactions to be queried by
+an honest party (not counting no-ops) for confirming the target transaction T. The larger this number
+becomes, the longer it will take the party until it may accept T. We assume that T \ Q 6= ∅ and that a
+fraction γ of those transactions are malicious at any point in time2
+. A non-obvious implication is that the
+repoll function never queries the same transaction twice.
+Lemma 4. Avalanche requires every party to query at least β1 transactions before accepting transaction T in the absence of an adversary.
+Proof. The absence of an adversary carries several simplifications. Firstly, there are no conflicting transactions, thus every transaction is the preferred one in its respecting conflict set and every query is successful. Secondly, due to the no-op transactions, the counter for acceptance of every transaction in the
+DAG is incremented by one after each query. Finally, a transaction T is accepted when its counter for
+acceptance reaches β1, since the counter of the parent of any transaction reaches β1 strictly before T
+(L 102).
+Lemma 5. The average number of queried transactions before accepting transaction T in the presence
+of the adversary, as described in the text, is at least
+β1 +
+1 + (2 + β1γ)(1 − γ)
+β1 − (1 − γ)
+2β1 (1 + β1γ)
+γ(1 − γ)
+β1 (1 − (1 − γ)
+β1 )
+.
+Proof. We recall that in the worst-case scenario for the adversary, the query of an honest transaction
+increments the counter for acceptance of the target transaction T by one, while the query of a malicious
+transaction, effectively, resets the counter for acceptance to one, as a result of a no-op transaction.
+Let a random variable W denote the number of transactions queried by u until T is accepted, and
+let X ∈ {0, 1} model the outcome of the following experiment. Party u samples transactions until it
+picks a malicious transaction or until it has sampled β1 − 1 honest transactions. In the first case, X
+takes the value zero, and otherwise, X takes the value one. By definition, X is a Bernoulli variable with
+parameter p = (1 − γ)
+(β1−1). Thus, the number of attempts until X returns one is a random variable Y
+with geometric distribution, Y ∼ G(p), with the same parameter p. We let Wa be the random variable
+denoting the number of queried transactions per attempt of this experiment. The expected number of
+failed attempts is E[Y ] = 1
+(1−γ)
+β1
+. Furthermore, the probability that an attempt fails after sampling
+exactly k transactions, for k ≤ β1, is
+P[Wa = k|X = 0] = γ(1 − γ)
+k−1
+1 − (1 − γ)
+β1
+.
+Thus, the expected number of transactions per failed attempt can be expressed as
+E[W|X = 0] = 1 − (1 − γ)
+β
+1
+(1 + β1γ)
+γ(1 − (1 − γ)
+β1 )
+. (1)
+The expected number of transaction queried during a successful attempt is at least β1 by Lemma 4.
+Finally, the total expected number of queried transactions can be written as the expected number of
+transaction per failed attempt multiplied by the expected number of failed attempts plus the expected
+number of transactions in the successful attempt,
+E[W] = E[Wa|X = 0] · (E[Y ] − 1) + E[Wa|X = 1] · 1. (2)
+2Avalanche may impose a transaction fee for processing transactions. However, since the malicious transactions cannot be
+delivered, this mechanism does not prevent the adversary from submitting a large number of transactions.
+16
+From equations (1) and (2) and basic algebra, we obtain
+E[W] = β1 +
+1 + (2 + β1γ)(1 − γ)
+β1 − (1 − γ)
+2β1 (1 + β1γ)
+γ(1 − γ)
+β1 (1 − (1 − γ)
+β1 )
+.
+This expression is complex to analyze. Hence, a graphical representation of this bound is given in
+Figure 2. It shows the expected smallest number of transactions to be queried by an honest party (not
+counting no-ops) until it can confirm the target transaction T. The larger this gets, the more the protocol
+loses liveness. It is relevant that this bound grows proportional to 1
+(1−γ)
+β1
+, i.e., exponential in acceptance
+threshold β1 since (1 − γ) < 1.
+Figure 2. Expected delay in number of transactions needed to confirm a given transaction with acceptance threshold β1 = 15, the recommended value [3], and assuming that the queries of honest transactions are successful. The (green) horizontal line shows β1, the expected delay without attacker. The
+(blue) dotted line represents the expected confirmation delay in Avalanche depending on the fraction of
+malicious transactions. The (orange) squared line denotes the delay in Glacier (Section 6).
+The Avalanche team has acknowledged our findings and the vulnerability in the abstract protocol.
+The protocol deployed in the actual network, however, differs from our formalization in a way that
+should prevent the problem. We describe the deployed version of Avalanche in Appendix B. The next
+section describes another variation of Avalanche that provably eliminates the problem.
+6 Fixing liveness with Glacier
+The adversary is able to delay the acceptance of an honest transaction T because T is directly influenced
+by the queries of its descendants. Note the issuer of T has no control over its descendants according to the
+protocol. A unsuccessful query of a descendant of T carries a negative consequence for the acceptance of
+T, regardless of the status of T inside its conflict set. This influence is the root of the problem described
+earlier. An immediate, but inefficient remedy might be to run one Snowball consensus instance for each
+transaction. However, this would greatly degrade the throughput and increase the latency of the protocol,
+as many more messages would be exchanged.
+17
+We propose here a modification, called Glacier, in which an unsuccessful query of a transaction T
+carries negative consequences only for those of its ancestors that led to negative votes and caused the
+query to be unsuccessful. Our protocol is shown in Algorithm 6. It specifically modifies the voting protocol and adds to each VOTE message for T a list L with all ancestors of T that are not preferred in their
+respective conflict sets (L 123–127). When party u receives a negative vote like [VOTE, v, T, FALSE, L],
+it performs the same actions as before. Additionally, it increments a counter for each ancestor T
+∗ of T
+to denote how many parties have reported T
+∗
+as not preferred while accepting T (L 135). If u receives a
+positive vote, the protocol remains unchanged.
+If the query is successful because u receives at least α positive votes on T, then it proceeds as before
+(Algorithm 3, L 53). But before u declares the query to be unsuccessful, it furthermore waits until
+having received a vote on T from all k parties sampled in the query (L 137). When this is the case, u
+only resets the counter for acceptance of those ancestors T
+∗ of T that have been reported as non-preferred
+by more than k − α queried parties (L 141–143). If T
+∗
+is preferred by at least α parties, however, then
+u increments its confidence level as before (L 145).
+Algorithm 6 Modifications to Avalanche (Algorithm 1–4) for Glacier (party u)
+State
+121: nonpref : HashMap[T × T → N] // number of votes on T reporting that T
+0
+is not preferred
+122:upon receiving message [QUERY, T] from party v do // replaces L 49
+123: L ← [ ] // contains the non-preferred ancestors of T
+124: for T
+0 ∈ ancestors(T) do
+125: if ¬preferred(T
+0
+) then
+126: append T
+0
+to L
+127: send message [VOTE, v, T,stronglyPreferred(T), L] to party v
+128:// replaces code at L 51
+129:upon receiving message [VOTE, v, T, w, L] from a party v ∈ S[T] do // w is the vote
+130: votes[T, v] ← w
+131: for T
+0 ∈ L do
+132: if nonpref[T, T0
+] =⊥ then
+133: nonpref[T, T0
+] ← 1
+134: else
+135: nonpref[T, T0
+] ← nonpref[T, T0
+] + 1
+136:// replaces code at L 68
+137:upon ∃T ∈ T such that
+
+votes[T, v]
+
+ = k ∧
+
+
+
+
+v ∈ S[T] | votes[T, v] = FALSE
+
+
+ > k − α do
+138: stop timer[T]
+139: votes[T, ∗] ← ⊥ // remove all entries in votes for T
+140: S[T] ← [ ] // reset the HashMap S
+141: for T
+0
+such that nonpref[T, T0
+] 6= ⊥ do // all ancestors of T
+142: if nonpref[T, T0
+] > k − α then
+143: cnt[conflictSet[T
+0
+]] ← 0
+144: else // nonpref[T, T0
+] ≤ α
+145: cnt[conflictSet[T
+0
+]] ← cnt[conflictSet[T
+0
+]] + 1
+146: nonpref[T, ∗] ← ⊥
+Considering the adversary introduced in Section 5.3, a negative reply to the query of a descendant
+of the target transaction T does not carry any negative consequence for the acceptance of T here. In
+particular, the counter for acceptance of transaction T is never reset, even when a query is unsuccessful,
+because T is the only transaction in its conflicting set, then always preferred. Thus, transaction T will
+18
+be accepted after β1 successful queries, if all its parents are accepted, or β2 successful queries if they are
+not accepted. Assuming that queries of honest transactions are successful, on average β
+1−p
+transactions
+are required to accept T for β ∈ [β1, β2] depending on the state of the parents of T. For simplicity we
+assume that the parents are accepted, thus, the counter needs to achieve the value β1. If this were not
+the case, then it is sufficient to substitute β1 with β in the upcoming expression. Avalanche requires on
+average β1 +
+1+(2+β1γ)(1−γ)
+β1−(1−γ)
+2β1 (1+β1γ)
+γ(1−γ)
+β1 (1−(1−γ)
+β1 )
+transactions to accept T by Lemma 5. The assumption
+that the query of honest transactions is always successful is more beneficial to Avalanche than to Glacier,
+since in Avalanche such a query resets the counter for acceptance of T. But in Glacier, the query simply
+leaves the counter as it is. The value of the acceptance threshold β1 is also more beneficial for Avalanche
+since the number of required transactions increases linearly in Glacier and exponentially in Avalanche.
+Figure 2 shows a comparison of both expressions.
+In Glacier, the vote for a transaction is independent of the vote of its descendant and ancestors, even
+if a query of a transaction carries an implicit query of all its ancestors. Thus, Lemma 1 can be extended.
+Lemma 6. Party u delivers a transaction T with counter for acceptance cnt[conflictSet[T]] ≥ β1 in
+Glacier if and only if u decides 1 in the equivalent execution of Snowball with threshold cnt[conflictSet[T]].
+Proof. Consider a transaction T in the equivalent execution of Snowball. The counter for acceptance
+of the value 1 in Snowball is always the same as the counter for acceptance of transaction T in Glacier
+because of the modifications introduced by Glacier. Thus, following the same argument as in Lemma 1,
+transaction T is accepted in Glacier with counter cnt[conflictSet[T]] if and only if 1 is decided with
+counter cnt[conflictSet[T]] in the equivalent execution of Snowball.
+Theorem 7. The Glacier algorithm satisfies the properties of generic broadcast in the presence of an
+adversary that controls up to O(
+√
+n) parties.
+Proof. Lemma 1 is a a special case of Lemma 6. Theorem 2 shows that Lemma 1 and the properties of
+Snowball (Appendix A) guarantee that Avalanche satisfies integrity, partial order, and external validity.
+In the same way, Lemma 6 guarantees that Glacier satisfies these same properties. Thus, it is sufficient
+to prove that Glacier satisfies validity and agreement.
+Validity. Assume that an honest party broadcasts a payload tx. Because the party is honest, the transaction T containing tx is valid and non-conflicting. In the equivalent execution of Snowball, every
+honest party that proposes a value proposes 1. Hence, using the validity and termination properties of Snowball, every honest party eventually decides 1. Using Lemma 6, every honest party
+eventually delivers tx.
+Agreement. Assume that an honest party delivers a payload transaction tx contained in transaction T.
+Using Lemma 6, an honest party decides 1 in the equivalent execution of Snowball. Because of the
+termination and agreement properties of Snowball, every honest party decides 1. Using Lemma 6
+again, every honest party eventually delivers payload tx
+We conclude that Glacier satisfies the properties of generic broadcast.
+With the modification to Glacier, Avalanche can be safely used as the basis for a payment system. The
+only possible concern with Glacier could be a decrease in performance compared to Avalanche. However,
+Glacier does not reduce the performance but rather improves it. Glacier only modifies the update in the
+local state of party u after a query has been unsuccessful. The counter of acceptance of a given transaction
+T in Glacier implementation is always greater or equal than its counterpart in Avalanche. This follows
+because a reset of cnt[conflictSet[T]] in Glacier implies the same reset in Avalanche. Such a reset in
+Glacier occurs if the query of a descendant of T fails and T was reported as non-preferred by more than
+k − α parties, whereas in Avalanche it is enough if the query of the descendant failed. In Avalanche,
+cnt[conflictSet[T]] is incremented if the query of a descendant of T succeeds, and the same occurs in
+Glacier. Thus, cnt[conflictSet[T]] in Glacier is always greater or equal than in Avalanche. We recall that
+a transaction is accepted when cnt[conflictSet[T]] reaches a threshold depending on some conditions of
+19
+the local view of the DAG, but these are identical for Glacier and Avalanche. Hence, every transaction
+that is accepted in Avalanche is accepted in Glacier with equal or smaller latency. This implies not only
+that the latency of Glacier is smaller than the latency of Avalanche, but also that the throughput of Glacier
+is at least as good as the throughput of Avalanche.
+7 Conclusion
+Avalanche is well-known for its remarkable throughput and latency that are achieved through a metastable
+sampling technique. The pseudocode we introduce captures in a compact and relatively simple manner
+the intricacies of the system. We show that Avalanche, as originally introduced, possesses a vulnerability allowing an adversary to delay transactions arbitrarily. We also address such vulnerability with a
+modification of the protocol, Glacier, that allows Avalanche to satisfy both safety and liveness.
+The developers of Avalanche have acknowledged the vulnerability, and the actual implementation
+does not suffer from it due to an alternative fix. Understanding this variant of Avalanche remains open
+and is subject of future work.
+Acknowledgments
+This work has been funded by the Swiss National Science Foundation (SNSF) under grant agreement
+Nr. 200021 188443 (Advanced Consensus Protocols).
+References
+[1] AMORES-SESAR, I., CACHIN, C., AND MICIC, J. Security analysis of ripple consensus. In
+OPODIS (2020), vol. 184 of LIPIcs, Schloss Dagstuhl - Leibniz-Zentrum fur Informatik, pp. 10:1– ¨
+10:16.
+[2] ARMKNECHT, F., KARAME, G. O., MANDAL, A., YOUSSEF, F., AND ZENNER, E. Ripple:
+Overview and outlook. In TRUST (2015), vol. 9229 of Lecture Notes in Computer Science,
+Springer, pp. 163–180.
+[3] AVA LABS, INC. Avalanche documentation. https://docs.avax.network/.
+[4] AVA LABS, INC. Node implementation for the Avalanche network. https://github.com/
+ava-labs/avalanchego.
+[5] CACHIN, C., GUERRAOUI, R., AND RODRIGUES, L. E. T. Introduction to Reliable and Secure
+Distributed Programming (2. ed.). Springer, 2011.
+[6] CACHIN, C., KURSAWE, K., PETZOLD, F., AND SHOUP, V. Secure and efficient asynchronous
+broadcast protocols. In CRYPTO (2001), vol. 2139 of Lecture Notes in Computer Science, Springer,
+pp. 524–541.
+[7] CACHIN, C., AND VUKOLIC, M. Blockchain consensus protocols in the wild (keynote talk). In
+DISC (2017), vol. 91 of LIPIcs, Schloss Dagstuhl - Leibniz-Zentrum fur Informatik, pp. 1:1–1:16. ¨
+[8] Coinmarketcap: Today’s cryptocurrency prices by market cap. https://coinmarketcap.
+com/, 2022.
+[9] DAVID, B., GAZI, P., KIAYIAS, A., AND RUSSELL, A. Ouroboros praos: An adaptively-secure,
+semi-synchronous proof-of-stake blockchain. In EUROCRYPT (2) (2018), vol. 10821 of Lecture
+Notes in Computer Science, Springer, pp. 66–98.
+20
+[10] DWORK, C., LYNCH, N. A., AND STOCKMEYER, L. J. Consensus in the presence of partial
+synchrony. J. ACM 35, 2 (1988), 288–323.
+[11] EYAL, I., AND SIRER, E. G. Majority is not enough: Bitcoin mining is vulnerable. In Financial
+Cryptography (2014), vol. 8437 of Lecture Notes in Computer Science, Springer, pp. 436–454.
+[12] GARAY, J. A., KIAYIAS, A., AND LEONARDOS, N. The bitcoin backbone protocol: Analysis
+and applications. In EUROCRYPT (2) (2015), vol. 9057 of Lecture Notes in Computer Science,
+Springer, pp. 281–310.
+[13] GARAY, J. A., KIAYIAS, A., AND LEONARDOS, N. The bitcoin backbone protocol with chains
+of variable difficulty. In CRYPTO (1) (2017), vol. 10401 of Lecture Notes in Computer Science,
+Springer, pp. 291–323.
+[14] GILAD, Y., HEMO, R., MICALI, S., VLACHOS, G., AND ZELDOVICH, N. Algorand: Scaling
+byzantine agreements for cryptocurrencies. In SOSP (2017), ACM, pp. 51–68.
+[15] KEIDAR, I., KOKORIS-KOGIAS, E., NAOR, O., AND SPIEGELMAN, A. All you need is DAG. In
+PODC (2021), ACM, pp. 165–175.
+[16] KIAYIAS, A., RUSSELL, A., DAVID, B., AND OLIYNYKOV, R. Ouroboros: A provably secure
+proof-of-stake blockchain protocol. In CRYPTO (1) (2017), vol. 10401 of Lecture Notes in Computer Science, Springer, pp. 357–388.
+[17] KIM, M., KWON, Y., AND KIM, Y. Is stellar as secure as you think? In EuroS&P Workshops
+(2019), IEEE, pp. 377–385.
+[18] LI, C., LI, P., XU, W., LONG, F., AND YAO, A. C. Scaling nakamoto consensus to thousands of
+transactions per second. CoRR abs/1805.03870 (2018).
+[19] LI, C., LI, P., ZHOU, D., YANG, Z., WU, M., YANG, G., XU, W., LONG, F., AND YAO, A. C. A
+decentralized blockchain with high throughput and fast confirmation. In USENIX Annual Technical
+Conference (2020), USENIX Association, pp. 515–528.
+[20] LOKHAVA, M., LOSA, G., MAZIERES ` , D., HOARE, G., BARRY, N., GAFNI, E., JOVE, J., MALINOWSKY, R., AND MCCALEB, J. Fast and secure global payments with stellar. In SOSP (2019),
+ACM, pp. 80–96.
+[21] MAMACHE, H., MAZUE´, G., RASHID, O., BU, G., AND POTOP-BUTUCARU, M. Resilience of
+IOTA consensus. CoRR abs/2111.07805 (2021).
+[22] NAKAMOTO, S. Bitcoin: A peer-to-peer electronic cash system. Whitepaper, https://
+bitcoin.org/bitcoin.pdf, 2009.
+[23] PEASE, M. C., SHOSTAK, R. E., AND LAMPORT, L. Reaching agreement in the presence of
+faults. J. ACM 27, 2 (1980), 228–234.
+[24] PEDONE, F., AND SCHIPER, A. Generic broadcast. In DISC (1999), vol. 1693 of Lecture Notes in
+Computer Science, Springer, pp. 94–108.
+[25] ROSS, S. Stochastic Processes, second ed. Wiley, 1996.
+[26] SOMPOLINSKY, Y., WYBORSKI, S., AND ZOHAR, A. PHANTOM GHOSTDAG: a scalable
+generalization of nakamoto consensus: September 2, 2021. In AFT (2021), ACM, pp. 57–70.
+[27] TAN, W. Y. On the absorption probabilities and absorption times of finite homogeneous birth-death
+processes. Biometrics 32, 4 (1976), 745–752.
+21
+[28] TEAM ROCKET, YIN, M., SEKNIQI, K., VAN RENESSE, R., AND SIRER, E. G. Scalable and
+probabilistic leaderless BFT consensus through metastability. e-print, arXiv:1906.08936 [cs.CR],
+2019.
+[29] WANG, B., WANG, Q., CHEN, S., AND XIANG, Y. Security analysis on tangle-based blockchain
+through simulation. CoRR abs/2008.04863 (2020).
+[30] WANG, Q., YU, J., PENG, Z., BUI, V. C., CHEN, S., DING, Y., AND XIANG, Y. Security
+analysis on dbft protocol of NEO. In Financial Cryptography (2020), vol. 12059 of Lecture Notes
+in Computer Science, Springer, pp. 20–31.
+[31] YIN, M. Scaling the Infrastructure of Practical Blockchain Systems. PhD thesis, Cornell University, USA, 2021.
+A The Snowball protocol
+The Snowball protocol is the Byzantine-resistant protocol introduced together with Avalanche in the
+whitepaper [28]. We shortly summarize this protocol in Algorithm 7.
+Snowball possesses almost the same structure as Avalanche, but it is a protocol for consensus, not for
+broadcast. This Byzantine consensus primitive is accessed through the events propose(b) and decide(b).
+Any party is allowed to propose a value b ∈ {0, 1}. Since Snowball is a probabilistic algorithm, the
+properties of our abstraction need to be fulfilled only with all but negligible probability.
+Definition 5. A protocol solves Byzantine consensus if it satisfies the following conditions, except with
+negligible probability:
+Validity: If all parties are honest and propose the same value v, then no honest party decides a value
+different from v; furthermore, if some process decides v, then v was proposed by some process.
+Termination: Every honest party eventually decides some value.
+Integrity: No honest party decides twice.
+Agreement: No two honest parties decide differently.
+At the beginning of the protocol, party u may propose a value b, if u does not propose b =⊥.
+Snowball is structured in rounds around the same sample mechanism as Avalanche. Party u starts a
+round by sampling k parties at random and querying them for the value they are currently considering
+for b. If the value of a queried party is undefined, the queried party adopts the value that it is been queried
+with and replies accordingly. If more than α votes for value b
+0
+are collected (L 165), the query is finalized
+and u updates its local state by incrementing d[b
+0
+]. If b
+0
+is the same value as the value b in the local view
+of u, the counter for acceptance is incremented. However, if b
+0 6= b and d[b
+0
+] > d[b], the party updates
+its local value b and resets the counter to zero. Party u finishes consensus when the acceptance counter
+reaches the value β.
+Considering the adversary introduced in Section 3.2 controlling up to O(
+√
+n) parties, it can be shown
+that Snowball satisfies the properties of Byzantine consensus.
+Theorem 8. Snowball satisfies Byzantine consensus.
+Proof. The proof is provided in the Appendix A of the whitepaper of Avalanche [28].
+22
+Algorithm 7 Snowball (party u)
+Global parameters and state
+147:N // set of parties
+148:newRound ∈ {FALSE, TRUE} // boolean variable indicating when to start a round
+149:decided ∈ {FALSE, TRUE} // boolean variable indicating when to finish the protocol
+150:k ∈ N // number of parties queried in each poll
+151:α ∈ N // majority threshold for queries
+152:cnt ∈ N // counter for acceptance
+153:β ∈ N // threshold for acceptance
+154:S : HashMap[T → N ] // set of sampled parties to be queried
+155:d : HashMap[{0, 1} → N] // confidence value of a transaction
+156:votes : HashMap[{0, 1} → N] // number of votes for a value
+Algorithm
+157:upon propose(b) do
+158: decided ← FALSE
+159: newRound ← TRUE
+160:upon newRound ∧ ¬decided do // still not decided
+161: newRound ← FALSE
+162: if b 6=⊥ then
+163: S ← sample(N \ {u}, k) // sample k random parties
+164: send message [QUERY, b] to all parties v ∈ S
+165:upon votes[b
+0
+] ≥ α do // b
+0 = 0 or b
+0 = 1
+166: d[b
+0
+] ← d[b
+0
+] + 1
+167: if b = b
+0
+then // the outcome of the query is the same as our proposal
+168: cnt ← cnt + 1
+169: else
+170: if d[b
+0
+] > d[b] then
+171: b ← b
+0
+172: cnt ← 0
+173: newRound ← TRUE
+174:upon n = k ∧ votes[0] < α ∧ votes[1] < α do // there is no majority for any value
+175: cnt ← 0
+176: newRound ← TRUE
+177:upon receiving message [QUERY, b0
+] from party v do
+178: if b =⊥ then
+179: decided ← FALSE
+180: b ← b
+0
+181: send message [VOTE, b] to party v // reply with the local value of b
+182:upon receiving message [VOTE, b∗
+] from a party v ∈ S do // collect the vote b
+∗
+183: votes[b
+∗
+] ← votes[b
+∗
+] + 1
+184:upon cnt = β do // there is enough confidence for B
+185: decide(b)
+186: decided ← TRUE
+23
+B The Avalanche protocol as implemented
+The actual implementation of Avalanches addresses the liveness problems differently from Glacier and
+works as follows. Consider the protocol in Section 4. In the implementation, a party u queries k parties
+with transaction T as before. When some party v is queried with T, then v first adds T to its local view.
+Then it replies with a VOTE message, but instead of including a binary vote, it sends the whole virtuous
+frontier according to its local view. Party u collects the responses as in Section 4 and stores the virtuous
+frontiers received in the VOTE messages. Then it counts how many queried parties have reported some
+transaction T
+0
+, or a descendant of T
+0
+, as part of their virtuous frontier in the variable ack[T, T0
+]. If more
+than α parties have reported T
+0
+, then u adds T
+0
+to the set G[T
+0
+] and updates its state, as for a successful
+query in the original protocol (L 209–215). For the remaining transactions, i.e., all the transactions in Q
+outside G[T
+0
+], the counter is set to zero (L 217–219); this is equivalent to the effect of a negative query
+in the original protocol.
+This fix addresses the liveness issue shown in Section 5.2 since a potential adversary loses the ability
+to submit a transaction that causes a reset of the acceptance counter of an honest transaction. As explained
+in Section 3.2, the adversary could reset the counter for acceptance of honest transactions by simply
+submitting a transaction T referring to the target transaction T and both transactions of a double spending
+T1 and T2 because T is not strongly preferred. However, in the implemented protocol, the parties reply
+with the virtuous frontier regardless of the queried transaction. Due to this, the adversary cannot influence
+the reply of the queried parties by creating malicious transactions. A detailed analysis of this protocol is
+beyond the scope of this work, however.
+24
+Algorithm 8 Modifications to Avalanche (Algorithm 1–4) in the implementation (party u)
+State
+187:ack : HashMap[T × T → N] // number of votes on T reporting that T
+0
+is not preferred
+188:G : HashMap[T × N → 2
+T
+] // ancestors of positively reported transactions
+189:// replaces code at L 49
+190:upon receiving message [QUERY, T] from party v do
+191: if T 6∈ T then // party u sees T for the first time
+192: updateDAG(T)
+193: send message [VOTE, u, T, VF] to party v
+194:// replaces code at L 51
+195:upon receiving message [VOTE, v, T, VF0
+] from a party v ∈ S[T] do // VF0
+is the new vote
+196: votes[T, v] ← VF0
+197: for T
+0 ∈ votes[T, v] do // build the ancestors of the reported transactions
+198: G[T, v] ← G[T, v] ∪ ancestors(T
+0
+)
+199: for T
+0 ∈ G[T, v] do // count the number of parties that reported T
+0
+200: if ack[T, T0
+] =⊥ then
+201: ack[T, T0
+] ← 1
+202: else
+203: ack[T, T0
+] ← ack[T, T0
+] + 1
+204:// replaces code at L 53 and L 68
+205:upon ∃T ∈ T such that
+
+{votes[T, v]}
+
+ = k // every queried party has replied
+206: stop timer[T]
+207: votes[T, ∗] ← ⊥ // remove all entries in votes for T
+208: for T
+0 ∈ Q do
+209: if ack[T, T0
+] ≥ α then
+210: d[T
+0
+] ← d[T
+0
+] + 1
+211: if d[T
+0
+] > d[pref[conflictSet[T
+0
+]]] then
+212: pref[conflictSet[T
+0
+]] ← T
+0
+213: if T
+0 6= last[conflictSet[T
+0
+]] then
+214: last[conflictSet[T
+0
+]] ← T
+0
+215: cnt[conflictSet[T
+0
+]] ← 1
+216: else
+217: cnt[conflictSet[T
+0
+]] ← cnt[conflictSet[T
+0
+]] + 1
+218: else
+219: cnt[conflictSet[T
+0
+]] ← 0
+220: ack[T, ∗] ← ⊥ // remove all entries in ack for T
+221: G[T, ∗] ← ⊥ // remove all entries in G for T
+25

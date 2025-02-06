@@ -1,0 +1,278 @@
+Home
+News
+Changelog
+Research
+Interviews
+Community
+Engineering
+Newsletter
+Research
+
+The fundamentals of Avalanche
+Token Terminal Research
+•
+
+29 Nov, 2023
+
+Article hero image
+Content
+
+1. History & team
+2. Product: technical differentiation & approach to scalability
+Consensus mechanism
+Three chain approach
+Decentralization
+Subnets & interoperability
+Programming languages
+3. Business model
+4. Top projects & use cases (C-Chain only)
+Takeaway: top projects on Avalanche
+NFTs & gaming
+Tokenization & real-world assets
+5. Financials
+Token economics
+6. Comps
+7. Investors
+8. Social & community
+9. Conclusion
+This research piece has been written by Michael Nadeau from The DeFi Report, in collaboration with Token Terminal.
+
+1. History & team
+Ava Labs, the team behind the Avalanche Protocol, was founded in 2019 by Emin Gün Sirer, a computer science professor from Cornell. However, the original research team behind the early protocols (Snowflake, Snowball, and Avalanche) surfaced in 2018 under the pseudonym “Team Rocket.” After operating in stealth mode for over a year, the project was open-sourced. The first testnet was launched in April 2020 and the Avalanche mainnet eventually launched in September 2020 — featuring Avalanche’s three interconnected chains: P-Chain, X-Chain, and C-Chain.
+
+Per Emin Gün Sirer, the original thesis was that Bitcoin and Ethereum could not scale to support the tokenization of the entire world’s assets (approx. $700 trillion of value). Of course, the team behind Ava Labs was not the only group working to solve this problem. Ethereum is now scaling via layer 2. Solana took a monolithic approach. Cosmos and Polkadot seek to solve the problem with a “chain of chains” approach — which is similar to Avalanche’s approach via “subnets.”
+
+Today Avalanche (Ava Labs + Avalanche Foundation) has 126 associated team members (per LinkedIn).
+
+2. Product: technical differentiation & approach to scalability
+We’d like to keep this section as high-level as possible while giving you an indication of the key problems Avalanche is seeking to solve, and how they differentiate from the competition.
+
+Consensus mechanism
+Most blockchain protocols achieve consensus via 1) a set of validators that propose transactions and 2) a vote collection process in which validators vote on transactions proposed by their peers. You can think of this similarly to how the US Senate passes a resolution: one Senator may propose the resolution, with the remaining 99 Senators voting on it to achieve consensus. Most protocols (e.g. Bitcoin, Ethereum, etc.) require every node to store all the information on the blockchain — which constrains the network, hindering scalability.
+
+Avalanche is different.
+
+In the Avalanche system, consensus is sought by soliciting a subset of validators rather than seeking votes from every other validator on the network. Those validators then solicit another subset of validators. This goes on and on until consensus is achieved— enabling greater throughput since every node is not recording every single transaction.
+
+Three chain approach
+Avalanche is comprised of three separate, but interoperable protocols.
+
+Contract Chain (C-Chain): This is the EVM chain that is used for smart contracts and DeFi apps. The C-Chain would be familiar to Ethereum users as it is compatible with MetaMask and wallet addresses start with 0x.
+Exchange Chain (X-Chain): The X-Chain is used for sending and receiving funds, however, it is not used for DeFi. The X-Chain cannot be used with MetaMask or similar wallets. X-Chain wallet addresses begin with “X-avax.”
+Platform Chain (P-Chain): The P-Chain function allows you to stake AVAX and serve as a validator. If you’re a validator (or a delegator), your AVAX rewards will be received on the P-Chain. P-Chain wallet addresses begin with “P-avax.”
+From a user experience perspective, interacting with Avalanche today feels similar to navigating Ethereum and the L2 ecosystem — which is not exactly a slick process. In some ways, it is even clunkier than navigating Ethereum (and L2s) — since multiple wallets are required.
+
+While we expect these complexities to be solved, in our opinion, Solana has the best user experience in crypto right now — by a wide margin.
+
+Decentralization
+Hardware requirements to run an Avalanche node are quite low: 8 CPU cores, 16 GB of RAM, and 1 TB of SSD. Meanwhile, the minimum stake required to be a validator is 2,000 AVAX tokens ($42,440 at current market prices). For reference, it would cost you $66k to run an Ethereum validator today and you would need slightly less hardware (4 cores, 16 GB of RAM, and 1 TB of SSD).
+
+Avalanche is sufficiently decentralized today with a total of 1,562 nodes. However, this number is down slightly from its peak of 1,629 validators in April of 2022.
+
+Subnets & interoperability
+As we’ve covered extensively, we believe there will be hundreds if not thousands of L2s (serving as “app chains”) within the Ethereum network. Avalanche is building with the same thesis in mind. The idea here is that subnets (app chains) can be built within Avalanche allowing for greater flexibility for developers. Furthermore, subnets can fulfill unique geographic or legal requirements for various regions or use cases.
+
+In many ways, the road map of Ethereum L2s seems to be colliding with that of Avalanche subnets. We recently covered Arbitrum — a general-purpose Ethereum L2 that launched Orbit Protocol in March — enabling anyone to create an “app chain” within the Arbitrum ecosystem. Just as Arbitrum and “app chains” within the ecosystem leverage Ethereum L1 for security, subnets leverage the Avalanche C-Chain for shared security.
+
+With that said, the value prop of Avalanche over Ethereum L2s is that developers have one set of shared infrastructure to build upon — which means the entire network is natively interoperable (operating on one shared standard).
+
+Programming languages
+Because the Avalanche C-Chain is EVM compatible, we think Ethereum developers would feel comfortable deploying on the network — and many have. GMX, Aave, 1inch, Uniswap, and Curve have all launched on Avalanche. With that said, these projects were “bribed” with incentives from the Avalanche Foundation to do so. None of them have seen widespread usage on Avalanche at the scale they see on Ethereum to date.
+
+3. Business model
+As with all layer 1 blockchains, Avalanche sells “blockspace” — which can be thought of as accounting ledger entries that record the state of all user activity onchain. Users pay for computation (and the recording of their state) in the AVAX token — 100% of which is burned in the process — acting as an automatic “share buyback.”
+
+The supply side of the network (validators who approve transactions and provide economic security) is paid via new issuance of AVAX tokens (inflation) — which can be offset by the burned tokens, making the network deflationary during periods of high onchain usage.
+
+Below is a quick breakdown of the model. Please note that the inflation rate is dependent on a number of validators on the network and is subject to change per future governance decisions.
+
+
+
+Over the last year, the network did $11.5 million in user fees but paid out over $275m (token issuance/inflation) to compensate its validators. It’s common to observe crypto networks and protocols using token inflation to bootstrap the supply side of the network in the first few years after launch. With that said, the business model only works in the long run if user activity eventually compensates the supply side of the network — rather than token inflation.
+
+Per Avalanche’s token issuance schedule, the network is currently set to issue the last of its staking rewards in 2030 — putting pressure on the team to drive developers and users to the network in the coming years so that it can economically sustain itself far into the future.
+
+4. Top projects & use cases (C-Chain only)
+
+
+A quick breakdown of the top 10 projects in terms of gas consumption on Avalanche:
+
+LayerZero: bridging infrastructure. It makes sense that a bridge is #1 as this is the first action that users need to take — no matter what app they are seeking to engage with on the network. That said, Avalanche is losing to L2s by a wide margin. For reference, LayerZero drove over $6m in gas fees to Arbitrum and over $5m to Optimism. Finally, LayerZero drove $760k (over half that of Avalanche) to Base — which has been around for only 3.5 months.
+XEN Crypto: app that allows anyone to mint Xen NFTs (we do not think this is a serious project).
+Trader Joe: the largest DEX on Avalanche. For reference, Trader Joe has done about 3.5% of the volume that Uniswap has done in the last year.
+Stargate: more bridging infrastructure.
+CoinTool: an app that makes it easy for anyone to mint tokens without writing code.
+Holograph: infrastructure that makes it easy for anyone to mint fungible and non-fungible tokens.
+GMX: A leading DeFi perpetual futures protocol. GMX is also on Arbitrum and has seen *far* more usage on the Ethereum L2: $1.5m gas fees over the last year vs 348k on Avalanche and $489m in TVL on Arbitrum vs $52m on Avalanche.
+Woo Network: A centralized and decentralized exchange aggregation app.
+Galxe: Galxe Network is an app that makes it easy for consumer brands to track user data onchain.
+1inch: 1Inch is a DEX aggregator that is also integrated with Ethereum, BNB, Arbitrum, etc. For reference, the project drove $45m in gas fees to Ethereum over the last year and over $1m to Arbitrum. By comparison, the activity on Avalanche is minuscule.
+
+
+In terms of projects with the most active users, we see a few new projects making the list:
+
+Circle: Circle is the company behind USDC — the second largest dollar-backed stablecoin behind Tether. Over 1.5 million unique wallets engaged with USDC on Avalanche over the last year — a solid figure. However, Avalanche is losing to Ethereum L2s once again in this category. Arbitrum saw over 2.6m USDC users last year. Optimism had 1.8m users. And Polygon had 3.6m users.
+Tether: Over 1 million unique wallet addresses interacted with Tether on the Avalanche blockchain last year. But once again, more users are interacting with Ethereum L2s: Polygon saw 4.1m users. Arbitrum had 2.2 million. In case you’re wondering, Tron is BY FAR the most active blockchain for Tether — with over 24 million unique addresses interacting with Tether over the last year.
+Bitcoin: To be clear, this represents users who have interacted with the “wrapped BTC” contract on Avalanche — i.e. users who have bridged BTC to Avalanche. In this case, Avalanche beat out the strongest L2 — Arbitrum with 420k users bridging Bitcoin.
+
+
+In terms of 365-day transactions, we don’t see anything noteworthy besides an appearance from Chainlink — the largest data oracle network within Ethereum. Chainlink is responsible for 3.2m transactions on Arbitrum and 2.1m transactions on Optimism over the same period. Finally, Chainlink has driven a whopping 187m transactions on Polygon over the last year.
+
+Takeaway: top projects on Avalanche
+Avalanche does not have any particularly interesting use cases to point to just yet. Furthermore, most of the top projects are on other chains including Ethereum L2s — where they are seeing more widespread usage.
+
+You have to assume that developers are paying attention to this — which could impact their decision to deploy on an L2 vs Avalanche in the future.
+
+We think the team will need to seek out *net new use cases* to see truly widespread onchain usage.
+
+NFTs & gaming
+Gaming and NFTs are potential growth areas in the future. Blizzard, Avalanche’s $200+ million ecosystem fund seeks to attract gaming developers looking to utilize subnet infrastructure. Shrapnel is a AAA first-person shooter game built onchain by a team with backgrounds including Halo, Call of Duty, and HBO. Cosmic Universe, OpenBlox, and Domi Online are some other notable GameFi developers entering the Avalanche Ecosystem.
+
+In terms of NFT activity, the network recently launched “ASC-20” tokens — which use inscriptions to put information on the blockchain — similar to Bitcoin Ordinals. The launch provided a much-needed boost in onchain activity, with transaction fees hitting $903k on 11/22. However, fees quickly came back to earth — crashing back to about $20k/day — where they were prior to the launch.
+
+In total, Avalanche has seen $438m in NFT sales all time. For reference, Solana has done $4.2 billion. Ethereum has done over $41b.
+
+Tokenization & real-world assets
+In April of 2023, Ava Labs launched Evergreen Subnets — a suite of institutional blockchain deployments, customizations, and tooling. These subnets enable institutions to establish private, permissioned networks for research, development, or production purposes while maintaining the ability to interact with other subnets through Avalanche Warp Messaging. The first deployments went live 4/12/23 with institutions such as Wellington and T. Rowe as early partners.
+
+Earlier this year, Avalanche allocated up to $50m to purchase tokenized assets (real-world assets) minted on the Avalanche blockchain. The program termed “Avalanche Vista” aims to support and demonstrate the value of tokenization. Avalanche Vista will support assets across the liquidity spectrum including equity, credit, real estate, commodities, as well as blockchain-native assets. The program comes on the heels of a significant milestone in tokenization when KKR tokenized one of its funds via Securitize on the Avalanche blockchain in September of 2022.
+
+More recently, JP Morgan collaborated with a suite of blockchains for testing related to Project Guardian, a proof of concept demonstrating how blockchain technology, smart contracts, and tokenization can potentially help automate portfolio management while including alternatives (alts) alongside liquid assets in discretionary portfolios. Avalanche participated in the trial alongside JPM’s Onyx and the Provenance blockchain. The AVAX token was up 14% when the news was announced.
+
+5. Financials
+
+
+While it’s nice to see a significant drop in token incentives (network inflation), fees are down almost 90% year-to-date. For reference, Ethereum and Solana are down roughly 50%.
+
+Compared to L2s, Arbitrum is up 130%. Optimism is up 75%. Polygon is up 25%.
+
+Takeaway: it appears that Ethereum L2s are eating Avalanche’s market share during the crypto winter. What does this mean for the next adoption cycle? Time will tell.
+
+Token economics
+Circulating Supply: 365,096,132
+Max Supply: 720,000,000 (50.7% circulating)
+Token allocation:
+
+Staking rewards: 50% allocation. 32.5% is unlocked with the remaining tokens unlocking on a linear schedule through 2030.
+
+Investors: 16% allocation. The entire allocation is fully vested & unlocked.
+
+Founding team & advisors: 15% allocation. 90% unlocked with the remaining tokens unlocking in September 2024.
+
+Avalanche foundation: 9.3% allocation. 30% is unlocked with the remaining tokens unlocking on a linear schedule through 2030.
+
+Community & development: 7% allocation. Fully unlocked.
+
+Airdrops & incentive programs: 2.7% allocation. 81% unlocked with the remaining tokens unlocking in September 2024.
+
+Stake rate: 68%
+
+Burn rate: 100% of all transaction fees are burned. Validators are paid via token incentives.
+
+Token utility: The AVAX token is used to pay for gas and to validate transactions (staked amounts). With that said, we see less “moneyness” with AVAX than we observe with ETH and SOL — which serve as a unit of account within NFT markets and are used as collateral within DeFi more broadly.
+
+6. Comps
+
+
+In our view, Avalanche is competing against Ethereum L2s. And as the data reveals — they are losing (by a wide margin).
+
+If you’re looking for a silver lining, Avalanche is holding its own against Cosmos and Near — two alternative L1s that are also struggling to keep up with the pace of Ethereum’s L2s.
+
+*Note for those that are digging into the data: gross margin for the L1s = the amounts paid to the supply side vs burned. Avalanche and Solana burn 50% of transaction fees. Cosmos pays the vast majority to its validators, and Near burns 100% of the transaction fees (validators are paid with network inflation).
+
+The active users and avg. transactions/day on Near is notable and something we’ll be looking into further.
+
+7. Investors
+The Avalanche team raised a $6m series A round in February of 2019. Notable investors included Andreessen Horowitz, Polychain Capital, Balaji Srinivasan, and Naval Ravikant. The team later raised $12m in a private staking round led by Galaxy Digital and Bitmain in June of 2020.
+
+After showing some significant development progess, Ava Labs closed a massive $230 million investment round at the peak of the bull market in 2021. Polychain Capital and Three Arrows Capital (now defunct with the founders facing jail time) lead the round. Other participants included Dragonfly, CMS Holdings, and Lvna Capital.
+
+8. Social & community
+Avalanche Twitter: 966k followers
+
+Emin Gün Sirer: 287k followers
+
+Reddit: 44k members
+
+Discord: 57k members
+
+9. Conclusion
+Anecdotally, we have had consistently positive interactions with members of the Avalanche team. We think the leadership is mission-driven and has come to market with differentiated tech. Furthermore, the team has raised a substantial amount of cash to not only develop the network but to incentivize 3rd party developers and users to join. It’s possible that Avalanche has the best tech. But as we’ve noted in the past, the best tech almost never wins.
+
+It’s hard to put a finger on it, but we feel that something is missing when it comes to Avalanche. There is certainly lots of potential here, but we think it’s noteworthy that Ethereum L2s have been able to attract more projects, users, liquidity, devs, etc. — while having launched after Avalanche.
+
+We believe this highlights the power of Ethereum’s network effects. Of course, we’ll continue to closely monitor the Avalanche ecosystem and keep you updated on our findings.
+
+Thanks for reading.
+
+This research piece has been written by Michael Nadeau from The DeFi Report, in collaboration with Token Terminal.
+
+References:
+
+https://support.avax.network/en/articles/6077308-what-are-the-differences-between-the-x-p-and-c-chains
+https://docs.avax.network/nodes/run/node-manually#computer-hardware-and-os
+https://subnets.avax.network/
+https://www.theblock.co/post/114782/avalanche-launches-180-million-defi-incentive-scheme-aave-curve
+https://www.cryptoslam.io/blockchains
+https://messari.io/project/avalanche/profile
+https://www.avax.network/blog/avalanche-foundation-vista-asset-tokenization
+https://web.archive.org/web/20200712174107/https://info.avax.network/#unlocking_schedule
+https://www.avax.network/validators
+
+The authors of this content, or members, affiliates, or stakeholders of Token Terminal may be participating or are invested in protocols or tokens mentioned herein. The foregoing statement acts as a disclosure of potential conflicts of interest and is not a recommendation to purchase or invest in any token or participate in any protocol. Token Terminal does not recommend any particular course of action in relation to any token or protocol. The content herein is meant purely for educational and informational purposes only, and should not be relied upon as financial, investment, legal, tax or any other professional or other advice. None of the content and information herein is presented to induce or to attempt to induce any reader or other person to buy, sell or hold any token or participate in any protocol or enter into, or offer to enter into, any agreement for or with a view to buying or selling any token or participating in any protocol. Statements made herein (including statements of opinion, if any) are wholly generic and not tailored to take into account the personal needs and unique circumstances of any reader or any other person. Readers are strongly urged to exercise caution and have regard to their own personal needs and circumstances before making any decision to buy or sell any token or participate in any protocol. Observations and views expressed herein may be changed by Token Terminal at any time without notice. Token Terminal accepts no liability whatsoever for any losses or liabilities arising from the use of or reliance on any of this content.
+
+Stay in the loop
+
+Join our mailing list to get the latest insights!
+
+Email
+Your email address
+Sign up
+Continue reading
+
+Gravity Alpha Mainnet is live on Token Terminal
+Gravity Alpha Mainnet is live on Token Terminal
+Gravity Alpha Mainnet is live on Token Terminal
+Token Terminal has completed its integration of Gravity Alpha Mainnet to enable institutional-grade onchain analytics for the Gravity Alpha Mainnet ecosystem. This integration improves the accessibility of Gravity Alpha Mainnet's onchain data to enable more informed decision-making for all stakeholders in the ecosystem.
+
+28 Jan, 2025
+
+Injective is live on Token Terminal
+Injective is live on Token Terminal
+Injective is live on Token Terminal
+Token Terminal has completed its integration of Injective to enable institutional-grade onchain analytics for the Injective ecosystem. This integration improves the accessibility of Injective’s onchain data to enable more informed decision-making for all stakeholders in the ecosystem.
+
+21 Jan, 2025
+
+Viction is live on Token Terminal
+Viction is live on Token Terminal
+Viction is live on Token Terminal
+Token Terminal has completed its integration of Viction to enable institutional-grade onchain analytics for the Viction ecosystem. This integration improves the accessibility of Viction’s onchain data to enable more informed decision-making for all stakeholders in the ecosystem.
+
+16 Jan, 2025
+
+Stay in the loop
+Join our mailing list to get the latest insights!
+
+Email
+Your email address
+Sign up
+© 2023 Token Terminal
+
+Home
+Metrics
+Markets
+Projects
+Pricing
+API
+Docs
+Terms
+Resources
+Contact
+ Twitter
+ Discord
+ LinkedIn
+ YouTube
+ Podcast
+Get listed on Token Terminal
+The fundamentals of Avalanche | Token Terminal

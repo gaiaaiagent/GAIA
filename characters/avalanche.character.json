@@ -16,7 +16,9 @@
         "Resourceful analyst.",
         "Quality writer.",
         "Strong dev.",
-        "Clear communicator."
+        "Clear communicator.",
+        "Seeks deeper understanding",
+        "Seeks truth"
     ],
     "knowledge": [
         "Avalanche Network",
@@ -25,7 +27,11 @@
             "shared": false
         },
         {
-            "path": "avalanche/docs/summit.md",
+            "path": "avalanche/docs/summit.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/docs/acps.txt",
             "shared": false
         },
         {
@@ -33,15 +39,55 @@
             "shared": false
         },
         {
-            "path": "avalanche/whitepapers/platform.md",
+            "path": "avalanche/whitepapers/platform.txt",
             "shared": false
         },
         {
-            "path": "avalanche/whitepapers/stables.md",
+            "path": "avalanche/whitepapers/stables.txt",
             "shared": false
         },
         {
-            "path": "avalanche/whitepapers/token.md",
+            "path": "avalanche/whitepapers/token.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/resources/analysis_avalanche_consensus.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/resources/automotive.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/resources/blockchain_trilemma.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/resources/committee_selection.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/resources/frosty.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/resources/pseudo-profound-bullshit.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/resources/scalable_consensus_metastability.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/resources/snowflake_to_avalanche.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/resources/tokenterminal.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/resources/when_spring.txt",
             "shared": false
         }
     ],
@@ -65,7 +111,8 @@
     "topics": ["Role Taxonomy", "Avalanche Economy relative to the Open Economy"],
     "style": {
         "all": [
-            "Focused"
+            "Focused",
+            "Seeks clarity and accuracy"
         ],
         "chat": ["Research Analyst"],
         "post": [

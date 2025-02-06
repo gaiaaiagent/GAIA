@@ -1,0 +1,4050 @@
+An Analysis of Avalanche Consensus∗
+Ignacio Amores-Sesar1,2, Christian Cachin1,3, and Philipp Schneider1,4
+1University of Bern
+2
+ignacio.amores@unibe.ch
+3
+christian.cachin@unibe.ch
+4philipp.schneider2@unibe.ch
+Abstract
+A family of leaderless, decentralized consensus protocols, called Snow consensus was introduced
+in a recent whitepaper by Yin et al. These protocols address limitations of existing consensus methods, such as those using proof-of-work or quorums, by utilizing randomization and maintaining some
+level of resilience against Byzantine participants. Crucially, Snow consensus underpins the Avalanche
+blockchain, which provides a popular cryptocurrency and a platform for running smart contracts.
+Snow consensus algorithms are built on a natural, randomized routine, whereby participants continuously sample subsets of others and adopt an observed majority value until consensus is achieved.
+Additionally, Snow consensus defines conditions based on participants’ local views and security parameters. These conditions indicate when a party can confidently finalize its local value, knowing it will be
+adopted by honest participants.
+Although Snow consensus algorithms can be formulated concisely, there is a complex interaction
+between randomization, adversarial influence, and security parameters, which requires a formal analysis of their security and liveness. Snow protocols form the foundation for Avalanche-type blockchains,
+and this work aims to increase our understanding of such protocols by providing insights into their
+liveness and safety characteristics. First, we analyze these Snow protocols in terms of latency and security. Second, we expose a design issue where the trade-off between these two is unfavorable. Third,
+we propose a modification of the original protocol where this trade-off is much more favorable.
+1 Introduction
+Establishing consensus is one of the most fundamental tasks in distributed computing, for instance to
+implement atomic broadcast, to synchronize processes, or to elect leaders. Distributed blockchains and
+in particular cryptocurrencies rely on consensus to ensure proper operation, and therefore trust in these
+systems, which has put increased focus on new kinds of consensus algorithms. In the consensus problem
+we consider 𝑛 parties of which some are potentially faulty. Every party has some input value, which we
+often refer to as opinion in this article. We say that a protocol that coordinates communication and local
+computations of all parties solves consensus when everyone agrees on a single opinion, which was also
+the input of at least one party.
+The consensus problem becomes challenging in the presence of Byzantine faults, i.e., parties that can deviate from the protocol. In particular, reaching consensus is impossible deterministically in the asynchronous
+setting with even one fault [12] and in the synchronous setting with one third or more Byzantine faults [11],
+∗
+Ignacio Amores-Sesar has been supported by the Swiss National Science Foundation (SNSF) under grant agreement
+Nr. 200021_188443 (Advanced Consensus Protocols). Philipp Schneider has been supported by a grant from Avalanche, Inc. to
+the University of Bern.
+1
+arXiv:2401.02811v1 [cs.DC] 5 Jan 2024
+except if one would use cryptographic signatures. Real protocols that solve consensus in the context
+of blockchains have to navigate around these impossibility results, while also optimizing other criteria;
+chief among them are the latency until a transaction is finalized, the throughput of transactions, resource
+consumption, scalability, and resiliency against adversarial parties, which often necessitates trade-offs [5,
+14].
+One particularly simple consensus design sacrifices determinism and works along the following principle. Each party continually samples random subsets of other parties and adjusts its opinion based on the
+observed sample according to certain rules. There has been extensive research that explores such mechanisms, see the recent survey [2]. It has been shown for a subset of protocols of this type that they can be
+expected to converge very rapidly to a state of stable consensus (with a limited adversary, a bounded number of opinions, and in a synchronous network) [3, 4, 9, 10, 13]. Additionally, such mechanisms have the
+advantage that parties need only few such samplings to be relatively certain what the consensus opinion
+will be, resulting in near-linear message complexity.
+A whitepaper [16] released in 2019 exploits this design and introduces the Avalanche protocol, which
+forms the basis of the Avalanche blockchain infrastructure and its services. Avalanche gained popularity
+and reach due to competitive characteristics in the performance spectrum of latency, throughput, scalability, and resource consumption [15].1
+In particular, [16] introduces the Snow family of binary consensus
+protocols that build on this principle of random samplings, which can be adapted to maintain consistency
+of the corresponding Avalanche blockchain network.
+The simplest protocol of this family, known as Slush, works as follows. Each party continuously samples the
+opinion of 𝑘 ≥ 2 others; if such a sampling contains an opinion different from its own at least 𝛼 times (for
+some 𝛼 > 𝑘/2) then the party adopts this opinion as its own. Slush can be considered as a self-organizing
+mechanism that it is likely to converge to a stable consensus relatively quickly and remain there, even in
+the presence of a limited number of parties that deviate from the protocol. The whitepaper also introduces
+the Snowflake and Snowball protocols, which add mechanisms to finalize an opinion of a node based on past
+queries which reflects how stable the observed majority is. The level of confidence in a majority can be
+controlled with a security parameter 𝛽.
+The complex interaction between performance characteristics, security level, and the involved parameters
+𝑘, 𝛼, and 𝛽 makes the analysis of Snow-type consensus protocols challenging. The whitepaper [16] relies
+primarily on empirical observations and informal explanations to motivate its design choices. Currently, a
+formal understanding of the performance and security characteristics of Snow protocols is lacking.
+Overview and Contributions. We focus on bridging the gap in understanding of Snow consensus protocols, which we consider as a necessary first step for an encompassing analysis of the complete Avalanche
+blockchain protocol, which builds upon Snow consensus (although the Avalanche protocol itself is beyond
+the scope of this work). First we explore the performance of Snow protocols, beginning with the selforganizing, binary consensus mechanism of Slush. In Section 3, we express the progress toward a stable
+consensus per round depending on the distribution of opinions and parameters 𝑘 ≥ 2 and 𝛼 >
+𝑘
+2
+, which
+gives insights into the evolution of the system (cf. Figure 1 for a visualization).
+In Section 4, we show that coming close to a consensus already requires a minimum of Ω
+
+log𝑛
+log𝑘
+
+rounds,
+even in the absence of adversarial influence (see Theorem 1, a simpler, weaker form is given in Corollary 4.4). Furthermore, we generalize upper bounds from the so-called Median and 3-Majority consensus
+protocols [3, 9] in the Gossip model (discussed in Section 4) and establish that Slush reaches a stable consensus in𝑂(log𝑛) rounds (see Theorem 2), which holds even when an adversary can influence up to𝑂
+√
+𝑛
+
+1For instance, through its AVAX token, Avalanche ranks in the top 10 among the “Layer-1” blockchains by market capitalization
+(as of December 2023).
+parties.
+We interpret these results in the following way. Even assuming that the performance of Slush matches
+the lower bound, increasing the parameter 𝑘 yields only a limited speed-up of 𝑂(log 𝑘) (usually 𝑘 ≪ 𝑛).
+Furthermore, since the message complexity per round is Θ(𝑘𝑛) Slush has the advantage of near-linear
+message complexity for small 𝑘, which is negated if 𝑘 increases significantly (e.g., sampling sizes close to
+𝑛). We conclude that values higher than 𝑘 = 20 as suggested originally [16] have diminishing benefit and an
+unfavorable trade-off in terms of message complexity. In Section 5 we show that the lower bound Ω
+
+log𝑛
+log𝑘
+
+rounds extends to Snowflake and Snowball.
+In Section 6 we analyze the security mechanisms of the Snow protocols, that deal with the possibility of
+failing to achieve consensus due to the randomized nature of the algorithm or adversarial influence. The
+protocol provides a security parameter 𝛽 to control the probability of such a failure. This has an unfavorable
+trade-off as we show in Section 6, specifically, a negligible probability of failure (w.r.t. 𝛽) and a latency to
+finalize a value that is at most polynomial in 𝛽 are mutually exclusive (see Theorem 3). In Section 7 we
+propose a solution for this issue by introducing an alternative protocol. It replaces the security mechanism
+of Snowball with a simple mechanism that achieves security with all but negligible probability (w.r.t. 𝛽) in
+𝑂(𝛽 + log𝑛) rounds (see Theorem 4 and Corollary 7.4).
+2 Preliminaries
+Before moving to the technical parts of the analysis, we introduce the definitions and modeling assumptions
+that we use throughout the paper. In part, this work aims to be a supplementary of the whitepaper [16] in
+the style of other theoretical works that study randomized, self-stabilizing consensus protocols [3, 4, 9, 10,
+13]. Therefore our nomenclature, definitions and modeling assumptions are a composition of those.
+2.1 Model
+Communication. We consider a fully connected network of 𝑛 parties with identifiers N = {1, . . . , 𝑛}.
+Parties communicate by sending point to point messages. For the message transfer we assume the synchronous message passing model, where there is a fixed period of time until any given message is delivered.
+In fact, the synchronous setting allows to assume that time is slotted into discrete rounds and all messages
+sent in the previous round have arrived by the next round. This also allows us to use the number of rounds
+as a proxy for algorithm running time.
+Consensus. In the general problem setup there are 𝑚 opinions in the network and each party has an
+initial opinion, however note that in the context of Snow protocols we typically have𝑚 = 2. Snow protocols
+can be seen as self-stabilizing protocols and we define a stable state where almost all parties have the same
+opinion and the likelihood to revert from this state is low (see Section 7 for some properties of this stable
+state).
+Definition 2.1 (State of Stable Consensus). The system is in a state of stable consensus if at least 𝑛−𝑜 (𝑛)
+parties have the same opinion.
+Randomization or the presence of an adversary implies that at any point in time there is a non-zero chance
+that a stable consensus is reverted. Therefore, in the context of blockchain applications, parties need to
+eventually finalize or decide on an opinion. In that sense we define the consensus problem as follows.
+Definition 2.2 (Consensus Problem). A protocol solves this problem if the following conditions are satisfied.
+Termination: Every party eventually decides on some opinion.
+Validity: If all parties propose the same value, then all parties decide on that value.
+
+Integrity: No party decides twice.
+Agreement: No two parties decide differently.
+We consider this consensus problem under the influence of the following adversary.
+Definition 2.3 (𝐹 -Bounded Adversary). An 𝐹 -bounded adversary can set the opinion of up to 𝐹 (undecided)
+parties at the beginning of each round to one of the 𝑚 opinions.
+Randomization, Security and Latency. The consensus protocols we consider in this work are randomized, and we work with some standard definitions that we summarize in Appendix A. In particular we also
+consider an 𝐹 -bounded adversary, which introduces a non-zero chance to delay a consensus for any fixed
+period of time. Hence, we can only hope to make the probability of failure of such a protocol negligibly
+small, while at the same time maintaining a reasonable latency (i.e., number of rounds until consensus). To
+connect the notions of failure probability and latency we make the following provisions.
+Let 𝐸 be an event or condition during the execution of some protocol P, e.g., 𝐸 describes the event that P
+successfully establishes consensus, see Definition 2.2. The protocols we are investigating typically depend
+on so called security parameters. Increasing the security parameter increases the likelihood of success but
+typically has detrimental effects on the running time. To quantify this, we formally define further below
+what it means that 𝐸 holds with all but negligible probability with respect to protocol P. Roughly speaking,
+as we increase the running time of a protocol measured in the security parameter 𝜆, the probability that
+some condition 𝐸 (e.g., consensus) has not been established yet, decreases super-polynomially in 𝜆.
+Definition 2.4 (Negligible Probability, Security Parameter). An event 𝐸 holds with all but negligible probability or equivalently its complement 𝐸 has negligible probability in a protocol P, if the following holds. There
+exists a polynomial 𝜌 such that for any polynomial 𝜋 there exists a value 𝜆0 ≥ 0, such that for all 𝜆 ≥ 𝜆0 the
+following holds. If P is executed for at least 𝜌 (𝜆) rounds it holds that P(𝐸) ≤ 1/𝜋 (𝜆), i.e., P(𝐸) > 1 − 1/𝜋 (𝜆).
+We call the value 𝜆 ≥ 𝜆0 a security parameter.
+In this article, we often talk about randomly sampling a set of 𝑘 parties, which means that we take a uniform
+random sample of size 𝑘 from the set of all 𝑛 parties with repetition, which is modeled by the binomial distribution. Note that sampling without repetition, represented by the hyper-geometric distribution, approaches
+the binomial distribution as the ratio 𝑛/𝑘 becomes larger. Therefore, our results approximate the case without repetition well for 𝑛 ≫ 𝑘 (the usual case). The assumption of uniform sampling with repetition makes
+our analysis much more feasible, in particular it removes undesirable marginal cases (e.g. 𝑘-samples for
+𝑛 < 𝑘) allowing use to use continuous functions to describe certain aspects of the system.
+2.2 The Snow Family
+The Snow family consists of three consensus protocols based on random sampling instead of the traditional
+quorum intersection. This approach allows the snow family to reduce the message complexity by sending
+messages to a constant number of parties each round. Here, we provide an informal description of each
+protocol, whereas a more detailed pseudocode can be found in Appendix C.
+Slush. The first protocol in the Snow family is Slush (Algorithm 2). An honest party 𝑗 runs the Slush
+protocol in local rounds, however in the general protocol every party may have a different round value.
+Party 𝑗 starts the round by randomly sampling 𝑘 parties for their opinion, with 𝑘 a constant value. If at
+least 𝛼 parties respond with the same opinion 𝑏, party 𝑗 adopts it as its own opinion and starts a new round.
+The value 𝛼 must be strictly larger than 𝑘
+2
+. If there is no 𝛼-majority, party 𝑗 keeps its opinion and starts
+a new round. The Slush algorithm has a hard-coded number of rounds defining the protocol’s end. When
+party 𝑗 reaches the maximum round, it decides(𝑏) its candidate value 𝑏. Note that in our analysis in Section
+4
+3 and 4 we analyze the time until Slush reaches a state of stable consensus (Definition 2.1) and assume that
+this hard coded maximum round does not exist or is sufficiently large to not play a role.
+Snowflake. The main limitation of the Slush algorithm is the hard-coded number of rounds. The number of rounds needs to be relatively high to guarantee consensus even in the worst case (which the case
+when the network starts in a bivalent state: half of the parties proposes(0) and the other half proposes(1)).
+Snowflake aims to address this issue by modifying the termination condition of Slush.
+In the Snowflake protocol (Algorithm 3), party 𝑗 counts the number of consecutive queries with an 𝛼-
+majority for opinion 𝑏. If 𝑗 observes 𝛽 consecutive rounds with 𝛼-majority for 𝑏, party 𝑗 decides(𝑏). The intuition behind this termination rule is the following: the probability of obtaining 𝛽 consecutive 𝛼-majorities
+for opinion 𝑏 is small when expressed as a function of 𝛽, unless almost every party has 𝑏 as candidate value
+in the network. This termination rule allows for an adaptive running time based on the state of the network. Looking ahead, we show how this termination rule forces the Snowflake protocol to choose between
+a high confidence in the agreement property and polynomial running time (Theorem 3).
+Snowball. The Snowball protocol (Algorithm 4) introduces another modification how parties change
+their opinion. In Snowflake, the change of opinion is only based on the outcome of the last query, i.e.,
+it is stateless. By contrast, in Snowball, party 𝑗 considers the past queries in order to decide whether to
+change its opinion or not. Party 𝑗 changes its opinion value from 𝑏 to 𝑏
+′ when the number of 𝛼-majorities
+for 𝑏
+′
+surpasses the number of 𝛼-majorities for value 𝑏 since the beginning of the execution. The idea
+behind considering the whole history of the protocol is to make it less likely for a party with opinion 𝑏 to
+switch to 𝑏
+′ when the prevalent opinion in the network is 𝑏, thus possibly reducing the number of rounds
+until termination. Looking ahead, we show that this routine does not reduce the number of rounds until
+termination in expectation (Lemma 5.5).
+Avalanche. The Snow consensus protocols serve as foundation for the Avalanche consensus [1, 16].
+Avalanche employs a classification system to group transactions into conflicting sets and subsequently
+applies a tailored adaptation of the Snowball algorithm to each of these conflict sets. To optimize communication efficiency, Avalanche establishes connections between distinct instances of the Snowball consensus, enabling the reuse of messages and, consequently, reducing message complexity. However, due to
+these interdependencies, Avalanche is unable to inherit the liveness properties from the Snow family [1].
+Nevertheless, it is noteworthy that the security of Avalanche remains equivalent to that of the Snowball
+protocol [16].
+2.3 Related Work
+The Avalanche protocol was introduced fairly recently thus research into this protocol is limited. The
+whitepaper [16] gives an iterative presentation of its algorithms and concepts, in particular the Snow protocols for binary consensus on which it then builds its Avalanche protocol in the UTXO model. This is
+supplemented with explanations about the design decisions and empiric data that highlights the protocols’
+performance in terms of latency, throughput and Byzantine resilience. Subsequently, the article [1] provided a formal description of the Avalanche protocol. They also showcase a vulnerability (that has since
+been addressed by subsequent versions of Avalanche) that is specific to the Avalanche protocol, where a
+single malicious party can delay acceptance of a transaction and proposes a modification that prohibits this
+attack. Part of the reason that an encompassing analysis of Avalanche is outside the scope for this work,
+is that it is currently still evolving, for instance recently transitioning from a directed acyclic graph (DAG)
+to a chain, providing a total order for transactions as opposed to a partial order.
+5
+Self-stabilizing consensus protocols based on random samplings have been investigated much earlier in
+message passing models, motivated by the so called GOSSIP model.2 A particular strain of such protocols
+that attained some focus in the past are the so called 3-Majority, the 2-choices and the Median protocols
+[2]. In the 3-Majority protocol parties sample 3 random others and adopt the majority opinion using the
+first sampled parties’ opinion in case of a tie. The 2-Choices protocol works similar, but only 2 parties
+are sampled with the third being the party itself which also provides the default opinion. In the Median
+protocol a party samples 2 others and adopts the median value among theirs and their own (which requires
+a total order on the opinions). There has been a plethora of work on the analysis of these and similar light
+weight protocols based on random sampling, a selection of those are [3, 4, 6, 8, 9, 13], see also the survey
+[2] for an overview. These works usually focus on analyzing the time to consensus with respect to the
+initial number of opinions in the network, sometimes also on the required initial bias of the network in
+case a consensus on the initial majority is desired (plurality consensus).
+In contrast to this work, these articles focus on samplings of size at most 3, analysis of the dynamics for the
+whole spectrum of 𝑘, 𝛼 have, to the best of our knowledge, so far not been attempted.3 Crucially, in case the
+number of opinions is constant, all these works arrive at 𝑂(log𝑛) rounds until a state of stable consensus
+is attained with high probability. Interestingly, in the binary case the 3-Majority, the 2-choices and the
+Median protocols can be all be related to special cases of Slush. Besides analyzing security aspects of snow
+protocols, one of the main contributions of this work is to show how the dynamics of such sampling based
+protocols behave in the size 𝑘 of those samplings.
+3 Dynamics of Slush
+The whitepaper [16] observes that the Slush consensus protocol converges to a stable consensus very fast
+in practice. Concrete claims are made pertaining to the time to consensus, but no conclusive proof is given.
+In this section we analyze the the rate of convergence of Slush towards a consensus, which will later also
+inform the rate of convergence of Snowflake and Snowflake (Section 5).
+3.1 Expected Rate of Progress of Slush
+We start by investigating the expected rate of progress of Slush, which characterizes the dynamics of Slush
+and how it depends on the parameters 𝛼 and 𝑘. We will later show that other Snow protocols (Snowflake,
+Snowball) behave similar in terms of the required number of rounds to consensus.
+We make the following definitions and assumptions. First we assume that all parties have an initial opinion
+0 or 1, so no party has initially the opinion ⊥ (the case where there exist parties with opinion ⊥ can be
+disregarded for the lower bound and is handled separately for the upper bound). Recall that the set of
+parties N is numbered from 1 to 𝑛 and assume rounds are numbered 0, 1, 2, . . . .
+• Let 𝑋𝑖𝑗 ∈ {0, 1} be the current opinion of party 𝑗 after round 𝑖 of the Slush protocol was executed
+(𝑋0,𝑗 describes the initial opinion of party 𝑗).
+• Let 𝑌𝑖𝑗 be the number of replies with opinion 1 that party 𝑗 obtains in its sample of 𝑘 parties in round
+𝑖. Note that 𝑌𝑖𝑗 ∼ Bin(𝑘, 𝑝𝑖).
+• Let the state of the network be 𝑆𝑖
+:=
+Í𝑛
+𝑗=1 𝑋𝑖𝑗 , which describes the total number of parties whose
+current opinion is 1.
+• Let 𝑝𝑖
+:= 𝑆𝑖/𝑛 be the relative share of parties with opinion 1 in round 𝑖, which corresponds the
+probability that a sampled party has state 1.
+2
+In the GOSSIP model, nodes can contact a few random neighbors in a graph.
+3Metrics other than the round complexity have been considered for the binary 𝑘-Majority protocol which relates to Slush [7].
+6
+• For 𝑖 ≥ 1, we define as Δ𝑖
+:= 𝑆𝑖 − 𝑆𝑖−1, i.e., the absolute progress to 1-consensus (or 0-consensus for
+negative values).
+• Let 𝛿𝑖
+:= E(Δ𝑖)/𝑛 be the expected relative progress in round 𝑖. We will later show that 𝛿𝑖 can also
+be expressed as a function 𝛿 : [0, 1] → R that only depends on 𝑝𝑖
+(when viewing 𝑘, 𝛼 as fixed
+values), such that 𝛿𝑖 = 𝛿 (𝑝𝑖). Subsequently, we establish a relation between the 𝛿 (𝑝𝑖) for varying
+parameters 𝑘, 𝛼, in which case we denote it as 𝛿
+𝑘,𝛼 (𝑝𝑖) (however, for conciseness we will refrain using
+this superscript whenever possible, in particular when only single values for 𝑘 and 𝛼 are involved).
+Note that for 𝑖 ≥ 1, the quantities 𝑋𝑖𝑗 , 𝑌𝑖𝑗 , 𝑆𝑖
+, Δ𝑖
+, are random variables. This is not the case for the expected
+relative progress 𝛿𝑖
+, which, for fixed 𝛼, 𝑘, can be expressed only in terms of 𝑝𝑖
+, i.e., 𝛿𝑖 can be expressed as a
+function 𝛿 (𝑝𝑖) that depends only on 𝑝𝑖
+.
+Lemma 3.1. Let 𝑘/2 < 𝛼 ≤ 𝑘. Then
+𝛿𝑖 = 𝛿 (𝑝𝑖) :=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+h
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ+1 − (1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ+1
+𝑖
+i
+.
+Proof. In a given round 𝑖 a party 𝑗 with can observe at least 𝛼 times the opposite opinion in its query, in
+which case it switches, or not (observing at least 𝛼 of both opinions is precluded due to 𝛼 > 𝑘/2). Note that
+for 𝛿𝑖 only events where parties switch their opinion are relevant. For some party 𝑗 we have
+P
+
+𝑋𝑖𝑗 = 1 | 𝑋𝑖−1,𝑗 = 0
+
+= P
+
+𝑌𝑖𝑗 ≥ 𝛼
+
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+,
+P
+
+𝑋𝑖𝑗 = 0 | 𝑋𝑖−1,𝑗 = 1
+
+= P
+
+𝑌𝑖𝑗 ≤ 𝑘 − 𝛼
+
+=
+𝑘
+∑︁−𝛼
+ℓ=0
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ =
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ
+𝑖
+,
+where the last step is due to symmetry (see also Appendix B). Let 𝛿
+0
+𝑖
+be the probability that a randomly
+selected party switches to from 1 to 0 and let 𝛿
+1
+𝑖
+be analogous probability for switching from 0 to 1. These
+can also be interpreted as expected portions of parties switching from 1 to 0 and vice versa. We obtain
+𝛿
+0
+𝑖 = P
+
+𝑋𝑖𝑗 =0 ∩ 𝑋𝑖−1,𝑗 =1
+
+= (1−𝑝𝑖)P
+
+𝑋𝑖𝑗 =0 | 𝑋𝑖−1,𝑗 =1
+
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ+1
+,
+𝛿
+1
+𝑖 = P
+
+𝑋𝑖𝑗 =1 ∩ 𝑋𝑖−1,𝑗 =0
+
+= 𝑝𝑖
+· P
+
+𝑋𝑖𝑗 =1 | 𝑋𝑖−1,𝑗 =0
+
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ+1
+𝑖
+.
+The random variable Δ𝑖
+is determined by the number of parties that switch from 0 to 1 minus those that
+switch from 1 to 0. Since the events 𝑋𝑖𝑗 = 0 ∩ 𝑋𝑖−1,𝑗 = 1 and 𝑋𝑖𝑗 = 1 ∩ 𝑋𝑖−1,𝑗 = 0 are disjoint, we have that
+𝐸(Δ𝑖) = 𝑛𝛿1
+𝑖 − 𝑛𝛿0
+𝑖
+. Thus 𝛿𝑖 = 𝑛𝐸(Δ𝑖) = 𝛿
+1
+𝑖 − 𝛿
+0
+𝑖
+and the claim follows. □
+3.2 Mapping out the Dependency of 𝜹𝒊 on 𝒌 and 𝜶
+Recall that we define 𝛿
+𝑘,𝛼 (𝑝𝑖) as the function defining the rate of progress for parameters 𝛼, 𝑘 depending on
+𝑝𝑖
+. It is interesting that for 𝑘 = 2𝛼 −1 we have 𝛿
+𝑘,𝛼 = 𝛿
+𝑘,𝛼+1
+as the first summand in the expression 𝛿
+𝑘,𝛼 (𝑝𝑖)
+from Lemma 3.1 is zero. Another interesting observation is that in the marginal case 𝑘 = 𝛼 = 1, we have
+𝛿
+𝑘,𝛼 = 0 (see Figure 1a), i.e., there is no expected progress and Slush essentially degenerates into a random
+walk, and it is not too hard to show that in this case Slush takes Ω(𝑛
+2
+) rounds in expecta
+(a) 𝑘 = 2𝛼−1 with various values 𝛼 (b) 𝑘 = 20 with various values 𝛼
+Figure 1: Plots of 𝛿 (𝑝𝑖) for different parameters 𝑘 and 𝛼. For 𝑘 = 2𝛼−1 the expected progress for larger 𝛼
+dominates those for smaller (note that in the extreme case 𝑘 = 𝛼 = 1 there is no expected progress). For
+fixed 𝑘 the opposite is true. The combination 𝑘 = 20, 𝛼 = 15 was suggested by the whitepaper [16]. Note
+that 𝛿 (𝑝𝑖) is point-symmetric with respect to the point (
+1
+2
+, 0).
+In this section we establish non-trivial relations and claims for 𝛿
+𝑘,𝛼 (𝑝𝑖). First, we show that 𝛿
+𝑘,𝛼 (𝑝𝑖) is
+always larger (in absolute value) than 𝛿
+𝑘,𝛼′
+(𝑝𝑖) for 𝛼
+′ > 𝛼 (see Figure 1b for a visualized example of this
+claim). This means that choosing the smallest 𝛼 with 𝛼 > 𝑘/2 (i.e., 𝛼 = ⌈
+𝑘+1
+2
+⌉) is best in terms of the expected
+rate of progress 𝛿
+𝑘,𝛼 (𝑝𝑖). While this is useful on its own regarding the choice of 𝛼 in practice, we utilize
+this later to essentially eliminate 𝛼 from the of analysis for the lower bound of the rate of convergence to
+consensus.
+Lemma 3.2. For fixed 𝑘, let 𝑘/2 < 𝛼 ≤ 𝑘 and consider 𝛼
+′ > 𝛼. Then for any 𝑝𝑖 we have |𝛿
+𝑘,𝛼 (𝑝𝑖)| ≥ |𝛿
+𝑘,𝛼′
+(𝑝𝑖)|.
+Proof. The lemma is a corollary of Lemma 3.1, where we notice that all summands of 𝛿 (𝑝𝑖) = 𝛿
+𝑘,𝛼 (𝑝𝑖) are
+either positive for 𝑝𝑖 > 1/2 or negative for 𝑝𝑖 < 1/2 or 0 for 𝑝𝑖 = 1/2. Since all summands of 𝛿
+𝑘,𝛼′
+(𝑝𝑖) occur
+in 𝛿
+𝑘,𝛼 (𝑝𝑖) and all have the same sign for some fixed 𝑝𝑖
+, we have the claim. □
+In particular, for 𝛼 = ⌈
+𝑘+1
+2
+⌉ we can express 𝛿
+𝑘,𝛼 (𝑝𝑖) in a different form, which we will use frequently in
+subsequent lemmas to simplify (or enable) subsequent proofs.
+Lemma 3.3. Let 𝛼 = ⌈
+𝑘+1
+2
+⌉. Then
+(
+𝛿
+𝑘,𝛼 (𝑝𝑖) =
+ Í𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+
+− 𝑝𝑖
+, 𝑘 odd
+𝛿
+𝑘,𝛼 (𝑝𝑖) =
+ Í𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+
+− 𝑝𝑖 +
+
+𝑘
+𝛼−1
+
+𝑝
+𝛼
+𝑖
+(1−𝑝𝑖)
+𝛼−1
+, 𝑘 even.
+Proof. We start out with the expression from Lemma 3.1.
+𝛿
+𝑘,𝛼 (𝑝𝑖) =
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+h
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ+1 − (1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ+1
+𝑖
+i
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ+1 −
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ+1
+𝑖
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+h
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ − 𝑝
+ℓ+1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+i
+−
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ+1
+𝑖
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ −
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ+1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ −
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ+1
+𝑖
+The proof forks into cases by the parity of 𝑘. Consider the case that 𝑘 is odd. Then we have 𝑘 = 2𝛼 − 1.
+Continuing from above, we substitute ℓ
+′
+:= 𝑘 − ℓ in the middle sum, i.e., ℓ
+′ goes from 0 to 𝑘 − 𝛼 = 𝛼 − 1.
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ −
+𝛼∑︁−1
+ℓ
+′=0
+
+𝑘
+𝑘 − ℓ
+′
+
+𝑝
+𝑘−ℓ
+′+1
+𝑖
+(1−𝑝𝑖)
+ℓ
+′
+−
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ+1
+𝑖
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ −
+𝛼∑︁−1
+ℓ
+′=0
+
+𝑘
+ℓ
+′
+
+𝑝
+𝑘−ℓ
+′+1
+𝑖
+(1−𝑝𝑖)
+ℓ
+′
+−
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ+1
+𝑖
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ − 𝑝𝑖
+∑︁
+𝑘
+ℓ=0
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ
+𝑖
+| {z }
+=1
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ − 𝑝𝑖
+.
+In the case that 𝑘 is even we have 𝑘 = 2𝛼 − 2. Again we substitute ℓ
+′
+:= 𝑘 − ℓ in the middle sum, that is, ℓ
+′
+goes from 0 to 𝑘 − 𝛼 = 𝛼 − 2.
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ −
+𝛼∑︁−2
+ℓ
+′=0
+
+𝑘
+𝑘 − ℓ
+′
+
+𝑝
+𝑘−ℓ
+′+1
+𝑖
+(1−𝑝𝑖)
+ℓ
+′
+−
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ+1
+𝑖
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ −
+𝛼∑︁−2
+ℓ
+′=0
+
+𝑘
+ℓ
+′
+
+𝑝
+𝑘−ℓ
+′+1
+𝑖
+(1−𝑝𝑖)
+ℓ
+′
+−
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ+1
+𝑖
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ − 𝑝𝑖
+∑︁
+𝑘
+ℓ=0
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+ℓ
+𝑝
+𝑘−ℓ
+𝑖 +
+
+𝑘
+𝛼−1
+
+𝑝
+𝛼
+𝑖
+(1−𝑝𝑖)
+𝛼−1
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ − 𝑝𝑖 +
+
+𝑘
+𝛼−1
+
+𝑝
+𝛼
+𝑖
+(1−𝑝𝑖)
+𝛼−1
+. □
+The next two lemmas show, perhaps surprisingly, that for odd 𝑘 = 2𝛼−1 the expected progress functions
+𝛿
+𝑘,𝛼 (𝑝𝑖) and 𝛿
+𝑘−1,𝛼 (𝑝𝑖) coincide. When combined with Lemma 3.2, this will later, when we cover lower
+bounds, allow us to focus our analysis solely on odd values of the form 𝑘 = 2𝛼 − 1 as the corresponding
+claim for even 𝑘 = 2𝛼 − 2 is implied.
+Lemma 3.4. For 𝑘 > 𝛼 ≥ 1 the following equation holds
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ =
+h∑︁
+𝑘−1
+ℓ=𝛼
+
+𝑘−1
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+i
++
+
+𝑘−1
+𝛼−1
+
+𝑝
+𝛼
+𝑖
+(1−𝑝𝑖)
+𝑘−𝛼
+.
+9
+Proof.
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+=
+h∑︁
+𝑘−1
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+i
++ 𝑝
+𝑘
+𝑖
+=
+h∑︁
+𝑘−1
+ℓ=𝛼
+n
+
+𝑘−1
+ℓ
+
++
+
+𝑘−1
+ℓ−1
+o
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+i
++ 𝑝
+𝑘
+𝑖
+=
+h∑︁
+𝑘−1
+ℓ=𝛼
+n
+
+𝑘−1
+ℓ
+
++
+
+𝑘−1
+ℓ−1
+o
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+i
++ 𝑝
+𝑘
+𝑖
+=
+h∑︁
+𝑘−1
+ℓ=𝛼
+
+𝑘−1
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+i
++
+h∑︁
+𝑘−1
+ℓ=𝛼
+
+𝑘−1
+ℓ−1
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+i
++ 𝑝
+𝑘
+𝑖
+=
+h∑︁
+𝑘−1
+ℓ=𝛼
+
+𝑘−1
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+i
++
+h ∑︁
+𝑘−2
+ℓ=𝛼−1
+
+𝑘−1
+ℓ
+
+𝑝
+ℓ+1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+i
++ 𝑝
+𝑘
+𝑖
+=
+h∑︁
+𝑘−1
+ℓ=𝛼
+
+𝑘−1
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+i
+−
+h∑︁
+𝑘−1
+ℓ=𝛼
+
+𝑘−1
+ℓ
+
+𝑝
+ℓ+1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+i
++
+h ∑︁
+𝑘−2
+ℓ=𝛼−1
+
+𝑘−1
+ℓ
+
+𝑝
+ℓ+1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+i
++ 𝑝
+𝑘
+𝑖
+=
+h∑︁
+𝑘−1
+ℓ=𝛼
+
+𝑘−1
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+i
++
+
+𝑘−1
+𝛼−1
+
+𝑝
+𝛼
+𝑖
+(1−𝑝𝑖)
+𝑘−𝛼 − 𝑝
+𝑘
+𝑖 + 𝑝
+𝑘
+𝑖 □
+Lemma 3.5. Let 𝑘 = 2𝛼−1 and 𝛼 ≥ 2. Then 𝛿
+𝑘,𝛼 = 𝛿
+𝑘−1,𝛼
+.
+Proof. The proof is implied by combining Lemma 3.3 and Lemma 3.4. We start with the expression of
+𝛿
+𝑘,𝛼 (𝑝𝑖) derived in Lemma 3.3.
+𝛿
+𝑘,𝛼 (𝑝𝑖)
+Lem.3.3
+=
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+i
+− 𝑝𝑖
+Lem.3.4
+=
+h∑︁
+𝑘−1
+ℓ=𝛼
+
+𝑘−1
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+i
++
+
+𝑘−1
+𝛼−1
+
+𝑝
+𝛼
+𝑖
+(1−𝑝𝑖)
+𝛼−1 − 𝑝𝑖
+Lem.3.3
+= 𝛿
+𝑘−1,𝛼 (𝑝𝑖) □
+As our final structural claim in this subsection, we show that for 𝑘 = 2𝛼−1 or 𝑘 = 2𝛼, the expected progress
+towards consensus |𝛿
+𝑘,𝛼 (𝑝𝑖)| does not decrease as 𝛼 (and thereby 𝑘) increases, an example is given in Figure
+1a. We will use the this lemma later to extend an upper bound for the number of rounds to a consensus
+from small values of 𝛼 to large (where 𝑘 = 2𝛼 or 𝑘 = 2𝛼−1 ).
+Lemma 3.6. Let 𝑘 = 2𝛼−1 and 𝑘
+′ = 2𝛼
+′−1 for 𝛼 > 𝛼
+′ > 1. Then for any 𝑝𝑖 we have |𝛿
+𝑘,𝛼 (𝑝𝑖)| ≥ |𝛿
+𝑘
+′
+,𝛼′
+(𝑝𝑖)|.
+The same holds for even 𝑘 = 2(𝛼−1) and 𝑘
+′ = 2(𝛼
+′−1)
+′
+.
+Proof. We show the bound for 𝑝𝑖 ≥
+1
+2
+, the claim for 𝑝𝑖 ≤
+1
+2
+holds by symmetry. Let 𝑘 = 2𝛼 −1. We show
+that 𝛿
+𝑘,𝛼 (𝑝𝑖) = 𝛿
+𝑘−1,𝛼 (𝑝𝑖) ≥ 𝛿
+𝑘−2,𝛼−1
+(𝑝𝑖) ≥ 𝛿
+𝑘−3,𝛼−1
+(𝑝𝑖), which implies the lemma for 𝛼
+′ = 𝛼 − 1 and the
+10
+rest follows by induction.
+𝛿
+𝑘,𝛼 (𝑝𝑖)
+Lem.3.5
+= 𝛿
+𝑘−1,𝛼 (𝑝𝑖)
+Lem.3.4
+=
+h∑︁
+𝑘−2
+ℓ=𝛼
+
+𝑘−2
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−2
+i
++
+
+𝑘−2
+𝛼−1
+
+𝑝
+𝛼
+𝑖
+(1−𝑝𝑖)
+𝑘−𝛼 − 𝑝𝑖
+𝑝𝑖 ≥1/2
+≥
+h∑︁
+𝑘−2
+ℓ=𝛼
+
+𝑘−2
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−2
+i
++
+
+𝑘−2
+𝛼−1
+
+𝑝
+𝛼−1
+𝑖
+(1−𝑝𝑖)
+𝑘−𝛼+1 − 𝑝𝑖
+=
+h ∑︁
+𝑘−2
+ℓ=𝛼−1
+
+𝑘−2
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−2
+i
+− 𝑝𝑖
+Lem.3.3
+= 𝛿
+𝑘−2,𝛼−1
+(𝑝𝑖)
+Lem.3.5
+= 𝛿
+𝑘−3,𝛼−1
+(𝑝𝑖). □
+Note that while increasing 𝛼 with 𝑘 = 2𝛼−1 or 𝑘 = 2𝛼 does in fact strictly increase |𝛿
+𝛼,𝑘 (𝑝𝑖)| thereby speeding up the expected time to consensus, this effect is rather limited, as we shall see in the next section.
+4 Bounding the Time to Consensus for Slush
+We will now show how the expected progress 𝛿 (𝑝𝑖) can be used to obtain bounds for the number of rounds
+required to obtain consensus.
+4.1 Lower Bound
+As the system converges to consensus, arguably the most critical phase is when the network is roughly in
+balanced state, i.e., where fractions of parties with opinion 0 and 1 are roughly equal (𝑝𝑖 ≈ 1/2) and where
+progress 𝛿 (𝑝𝑖) towards consensus is close to 0, see Figure 1.
+To lead us out of a potential perfect balance, the system can only rely pure randomness to gain some small
+initial imbalance, as the expected progress is 0. (The best one can hope for is a deviation of 𝑝𝑖 ≈ 1/2 +𝑐/
+√
+𝑛
+for some constant 𝑐 within reasonable time bounds, due to the central limit theorem). After that initial
+perturbation the convergence to consensus crucially depends on how fast the expected progress for the
+next round grows in parameter 𝑝𝑖
+.
+Indicative for the change in progress is the derivative of 𝛿 (𝑝𝑖), whose upper bound is useful to analyze
+the case where the system moves to a 1-consensus (w.l.o.g., due to a symmetry argument). Intuitively,
+this limits how fast the expected progress increases from an almost balanced state. We will first restrict
+ourselves to the case 𝑘 = 2𝛼−1, as the previous section gives us all tools to extend this result to general 𝑘
+and 𝛼, as will be shown formally afterwards.
+Lemma 4.1. Let 𝑘 = 2𝛼 − 1. For 𝑝𝑖 ≥ 1/2 it holds that 𝜕𝛿 (𝑝𝑖 )
+𝜕𝑝𝑖
+≤ 𝑘 − 1.
+Proof. We use the expression from Lemma 3.3 and obtain the following derivative.
+𝜕𝛿 (𝑝𝑖)
+𝜕𝑝𝑖
+=
+𝜕
+𝜕𝑝𝑖
+ h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+i
+− 𝑝𝑖
+
+=
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+
+ℓ · 𝑝
+ℓ−1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ − (𝑘−ℓ) · 𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+ i − 1
+11
+We evaluate at 𝑝𝑖 = 1/2, then
+𝜕𝛿 (
+1
+2
+)
+𝜕𝑝𝑖
+=
+1
+2
+𝑘−1
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(2ℓ − 𝑘)
+i
+− 1 ≤
+1
+2
+𝑘−1
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+(2ℓ − 𝑘)
+i
+− 1
+=
+1
+2
+𝑘−1
+h
+2
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+ℓ −
+𝑘
+2
+∑︁
+𝑘
+ℓ=0
+
+𝑘
+ℓ
+
+i
+− 1 due to 𝑘 = 2𝛼−1 and
+𝑘
+ℓ
+
+=
+
+𝑘
+𝑘−ℓ
+
+≤
+1
+2
+𝑘−1
+h
+2
+∑︁
+𝑘
+ℓ=0
+
+𝑘
+ℓ
+
+ℓ −
+𝑘
+2
+∑︁
+𝑘
+ℓ=0
+
+𝑘
+ℓ
+
+i
+− 1
+=
+1
+2
+𝑘−1
+h
+2𝑘 · 2
+𝑘−1 −
+𝑘
+2
+· 2
+𝑘
+i
+− 1 = 𝑘−1.
+In the following we will also show that the second derivative 𝜕𝛿 (𝑝𝑖 )
+𝜕
+2𝑝𝑖
+is at most 0 for 𝑝𝑖 ≥
+1
+2
+. Combined with
+the above, this implies that the first derivative is 𝜕𝛿 (𝑝𝑖 )
+𝜕𝑝𝑖
+≤ 𝑘−1 for any 𝑝𝑖 ≥
+1
+2
+. It remains to prove the claim
+about 𝜕𝛿 (𝑝𝑖 )
+𝜕
+2𝑝𝑖
+. This is a bit tedious and involves modifying binomial coefficients on the level of the definition
+
+
+𝑘
+ℓ
+
+=
+𝑛!
+𝑘!(𝑛−𝑘)!
+(third step) and then shifting sum indices (fourth step).
+𝜕𝛿 (𝑝𝑖)
+𝜕
+2𝑝𝑖
+=
+𝜕
+𝜕𝑝𝑖
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+
+ℓ · 𝑝
+ℓ−1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ − (𝑘−ℓ) · 𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+ i
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ−2
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−2
+·
+
+ℓ(ℓ−1) (1−𝑝𝑖)
+2 − 2ℓ(𝑘−ℓ)𝑝𝑖(1−𝑝𝑖) + (𝑘−ℓ) (𝑘−ℓ−1)𝑝
+2
+𝑖
+
+=
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ−2
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+ℓ(ℓ−1)
+i
++
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−2
+(𝑘−ℓ) (𝑘−ℓ−1)
+i
+− 2 ·
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ−1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+ℓ(𝑘−ℓ)
+i
+=
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ−1
+
+𝑝
+ℓ−2
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+(ℓ−1) (𝑘−ℓ+1)
+i
++
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ+1
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−2
+(ℓ+1) (𝑘−ℓ−1)
+i
+− 2 ·
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ−1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+ℓ(𝑘−ℓ)
+i
+=
+h ∑︁
+𝑘
+ℓ=𝛼−1
+
+𝑘
+ℓ
+
+𝑝
+ℓ−1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+ℓ(𝑘−ℓ)
+i
++
+h ∑︁
+𝑘
+ℓ=𝛼+1
+
+𝑘
+ℓ
+
+𝑝
+ℓ−1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+ℓ(𝑘−ℓ)
+i
+− 2 ·
+h∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ−1
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ−1
+ℓ(𝑘−ℓ)
+i
+=
+
+𝑘
+𝛼−1
+
+𝑝
+𝛼−2
+𝑖
+(1−𝑝𝑖)
+𝛼−1
+(𝛼−1)𝛼 −
+
+𝑘
+𝛼
+
+𝑝
+𝛼−1
+𝑖
+(1−𝑝𝑖)
+𝛼−2
+(𝛼−1)𝛼
+=
+
+𝑘
+𝛼
+
+𝑝
+𝛼−2
+𝑖
+(1−𝑝𝑖)
+𝛼−2
+(𝛼−1)𝛼 · (1 − 2𝑝𝑖) since
+𝑘
+𝛼
+
+=
+
+𝑘
+𝛼−1
+
+≤ 0 for 𝑝𝑖 ≥
+1
+2
+. □
+Next, we show that the progress towards consensus in a single round is limited, in particular around the
+balanced state. Here we utilize two tools. First of all, we employ Lemma 4.1 that bounds the progress
+around an almost balanced state but only for the "well behaved" case 𝑘 = 2𝛼−1. Second, we use Lemma 3.5
+to extend this to even Lemma 3.2 to extend it to any 𝑘 and 𝛼 for which 𝑘
+2
+< 𝛼 ≤ 𝑘.
+Lemma 4.2. Let 𝑘 ≥ 2 and 𝑘
+2
+< 𝛼 ≤ 𝑘 and 𝑆𝑖 ≥
+𝑛
+2
+(w.l.o.g.). Then Δ𝑖+1 > (𝑘−1)
+
+𝑆𝑖−
+𝑛
+2
+
++𝑡
+√
+𝑛 with probability
+at most 1
+𝑡
+2
+, for any 𝑡 ≥ 1.
+Proof. We prove the claim for 𝑘 = 2𝛼 − 1 for 𝛼 ≥ 2, and generalize it further below. Since 𝛿 (𝑝𝑖) ( 1
+2
+) = 0 (cf.
+Lemma 3.1 or Figure 1and 𝜕𝛿 (𝑝𝑖 )
+𝜕𝑝𝑖
+≤ 𝑘 by Lemma 4.1 we obtain E(Δ𝑖+1) = 𝛿 (𝑝𝑖) (𝑝𝑖) · 𝑛 ≤ (𝑘−1)𝑛(𝑝𝑖−
+1
+2
+).
+To also obtain the claim with the stated probability, let us look at the variance 𝜎
+2
+:= Var(𝑆𝑖+1) = Var(
+Í𝑛
+𝑗=1 𝑋𝑖+1,𝑗).
+After round 𝑖 before round 𝑖+1 we have Var(Δ𝑖+1) = Var(𝑆𝑖+1−𝑆𝑖) = Var(𝑆𝑖+1) = 𝜎
+2
+, since 𝑆𝑖
+is a constant
+offset.
+The 𝑋𝑖+1,𝑗 ∈ {0, 1} are independent and identically distributed with Var(𝑋𝑖+1,𝑗) ≤ 1, thus 𝜎
+2 = 𝑛 ·
+Var(𝑋𝑖+1,𝑗) ≤ 𝑛. Using the Chebyshev inequality we obtain
+P
+
+Δ𝑖+1 ≥ (𝑘−1)𝑛(𝑝𝑖 −
+1
+2
+) + 𝑡
+√
+𝑛
+
+≤ P
+
+Δ𝑖+1 ≥ E(Δ𝑖+1) + 𝑡𝜎
+≤ P
+
+|Δ𝑖+1 − E(Δ𝑖+1)| ≥ 𝑡𝜎
+≤
+1
+𝑡
+2
+.
+It remains to generalize the claim for 𝑘, 𝛼. Let Δ
+𝑘,𝛼
+𝑖
+and 𝛿
+𝑘,𝛼
+𝑖
+denote the absolute and relative expected
+progress in round 𝑖 for these specific parameters. Let 𝑘 = 2𝛼 − 1, 𝛼 ≥ 2 as before. By Lemma 3.5 we have
+E(Δ
+𝑘,𝛼
+𝑖
+) = 𝑛 · 𝛿
+𝑘,𝛼 (𝑝𝑖) = 𝑛 · 𝛿
+𝑘−1,𝛼 (𝑝𝑖) = E(Δ
+𝑘−1,𝛼
+𝑖
+), hence
+P
+
+Δ
+𝑘−1,𝛼
+𝑖+1
+≥ (𝑘−1)𝑛(𝑝𝑖 −
+1
+2
+) + 𝑡
+√
+𝑛
+
+≤ P
+
+Δ
+𝑘−1,𝛼
+𝑖+1
+≥ E(Δ
+𝒌,𝛼)
+𝑖+1
++ 𝑡𝜎
+= P
+
+Δ
+𝑘−1,𝛼
+𝑖+1
+≥ E(Δ
+𝒌−1,𝛼)
+𝑖+1
++ 𝑡𝜎
+≤
+1
+𝑡
+2
+.
+Note that this extends the claim from 𝑘 = 2𝛼−1 (odd) to the case 𝑘 = 2𝛼−2 (even).
+Let now 𝑘 be arbitrary (odd or even) and 𝑘
+2
+< 𝛼
+′ ≤ 𝑘. By Lemma 3.2 we have that
+E(Δ
+𝑘,𝛼′
+𝑖
+) = 𝑛 · 𝛿 (𝑝𝑖)
+𝑘,𝛼′
+≤ 𝑛 · 𝛿
+𝑘,𝛼 (𝑝𝑖) = E(Δ
+𝑘,𝛼
+𝑖
+).
+Applying the Chebyshev bound once more gives us
+P
+
+Δ
+𝑘,𝛼′
+𝑖+1
+≥ (𝑘−1)𝑛(𝑝𝑖 −
+1
+2
+) + 𝑡
+√
+𝑛
+
+≤ P
+
+Δ
+𝑘,𝛼′
+𝑖+1
+≥ E(Δ
+𝑘,𝜶
+𝑖+1
+) + 𝑡𝜎
+≤ P
+
+Δ
+𝑘,𝛼′
+𝑖+1
+≥ E(Δ
+𝑘,𝜶
+′
+𝑖+1
+) + 𝑡𝜎
+≤
+1
+𝑡
+2
+. □
+Building on the previous lemma, we can give the following probabilistic bound for the number of parties
+that have opinion 1 after 𝑖 rounds.
+Lemma 4.3. Let 𝑘 ≥ 2,
+𝑘
+2
+< 𝛼 ≤ 𝑘. Assume the system is in a roughly balanced state with 𝑆0 ≤
+𝑛
+2
++ 𝑓 (𝑛)
+for 𝑓 (𝑛) =
+√︁
+𝑛 log𝑛. Then for any 𝑖 ≤
+log𝑛
+𝑐
+it holds 𝑆𝑖 >
+𝑛
+2
++ (𝑘+1)
+𝑖
+𝑓 (𝑛) with probability at most 1/𝑐 for any
+𝑐 ≥ 1.
+Proof. Let us first assume that each round the statement Δ𝑖+1 ≤ (𝑘−1)
+
+𝑆𝑖−
+𝑛
+2
+
++ 𝑓 (𝑛) is true and assess the
+overall progress we make at most towards a 1 consensus starting from 𝑆0.
+𝑆1 = Δ1 + 𝑆0 ≤ (𝑘−1)
+
+𝑆0−
+𝑛
+2
+
++ 𝑓 (𝑛) + 𝑆0 ≤
+𝑛
+2
++ (𝑘−1)𝑓 (𝑛) + 2𝑓 (𝑛) =
+𝑛
+2
++ 𝑓 (𝑛) (𝑘+1).
+This satisfies the lemma for the first round and serves as our induction base. For the induction step we
+obtain
+𝑆𝑖+1 = Δ𝑖+1 + 𝑆𝑖 ≤ (𝑘−1)
+
+𝑆𝑖−
+𝑛
+2
+
++ 𝑓 (𝑛) + 𝑆𝑖
+(Lemma 4.2)
+≤ (𝑘−1) (𝑘+1)
+𝑖
+𝑓 (𝑛) + 𝑓 (𝑛) + 𝑛
+2
++ (𝑘+1)
+𝑖
+𝑓 (𝑛) (induction hypothesis)
+=
+𝑛
+2
++ 𝑘 (𝑘+1)
+𝑖
+𝑓 (𝑛) + 𝑓 (𝑛)
+≤
+𝑛
+2
++ (𝑘+1)
+𝑖+1
+𝑓 (𝑛)
+To conclude the proof, we compute the probability that the claim is true. By Lemma 4.2 we have that
+Δ𝑖 > (𝑘−1)
+
+𝑆𝑖−
+𝑛
+2
+
++
+√︁
+𝑛 log𝑛 with probability at most 1
+log𝑛
+. Union bounding this for at most log𝑛
+𝑐
+rounds,
+we obtain that the claim is true with probability at most log𝑛
+𝑐
+1
+log𝑛
+=
+1
+𝑐
+. □
+We have all tools to deduce the lower bound for the number of rounds of Slush that is required even to get
+moderately close to a consensus state with some moderate probability.
+Theorem 1. For 𝑘 ≥ 2 and any 𝑘
+2
+< 𝛼 ≤ 𝑘 and sufficiently large 𝑛, running Slush for at most log𝑛
+3 log(𝑘+1) log𝛾
+rounds there is a majority opinion with at least 𝑛
+2
++
+𝑛
+𝛾
+parties with probability at most 1
+log(𝑘+1) log𝛾
+for any
+constant 𝛾 ≥ 2.
+Proof. We will assume that there are initially no parties with opinion ⊥ (cf. the explanation of Slush in
+Section 2.2), which only strengthens the lower bound. Furthermore, we restrict ourselves to bound the
+probability of a 1-majority, since the same claim for a 0-majority holds by symmetry (and then we apply a
+union bound for the probability of one of either consensus happening).
+The scenario for our lower bound for a 1 majority is the start state 𝑆0 ≤
+𝑛
+2
++ 𝑓 (𝑛) for 𝑓 (𝑛) =
+√︁
+𝑛 log𝑛 with
+𝑛 > 16, which conforms to the preconditions of Lemma 4.3. We choose the parameter 𝑐 from Lemma 4.3
+as 𝑐 = 3 log(𝑘+1) log𝛾. Then, by Lemma 4.3, after at most 𝑖 ≤
+log𝑛
+𝑐
+rounds it is 𝑆𝑖 >
+𝑛
+2
++ (𝑘+1)
+𝑖
+𝑓 (𝑛) with
+probability at most 1
+𝑐
+. Furthermore we have
+(𝑘+1)
+𝑖
+𝑓 (𝑛) ≤ 𝑓 (𝑛) · (𝑘+1)
+log𝑛
+3 log(𝑘+1) log𝛾 = 𝑓 (𝑛) · (𝑛/𝛾)
+1/3 ≤
+𝑛
+𝛾
+.
+In the last step we use that 𝑓 (𝑛) ≤ (𝑛/𝛾)
+2/3
+for sufficiently large 𝑛. Note that the same holds for obtaining
+a majority in the opinion 0 by starting in a state 𝑛
+2
+− 𝑓 (𝑛) ≤ 𝑆0 ≤
+𝑛
+2
++ 𝑓 (𝑛) due to symmetry. We obtain
+the claim of the theorem (for 𝑘 = 2𝛼 − 1) through a union bound on the number of rounds to either a
+0-consensus or a 1-consensus with 2
+𝑐
+≤
+1
+log(𝑘+1) log𝛾
+. □
+We express the theorem above in a simpler, albeit weaker form.
+Corollary 4.4. For 𝑘 ≥ 2 and any 𝑘
+2
+< 𝛼 ≤ 𝑘, Slush takes Ω
+
+log𝑛
+log𝑘
+
+rounds in expectation to reach a stable
+consensus (as defined in Definition 2.1).
+4.2 Upper Bound
+We show how to use the structural insights about Slush with respect to parameters 𝑘 and 𝛼 to extend known
+upper bounds for the so called Median protocol, the 3-Majority protocol and the 2-Choices protocol. These
+are usually conceptualized for the case of multiple (> 2) opinions and are defined as follows.
+Definition 4.5 (cf. [2]). The Median protocol assumes some globally known total order among opinions. In
+each round, each party samples the opinion of two others and adopts the median among those two and its own.
+In the 3-Majority protocol, in each round, each party samples the opinion of three others and adopts the majority
+opinion, or picking a random opinion among the three in case of a tie.
+In the 2-Choices protocol, in each round, each party samples the opinion of two others and then applies the
+3-Majority rule, defaulting to its own opinion in case of a tie.
+We make the following observation.
+Remark 4.6. Assume that all parties have initially only one of two opinions (i.e., the binary case, in particular,
+there are no parties with opinion ⊥). Then the Median protocol, 2-choices protocol and Slush for 𝑘 = 2 and
+𝛼 = 2 are all equivalent. This is because in the binary case, in all three protocols a given party will switch its
+own opinion if and only if it samples two parties that both have a different opinion from its own. Under the
+same circumstances and for the same reason, the 3-Majority protocol is equivalent to Slush for 𝑘 = 3 and 𝛼 = 2
+(exploiting that there can never be a tie in the binary case).
+
+There has been extensive research on the dynamics of the Median, 2-Choices and 3-Majority protocol
+(Definition 4.5) and the techniques are for the most part analogous or at least quite similar if the number
+of opinions is kept constant. We have already established the lower bound of Ω
+
+log𝑛
+log𝑘
+
+, i.e., the additional
+speed-up one can gain by increasing the query size 𝑘 diminishes very fast. Therefore, we do not deem
+it particularly worthwhile to show an upper bound that strictly improves on the 𝑂(log𝑛) bound for the
+aforementioned cases.
+Furthermore, it is not the scope of this paper to give detailed proofs of slight generalizations of those for
+the protocols from Definition 4.5. To keep this paper reasonably self-contained we showcase how these
+proofs generalize to Slush with arbitrary 𝑘 ≥ 2 and 𝛼 = ⌈
+𝑘+1
+2
+⌉. We will give an extended proof sketch that
+shows how the existing proof techniques generalize to obtain the following theorem. For more details we
+refer to the according sources (in particular [3, 9]).
+Theorem 2. Let 𝑘 ≥ 2 and 𝛼 = ⌈
+𝑘+1
+2
+⌉. Then Slush reaches a state where all but 𝑛 − 𝑂(
+√
+𝑛) have the same
+opinion in 𝑂(log𝑛) rounds with high probability, even in the presence of a √
+𝑛-bounded adversary.
+Proof Sketch. Our proof rests on the structure of the according proof for the 𝑘 = 𝛼 = 2 and (𝑘, 𝛼) = (3, 2)
+from [3, 9] for the binary case. The proof is divided into a constant number of phases. The phases range
+from the worst case where the distribution of opinions is roughly in an equilibrium, to the state of a stable
+consensus. We will show that it always takes at most 𝑂(log𝑛) rounds to arrive in the corresponding next
+phase, even when starting from the worst case of an equilibrium. Due to symmetry we assume 𝑆𝑖 ≥ 0
+w.l.o.g. We will at first make the main argument without considering the √
+𝑛-bounded adversary and the
+opinion ⊥ (see Section 2.2) and argue why the proof holds for these cases at the end.
+Phase 1: 𝒏
+2
+≤ 𝑺𝒊 ≤
+𝒏
+2
++ 𝒄1
+√︁
+𝒏 log 𝒏. To lift 𝑆𝑖 over the threshold of 𝑛
+2
++ 𝑐1
+√︁
+𝑛 log𝑛 to the next phase, anticoncentration bounds are used. In particular, because 𝛼 = ⌈
+𝑘+1
+2
+⌉ there is always a majority for either 0 or
+1 in each query, thus we have that 𝑋𝑖𝑗 ∼ B (𝑞𝑖) is Bernoulli distributed with probability 𝑞𝑖 ≈ 𝑝𝑖 ≈
+1
+2
+(since
+the system is close to balanced state). Hence, 𝑆𝑖 =
+Í𝑛
+𝑗=1 𝑋𝑖𝑗 is a sum of independent, identically distributed
+Bernoulli variables. By the Central Limit Theorem, for sufficiently large 𝑛 the variable 𝑆𝑖 approximates a
+normal distribution with deviation of Ω
+√
+𝑛
+
+around the expectation E(𝑆𝑖) ≈ 𝑛
+2
+. The property of the normal
+distribution implies that there is a constant probability for |𝑆𝑖 −
+𝑛
+2
+| ≥ 𝑐
+√
+𝑛 in a single round. Applying
+concentration (Chernoff) bounds and considering that by symmetry we are allowed to escape Phase 1 in
+either direction, one can ensure |𝑆𝑖 −
+𝑛
+2
+| > 𝑐1
+√︁
+𝑛 log𝑛 after 𝑂(log𝑛) rounds w.h.p. (cf. [9] for more details).
+Phase 2: 𝒏
+2
++ 𝒄1
+√︁
+𝒏 log 𝒏 < 𝑺𝒊 ≤
+𝒏
+2
++
+𝒏
+𝒄2
+. We explain the idea in a style that is akin to the proof by [3],
+which shows the argument for (𝑘, 𝛼) = (3, 2) and then extend it to the general case. Note that expected
+progress is E(Δ𝑖) = 𝑛 · 𝛿
+3,2
+(𝑝𝑖). The next step is to show that in the Phase 2 interval of 𝑆𝑖
+(here 𝑐2 = 3
+in general, 𝑐2 depends on 𝑘, 𝛼) the function 𝛿
+3,2
+(𝑝𝑖) can be lower bounded by a linear function of constant
+positive gradient through the point (
+1
+2
+, 0) (see Figure 1a for a visual representation). This implies that in
+each round the expected progress increases linearly in the progress that was made in the previous round.
+Intuitively, this corresponds to a situation of “compounding interest” in expected progress E(Δ𝑖) with each
+round 𝑖, i.e., exponential growth in 𝑖. Hence, it takes at most 𝑂(log𝑛) rounds until Ψ𝑖 >
+𝑛
+𝑐2
+.
+The caveat is, that this only works if we can guarantee that the system makes progress that is at least some
+constant fraction of the expected progress. Due to randomness the expected progress could be undershot
+or the system could even backslide towards the equilibrium. To show that this does not happen w.h.p., we
+exploit the intuition that in Phase 2 the system is already relatively far advanced into a majority, such that,
+the expected progress E(Δ𝑖) exceeds the standard deviation of Δ𝑖
+. Concretely, one can use concentration
+bounds and union bounds, to guarantee a constant fraction of the expected progress E(Δ𝑖) w.h.p. for each
+round in this phase.
+By Lemma 3.5 we have that 𝛿
+3,2
+(𝑝𝑖) = 𝛿
+2,2
+(𝑝𝑖), so the argument also extends to the 2-Choices protocol.
+Finally, Lemma 3.6 shows that the expected progress 𝛿
+𝑘,𝛼 for 𝑘 ≥ 4 and 𝛼 = ⌈
+𝑘+1
+2
+⌉ dominates that for
+
+𝑘 ∈ {2, 3}, and consequently the argument above applies for Slush in general.
+Phase 3: 𝒏
+2
++
+𝒏
+𝒄2
+< 𝑺𝒊 ≤
+𝒏
+2
++
+𝒏
+𝒄3
+. This is arguably the simplest phase, since the system is a constant fraction
+of parties from both the equilibrium state and the consensus state. This implies that 𝛿
+2,2
+(𝑝𝑖) (= 𝛿
+3,2
+(𝑝𝑖) by
+Lemma 3.5) can be lower bounded by a constant (cf. Figure 1a), therefore a constant fraction of all parties
+will switch to the majority opinion in expectation. It is not hard to show that this also holds w.h.p. and by
+Lemma 3.6, also for any 𝑘 ≥ 4 and 𝛼 = ⌈
+𝑘+1
+2
+⌉.
+Phase 4: 𝒏
+2
++
+𝒏
+𝒄3
+< 𝑺𝒊 ≤ 𝒏 − 𝒄4
+√
+𝒏. Although the expected progress 𝛿
+2,2
+(𝑝𝑖) tends to 0 as 𝑝𝑖 approaches
+1 (see Figure 1a), one can apply a similar argument as in Phase 2 but “backwards”. In particular, in the
+corresponding interval of 𝑆𝑖 the expected progress given by 𝛿
+2,2
+(𝑝𝑖) can be lower bounded by a linear
+function with constant negative slope through the point (1, 0) (see Figure 1a for a visual confirmation). This
+implies that the expected number of parties holding the minority opinion shrinks by a constant fraction
+in each round (cf. [3]). Thus it takes at most 𝑂(log𝑛) rounds until 𝑆𝑖 passes the threshold 𝑛 − 𝑐4
+√
+𝑛 given
+that the progress is at least a constant fraction of the expected progress. As in Phase 2, the latter can
+be guaranteed w.h.p. using concentration bounds. The argument generalizes to 𝑘 ≥ 3 and 𝛼 = ⌈
+𝑘+1
+2
+⌉ by
+Lemmas 3.5 and 3.6.
+√
+𝒏-Bounded Adversary: The optimal strategy of the adversary to avoid a consensus is to flip √
+𝑛 parties
+of the majority to the minority opinion. The main argument is that the ability of adversary to influence
+𝑆𝑖
+is asymptotically not more than the standard deviation of 𝑆𝑖
+. In Phase 1 the random deviation from the
+expectation is a desired effect to lift the system out of an equilibrium and one can show that w.h.p., the
+given adversary can not inhibit this. In the subsequent phases, the random deviation is undesired as it
+may reduce the progress below its expectation. The intuition is that since the influence of the adversary
+is actually less than the standard deviation, we can deal with both the standard deviation and the effect of
+the adversary as before, by adjusting constants in the running time.
+Dealing with parties with opinion ⊥: It remains to argue that the asymptotic running time does not
+change if we introduce the special opinion ⊥, which is relatively straight forward. Whenever a party 𝑗1
+with opinion ⊥ receives a query for an opinion by another party 𝑗2 then 𝑗1 adopts 𝑏 (see Algorithm 2). Let
+𝑛0,1 and 𝑛⊥ be the number of parties that have opinion 0, 1 or ⊥ respectively (𝑛 = 𝑛0,1 + 𝑛⊥). As long as
+𝑛0,1 ≤ 𝑛⊥ it can be shown that 𝑛0,1 doubles every 𝑂(1) rounds w.h.p. Similarly, if 𝑛0,1 ≥ 𝑛⊥, the number
+of parties halves every 𝑂(1) rounds w.h.p. Ultimately, this implies that the opinion ⊥ will die out after
+𝑂(log𝑛) rounds. □
+We can translate the above result into the notion of concentration with all but negligible probability (Definition A.3) by adding a factor of 𝛽 to the running time that gives more control over the level of security in in
+particular for small 𝑛 (see Lemma A.5 and Remark A.6 for the details). Specifically, the corollary conforms
+to Definition 2.4, as the runtime is polynomial in 𝛽.
+Corollary 4.7. Let 𝑘 ≥ 2 and 𝛼 = ⌈
+𝑘+1
+2
+⌉. Then Slush reaches a stable consensus in 𝑂(log𝑛 + 𝛽) rounds with
+all but negligible probability (with respect to 𝛽), even in the presence of a √
+𝑛-bounded adversary.
+5 Dynamics of Snowflake and Snowball
+In this section we are going to extend the lower bound for Slush derived in Section 4 to the Snowflake and
+Snowball protocols. Note that the quantities 𝑆𝑖
+, 𝑝𝑖
+, Δ𝑖
+, 𝛿𝑖 can be defined the same as in Slush, see Section 3,
+since the variables only depend on the opinion attribute of parties, which is present in all three protocols.
+However, the actual (expected) changes of these quantities in this section can and will differ from those
+in Slush. We will denote these quantities with superscripts (slush, flake, ball) in case we compare them
+over protocols (but avoid this whenever possible). Moreover, we condition the results of this section on the
+assumption that no node decides (finalizes) their opinion, before the system reaches a stable majority and
+17
+consider the repercussions at the end.
+Snowball, as explained in Section 2.2, augments the consensus mechanism from Slush with the concept of
+confidence associated to the current value, which influences the decision of a party to change its opinion.
+In a nutshell, a node changes opinion in the Snowball protocol when the cumulative number of queries
+with majority for the new opinion exceeds that for the old opinion. In the Slush protocol, the variable 𝑆𝑖
+was sufficient to describe the expected progress required to predict the evolution of the system, which is
+not the case in Snowball anymore, since aforementioned confidence levels play a crucial role.
+Definition 5.1. Define the set 𝐿
+𝑐
+𝑖
+to be the set of parties in round 𝑖 such that cnt(1) −cnt(0) = 𝑐 (where cnt(𝑏)
+is the number of queries of a given party that had a majority of opinion 𝑏). We further divide the set 𝐿
+0
+𝑖
+in two
+subsets 𝐿
+0,0
+𝑖
+and 𝐿
+0,1
+𝑖
+. Parties in 𝐿
+0
+𝑖
+(𝐿
+0,1
+𝑖
+) that have opinion 0 (1) belong to 𝐿
+0,0
+𝑖
+(𝐿
+0,1
+𝑖
+).
+The variable 𝑆𝑖 can be reconstructed as follows: 𝑆𝑖 = |𝐿
+0,1
+𝑖
+|+Í
+𝑐>0
+|𝐿
+𝑐
+𝑖
+|. Given a round 𝑖 > 0, the set of parties
+N is contained in Ð𝑖
+𝑐=−𝑖 𝐿
+𝑐
+𝑖
+as the end of round 𝑖, since every party performed 𝑖 queries by the end of round
+𝑖, thus the difference in counts 𝑐 is bounded between −𝑖 and 𝑖.
+Remark 5.2. Consider the collection L𝑖
+:= {𝐿
+𝑐
+𝑖
+}
+𝑖
+𝑐=−𝑖 ∪ {𝐿
+0,0
+𝑖
+, 𝐿0,1
+𝑖
+} of disjoint sets. The evolution of the system
+in the next round 𝑖 + 1 can now be described using this set L𝑖
+. After a query is performed a party in 𝐿
+𝑐
+𝑖 moves
+to set 𝐿
+𝑐+1
+𝑖
+if the query had a majority for 1, to 𝐿
+𝑐−1
+𝑖
+if the query had a majority for 0, or 𝐿
+𝑐
+𝑖
+if the query had
+no majority. The only parties that can change value after round 𝑖 are the parties contained in 𝐿
+0
+𝑖
+.
+Definition 5.3. For𝑖 ≥ 1, we define the absolute progress as Δ𝑖
+:= 𝑆𝑖−𝑆𝑖−1 = |𝐿
+0,1
+𝑖
+|−|𝐿
+0,1
+𝑖−1
+|+Í𝑖
+𝑐=1
+(|𝐿
+𝑐
+𝑖
+|−|𝐿
+𝑐
+𝑖−1
+|),
+i.e., the number of parties with 1 in their view in round 𝑖 minus the number of parties with 1 in their view in
+round 𝑖 − 1. As before, we define the expected relative progress as 𝛿𝑖
+:= E(Δ𝑖)/𝑛.
+The following Lemma shows that in Snowball, Δ𝑖
+is only affected by parties migrating from 𝐿
+0,1
+𝑖−1
+or 𝐿
+0,0
+𝑖−1
+in
+round 𝑖−1 to 𝐿
+−1
+𝑖
+or 𝐿
+1
+𝑖
+in round 𝑖, respectively.
+Lemma 5.4. The absolute progress can be expressed as Δ𝑖 = |Λ
+1
+𝑖
+| − |Λ
+0
+𝑖
+|, where Λ
+0
+𝑖
+:= 𝐿
+−1
+𝑖 ∩ 𝐿
+0,1
+𝑖−1
+and Λ
+1
+𝑖
+:=
+𝐿
+1
+𝑖 ∩ 𝐿
+0,0
+𝑖−1
+.
+Proof. Recall Δ𝑖 = |𝐿
+0,1
+𝑖
+| − |𝐿
+0,1
+𝑖−1
+| + Í𝑖
+𝑐=1
+(|𝐿
+𝑐
+𝑖
+| − |𝐿
+𝑐
+𝑖−1
+|) and consider a party 𝑗. We distinguish the following
+cases:
+• If 𝑗 ∈ 𝐿
+𝑐
+𝑖−1
+for𝑐 < 0, then Remark 5.2 guarantees that 𝑗 ∈ 𝐿
+𝑐−1
+𝑖 ∪𝐿
+𝑐
+𝑖 ∪𝐿
+𝑐+1
+𝑖 ∪𝐿
+0,0
+𝑖
+. None of the previous
+sets are involved in the definition of Δ𝑖
+, thus the value of Δ𝑖
+is independent from party 𝑗.
+• If 𝑗 ∈ 𝐿
+𝑐
+𝑖−1
+for 𝑐 > 0, then Remark 5.2 guarantees that 𝑗 ∈ 𝐿
+𝑐−1
+𝑖 ∪ 𝐿
+𝑐
+𝑖 ∪ 𝐿
+𝑐+1
+𝑖 ∪ 𝐿
+0,1
+𝑖
+. In the definition
+of Δ𝑖
+, the terms |𝐿
+𝑐
+′
+𝑖
+| for 𝑐
+′ ∈ {𝑐 − 1, 𝑐, 𝑐 + 1, {0, 1}} and |𝐿
+𝑐
+𝑖−1
+| appear with opposite signs. Thus, the
+contribution of party 𝑗 cancels out.
+• If 𝑗 ∈ 𝐿
+0,0
+𝑖−1
+, then Remark 5.2 guarantees that 𝑗 ∈ 𝐿
+−1
+𝑖 ∪𝐿
+0,0
+𝑖 ∪𝐿
+1
+𝑖
+. If 𝑗 ∈ 𝐿
+−1
+𝑖
+or 𝑗 ∈ 𝐿
+0,0
+𝑖
+, the terms terms
+𝐿
+0,0
+𝑖−1
+, 𝑗 ∈ 𝐿
+0,0
+𝑖
+, and 𝐿
+−1
+𝑖
+do not appear in the definition of Δ𝑖
+. If 𝑗 ∈ 𝐿
+1
+𝑖
+, then 𝑗 ∈ 𝐿
+0,0
+𝑖−1 ∩ 𝐿
+1
+𝑖
+= Λ
+1
+𝑖
+and 𝑗
+contributes with +1 to Δ𝑖
+.
+• If 𝑗 ∈ 𝐿
+0,1
+𝑖−1
+, then Remark 5.2 guarantees that 𝑗 ∈ 𝐿
+−1
+𝑖 ∪ 𝐿
+0,0
+𝑖 ∪ 𝐿
+1
+𝑖
+. If 𝑗 ∈ 𝐿
+1
+𝑖
+or 𝑗 ∈ 𝐿
+0,1
+𝑖
+, the term 𝐿
+0,1
+𝑖−1
+appears with coefficient −1, whereas the terms 𝑗 ∈ 𝐿
+1
+𝑖
+and 𝑗 ∈ 𝐿
+0,1
+𝑖
+appear with coefficient 1. Thus,
+their contribution cancel out. If 𝑗 ∈ 𝐿
+−1
+𝑖
+, then 𝑗 ∈ 𝐿
+0,1
+𝑖−1 ∩ 𝐿
+−1
+𝑖
+= Λ
+0
+𝑖
+the term 𝑗 ∈ 𝐿
+0,1
+𝑖−1
+appears with
+coefficient −1, whereas the term 𝑗 ∈ 𝐿
+−1
+𝑖
+does not appear.
+We conclude that Δ𝑖 = |Λ
+1
+𝑖
+| − |Λ
+0
+𝑖
+|. □
+An interesting interpretation of Lemma 5.4 if the following. Since the parties contained in the set 𝐿
+0
+𝑖
+are
+the only parties that can change their opinion, the expected progress of Snowball in a given round is the
+same as the expected progress of Slush restricted to the parties in 𝐿
+0
+𝑖
+. We formalize this intuition in the
+following lemma.
+18
+Lemma 5.5. The expected absolute progress of Snowball is at most as high as in Slush, i.e., 𝛿
+ball
+𝑖 ≤ 𝛿
+slush
+𝑖
+.
+Proof. Lemma 5.4 states that only parties in 𝐿
+0
+𝑖−1
+can modify the state 𝑆𝑖
+. Given a party 𝑗 ∈ 𝐿
+0,0
+𝑖−1
+(respectively
+𝑗 ∈ 𝐿
+0,1
+𝑖−1
+) The probability that 𝑗 changes to value 1 (respectively 0) is given by
+P
+
+𝑋𝑖𝑗 = 1 | 𝑗 ∈ 𝐿
+0,0
+𝑖−1
+
+= P
+
+𝑌𝑖𝑗 ≥ 𝛼
+
+=
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+.
+P
+
+𝑋𝑖𝑗 = 0 | 𝑗 ∈ 𝐿
+0,1
+𝑖−1
+
+= P
+
+𝑌𝑖𝑗 ≤ 𝑘 − 𝛼
+
+=
+𝑘
+∑︁−𝛼
+ℓ=0
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ
+,
+where the quantities 𝑋𝑖𝑗, 𝑌𝑖𝑗 are defined the same as in Section 3, i.e., we deal with exactly the same probabilities as in Lemma 3.1. Consequently, we are able to apply Lemma 3.1 and conclude that the expected
+rate of progress is 𝛿
+ball
+𝑖
+= 𝛿 (𝑝𝑖) when restricted to 𝐿
+0
+𝑖−1
+.
+The latter is an important caveat, since what changes in Snowball is the set of parties on which the expected
+rate of progress is applied. Then the way the expected absolute progress of Snowball and Snowflake relate
+to each other is given as follows
+E(Δ
+ball
+𝑖
+) = |𝐿
+0
+𝑖
+| · 𝛿
+ball
+𝑖 = |𝐿
+0
+𝑖
+| · 𝛿 (𝑝𝑖) = |𝐿
+0
+𝑖
+| · 𝛿
+slush
+𝑖 =
+|𝐿
+0
+𝑖
+|
+𝑛
+· E(Δ
+slush
+𝑖
+)
+|𝐿
+0
+𝑖
+| ≤𝑛
+≤ E(Δ
+slush
+𝑖
+).
+Dividing by 𝑛 on both sides and using 𝛿
+ball
+𝑖
+=
+E(Δ
+ball
+𝑖
+)
+𝑛
+, 𝛿
+slush
+𝑖
+=
+E(Δ
+slush
+𝑖
+)
+𝑛
+(see start of Section 3), yields the
+desired result. □
+Lemma 5.5 states that the expected progress of the Snowball protocol is upper-bounded by the expected
+progress of the Slush protocol. We conclude that the expected number of rounds even to reach majority of a
+constant fraction of nodes of one opinion of the Snowball protocol is lower-bounded by the Slush protocol,
+if no node decides prematurely. Note that the same is clearly true for as Snowflake which is essentially
+equal to Slush if no node decides prematurely.
+Corollary 5.6 (cf. Corollary 4.4). For 𝑘 ≥ 2 and any 𝑘
+2
+< 𝛼 ≤ 𝑘, Snowball and Snowball take Ω
+
+log𝑛
+log𝑘
+
+rounds
+in expectation to reach a state state of stable consensus for any constant 𝛾 ≥ 2, assuming that nodes do not
+decide before such a state is reached.
+Note that since the decision mechanism in Snowflake and Snowball implies that no node can decide before
+𝛽 rounds have passed the corollary implies a lower bound of Ω
+
+min
+log𝑛
+log𝑘
+, 𝛽 rounds. Furthermore, we will
+see in Section 6 that the dependence of the runtime on 𝛽 behaves much worse than Ω(𝛽) as the adversary
+can exploit the decision mechanism to delay a decision super-polynomially in 𝛽.
+6 Security of Snowflake and Snowball
+We show that in Snowflake and Snowball, has a vulnerability towards an adversary that intends to delay
+consensus (as defined in Definition 2.2). In particular, there might is an unfavorable trade-off between confidence of success with and latency. In particular, the mechanic that Snowflake and Snowball protocols use
+introduces a security parameter 𝛽 to control the probability of failure of obtaining a consensus (according to
+Definition 2.2). We show that this mechanism to make decision allows an adversary to delay the decision of
+any given party when using the consensus mechanisms of Snowflake and Snowball for a super-polynomial
+number of rounds in 𝛽. This is independent of the current state of the system, i.e., the claim is true even
+if the system is in a state of a stable consensus (see Definition 2.1) and is true for a weaker notion of the
+𝐹 -bounded adversary from Definition 2.3 for a small �
+Definition 6.1. A weak 𝐹 -bounded adversary controls up to 𝐹 undecided parties whose state (opinion) it can
+set once each round. We call these influenced parties and in particular we assume that the adversary can reset
+any decision on some opinion made by those.
+We start by giving a lower bound for the probability that some party samples a majority of influenced
+parties.
+Lemma 6.2. The probability that a random sample of 𝑘 parties contains at least 𝛼 that are influenced by a
+weak 𝐹 -bounded adversary is at least
+𝐹
+𝑛
+𝑘
+.
+Proof. Recall that we nodes are sampled uniformly at random with repetition. We can lower bound 𝑞𝑗 with
+the probability that 𝑗 samples at least 𝛼 Byzantine parties as follows
+𝑞𝑗 =
+∑︁
+𝑘
+ℓ=𝛼
+
+𝑘
+ℓ
+
+
+𝐹
+𝑛
+ℓ
+
+𝑛 − 𝐹
+𝑛
+𝑘−ℓ
+≥
+∑︁
+𝑘
+ℓ=𝑘
+
+𝑘
+ℓ
+
+
+𝐹
+𝑛
+ℓ
+
+𝑛 − 𝐹
+𝑛
+𝑘−ℓ
+=
+
+𝐹
+𝑛
+𝑘
+. □
+Note that even though the probability above decreases with 𝑘, the parameter 𝑘 is considered a small, constant sized tuning parameter [16] and is not a proper security parameter, particularly since the message
+complexity scales in Ω(𝑘𝑛).
+Interestingly, the lemma shows that even in a stable consensus (according to Definition 2.1), i.e., where
+almost all nodes share the same opinion, even a weak adversary can create a small but inherent “background
+noise”, i.e., an expected fraction
+𝐹
+𝑛
+𝑘
+of all parties can be reverted by the adversary to the minority opinion
+each round, because it gains a majority in a sample.
+This situation is what the security mechanic of Snowflake and Snowball protocols is intended for as it makes
+parties decide and finalize an opinion by introducing an according mechanism with a security parameter
+𝛽. One condition for some party to decide an opinion, is that it must have at least 𝛽 consecutive queries
+with an 𝛼-majority of the same opinion, see Section 2.2 or Section C for detailed pseudocode. (Note that
+Snowball imposes an additional condition for parties to decide based on the history of queries, which,
+however, only delays the decision of a party down even further).
+The idea behind this mechanism is to reduce the probability that an adversary can make some party accept
+the minority opinion, since sampling the minority opinion 𝛽 times in a row has a probability that is negligible with respect to 𝛽. This mechanism is flawed in the sense that even an adversary that influences just
+a single party can abuse it to introduce a delay to the decision of a party that scales badly in 𝛽.
+Lemma 6.3. In the Snowflake and Snowball protocols, there exists a value 𝑐 > 1 which is constant in 𝛽, such
+that a weak 𝐹 -bounded adversary (Def. 6.1, for any 𝐹 ≥ 2) can ensure that the probability that a given party
+decides within 𝑐
+𝛽−1
+/2 queries (rounds) is at most 4/𝑐
+2(𝛽−1)
+. To enforce this, the adversary needs no information
+on the current state of the network.
+Proof. In the Snowflake and Snowball protocols, a variable 𝑐𝑛𝑡 ≥ 1 maintains the length of the most recent
+sequence of consecutive queries which all had a majority of the same opinion 𝑏 (see Section C). To decide
+on some opinion 𝑏 (which we call “success” in the following), it is necessary that 𝑐𝑛𝑡 ≥ 𝛽.
+Consider the following adversary strategy, where it splits its influenced parties into two roughly equally
+sized groups whose opinions it sets to 0 and 1, respectively (here we need 𝐹 ≥ 2, round group sizes if
+necessary). We will now compute the probability 𝑞𝛽 of the event 𝐸𝛽 (failure in the sequence of length 𝛽)
+that some given sequence of 𝛽 queries of some party 𝑗 contains either a query which had no opinion or at
+least one of each opinion, 0 or 1.
+Assume, that the first opinion in such a sequence had a majority of 1. This is w.l.o.g., firstly, since the
+case of no majority in the first query already satisfies the condition above (by the law of total probability,
+neglecting this case gives us a lower bound for 𝑞𝛽 ). Secondly, because the case where a sequence starts
+
+with a 0 majority is analogous, if we treat the two groups of the adversary as two separate adversaries of
+size at least 𝐹
+′ ≥ ⌊ 𝐹
+2
+⌋ ≥ 1.
+This means 𝑞𝛽 is lower bounded by the probability that the next 𝛽 − 1 queries have a majority from the
+𝐹
+′
+-bounded adversary. Thus 𝑞𝛽 ≥ (1 − 𝑞𝑗)
+𝛽−1
+, where 𝑞𝑗
+is the lower bound of the probability that at least
+𝛼 Byzantine parties are sampled in a given query from Lemma 6.2. Note that 𝑞𝑗
+is lower bounded by a
+non-zero value that is independent of 𝛽.
+The number of queries crucially depends on the probability 𝑞𝛽 of failure of deciding in a sequence of length
+𝛽. To measure the number of queries until success we introduce a r.v. 𝑍𝑗 that lower bounds the number
+counter resets because event 𝐸𝛽 occurs (with probability 𝑞𝛽 ). This means that 𝑍𝑗 follows a geometric
+distribution 𝑍𝑗 ∼ G (𝑞𝛽 ), describing the number of failures (i.e., counter resets) until success (deciding on
+a value).
+Note that 𝑍𝑗
+is a conservative lower bound for the overall number of queries that 𝑗 has to make. First, we
+significantly underestimate the probability of failure 𝑞𝛽 . Second, we consider only counter resets caused by
+sampling a Byzantine majority. Third, we do not account for queries (that increase the counter) in between
+counter resets.
+The expectation of 𝑍𝑗 ∼ G (𝑞𝛽 ) is 𝜇 = 1/𝑞𝛽 and the variance is 𝜎 := (1 − 𝑞𝛽 )/𝑞
+2
+𝛽
+. Then the probability that
+𝑋 is at most half its mean can be bounded with the Chebyshev inequality:
+P(𝑋 ≤
+𝜇
+2
+) ≤ P(|𝑋 − 𝜇| ≥ 𝜇
+2
+)
+= P(|𝑋 − 𝜇| ≥ 𝑘 · 𝜎) where 𝑘 :=
+𝜇
+2𝜎
+≤
+1
+𝑘
+2 =
+4(1−𝑞𝛽 )
+2
+𝑞
+2
+𝛽
+≤
+4
+𝑞
+2
+𝛽
+.
+Let 𝑐 := (1 − 𝑝𝑗)
+−1
+(> 1), thus 𝑞𝛽 ≥ 𝑐
+− (𝛽−1)
+. The claim follows from the fact that 𝜇 = 1/𝑞𝛽 = 𝑐
+𝛽−1
+and
+P(𝑋 >
+𝜇
+2
+) = 1 − P(𝑋 ≤
+𝜇
+2
+) ≥ 1 − 4/𝑐
+2(𝛽−1)
+. □
+Using the lemma above, we show that Snowflake and Snowball cannot satisfy Definition 2.4, which states
+the conditions for a mechanism that provides a decent trade-off between security and performance. Specifically, the following theorem shows that having consensus with all but negligible probability w.r.t., 𝛽 and
+a polynomial runtime in 𝛽 are mutually exclusive.
+Theorem 3. In the Snowflake and Snowball protocol with a weak 𝐹 -bounded adversary (𝐹 ≥ 2) the following
+properties are mutually exclusive
+• The protocol ensures consensus with all but negligible probability with respect to 𝛽 (cf. Def. 2.2).
+• Parties decide with less than 𝜋 (𝛽) queries with all but negligible probability with respect to 𝛽, for any
+fixed polynomial 𝜋.
+Note that this holds even when the definition of consensus is restricted to those parties which are not influenced
+by the adversary.
+Proof. By Lemma 6.3, the probability that at least 𝑐
+𝛽−1
+/2 queries are required is at least 1−4/𝑐
+2(𝛽−1)
+. Intuitively, this means that the Snow protocols are likely to fail if not enough queries are used, unless 𝛽 is small.
+If, on the other hand, 𝛽 is indeed small, then there is a non-negligible chance that some party decides the
+minority value, thus prohibiting agreement.
+Formally, assume that 𝛽 is a security parameter as in Definition 2.4. Consider the threshold value 𝐵 :=
+2
+log𝑐
++ 1
+(constant in 𝛽). Consider the case that 𝛽 is small, i.e., 𝛽 ≤ 𝐵. By Lemma 6.2 there is a non zero probability
+𝑞𝑗
+(which does not depend on 𝛽) that an adversary controls at least 𝛼 parties that have been queried by
+some party 𝑗. Then the probability that the adversary can make 𝑗 decide on the minority value is at least
+𝑞
+𝐵
+𝑗
+, which is constant in 𝛽, i.e., non-negligible.
+21
+Now consider 𝛽 > 𝐵. Then the probability that the protocol fails is more than 3/4 if less than 𝑐
+𝛽−1
+/2 queries
+are conducted because a party did not yet decide. To show the mutual exclusivity for 𝛽 above this threshold,
+assume that the protocol decides with all but negligible probability. Then (much) more than 𝑐
+𝛽−1
+/2 queries
+are required by Lemma 6.3, which is larger than 𝜋 (𝛽) for sufficiently large 𝛽. □
+7 Reconciling Security and Fast Consensus
+Theorem 3 shows that the Snowflake and Snowball protocols cannot achieve consensus within a polynomial number of rounds with all but negligible probability with respect to security parameter 𝛽, due to the
+termination condition. We propose in Algorithm 5 a modification of the Slush protocol that we call Blizzard
+and which incorporates confidence levels as a termination criterion. Importantly, Blizzard leaves the basic dynamics of the Slush protocol intact, in particular Blizzard neglects the mechanic of Snowball, where
+parties change their current opinion depending not only on the current but also on past queries, which is
+in general detrimental for the time it takes to converge to a stable consensus as shown in Section 5.
+This modification is arguably simpler than the corresponding mechanisms in Snowball and works as follows. Each party maintains two counters, which track the total number of queries that contained at least
+𝛼 of opinion 0 or 1, respectively (an 𝛼-majority). A decision in favor of one opinion is made if the corresponding counter has a decisive lead over the other. The lead that is required is of the order 𝑂(log𝑛 + 𝛽)
+and we show that this also corresponds to the number of rounds until consensus is established with all but
+negligible probability (w.r.t. 𝛽).
+The idea is that within the given time frame, the network will reach a state of a stable consensus, and it will
+remain close to this state for a sufficiently long time such that each party can establish a lead in the counter
+for the opinion which is in the majority. Furthermore, unanimity is ensured because the required lead is
+large enough such that no party can accidentally make a “premature” decision, i.e., reaching the threshold
+even when no stable majority has been established yet.
+Note that as time progresses and given an adversary that controls at least 𝛼 parties, there is always a small
+but non-zero chance that a system reverts from a state of stable consensus and even switches majorities.
+However, we show that once the system is in a stable consensus, it will not “slide back” too far within a
+given time frame, i.e., one opinion retains an overwhelming majority for a sufficient amount of time, even
+in the presence of an adversary. We start with a lemma about the probabilities to sample an 𝛼-majority of
+an opinion given that one opinion has a majority.
+Lemma 7.1. Let 𝑆𝑖 ≥
+15𝑛
+16 and 𝛼 = ⌈
+𝑘+1
+2
+⌉. Then P
+
+𝑌𝑖𝑗 ≥ 𝛼
+
+≥ 𝑝𝑖 and P
+
+𝑌𝑖𝑗 ≤ 𝑘−𝛼
+
+≤ 4(1−𝑝𝑖)
+2
+.
+Proof. Note that 1−𝑝𝑖 ≤
+1
+16 . From the choice of 𝛼, it follows that there is always an 𝛼 majority for either 0 or
+
+1. Thus, it suffices to show that P
+
+𝑌𝑖𝑗 ≤ 𝑘−𝛼
+
+≤ 4(1−𝑝𝑖)
+2
+the other inequality follows due to 4(1−𝑝𝑖)
+2 ≤ 1−𝑝𝑖
+.
+P
+
+𝑌𝑖𝑗 ≤ 𝑘−𝛼
+
+=
+𝑘
+∑︁−𝛼
+ℓ=0
+
+𝑘
+ℓ
+
+𝑝
+ℓ
+𝑖
+(1−𝑝𝑖)
+𝑘−ℓ ≤
+𝑘
+∑︁−𝛼
+ℓ=0
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+𝑘−ℓ
+≤
+𝑘
+∑︁−𝛼
+ℓ=0
+
+𝑘
+ℓ
+
+(1−𝑝𝑖)
+𝛼 = (1−𝑝𝑖)
+𝛼
+𝑘
+∑︁−𝛼
+ℓ=0
+
+𝑘
+ℓ
+
+≤ (1−𝑝𝑖)
+𝛼
+⌊
+∑︁
+𝑘/2⌋
+ℓ=0
+
+𝑘
+ℓ
+
+≤ (1−𝑝𝑖)
+𝛼
+2
+𝑘−1
+𝑘≤2𝛼−1
+≤ (1−𝑝𝑖)
+𝛼
+2
+2𝛼−2 = (1−𝑝𝑖)
+2
+(1−𝑝𝑖)
+𝛼−2
+2
+2𝛼−2
+≤ (1−𝑝𝑖)
+2
+(
+1
+16 )
+𝛼−2
+2
+2𝛼−2 = (1−𝑝𝑖)
+2
+(
+1
+2
+)
+4𝛼−8
+2
+2𝛼−2
+= (1−𝑝𝑖)
+2
+(
+1
+2
+)
+2𝛼−6 = 4(1−𝑝𝑖)
+2
+(
+1
+2
+)
+2𝛼−4
+𝛼≥2
+≤ 4(1−𝑝𝑖)
+2 □
+The next lemma shows that once the network is in a stable consensus state, it will very likely conserve a
+majority for a certain time frame.
+Lemma 7.2. Let 𝑠, 𝑡 ≥ 1 with 𝑠 ≤
+𝑡
+2
+and 𝑡 ≤
+√
+𝑛/16. Assume the number of parties with opinion 1 is currently
+𝑆0 ≥ 𝑛 −𝑠
+√
+𝑛. Then 𝑆𝑖 ≥ 𝑛 −𝑡 ·
+√
+𝑛 for at least 𝑖 ≤ 𝑇 := min
+√
+𝑛
+32𝑡
+,
+𝑡
+4
+
+rounds with probability at least 𝑒
+−𝑡
+2
+. This
+holds even in the presence of a √
+𝑛-bounded adversary.
+Proof. We assume that the condition 𝑝𝑖 ≥ 1 − 𝑡/
+√
+𝑛 is true and show for how long it can be maintained
+starting from round 𝑖 = 0 in state 𝑆0. The claim is initially true due to 𝑠 ≤
+𝑡
+2
+. Since 𝑡 ≤
+√
+𝑛/16, this
+assumption entails 𝑝𝑖 ≥ 15/16, which satisfies the precondition of Lemma 7.1.
+Let 𝐵𝑖𝑗 the indicator variable that some party changes its opinion from 1 to 0 in round 𝑖, i.e., 𝐵𝑖𝑗 = 1 if that
+is the case, 𝐵𝑖𝑗 = 0 else. Then 𝐵𝑖
+:=
+Í𝑛
+𝑗=1 𝐵𝑖𝑗 is the "backslide", i.e., the number of nodes that change opinion
+from 1 to 0, which is a sum of independent, identically distributed Bernoulli variables. We obtain
+E(𝐵𝑖) =
+∑︁𝑛
+𝑗=1
+E(𝐵𝑖𝑗) = 𝑛P(𝑋𝑖𝑗 =0 | 𝑋𝑖−1,𝑗 =1) ≤ ∑︁𝑛
+𝑗=1
+P(𝑌𝑖𝑗 ≥𝛼) =
+∑︁𝑛
+𝑗=1
+(1−𝑝𝑖) = 𝑛(1−𝑝𝑖)
+Lem.7.1
+≤ 4𝑛
+
+𝑡
+√
+𝑛
+2
+= 4𝑡
+2
+.
+We will assume that in each round 𝑖 ≤ 𝑇 the backslide is 𝐵𝑖 ≤ 2E(𝐵𝑖) = 8𝑡
+2
+and show that this is the case
+with high probability later. Considering this upper bound for the backslide, that the adversary can change
+the opinion of at most √
+𝑛 parties in each round and exploiting the bounds for 𝑠 and 𝑇 , then in round 𝑖 = 𝑇
+we obtain
+𝑆𝑇 ≥ 𝑛 − 𝑠 ·
+√
+𝑛 −𝑇 · 8𝑡
+2 −𝑇 ·
+√
+𝑛
+≥ 𝑛 −
+𝑡
+2
+·
+√
+𝑛 −
+√
+𝑛
+32𝑡
+· 8𝑡
+2 −
+𝑡
+4
+·
+√
+𝑛
+= 𝑛 −
+𝑡
+2
+·
+√
+𝑛 −
+𝑡
+4
+·
+√
+𝑛 −
+𝑡
+4
+·
+√
+𝑛 = 𝑛 − 𝑡 ·
+√
+𝑛
+In particular, this also implies 𝑆𝑖 ≥ 𝑛 −𝑡 ·
+√
+𝑛 thus 𝑝𝑖 ≥ 1−𝑡/
+√
+𝑛 for all 𝑖 ≤ 𝑇 since 𝐵𝑖 ≤ 2E(𝐵𝑖) for all 𝑖 ≤ 𝑇 .
+It remains to compute the probability for the latter. We apply a Chernoff Bound (given in Lemma A.9) and
+obtain P
+
+𝐵𝑖 > 2E(𝐵𝑖)
+
+≤ exp
+−
+4𝑡
+2
+3
+
+. A union bound shows that this holds for all 𝑖 ≤ 𝑇 with probability
+P
+Ø
+𝑖≤𝑇
+𝐵𝑖 ≤ 2E(𝐵𝑖)
+
+= 1 − P
+Ù
+𝑖≤𝑇
+𝐵𝑖 > 2E(𝐵𝑖)
+
+≥ 1 −
+∑︁
+𝑖≤𝑇
+P
+
+𝐵𝑖 > 2E(𝐵𝑖)
+
+≥ 1 −𝑇 · exp
+−
+4𝑡
+2
+3
+
+≥ 1 −
+𝑡
+4
+· exp
+−
+4𝑡
+2
+3
+
+≥ 1 − exp
+𝑡
+4
+
+· exp
+−
+4𝑡
+2
+3
+
+= 1 − exp
+𝑡
+4
+−
+4𝑡
+2
+3
+ 𝑡 ≥1
+≥ 1 − 𝑒
+−𝑡
+2
+. □
+While Lemma 7.2 captures the stability of a state of almost consensus in a more general way, we will use
+it in the following form, by specifying some parameters.
+Lemma 7.3. Let 𝑠 ≥ 1 be a constant and assume the number of parties with opinion 1 is 𝑆0 ≥ 𝑛 −𝑠
+√
+𝑛. For an
+arbitrary constant 𝛽 ≥ 𝑠/2, let 𝑇 ≥ 𝛽 and 𝑇 ∈ 𝑜 (𝑛
+1/4
+). Then 𝑆𝑖 ≥
+15𝑛
+16 for at least 𝑇 rounds with probability at
+least 1 − 𝑒
+−𝛽
+2
+. This holds for sufficiently large 𝑛 even with a √
+𝑛-bounded adversary.
+Proof. Let 𝑡 := 4𝑇 , i.e., 𝑇 ≤
+𝑡
+4
+by definition. Since 𝑇 ∈ 𝑜 (𝑛
+1/4
+) we have 𝑡 ≤
+√
+𝑛/16 for large enough
+𝑛. Moreover, we have √
+𝑛/32𝑡 ∈ Ω(
+√
+𝑛/𝑇 ) ⊆ Ω(𝑛
+1/4
+) and therefore 𝑇 ≤
+√
+𝑛/32𝑡 for sufficiently large 𝑛.
+Furthermore, 𝑠 ≤ 2𝛽 ≤ 2𝑇 ≤
+𝑡
+2
+. This satisfies all the requirements for Lemma 7.2 and we conclude that
+𝑆𝑖 ≥ 𝑛 − 𝑡
+√
+𝑛 ≥ 15𝑛/16 with probability at least 1 − 𝑒
+−𝑡
+2
+= 1 − 𝑒
+−16𝑇
+2
+≥ 1 − 𝑒
+−𝛽
+2
+. □
+We will now use the stability properties of a network that is in a state of stable consensus (Definition 2.1) to
+show that Blizzard ensures consensus (Definition 2.2) with all but negligible probability after 𝑂(𝛽 + log𝑛)
+rounds. Recall that Blizzard essentially corresponds to running an instance of Slush, where each node
+maintains counters that track how often an 𝛼-majority was observed for opinion 0 and 1, respectively. If
+the difference in counters reaches a (sufficiently large) threshold 𝜏, then a decision for the opinion with the
+larger counter is made. In the following theorem we use a variable running time for Slush (due to the fact
+that as speedups up to log 𝑘 over our upper bound can not be excluded, see Theorems 1 and 2).
+Theorem 4. Algorithm 5 (Blizzard) with a threshold 𝜏 := 2𝑇Slush ensures consensus with all but negligible
+probability (w.r.t. 𝛽) after at most 7𝑇Slush rounds, assuming that 𝑇Slush is the number of rounds until Slush
+reaches a state where at least 𝑛 −𝑂(
+√
+𝑛) parties have the same opinion and 𝑇Slush is a sufficiently large multiple
+of 𝛽. This holds even with a √
+𝑛-bounded adversary.
+Proof. Let 𝑠 ≥ 1 such that at least 𝑆0 ≥ 𝑛 − 𝑠
+√
+𝑛 parties have opinion 1 (w.l.o.g.) with all but negligible
+probability after at most 𝑇Slush rounds. Note that we have 𝑇Slush ∈ 𝑂(𝛽 + log𝑛) by Theorem 2.
+Purely syntactically, we reinitialize the round counter to 𝑖 = 0 when we reach such a state 𝑆0 for the first
+time. Starting from round 𝑖 = 0, by Lemma 7.3 we have 𝑝𝑖 ≥
+15
+16 for at least 𝑇 ∈ 𝑜 (𝑛
+1/4
+) rounds, even with
+a
+√
+𝑛-bounded adversary.
+Let 𝑍𝑗,0 and 𝑍𝑗,1 be the number of times party 𝑗 observed an 𝛼-majority of 0 and 1 respectively in any query
+made from round 𝑖 = 0 to round 𝑖 = 𝑇 . For the expectations we have.
+E(𝑍𝑗,0) = P
+
+𝑌𝑖𝑗 ≤ 𝑘 − 𝛼
+
+· 𝑇
+Lem.7.1
+≤ 4(1 − 𝑝𝑖)
+2
+· 𝑇 ≤ 4 ·
+1
+162
+· 𝑇 ≤
+𝑇
+16 .
+E(𝑍𝑗,1) = P
+
+𝑌𝑖𝑗 ≥ 𝛼
+
+· 𝑇
+Lem.7.1
+≥ 𝑝𝑖
+· 𝑇 ≥
+15𝑇
+16 .
+Note that the variables 𝑍𝑗,0 and 𝑍𝑗,1 can be seen as sums of independent Bernoulli variables, which allows
+us to apply the following Chernoff bounds.
+P
+
+𝑍𝑗,0 ≥ (1 + 1) · 𝑇
+16
+
+≤ exp 
+−
+𝑇
+3·16  𝑇 ≥48𝛽
+≤ 𝑒
+−𝛽
+P
+
+𝑍𝑗,1 ≤ (1 −
+1
+3
+) · 15𝑇
+16
+
+≤ exp 
+−
+15𝑇
+9·16  𝑇 ≥48𝛽/5
+≤ 𝑒
+This implies that 𝑍𝑗,0 <
+𝑇
+8
+and 𝑍𝑗,1 >
+5𝑇
+8 with all but negligible probability given that 𝑇 ≥ 48𝛽. Let
+𝐷𝑗 (𝑇 ) := 𝑍𝑗,1 − 𝑍𝑗,0 be the difference in the counters after 𝑇 rounds, then we have 𝐷𝑗 (𝑇 ) ≥ 5𝑇
+8
+−
+𝑇
+8
+=
+𝑇
+2
+after 𝑇 rounds with all but negligible probability. We can now show that the properties of consensus in
+Definition 2.2 are met after 7𝑇Slush + 𝑂(𝛽) rounds with all but negligible probability.
+Termination. We have to show that for any given party 𝑗 the absolute value of the difference in the
+counters 𝐷
+′
+𝑗
+= 𝑐𝑛𝑡[1] − 𝑐𝑛𝑡[0] reaches the threshold 𝜏 eventually so that it decides (cf. Algorithm 5). We
+assume that after 𝑇Slush rounds we reach a stable consensus where 𝑆0 parties have opinion 1, whereas
+the opposite case with a stable consensus for opinion 0 is analogous. Note that in 𝑇Slush rounds we have
+𝐷
+′
+𝑗 ≥ −𝑇Slush, as in each round the counter 𝑐𝑛𝑡[0] increases by at most one. After 𝑇 = 6𝑇Slush additional
+rounds starting from 𝑆0 we obtain 𝐷
+′
+𝑗 ≥ −𝑇Slush + 𝐷𝑗 (𝑇 ) ≥ −𝑇Slush + 3𝑇Slush = 2𝑇Slush = 𝜏. Therefore, any
+given party decides and the algorithm terminates after 7𝑇Slush rounds, with all but negligible probability,
+given that 𝑇 ≥ 48𝛽 and 𝑇 ∈ 𝑜 (𝑛
+1/4
+). The former means that we require 𝑇Slush ≥ 8𝛽. The latter is fulfilled as
+𝑇Slush ∈ 𝑂(log𝑛).
+Validity. Suppose all parties propose 1 (w.l.o.g.). Then there is also a stable consensus for 1 even if we
+assume that initially √
+𝑛 parties are flipped to 0 by an adversary. We showed above that from a stable
+consensus state, for any given node, the threshold 𝑐𝑛𝑡[1] −𝑐𝑛𝑡[0] = 𝜏 will be reached with all but negligible
+probability.
+Integrity. Follows form the construction of the algorithm.
+Agreement. The idea is that the threshold 𝜏 is so large that no party can decide before a stable consensus
+is reached, and from there on every party must decide the same. Since in each round a counter of any party
+𝑗 can increase by only one, no party can decide before 𝜏 = 2𝑇Slush rounds have passed. Already after 𝑇Slush
+rounds we will reach a stable consensus with a 𝑆0 majority for opinion 1 (w.l.o.g.). When we arrive at the
+state of stable consensus we have 𝐷
+′
+𝑗 ≥ −𝑇Slush, hence reaching the −𝜏 = −2𝑇Slush threshold for deciding 0
+would require at least 𝑇Slush additional rounds. We already showed that starting from 𝑆0 the change in 𝐷
+′
+𝑗
+is strictly positive with all but negligible probability (provided that 𝑇Slush is a sufficiently large multiple of
+𝛽). Consequently for any party 𝑗 the probability to attain the threshold −𝜏 within the next 6𝑇Slush rounds
+is negligible. □
+The theorem above is given in a more general way, depending on the number of rounds until Slush reaches
+a stable consensus. Given that we have already shown an upper bound of 𝑂(log𝑛 + 𝛽) for this (Corollary
+4.7), we can rephrase the theorem as follows.
+Corollary 7.4. Algorithm 5 (Blizzard) ensures consensus with all but negligible probability after at most
+𝑂(log𝑛 + 𝛽) rounds. This holds even with a √
+𝑛-bounded adversary.
+8 Conclusion
+With the goal of improving latency in mind, we deduce two main recommendations for changes to Snowstyle consensus protocols as they are deployed in the Avalanche network today. First, for a given 𝑘 we
+recommend to choose 𝛼 > 𝑘/2 as small as possible, i.e., 𝛼 = ⌈
+𝑘+1
+2
+⌉, as this promises a better performance
+compared to 𝛼 closer to 𝑘 (see Lemma 3.2 or Figure 1b). Second, we propose to change the termination
+condition of the Snowflake and Snowball protocols where we observe an unfavorable trade-off between
+security and latency (see Corollary 3) to the simpler one of the Blizzard protocol (Algorithm 5). This modification will resolve the observed issue (see Theorem 4 and Corollary 7.4). We caveat our recommendations
+by noting that there might be other considerations than the asymptotic performance aspects analyzed in
+this paper.
+From a theoretical point of view, we see our results on the performance of Slush (Theorem 1 and 2) as a
+25
+natural continuation of the corresponding analysis of the randomized, self-stabilizing consensus protocols
+in the GOSSIP model where the sample size is at most 3 (such as the Median Protocol, the 2-Choices
+Protocol and the 3-Majority Protocol, see Definition 4.5). These protocols have been analyzed with respect
+to performance as a function of the initial number of opinions and it was shown that in “most” conditions
+they converge quite fast (cf. related work Section 2.3). An interesting avenue of future research is the
+adaptation of Slush to multiple opinions, a party adopts a new opinion if it has a simple majority in a
+sampling of size 𝑘, i.e., a “𝑘-Majority protocol”. We believe that our technical work on Slush gives insights
+how such a 𝑘-Majority protocol would perform on multiple opinions.
+References
+[1] Ignacio Amores-Sesar, Christian Cachin, and Enrico Tedeschi. “When Is Spring Coming? A Security
+Analysis of Avalanche Consensus”. In: 26th International Conference on Principles of Distributed Systems, OPODIS 2022, December 13-15, 2022, Brussels, Belgium. Ed. by Eshcar Hillel, Roberto Palmieri,
+and Etienne Rivière. Vol. 253. LIPIcs. Schloss Dagstuhl - Leibniz-Zentrum für Informatik, 2022, 10:1–
+10:22. url: https://doi.org/10.4230/LIPIcs.OPODIS.2022.10.
+[2] Luca Becchetti, Andrea E. F. Clementi, and Emanuele Natale. “Consensus Dynamics: An Overview”.
+In: SIGACT News 51.1 (2020), pp. 58–104. url: https://doi.org/10.1145/3388392.3388403.
+[3] Luca Becchetti et al. “Simple dynamics for plurality consensus”. In: Distributed Comput. 30.4 (2017),
+pp. 293–306. url: https://doi.org/10.1007/s00446-016-0289-4.
+[4] Luca Becchetti et al. “Stabilizing Consensus with Many Opinions”. In: Proceedings of the TwentySeventh Annual ACM-SIAM Symposium on Discrete Algorithms, SODA 2016, Arlington, VA, USA, January 10-12, 2016. Ed. by Robert Krauthgamer. SIAM, 2016, pp. 620–635. url: https://doi.org/10.
+1137/1.9781611974331.ch46.
+[5] Vitalik Buterin. The Scalability Trilemma — Why Sharding is Great: Demystifying the Technical Properties. Available online, https://vitalik.ca/general/2021/04/07/sharding.html. 2017.
+[6] Colin Cooper, Robert Elsässer, and Tomasz Radzik. “The Power of Two Choices in Distributed Voting”. In: Automata, Languages, and Programming - 41st International Colloquium, ICALP 2014, Copenhagen, Denmark, July 8-11, 2014, Proceedings, Part II. Ed. by Javier Esparza et al. Vol. 8573. Lecture
+Notes in Computer Science. Springer, 2014, pp. 435–446. url: https://doi.org/10.1007/978-3-
+662-43951-7\_37.
+[7] Emilio Cruciani et al. “Phase Transitions of the k-Majority Dynamics in a Biased Communication
+Model”. In: ICDCN ’21: International Conference on Distributed Computing and Networking, Virtual
+Event, Nara, Japan, January 5-8, 2021. ACM, 2021, pp. 146–155. url: https://doi.org/10.1145/
+3427796.3427811.
+[8] James R. Cruise and Ayalvadi Ganesh. “Probabilistic consensus via polling and majority rules”. In:
+Queueing Syst. Theory Appl. 78.2 (2014), pp. 99–120. url: https://doi.org/10.1007/s11134-014-
+9397-7.
+[9] Benjamin Doerr et al. “Stabilizing consensus with the power of two choices”. In: SPAA 2011: Proceedings of the 23rd Annual ACM Symposium on Parallelism in Algorithms and Architectures, San Jose, CA,
+USA, June 4-6, 2011 (Co-located with FCRC 2011). Ed. by Rajmohan Rajaraman and Friedhelm Meyer
+auf der Heide. ACM, 2011, pp. 149–158. url: https://doi.org/10.1145/1989493.1989516.
+[10] Robert Elsässer et al. “Brief Announcement: Rapid Asynchronous Plurality Consensus”. In: Proceedings of the ACM Symposium on Principles of Distributed Computing, PODC 2017, Washington, DC, USA,
+July 25-27, 2017. Ed. by Elad Michael Schiller and Alexander A. Schwarzmann. ACM, 2017, pp. 363–
+365. url: https://doi.org/10.1145/3087801.3087860.
+26
+[11] Michael J. Fischer, Nancy A. Lynch, and Michael Merritt. “Easy Impossibility Proofs for Distributed
+Consensus Problems”. In: Distributed Comput. 1.1 (1986), pp. 26–39. url: https://doi.org/10.
+1007/BF01843568.
+[12] Michael J. Fischer, Nancy A. Lynch, and Mike Paterson. “Impossibility of Distributed Consensus with
+One Faulty Process”. In: J. ACM 32.2 (1985), pp. 374–382. url: https://doi.org/10.1145/3149.
+214121.
+[13] Mohsen Ghaffari and Johannes Lengler. “Nearly-Tight Analysis for 2-Choice and 3-Majority Consensus Dynamics”. In: Proceedings of the 2018 ACM Symposium on Principles of Distributed Computing,
+PODC 2018, Egham, United Kingdom, July 23-27, 2018. Ed. by Calvin Newport and Idit Keidar. ACM,
+2018, pp. 305–313. url: https://dl.acm.org/citation.cfm?id=3212738.
+[14] Seth Gilbert and Nancy A. Lynch. “Brewer’s conjecture and the feasibility of consistent, available,
+partition-tolerant web services”. In: SIGACT News 33.2 (2002), pp. 51–59.
+[15] Vincent Gramoli et al. “Diablo: A Benchmark Suite for Blockchains”. In: Proceedings of the Eighteenth
+European Conference on Computer Systems, EuroSys 2023, Rome, Italy, May 8-12, 2023. Ed. by Giuseppe
+Antonio Di Luna et al. ACM, 2023, pp. 540–556. url: https : / / doi . org / 10 . 1145 / 3552326 .
+3567482.
+[16] Team Rocket et al. “Scalable and Probabilistic Leaderless BFT Consensus through Metastability”. In:
+CoRR abs/1906.08936 (2019). arXiv: 1906.08936. url: http://arxiv.org/abs/1906.08936.
+A Probabilistic Concepts
+We give a few basic definitions and principles pertaining the probabilistic security properties of some
+protocol (used in Definition 2.4) that we use throughout the paper.
+Definition A.1 (Negligible Function). A function 𝑓 is negligible if for any polynomial 𝜋 there is a constant
+𝜆0 ≥ 0, s.t., for any 𝜆 ≥ 𝜆0 it is 𝑓 (𝜆) ≤ 𝜋 (𝜆).
+Remark A.2. We often use that for any constant 𝑐 > 0, the function 𝑓 (𝜆) = 𝑒
+−𝑐 ·𝜆
+is a negligible w.r.t. 𝜆.
+We usually aim for a certain security threshold given by a variable 𝛾.
+Definition A.3 (All But Negligible Probability). An event is said to occur with all but negligible probability
+with respect to some parameter 𝜆 if the probability of the event not happening is a function in 𝜆 that is negligible
+w.r.t. 𝜆.
+In the literature, randomized consensus protocols are often shown to be successful with high probability,
+which expresses the probability of failure as a function that decreasing inversely with the input size 𝑛 of
+the problem (here 𝑛 is the number of parties). This is often quite convenient as it eliminates any other
+variable from the analysis, compared to defining some fixed failure threshold.
+Definition A.4 (With High Probability). An event is said to hold with high probability (w.h.p.), if there exists
+a constant 𝑐 ≥ 1 such that the event occurs with probability at least 1 − 𝑛
+−𝑐
+for sufficiently large 𝑛.
+The disadvantage of the notion w.h.p. is that it usually looks at the asymptotic behavior of a system (i.e., for
+large 𝑛), which does not provide a fixed security level for small 𝑛, which can be a requirement in practice.
+The following lemma provides an interface between the two notions.
+Lemma A.5. Let 𝐸 be an event such that the probability that 𝐸 does not occur within any interval of 𝑇
+consecutive rounds is at most 1
+𝑛
+(which is guaranteed if 𝐸 occurs w.h.p., see Definition A.4). Then 𝐸 occurs with
+probability 1 − 𝑒
+−𝜆
+(all but negligible, see Definition A.3) after 𝑇
+′ = 𝑇 (
+𝜆
+ln𝑛
++1) rounds for security parameter
+𝜆 > 0.
+Proof. We consider the cases 𝜆 < ln𝑛 and 𝜆 ≥ ln𝑛 starting with the former. Note that 𝑇
+′ ≥ 𝑇 , thus the
+27
+probability that 𝐸 does not occur is at most
+1
+𝑛
+= 𝑒
+− ln𝑛 < 𝑒
+−𝜆
+.
+In the second case, we use that 𝑇
+′ ≥
+𝜆
+ln𝑛
+𝑇 . The probability that 𝐸 does not occur after 𝜆
+ln𝑛
+𝑇 rounds is at
+most
+1
+𝑛
+𝜆
+ln𝑛
+=
+1
+𝑒
+𝜆 ln𝑛
+ln𝑛
+= 𝑒
+−𝜆
+.
+□
+Remark A.6. In Lemma A.5, given that some event 𝐸 occurs w.h.p., within 𝑇 ∈ 𝑂(log𝑛) rounds, then 𝑇
+′ =
+𝑇 (
+𝜆
+ln𝑛
++ 1) ∈ 𝑂(𝜆 + log𝑛) rounds are sufficient that 𝐸 occurs with all but negligible probability.
+Lemma A.7 (Closure of Negligible Functions). Let 𝜆 > 0 and 𝑘 ≤ 𝜌 (𝜆) for some polynomial 𝜌. Let 𝐸1, . . . , 𝐸𝑘
+be outcomes (events) of some algorithm A. Assume that any individual event 𝐸𝑖 takes place with all but
+negligible probability (Def. 2.4). Then 𝐸 B
+Ñ𝑘
+𝑖=1 𝐸𝑖 takes place with all but negligible probability.
+Proof. There is a 𝜆0 ≥ 0 such that 𝜌 (𝜆) ≤ 𝑒
+𝜆/2
+for all 𝜆 ≥ 𝜆0. Let 𝜆1, . . . , 𝜆𝑘 ∈ N such that for all 𝑖 ∈ {1, . . . , 𝑘}
+we have P(𝐸𝑖) ≤ 𝑒
+−𝜆
+for 𝜆 > 𝜆𝑖
+. With Boole’s inequality (a.k.a. “Union Bound”) we have that
+P
+
+𝐸
+
+= P
+Ø
+𝑘
+𝑖=1
+𝐸𝑖
+
+≤
+∑︁
+𝑘
+𝑖=1
+P(𝐸𝑖) ≤ ∑︁
+𝑘
+𝑖=1
+𝑒
+−𝜆 ≤ 𝜌 (𝜆)𝑒
+−𝜆 ≤ 𝑒
+−𝜆/2 = 𝑒
+−𝜆
+′
+for 𝜆
+′ ≥ 2 max(𝜆0, . . . , 𝜆𝑘 ). □
+Remark A.8. Lemma A.7 implicitly shows that a series of events all occur with all but negligible probability
+w.r.t. 𝜆, given that the number of events is not too large in 𝜆. In our proofs we often apply this mechanic
+without specifically mentioning the lemma. Sometimes we also have a number of events that scales in 𝑛, for
+this we (necessarily have to) assume that 𝑛 ≤ 𝜋 (𝜆) for some fixed but arbitrary polynomial 𝜋, which allows
+us to apply Lemma A.7 for such a number of events as well.
+We use the following forms of Chernoff bounds in some of our proofs.
+Lemma A.9 (Chernoff Bound). Let 𝑋 =
+Í𝑛
+𝑖=1 𝑋𝑖 for i.i.d. random variables 𝑋𝑖 ∈ {0, 1} and E(𝑋) ≤ 𝜇𝐻 and
+𝛿 ≥ 1, then
+P
+
+𝑋 ≥ (1+𝛿)𝜇𝐻
+
+≤ exp 
+−
+𝛿𝜇𝐻
+3
+
+,
+Similarly, for E(𝑋) ≥ 𝜇𝐿 and 0 ≤ 𝛿 ≤ 1 we have
+P
+
+𝑋 ≤ (1−𝛿)𝜇𝐿
+
+≤ exp 
+−
+𝛿
+2
+𝜇𝐿
+2
+
+.
+B Sums over Binomial Coefficients
+We will summarize a few equations for sums over binomial coefficients of the form Í𝑗
+ℓ=𝑖
+
+𝑘
+ℓ
+
+that we use
+throughout this paper.
+Remark B.1 (Some Identities). Starting with the definition
+𝑘
+ℓ
+
+:=
+𝑘!
+ℓ!(𝑘−ℓ)!
+, the first observation is that
+𝑘
+ℓ
+
+=
+
+𝑘
+𝑘−ℓ
+
+by symmetry. By reordering summands we obtain
+∑︁𝑚
+ℓ=0
+
+𝑘
+ℓ
+
+=
+
+𝑘
+0
+
++ · · · + 
+𝑘
+𝑚
+
+=
+
+𝑘
+𝑘
+
++ · · · + 
+𝑘
+𝑘 − 𝑚
+
+=
+
+𝑘
+𝑘 − 𝑚
+
++ · · · + 
+𝑘
+𝑘
+
+=
+∑︁
+𝑘
+ℓ=𝑘−𝑚
+
+𝑘
+ℓ
+
+Note that a closed form for partial sums of the form Í𝑗
+ℓ=𝑖
+
+𝑘
+ℓ
+
+is currently not known. In this article we make
+use a few known special cases.
+Remark B.2 (Closed Forms). The binomial theorem implies Í𝑘
+ℓ=0
+
+𝑘
+ℓ
+
+= 2
+𝑘
+. Using the equality from the
+previous remark, for uneven 𝑘 we obtain
+⌊
+∑︁
+𝑘/2⌋
+ℓ=0
+
+𝑘
+ℓ
+
+=
+∑︁
+𝑘
+ℓ=⌈𝑘/2⌉
+
+𝑘
+ℓ
+
+= 2
+𝑘−1
+.
+For any 𝑘 and any 𝑚 < 𝑘/2 we have at least the following estimations
+∑︁𝑚
+ℓ=0
+
+𝑘
+ℓ
+
+=
+∑︁
+𝑘
+ℓ=𝑘−𝑚
+
+𝑘
+ℓ
+
+≤ 2
+𝑘−1
+.
+C Pseudocode
+Algorithm 1 State
+Global parameters and state
+1: N // set of parties
+2: newRound ∈ {false, true} // variable indicating when to start a round
+3: decided ∈ {false, true} // variable indicating when to finish the protocol
+4: 𝑏 ∈ { 0, 1, ⊥} // current estimate for decision, initially ⊥
+5: 𝑘 ∈ N // number of parties queried in each poll
+6: 𝛼 ∈ N // majority threshold for queries
+7: S : HashMap[T → N ] // set of sampled parties to be queried
+8: votes : HashMap[{0, 1} → N] // number of votes for a value
+9: cnt ∈ N // counter for acceptance Snowflake and Snowball
+10: cnt[0] ∈ N // counter for acceptance Blizzard
+11: cnt[1] ∈ N // counter for acceptance Blizzard
+12: 𝛽 ∈ N // threshold for acceptance
+13: 𝑑 : HashMap[{0, 1} → N] // confidence value of a transaction
+14: round ∈ N // current round
+15: maxRound ∈ N // maximum round
+
+Algorithm 2 Slush (party 𝑗)
+16: upon propose(𝑏
+′
+) do
+17: decided ← false
+18: newRound ← true
+19: 𝑏 ← 𝑏
+′
+20: upon newRound ∧ ¬decided do // still not decided
+21: newRound ← false
+22: votes[∗] ← 0
+23: round ← round + 1
+24: if 𝑏 ≠⊥ then
+25: S ← sample(N \ { 𝑗 }, 𝑘) // sample 𝑘 parties
+26: send message [Query, 𝑏] to all parties 𝑘 ∈ S
+27: upon votes[𝑏
+′
+] ≥ 𝛼 do // 𝑏
+′ = 0 or 𝑏
+′ = 1
+28: 𝑏 ← 𝑏
+′
+29: newRound ← true
+30: upon 𝑛 = 𝑘 ∧ votes[0] < 𝛼 ∧ votes[1] < 𝛼 do // no majority
+31: newRound ← true
+32: upon receiving message [Query, 𝑏′
+] from party 𝑘 do
+33: if 𝑏 = ⊥ then
+34: decided ← false
+35: 𝑏 ← 𝑏
+′
+36: send message [Vote, 𝑏] to party 𝑘 // reply with the local value of 𝑏
+37: upon receiving message [Vote, 𝑏′
+] from a party 𝑘 ∈ S do // collect the vote 𝑏
+′
+38: votes[𝑏
+′
+] ← votes[𝑏
+′
+] + 1
+39: upon round = maxRound ∧ ¬decided do // end of the protocol
+40: decide(𝑏)
+41: decided ← true
+30
+Algorithm 3 Snowflake (party 𝑗)
+42: upon propose(𝑏
+′
+) do
+43: decided ← false
+44: newRound ← true
+45: 𝑏 ← 𝑏
+′
+46: upon newRound ∧ ¬decided do // still not decided
+47: newRound ← false
+48: votes[∗] ← 0
+49: if 𝑏 ≠⊥ then
+50: S ← sample(N \ { 𝑗 }, 𝑘) // sample 𝑘 random parties
+51: send message [Query, 𝑏] to all parties 𝑘 ∈ S
+52: upon votes[𝑏
+′
+] ≥ 𝛼 do // 𝑏
+′ = 0 or 𝑏
+′ = 1
+53: if 𝑏 = 𝑏
+′
+then // majority for our proposal
+54: cnt ← cnt + 1
+55: else
+56: 𝑏 ← 𝑏
+′
+57: cnt ← 1
+58: newRound ← true
+59: upon 𝑛 = 𝑘 ∧ votes[0] < 𝛼 ∧ votes[1] < 𝛼 do // no majority
+60: cnt ← 0
+61: newRound ← true
+62: upon receiving message [Query, 𝑏′
+] from party 𝑘 do
+63: if 𝑏 = ⊥ then
+64: decided ← false
+65: 𝑏 ← 𝑏
+′
+66: send message [Vote, 𝑏] to party 𝑘 // reply with the local value of 𝑏
+67: upon receiving message [Vote, 𝑏′
+] from a party 𝑘 ∈ S do // collect the vote 𝑏
+′
+68: votes[𝑏
+′
+] ← votes[𝑏
+′
+] + 1
+69: upon cnt = 𝛽 ∧ ¬decided do // there is enough confidence for 𝐵
+70: decide(𝑏)
+71: decided ← true
+31
+Algorithm 4 Snowball (party 𝑗)
+72: upon propose(𝑏
+′
+) do
+73: decided ← false
+74: newRound ← true
+75: 𝑏 ← 𝑏
+′
+76: upon newRound ∧ ¬decided do // still not decided
+77: newRound ← false
+78: votes[∗] ← 0
+79: if 𝑏 ≠⊥ then
+80: S ← sample(N \ { 𝑗 }, 𝑘) // sample 𝑘 random parties
+81: send message [Query, 𝑏] to all parties 𝑘 ∈ S
+82: upon votes[𝑏
+′
+] ≥ 𝛼 do // 𝑏
+′ = 0 or 𝑏
+′ = 1
+83: 𝑑 [𝑏
+′
+] ← 𝑑 [𝑏
+′
+] + 1
+84: if 𝑏 = 𝑏
+′
+then // majority for our proposal
+85: cnt ← cnt + 1
+86: else
+87: if 𝑑 [𝑏
+′
+] > 𝑑 [𝑏] then
+88: 𝑏 ← 𝑏
+′
+89: cnt ← 1
+90: newRound ← true
+91: upon 𝑛 = 𝑘 ∧ votes[0] < 𝛼 ∧ votes[1] < 𝛼 do // no majority
+92: cnt ← 0
+93: newRound ← true
+94: upon receiving message [Query, 𝑏′
+] from party 𝑘 do
+95: if 𝑏 = ⊥ then
+96: decided ← false
+97: 𝑏 ← 𝑏
+′
+98: send message [Vote, 𝑏] to party 𝑘 // reply with the local value of 𝑏
+99: upon receiving message [Vote, 𝑏′
+] from a party 𝑘 ∈ S do // collect the vote 𝑏
+′
+100: votes[𝑏
+′
+] ← votes[𝑏
+′
+] + 1
+101: upon cnt = 𝛽 ∧ ¬decided do // there is enough confidence for 𝐵
+102: decide(𝑏)
+103: decided ← true
+32
+Algorithm 5 Blizzard (party 𝑗)
+104: upon propose(𝑏
+′
+) do
+105: decided ← false
+106: newRound ← true
+107: 𝑏 ← 𝑏
+′
+108: upon newRound ∧ ¬decided do // not yet decided
+109: newRound ← false
+110: votes[∗] ← 0
+111: if 𝑏 ≠⊥ then
+112: S ← sample(N \ { 𝑗 }, 𝑘) // sample 𝑘 parties
+113: send message [Query, 𝑏] to all parties 𝑘 ∈ S
+114: upon votes[𝑏
+′
+] ≥ 𝛼 do // 𝑏
+′ = 0 or 𝑏
+′ = 1
+115: 𝑏 ← 𝑏
+′
+116: cnt[𝑏] + +
+117: newRound ← true
+118: upon 𝑛 = 𝑘 ∧ votes[0] < 𝛼 ∧ votes[1] < 𝛼 do // no majority
+119: newRound ← true
+120: upon receiving message [Query, 𝑏′
+] from party 𝑘 do
+121: if 𝑏 = ⊥ then
+122: decided ← false
+123: 𝑏 ← 𝑏
+′
+124: send message [Vote, 𝑏] to party 𝑘 // reply with the local value of 𝑏
+125: upon receiving message [Vote, 𝑏′
+] from a party 𝑘 ∈ S do // collect the vote 𝑏
+′
+126: votes[𝑏
+′
+] ← votes[𝑏
+′
+] + 1
+127: upon cnt[1] − cnt[0] = 𝜏 ∧ ¬decided do // threshold 𝜏 ∈ 𝑂(log𝑛 + 𝛽), see Thm. 4 and Cor. 7.4
+128: decide(1)
+upon cnt[0] − cnt[1] = 𝜏 ∧ ¬decided
+129: decide(0)
+33

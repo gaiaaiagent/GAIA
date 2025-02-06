@@ -1,0 +1,683 @@
+Committee Selection is More Similar Than You Think:
+Evidence from Avalanche and Stellar
+Tarun Chitra
+Gauntlet Networks, Inc.
+tarun@gauntlet.network
+Uthsav Chitra
+Department of Computer Science
+Princeton University
+uchitra@cs.princeton.edu
+Abstract—Increased interest in scalable and high-throughput
+blockchains has led to an explosion in the number of committee selection methods in the literature. Committee selection
+mechanisms allow consensus protocols to safely select a committee, or a small subset of validators that is permitted to vote
+and verify a block of transactions, in a distributed ledger.
+There are many such mechanisms, each with substantially
+different methodologies and guarantees on communication
+complexity, resource usage, and fairness. In this paper, we
+illustrate that, despite these implementation-level differences,
+there are strong statistical similarities between committee
+selection mechanisms. We concretely show this by proving
+that the committee selection of the Avalanche consensus
+protocol can be used to choose committees in the Stellar
+Consensus Protocol that satisfy the necessary and sufficient
+conditions for Byzantine agreement. We also verify these
+claims using simulations and numerically observe sharp
+phase transitions as a function of protocol parameters. Our
+results suggest the existence of a ‘statistical taxonomy’ of
+committee selection mechanisms in distributed consensus
+algorithms.
+Index Terms—Cryptocurrencies, Distributed Consensus Protocol, Committee Selection, Stellar Consensus Protocol,
+Avalanche
+1. Introduction
+Byzantine Fault Tolerant (BFT) algorithms provide a
+robust, resilient way for a group of n networked participants to come to agreement on an ordered series of transactions, known as a ledger. Although existing algorithms,
+such as PBFT [1] or Paxos [2], provide strong safety
+guarantees for transactions, they do this at the expense
+of performance (e.g. transaction rate), permissioning (the
+identities of all nodes must be known at all times) and
+synchrony assumptions. In recent years, there has been
+a burst of interest in distributed consensus algorithms
+that provide weaker safety guarantees but can achieve
+higher transaction rates and reduced bandwidth usage.
+These algorithms, inspired by the empirical success of the
+Nakamoto consensus mechanism used in Bitcoin, combine advances in cryptography and distributed systems to
+achieve high performance and low bandwidth usage while
+providing tail-bounds on the probability of a successful
+attack (see [3]–[5]). Such protocols (including Bitcoin)
+often reduce the BFT requirement, which purports that
+an algorithm is resistant to arbitrary Byzantine attackers,
+to specific assumptions about the ways that bad actors
+can misbehave. Given the low transaction rates of live
+networks, such as Bitcoin, Ethereum, and Tezos, there
+has been an uptick in research that aims to improve the
+scalability of blockchain protocols so that they can be used
+as a general compute platform [6]–[8].
+One of the key improvements common to most
+blockchain scaling solutions is the committee selection
+mechanism. Committee selection mechanisms allow users
+to coordinate and choose a small committee of users without knowing the identities of all other participants. The
+committee is then allowed to append transactions to the
+ledger while collecting transaction fees and/or block mining rewards. There are three major camps of committee
+selection, each with substantially different methodologies
+and guarantees: the first camp uses selection to choose
+a small set of validators who achieve consensus via a
+standard Byzantine Fault Tolerance (BFT) algorithm; the
+second uses selection to assign validators / miners to
+specific chains; and the last allows users explicitly decide
+the validators that they trust.
+Distinct committee selection mechanisms can provide dramatically different guarantees in terms of ease
+of implementation, fairness, communication complexity,
+resource usage, and number of rounds of multi-party
+computation. On one side, social committee selection
+mechanisms such as Ripple [9], where individual nodes
+choose which nodes they want to reach consensus with,
+provide minimal fairness1
+, communication, or multi-party
+computation (MPC) bounds, but are much easier to implement and let users directly control their resource usage.
+Conversely, protocols such as Algorand [11], [12] — the
+first camp of protocols that use a small committee of
+constant or logarithmic size to perform traditional BFT
+— rely on public randomness to perform a cryptographic
+sortition of users. These protocols require much more
+coordinated communication, but provide stronger fairness
+guarantees. The final camp of committee selection methods are from protocols that have multiple chains or shards
+that each require their own set of validators [7], [13]. In
+this setting, committee selection corresponds to assigning
+each of the n participants to k chains in a way that is as
+close to random as possible. The goal of using randomness
+in committee selection is to ensure that the protocol is
+censorship resistant by making it probabilistically impos1. In this context, fairness refers to a node receiving p ±  ∈ (0, 1)
+percent of the rewards (fees and block rewards) if the node commits a
+fraction p ∈ (0, 1) of the resources committed to verification [10]
+arXiv:1904.09839v1 [cs.DC] 7 Apr 2019
+sible for a validator to use an attack, such as a grinding
+attack, to choose the shard that they get assigned to. In
+many of these protocols, committee selection is performed
+repeatedly every T epochs in order to ensure a stronger
+form of censorship resistance that is insensitive to adaptive
+adversaries [14].
+From a more pragmatic point of view, protocol designers are faced with a variety of trade-offs when choosing a committee selection mechanism. Those concerned
+with fairness will end up increasing their compute and
+communication costs and often have to change their Sybil
+resistance mechanism in response. For example, Algorand
+requires a common coin (a public randomness beacon
+for all participants, not just the committee) in order to
+guarantee both fairness and liveness (under asynchrony).
+This coin, while only used in scenarios under which a rare
+timeout condition is hit, has a non-trivial cost in terms of
+ease of implementation and communication complexity.
+Optimizing these trade-offs ends up tightly coupling the
+Sybil resistance mechanism to the committee selection
+mechanism. Intuitively, this suggests that committee selection mechanisms are incomparable, in that their guarantees
+become tightly coupled to the protocol(s) they are used
+with.
+In this paper, we show that it is possible for two seemingly disparate committee selections mechanisms to be
+statistically similar. Specifically, we show that Avalanche
+[15], a protocol that uses multiple rounds of MPC, can
+be used to generate committees for a social consensus protocol, the Stellar Consensus Protocol [16], that
+provides BFT guarantees under certain conditions (see
+§2.2). Our methods for showing that these two protocols
+are similar are probabilistic in nature. Avalanche utilizes
+private randomness to allow a participant to randomly
+sample other participants votes. In order to replicate
+this mechanism, we outline a generative model for the
+Avalanche sampling procedure, allowing us to transform
+Avalanche samples into Stellar’s notion of a ‘socially
+trusted consensus group’, or quorum slice. Then, through
+both numerical estimates and theoretical arguments, we
+show the existence of a phase transition for when quorum
+slices from Avalanche satisfy the liveness and safety guarantees of Stellar. Our results suggest that there are more
+commonalities between committee selection mechanisms
+than previously thought, and illustrate the importance of
+numerical simulation for designing committee selection
+mechanisms.
+2. Stellar and Avalanche Protocols
+2.1. Definitions
+We first describe the member preference model used
+by many Federated Byzantine Agreement (FBA) algorithms.
+Definition 2.1. A Federated Byzantine Agreement System
+(FBAS) is a pair (V, Q), where V is a set of participants,
+and Q is a quorum slice function Q : V → 2
+2
+V
+, with
+v ∈ S for all S ∈ Q(v).
+The quorum slice function Q maps each vertex v to
+a set of one or more quorum slices. Intuitively, a quorum
+slice for node v is a sufficient set of nodes for v to
+reach agreement. For example, in a traditional Byzantine
+agreement system [17], every node has the quorum slices
+Q(v) = {{v} ∪ S : S ⊂ V, |S| ≥ 2
+3
+|V |} and as such,
+has same set of quorum slices as every other node, i.e.
+Q(v) = Q(w) for all vertices v, w.
+Definition 2.2. A quorum is a set of nodes U ⊂ V such
+that, for all v ∈ U, there exists some S ∈ Q(v) with
+S ⊂ U.
+In other words, a quorum is a set of nodes which can
+reach agreement without input from any other node in the
+system. In a traditional Byzantine agreement system with
+3n + 1 nodes, any 2n + 1 of the nodes form a quorum.
+We can rephrase Definitions 2.1 and 2.2 in the language of graph theory by appealing to directed hypergraphs [18].
+Definition 2.3. A FBAS is a directed hypergraph H =
+(V, E), whose hyperedges are of the form (v, T) for T ⊂
+V and v ∈ T. A quorum is a set U ⊂ V such that, for
+all v ∈ U, there exists some edge e = (v, T) incident to
+v, with T ⊂ U.
+Two important properties of an FBAS are safety and
+liveness, which we define below.
+Definition 2.4 (Safety). A set of nodes in an FBAS exhibits
+safety if no two nodes externalize different values at the
+same time.
+Definition 2.5 (Liveness). A node in an FBAS exhibits
+liveness if it can externalize a value without the participation of any adversarial nodes.
+2.2. Stellar Consensus Protocol
+The Stellar Consensus Protocol (SCP) [16] works to
+preserve BFT guarantees by only requiring consensus
+among a series of subset of users. In an n user BFT
+algorithm, one necessarily has Ω(n
+2
+) messages sent across
+the network unless routing assumptions can be made. SCP
+relaxes this by giving each network participant the ability
+to choose their own quorum slices — groups of other
+network participants that they place their trust in. Systemwide consensus is then achieved via a modified version
+of the Paxos algorithm, where each network participant
+only has to achieve consensus within one of their quorum
+slices.
+Safety and liveness of the SCP are provably guaranteed when the FBAS hypergraph satisfies certain edge
+intersection constraints. At the heart of these constraints
+is the quorum intersection property (QIP).
+Definition 2.6. An FBAS has the quorum intersection
+property (QIP) if there do not exist disjoint quorums of
+the FBAS. That is, U1∩U2 6= ∅ for every pair of quorums
+U1, U2.
+To write out the guarantees for SCP, we need the
+following definition.
+Definition 2.7. If H = (V, E) is a FBAS, then for a set
+of vertices B ⊂ V , we define the deletion of B in H as
+the subgraph HB = (V \ B, EB), where
+E
+B = {(v, T \ B) | v ∈ V \ B and (v, T) ∈ E}. (2.1)
+Figure 1. The Avalanche consensus algorithm.(1) A user broadcasts a transaction via a peer-to-peer network to validators. (2) Each validator, upon
+receipt of this transaction, votes on whether to accept or reject i. (3) Each validator samples votes from other participants in the network using
+private randomness. (4) Validators repeat this sampling procedure (e.g. sampling with replacement) until they reach an acceptable level of statistical
+confidence
+Formally, the SCP has the following guarantees for
+safety [16].
+Theorem 2.8. Let H be an FBAS. Then, the SCP protocol
+on H exhibits safety when HS exhibits the QIP for any
+set S of adversarial nodes.
+Liveness in SCP is also formally guaranteed through
+two other technical conditions involving quorum intersection and the topology of H.
+2.3. Avalanche
+The Avalanche consensus algorithm [15] achieves consensus via repeated probabilistic sampling. Figure 1 depicts how validators interact within Avalanche and solicit
+repeated votes from other participants. Avalanche provides
+significantly weaker safety guarantees than the SCP, but is
+able to achieve a guaranteed communication complexity
+of O(kn log n), where k is a parameter that controls the
+statistical accuracy of a user’s local estimate for whether
+consensus was reached. The algorithm does this by having
+users use private randomness to sample the set of nodes in
+the network and decide whether the network has reached
+consensus or not after taking enough samples. The authors
+of [15] prove, under an assumption of strong network
+synchrony, a relationship between the number of samples
+each user takes and the maximum tolerance to Byzantine
+actors in the system. In this framework, an individual can
+tune the number of samples they need to reach consensus
+just as a user can tune their quorum slices in the SCP.
+The Avalanche algorithm is built up via three previous
+algorithms: Slush, Snowflake, and Snowball. Slush contains the underlying ideas of the consensus algorithm and
+is a simplified version of the heavy-hitters algorithm [19],
+[20] that is adapted for boolean functions. In Slush and
+heavy-hitters, the goal is to take samples of size k from
+a list L of size N and identify the elements ` ∈ L such
+that for some φ ≥ 0, |{i : Li = `}| ≥ φN. For Slush, we
+choose φ =
+1
+2
+. This is done via the following steps:
+1) Sample k elements `1, . . . , `k from L.
+2) Compute which indices are most likely to be the
+majority element of L, i.e. |{i : Li = `}| ≥ N
+2
+,
+based on their frequency in [`1, . . . , `k].
+3) Compute a confidence interval for how likely the
+most common element seen in [`1, . . . , `k] is the
+majority element of L.
+4) Repeat the above steps (termed a round) until
+the confidence interval shrinks to below a certain
+threshold, chosen to maximize the probability
+that the chosen element satisfies the majority
+condition.
+In the case of Slush, the list L consists of the boolean
+values of whether the ith node believes that a certain
+transaction is valid or not (i.e. the entries of L are either 0
+or 1). A node samples from this list by using the peer-topeer network to request votes from different participants.
+This way, the user doesn’t need to know the whole list,
+but instead treats the samples as results from an online sampling method. Snowflake and Snowball improve
+upon Slush by reducing the sampling complexity (e.g.
+the expected number of rounds needed) via an improved
+confidence calculation, and Avalanche uses Snowball to
+vote on forks of a directed acyclic graph that represents
+the ledger. Avalanche provides much weaker guarantees
+than Stellar by replacing safety (Definition 2.4) with:
+P1. Safety. No two correct nodes will accept
+conflicting transactions
+Note that this new condition is weaker than Definition 2.4
+as it provides no bound on how long it will take for two
+0 5 10 15 20
+5 log10(λ)
+0
+2
+4
+6
+k, Size of quorum slices
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Figure 2. Plot depicting when QIP holds for the Avalanche generative model with a network size of n = 16
+nodes to accept conflicting transactions. This weakened
+safety requirement, however, is precisely what allows for
+probabilistic sampling. Avalanche ensures fairness locally
+in that a participant uses their own randomness source to
+sample votes from the rest of the network.
+3. Using Avalanche to Generate Quora
+In this section, we show that Avalanche can generate
+quora that satisfy the Quorum Intersection Property of the
+Stellar protocol. Thus, Avalanche achieves liveness and
+safety guarantees similar to SCP (Theorem BLAH).
+Our goal in this section is to show that, under certain conditions, Avalanche can generate quora that satisfy
+the QIP (Definition 2.6), and thus achieve liveness and
+safety guarantees similar to Stellar (Theorem 2.8). Using
+numerical simulations, we empirically observe a phase
+transition which separates whether or not samples from
+the Avalanche generative model exhibit QIP with high
+probability (Figure 2). We also formally prove upper and
+lower bounds for the phase transition in Theorems 3.1
+and 3.2 respectively, which we illustrate in Figure 3.
+Our exposition illustrates the importance of numerical
+simulation in gaining intuition about phase transitions and
+their value in designing committee selection mechanisms.
+3.1. Generative Model for Avalanche
+We use the following generative model to describe
+the randomized quorum selection in Avalanche. Label the
+vertices in our network as {1, . . . , n}. For each vertex
+v ∈ {1, . . . , n}:
+• Let Yv ∼ Poisson(λ).
+• Let Av
+1
+, . . . , Av
+Yv
+be independently drawn k − 1
+element subsets of {1, . . . , n} \ v.
+• The quorum slices of v are
+Qava(v) = {Xv
+1
+, . . . , Xv
+Yv
+}, (3.1)
+where Xv
+i = Av
+i ∪ {v}.
+Each vertex draws quorum slices from a hypergeometric distribution, matching the analysis done in [15].
+We also use the standard Poissonization technique [21],
+[22] to model the number of network samples each node
+takes.
+3.2. Simulations
+We create a network of size n = 16. For k = 2, . . . , 8
+and λ = 100
+, . . . , 104
+, we draw 10 samples from our
+generative model, and test whether those samples satisfy
+the QIP. Since the general problem of testing whether
+a network satisfies the QIP is NP-complete [23], we
+recursively go through all disjoint pairs of subsets of
+vertices, checking whether those subsets are quorums.2
+We exclude k > n/2 because any two subsets of size k
+always intersect. The results of our simulation are shown
+in Figure 2.
+Interestingly, the phase transition in Figure 2 formalizes some of the intuition behind how nodes should choose
+quorum slices. If nodes have “too many” quorum slices
+(i.e. exponentially many quorum slices), then disjoint
+groups of nodes can come to consensus by themselves,
+and so system-wide consensus cannot be reached. This
+statistical reasoning improves upon the quorum selection
+advice of the Stellar paper [16], which states that nodes
+should “pick conservative slices that lead to large quorums”.
+3.3. Theory
+From the simulation results in Figure 2, we see a phase
+transition, where QIP holds for λ < f(k), and does not
+hold for λ > f(k). Moreover, the results suggests that
+f(k) is exponential in k. While the exact form of f is
+unclear, we can prove upper and lower bounds for f(k)
+(we suspect f(k) = O(n
+k
+)). We illustrate our bounds
+graphically in Figure 3.
+3.3.1. Upper Bound for Phase Transition.
+Theorem 3.1. Assume k < n/2. If λ = O(n
+k
+log n), then
+Qava does not exhibit the quorum intersection property
+with high probability.
+Proof. Let λ = 2n
+k
+log n. We will show that QIP does
+not hold by showing that {1, . . . , k} and {k + 1, . . . , 2k}
+are both quora with high probability.
+2. We use code from https://github.com/fixxxedpoint/quorum
+intersection to perform this check efficiently. For n = 16 it took 40
+hours to run on a MacBook Pro with 8GB RAM.
+Figure 3. Proven lower and upper bounds for when the Avalanche generative model exhibits QIP. Note that QIP is always achieved for k > n/2.
+For v = 1, . . . , k, let Tv be independent geometric random variables with probability parameter p =
+n−1
+k−1
+−1
+.
+Tv represents the number of quorum slices vertex v must
+draw before {1, . . . , k} is one of its quorum slices. Thus,
+max(T1, . . . , Tk) is the number of quorum slices vertices
+v = 1, . . . , k must draw for {1, . . . , k} to be a quora.
+Let U1, . . . , Uk be independent exponential random
+variables, with rate α = −(log 1 − p)
+−1
+. Since bUic is
+geometric with parameter p, we have P(Ui > t) ≥
+P(Ti > t) for any t > 0, and so P(max(U1, . . . , Uk) >
+t) ≥ P(max(T1, . . . , Tk) > t). Setting t =
+log n
+γ
+yields
+P(max(T1, . . . , Tk) > t) ≤ P(max(U1, . . . , Uk) > t)
+= 1 − P(max(U1, . . . , Uk) < t)
+= 1 − P(U1 < t)
+k
+= 1 − (1 − e
+− log n
+)
+k
+= 1 − (1 − n
+−1
+)
+k
+≤
+k
+n
+,
+where we use Bernoulli’s inequality in the last line. Thus,
+if each vertex in {1, . . . , k} draws more than t =
+log n
+α
+quorum slices, then with high probability, {1, . . . , k} is a
+quorum. Note that
+log n
+α
+= −
+log n
+log (1 − p)
+≤
+log n
+p
+≤ n
+k
+log n.
+Recall that Bennett’s inequality [24], when applied to
+X ∼ Poisson(λ), yields P(X ≥ λ − x) ≤ e
+− x
+2
+2λ
+h(− x
+λ
+)
+,
+where h(x) is decreasing in x and bounded above by 2
+and h(−1) = 2. Thus for λ = 2n
+k
+log n and x = n
+k
+log n,
+with high probability, P(Yv < nk
+log n) ≤ e
+−2n
+k
+log(n)
+for v = {1, . . . , k}. Thus, with high probability, each
+vertex will draw at least log n
+α
+quorum slices, and so
+{1, . . . , k} will be a quorum. By similar reasoning, {k +
+1, . . . , 2k} is also a quorum, so QIP does not hold with
+high probability.
+3.3.2. Lower Bound for Phase Transition.
+Theorem 3.2. Assume k = ω(log n). If λ = O(n
+c
+) for
+some constant c, then Qava exhibits the quorum intersection property with high probability.
+Since O(n
+k
+) = O(n
+log n) is super-polynomial, our
+lower bound states that the phase transition happens after
+O(n
+k
+) for k > log n.
+To prove the theorem, we need the following lemma.
+Lemma 3.3. Let U ⊂ V be a set of vertices with |U| ≥ k.
+Under the generative model, the probability that U is a
+quorum is
+P(U is a quorum) = 
+1 − exp 
+−λ
+(|U| − 1)k−1
+(n − 1)k−1
+|U|
+,
+(3.2)
+where (a)b is the falling Pochhammer symbol.
+Proof. We have
+P(U is a quorum) = Y
+u∈U
+P(∃S ∈ Qava(u), S ⊂ U)
+=
+Y
+u∈U
+
+1 − P(∀S ∈ Qava(u), S 6⊂ U)
+
+=
+
+1 − P(∀S ∈ Qava(u), S 6⊂ U)
+|U|
+,
+for any fixed u ∈ U. Moreover,
+P(∀S ∈ Qava(u), S 6⊂ U)
+
+=
+Y
+S∈Qava(u)
+P(S 6⊂ U)
+=
+Y
+S∈Qava(u)
+(1 − P(S ⊂ U))
+= exp 
+−λ
+(|U| − 1)k−1
+(n − 1)k−1
+
+,
+where in the last step we use that E[a
+Y
+] = e
+(a−1)λ
+for
+Y ∼ Poisson(λ). Putting the above two equations together
+yields the desired claim.
+Using the lemma, we can now prove our lower bound
+for the phase transiti
+Proof of Theorem 3.2. Note that (|U|−1)k−1
+(n−1)k−1
+=
+O(|U|
+k/nk
+). From Lemma 3.3, the expected number of
+quorums of size m is bounded above by
+
+n
+m
+
+(1 − e
+−λmk/nk
+)
+m ≤ n
+m
+
+2λ
+mk
+nk
+m
+,
+where we use that 1 − e
+−x ≤ 2x for x > 0. For m =
+o(n), the expected number of quorums of size n can be
+made arbitrarily small. Thus, with high probability, we
+can assume all quora have linear size.
+Next, let U be a quorum of linear size, i.e. |U| = dn
+for some d. Assume d < 1
+2
+. Write k = p log n for constant
+p, and let λ = n
+p
+. Then
+P(U is quorum) ≤ (1 − exp (−λdk
+))dn
+= (1 − exp (−n
+p
+· d
+p log n
+))dn
+≤ (1 − exp (−n
+p
+· (1/2)p log n
+))dn
+= (1 − e
+−O(1))
+dn
+.
+For large n, the above probability can be made exponentially small. Thus, with high probability, there are no
+quorums of size ≤
+1
+2
+n. Since any two sets of size greater
+than 1
+2
+n must have common intersection, it follows that
+Qava exhibits QIP with high probability.
+4. Conclusion
+In this paper, we develop a generative model for the
+Avalanche consensus protocol, and show that Avalanche
+can generate FBAS hypergraphs that satisfy the QIP, and
+therefore achieve safety and liveness guarantees similar to
+SCP. Because verifying that an FBAS hypergraph satisfies
+QIP is an NP-complete problem, we argue that one needs
+simulations and statistical arguments like ours to analyze
+the SCP in practical settings. More generally, as research
+into probabilistic consensus mechanisms has increased
+dramatically since the seminal work of Ben-Or [25], there
+has been an increasing need for a theoretical framework to
+compare different consensus mechanisms. At the moment,
+there are a wide variety of proof techniques and guarantees
+that, at first glance, appear non-comparable. Moreover, the
+differences in the definitions of what it means to achieve
+consensus make it hard to discern if a BFT algorithm can
+be fairly compared to a probabilistic algorithm. However,
+there are a number of similarities hidden within the analyses of distributed consensus protocols, and this work aims
+to evince one of these similarities.
+In particular, the phase transition that was described
+was inspired by transitions that are found in statistical
+physics and integrable probability. For instance, the quorum probabilities of Equation 3.2 are equivalent to cluster
+size probabilities within the random cluster model under
+certain limits [26]. This model, which has a variety of
+sharp phase transitions and a complicated phase diagram,
+serves as a formal probabilistic tool for analyzing random
+cluster formations in graphs. Perhaps, by borrowing tools
+from these fields, it will be possible to show that a larger
+number of consensus protocols and committee selection
+algorithms are related by simple statistical transformations. Our hope is that such an inquiry would lead to a
+simple taxonomy of distributed consensus algorithms and
+that this paper, which shows that one consensus algorithm
+can be viewed as a randomized realization of another
+consensus algorithm, will provide a way to prune this
+taxonomy.
+References
+[1] M. Castro, B. Liskov et al., “Practical byzantine fault tolerance,”
+in OSDI, vol. 99, 1999, pp. 173–186.
+[2] L. Lamport, “The part-time parliament,” ACM Transactions on
+Computer Systems (TOCS), vol. 16, no. 2, pp. 133–169, 1998.
+[3] J. Garay, A. Kiayias, and N. Leonardos, “The bitcoin backbone
+protocol: Analysis and applications,” in Annual International Conference on the Theory and Applications of Cryptographic Techniques. Springer, 2015, pp. 281–310.
+[4] R. Pass, L. Seeman, and A. Shelat, “Analysis of the blockchain protocol in asynchronous networks,” in Annual International Conference on the Theory and Applications of Cryptographic Techniques.
+Springer, 2017, pp. 643–673.
+[5] M. Fitzi, P. Gazi, A. Kiayias, and A. Russell, “Parallel chains: Im- ˇ
+proving throughput and latency of blockchain protocols via parallel
+composition,” Cryptology ePrint Archive, Report 2018/1119, 2018,
+https://eprint.iacr.org/2018/1119.
+[6] G. Wood, “Ethereum: A secure decentralised generalised transaction ledger,” Ethereum project yellow paper, vol. 151, pp. 1–32,
+2014.
+[7] T. Hanke, M. Movahedi, and D. Williams, “Dfinity technology overview series, consensus system,” arXiv preprint
+arXiv:1805.04548, 2018.
+[8] Y. Sompolinsky and A. Zohar, “Secure high-rate transaction processing in bitcoin,” in International Conference on Financial Cryptography and Data Security. Springer, 2015, pp. 507–527.
+[9] D. Schwartz, N. Youngs, A. Britto et al., “The ripple protocol
+consensus algorithm,” Ripple Labs Inc White Paper, vol. 5, 2014.
+[10] R. Pass and E. Shi, “Fruitchains: A fair blockchain,” in Proceedings
+of the ACM Symposium on Principles of Distributed Computing.
+ACM, 2017, pp. 315–324.
+[11] S. Micali, “Algorand: The efficient and democratic ledger,” arXiv
+preprint arXiv:1607.01341, 2016.
+[12] Y. Gilad, R. Hemo, S. Micali, G. Vlachos, and N. Zeldovich,
+“Algorand: Scaling byzantine agreements for cryptocurrencies,” in
+Proceedings of the 26th Symposium on Operating System Principles. ACM, 2017, pp. 51–68.
+[13] E. Kokoris-Kogias, P. Jovanovic, L. Gasser, N. Gailly, and B. Ford,
+“Omniledger: A secure, scale-out, decentralized ledger.” IACR
+Cryptology ePrint Archive, vol. 2017, p. 406, 2017.
+[14] M. Zamani, M. Movahedi, and M. Raykova, “Rapidchain: A fast
+blockchain protocol via full sharding,” preprint, 2018.
+[15] T. Rocket, “Snowflake to avalanche: A novel metastable consensus
+protocol family for cryptocurrencies,” May 2018.
+[16] D. Mazieres, “The stellar consensus protocol: A federated model
+for internet-level consensus,” Stellar Development Foundation,
+2015.
+[17] L. Lamport, R. Shostak, and M. Pease, “The byzantine generals
+problem,” ACM Trans. Program. Lang. Syst., vol. 4, no. 3, pp.
+382–401, Jul. 1982.
+[18] G. Gallo, G. Longo, S. Pallottino, and S. Nguyen, “Directed hypergraphs and applications,” Discrete Applied Mathematics, vol. 42,
+no. 2, pp. 177 – 201, 1993.
+[19] G. Cormode and S. Muthukrishnan, “An improved data stream
+summary: the count-min sketch and its applications,” Journal of
+Algorithms, vol. 55, no. 1, pp. 58–75, 2005.
+[20] R. Berinde, P. Indyk, G. Cormode, and M. J. Strauss, “Spaceoptimal heavy hitters with strong error bounds,” ACM Transactions
+on Database Systems (TODS), vol. 35, no. 4, p. 26, 2010.
+[21] G. Valiant and P. Valiant, “Estimating the unseen: An n/log(n)-
+sample estimator for entropy and support size, shown optimal
+via new clts,” in Proceedings of the Forty-third Annual ACM
+Symposium on Theory of Computing, ser. STOC ’11. New York,
+NY, USA: ACM, 2011, pp. 685–694.
+[22] P. Jacquet and W. Szpankowski, “Analytical depoissonization and
+its applications,” Theoretical Computer Science, vol. 201, no. 1,
+pp. 1 – 62, 1998.
+[23] L. Lachowski, “Complexity of the quorum intersection property of
+the federated byzantine agreement system,” 2019.
+[24] S. Boucheron, G. Lugosi, and P. Massart, Concentration inequalities: A nonasymptotic theory of independence. Oxford university
+press, 2013.
+[25] M. Ben-Or, “Another advantage of free choice (extended abstract):
+Completely asynchronous agreement protocols,” in Proceedings of
+the second annual ACM symposium on Principles of distributed
+computing. ACM, 1983, pp. 27–30.
+[26] G. Grimmett, “The random-cluster model,” in Probability on discrete structures. Springer, 2004, pp. 73–123.

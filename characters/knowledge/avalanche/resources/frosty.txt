@@ -1,0 +1,1511 @@
+arXiv:2404.14250v5 [cs.DC] 10 Sep 2024
+Frosty: Bringing strong liveness guarantees to the Snow
+family of consensus protocols.
+AARON BUCHWALD, Ava Labs, USA
+STEPHEN BUTTOLPH, Ava Labs, USA
+ANDREW LEWIS-PYE, London School of Economics, UK
+PATRICK O’GRADY, Ava Labs, USA
+KEVIN SEKNIQI, Ava Labs, USA
+Snowman is the consensus protocol implemented by the Avalanche blockchain and is part of the Snow family of protocols, first introduced in the Avalanche whitepaper [30]. A major advantage of Snowman is that
+each consensus decision only requires an expected constant communication overhead per processor in the
+‘common’ case that the protocol is not under substantial Byzantine attack, i.e. it provides a solution to the
+scalability problem which ensures that the expected communication overhead per processor is independent
+of the total number of processors  during normal operation. This is the key property that would enable a
+consensus protocol to scale to 10,000 or more independent validators (i.e. processors). On the other hand, the
+two following concerns have remained:
+(1) Providing formal proofs of consistency for Snowman has presented a formidable challenge.
+(2) Liveness attacks exist in the case that a Byzantine adversary controls more than (
+√
+) processors,
+slowing termination to more than a logarithmic number of steps.
+In this paper, we address the two issues above. We consider a Byzantine adversary that controls at most
+ < /5 processors. First, we provide a simple proof of consistency for Snowman. Then we supplement
+Snowman with a ‘liveness module’ that can be triggered in the case that a substantial adversary launches
+a liveness attack, and which guarantees liveness in this event by temporarily forgoing the communication
+complexity advantages of Snowman, but without sacrificing these low communication complexity advantages
+during normal operation.
+1 INTRODUCTION
+Recent years have seen substantial interest in developing consensus protocols that work efficiently
+at scale. In concrete terms, this means looking to minimize the latency and communication complexity per consensus decision as a function of the number of processors (participants/validators)
+. The Dolev-Reischuk bound [14], which asserts that deterministic protocols require Ω(
+2
+) communication complexity per consensus decision, presents a fundamental barrier in this regard: deterministic protocols that can tolerate a Byzantine (i.e. arbitrary) adversary of size () must
+necessarily suffer a quadratic blow-up in communication cost as the size of the network grows.
+It is precisely this relationship that makes these protocols susceptible to considerable slowdown
+when a high number of processors is present.
+Probabilistic sortition. One approach to dealing with this quadratic blow-up in communication
+cost, as employed by protocols such as Algorand [10], is to utilize probabilistic sortition [1, 20].
+Rather than have all processors participate in every consensus decision, the basic idea is to sample a committee of sufficient size that the proportion of Byzantine committee members is almost
+certainly close to the proportion of all processors that are Byzantine. Sampled committees of constant bounded size can then be used to implement consensus, thereby limiting the communication
+cost. In practical terms, however, avoiding Byzantine control of committees requires each committee to have a number of members sufficient that the quadratic communication cost for the committee
+is already substantial, e.g. Algorand requires committees with  members, where  is of the order
+of one thousand, meaning that
+2
+is already large.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 2
+The Snow family of consensus protocols. In [30], a family of consensus protocols was specified,
+providing an alternative approach to limiting communication costs. These protocols are all based
+on a common approach that is best described by considering a binary decision game. For the sake
+of simplicity, let us initially consider the Snowflake protocol1
+, which uses three parameters: ,
+ > /2, and  (for the sake of concreteness, in this paper we will focus on the example that  = 80).
+Suppose that each processor begins with an initial color, either red or blue. Each processor  then
+proceeds in rounds. In each round,  randomly samples  processors from the total population
+and asks those processors to report their present color. If at least  of the reported values are the
+opposite of ’s present color, then  adopts that opposite color. If  sees  consecutive rounds in
+which at least  of the reported values are red, then  decides red (and similarly for blue).
+The outcome of this dynamic sampling process can be informally described as follows when
+the adversary is sufficiently bounded (a formal analysis for a variant of Snowflake that we call
+Snowflake+
+is given in Section 4). Once the proportion of the population who are red, say, passes
+a certain tipping point, it holds with high probability that the remainder of the (non-Byzantine)
+population will quickly become red (and symmetrically so for blue). If  is set appropriately, then
+the chance that any correct processor decides on red before this tipping point is reached can be
+made negligible, meaning that once any correct processor decides on red (or blue), they can be
+sure that all other correct processors will quickly decide the same way. The chance that correct
+processors decide differently can thus be made negligible through an appropriate choice of parameter values. If correct processors begin heavily weighted in favor of one color, then convergence
+on a decision value will happen very quickly, while variance in random sampling is required to
+tip the population in one direction in the case that initial inputs are evenly distributed.
+While the discussion above considers a single binary decision game, the ‘Snowman’ protocol,
+formally described and analysed for the first time in this paper, shows that similar techniques
+can be used to efficiently solve State Machine Replication (SMR) [32]. The transition from simple
+consensus (Byzantine Agreement [21]) to an efficient SMR protocol is non-trivial, and is described
+in detail in Sections 5 and 6. A major benefit of the approach is that it avoids the need for all-to-all
+communication. In an analysis establishing that there is only a small chance of consistency failure,
+the value of  can be specified independent of , and each round requires each processor to collect
+reported values from only  others.
+Our contribution. The Snowman protocol is presently used by the Avalanche blockchain to implement SMR. However, the two following concerns have remained:
+(1) Providing formal proofs of consistency for Snowman has presented a formidable challenge.
+(2) Liveness attacks exist in the case that a Byzantine adversary controls more than (
+√
+)
+processors [30], meaning that finalization is no longer guaranteed to occur in a logarithmic
+number of steps.
+In this paper, we consider a Byzantine adversary that controls at most  < /5 processors, and
+address the two issues above. With respect to issue (1):
+• We describe a variant of Snowflake, called Snowflake+
+.
+• For appropriate choices of parameter values, we give a simple proof that Snowflake+
+satisfies
+‘validity’ and ‘agreement’ except with small error probability.
+• We give a complete specification of a version of Snowman that builds on Snowflake+
+. This
+is the first formal description of the Snowman protocol.
+1
+In [30], other variants such as the Slush and Snowball protocols are also described.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 3
+• For appropriate choices of parameter values, we give a simple proof that the resulting Snowman protocol satisfies consistency except with small error probability.
+• We also describe a variant of Snowflake+
+called Error-driven Snowflake+
+, that can be used
+to give very low latency in the ‘common case’.
+With regard to issue (2), we note that malicious liveness attacks on Avalanche have not been
+observed to date. It is certainly desirable, however, to have strong guarantees in the case that a
+large adversary launches an attack on liveness. The approach we take in this paper is therefore
+to strike a practical balance. More specifically, we aim to specify a protocol that is optimised to
+work efficiently in the ‘common case’ that there is no substantial Byzantine attacker, but which
+also provides a ‘fallback’ mechanism in the worst case of a substantial attack on liveness. To this
+end, we then describe how to supplement Snowman with a ‘liveness module’. The basic idea is
+that one can use Snowman to reach fast consensus under normal operation, and can then trigger
+an ‘epoch change’ that temporarily implements some standard quorum-based protocol to achieve
+liveness in the case that a substantial adversary attacks liveness. In the (presumably rare) event
+that a substantial adversary attacks liveness, liveness is thus ensured by temporarily forgoing the
+communication complexity advantages of Snowman during normal operation. The difficulty in
+implementing such a module is to ensure that interactions between the different modes of operation do not impact consistency. We give a formal proof that the resulting protocol, called Frosty,
+is consistent and live, except with small error probability.
+Paper structure. Section 2 describes the formal model. Section 3 describes Snowflake+
+and gives
+pseudocode for the protocol. Section 4 gives a proof of agreement and validity for Snowflake+
+and
+describes Error-driven Snowflake+
+. Section 5 describes the Snowman protocol, including pseudocode. Section 6 gives a proof of consistency for Snowman. Section 7 describes the liveness module and gives pseudocode for the resulting protocol, called Frosty. Section 8 proves liveness and
+consistency for Frosty.
+2 THE MODEL
+We consider a set Π = {0, . . . , −1} of  processors. Processor
+is told  as part of its input. For
+the sake of simplicity, we assume a static adversary that controls up to  of the processors, where
+ is a known bound. Generally, we will assume  < /5. The bound  < /5 is chosen only so
+as to give as simple a proof as possible in Section 4, and providing an analysis for larger  is the
+subject of future work. A processor that is controlled by the adversary is referred to as Byzantine,
+while processors that are not Byzantine are correct. Byzantine processors may display arbitrary
+behaviour, modulo our cryptographic assumptions (described below).
+Cryptographic assumptions. Our cryptographic assumptions are standard for papers in distributed computing. Processors communicate by point-to-point authenticated channels. We use
+a cryptographic signature scheme, a public key infrastructure (PKI) to validate signatures, and a
+collision-resistant hash function . We assume a computationally bounded adversary. Following a
+common standard in distributed computing, and for simplicity of presentation (to avoid the analysis of certain negligible error probabilities), we assume these cryptographic schemes are perfect, i.e.
+we restrict attention to executions in which the adversary is unable to break these cryptographic
+schemes. In a given execution of the protocol, hash values are thus assumed to be unique.
+Communication. As noted above, processors communicate using point-to-point authenticated
+channels. We consider the standard synchronous model: for some known bound Δ, a message sent
+at time  must arrive by time  + Δ.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 4
+The binomial distribution. Consider  independent and identically distributed random variables,
+each of which has probability  of taking the value ‘red’. We let Bin(, ,) denote the probability
+that  of the  values are red, we write Bin(, , ≥ ) to denote the probability that at least
+values are red (and similarly for Bin(, , ≤ )).
+Dealing with small probabilities. In analysing the security of a cryptographic protocol, one
+standardly regards a function  : N → N as negligible if, for every  ∈ N, there exists  ∈ N
+such that, for all  ≥  , | ()| < 1/
+
+. Our concerns here, however, are somewhat different.
+As noted above, we assume the cryptographic schemes utilized by our protocols are perfect. For
+certain fixed parameter values (e.g. setting  = 500,  = 80,  = 41 and  = 12 in an instance
+of Snowflake, as described in Section 1), we want to be able to argue that error probabilities are
+sufficiently small that they can reasonably be dismissed.
+In our analysis, we will therefore identify certain events as occurring with small probability (e.g.
+with probability < 10−20), and may then condition on those events not occurring. Often, we will
+consider specific events, such as the probability in a round-based protocol that a given processor
+performs a certain action  in a given round. In dismissing small error probabilities, one then has to
+take account of the fact that there may be many opportunities for an event of a given type to occur,
+e.g. any given processor may perform action  in any given round. How reasonable it is to condition
+on no correct processor performing action  may therefore depend on the number of processors
+and the number of rounds, and we assume ‘reasonable’ bounds on these values. As an example,
+consider the Snowflake protocol, as described in Section 1, and suppose  = 80 and that at most
+1/5 of the processors are Byzantine. Suppose that, at the beginning of a certain round, at least 75%
+of the correct processors are red. Then a calculation for the binomial distribution shows that the
+probability a correct processor receives at least 72 blue responses from the 80 processors it samples
+in that round is upper bounded by 1.18×10−20,i.e. Bin(80, 0.2+ (0.8×0.25), ≥ 72) < 1.18×10−20. To
+upper bound the probability that there exists any round in which at least 75% of correct processors
+are red and some correct processor receives at least 72 blue responses, we just apply the union
+bound. For the sake of concreteness, suppose that at most 10,000 processors run the protocol for at
+most 1000 years, executing at most 5 rounds a second. This means that less than 1.6 × 1011 rounds
+are executed. Since there are at most 10,000 processors, the union bound thus gives a cumulative
+error probability less than (1.18 × 10−20) × 104 × (1.6 × 1011) < 2 × 10−5
+. We will address such
+accountancy issues as they arise.
+We stress that accounting for small error probabilities in the manner described above (rather
+than showing error probabilities are negligible functions of the parameter inputs) also allows us
+to give particularly straightforward security proofs for Snowflake+
+, Snowman, and Frosty.
+A comment on the use of synchrony. We simplify our analysis by having correct processors
+execute the protocol executions in cleanly defined rounds. Each correct processor thus samples the
+values of some others in round 1, before adjusting local values based on that sample. All correct
+processors then proceed to round 2, and so on. As discussed in In Section 10, a follow-up paper
+will show how the analysis here can be extended to deal with a responsive version of the protocol
+in which each correct processor can proceed through rounds as fast as local message delays allow,
+i.e. a processor may proceed to round  + 1 as soon as they receive sufficiently many responses for
+round .
+3 A SIMPLE PROTOCOL FOR BYZANTINE AGREEMENT: SNOWFLAKE+
+.
+We begin by describing a simple probabilistic protocol for binary Byzantine Agreement, called
+Snowflake+
+, which will act as a basic building block for the Snowman protocol (described later
+in Section 5). While a similar analysis could be given for Snowflake (as described in the original
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 5
+whitepaper [30]), an advantage of Snowflake+
+is that it allows for a simpler proof to establish that
+error probabilities are small and, as described in further detail in Section 4.1, Snowflake+
+is also
+easily adapted to give flexible termination conditions, giving low latency in the good case that
+most processors are correct. Similar considerations also apply when comparing Snowflake+
+and
+Snowball (also described in the original whitepaper [30]).
+The inputs. Each processor  begins with a value input ∈ {0, 1}.
+The requirements. A probabilistic protocol for Byzantine agreement is required to satisfy the
+following properties, except with small error probability:
+Agreement: No two correct processors output different values.
+Validity: If every correct processor  has the same value input
+, then no correct processor outputs
+a value different than this common input.
+Termination: Every correct processor gives an output.
+Recalling Snowflake. Since Snowflake+
+is a simple variant of Snowflake, let us first informally
+recall the Snowflake protocol. Snowflake uses three parameters: ,  > /2, and . Each processor
+ maintains a variable val
+, initially set to input
+. The instructions proceed in rounds. In each
+round, processor  randomly samples  processors from the total population and asks each of
+those processors  to report their present value val
+. If at least  of the reported values are the
+opposite of
+’s present value val
+, then  sets val
+:= 1 − val
+. If  sees  consecutive rounds
+in which at least  of the reported values are 1, then  decides 1 (and similarly for 0).
+Snowflake+
+is similar to Snowflake, except that we now use two parameters 1 and 2, rather
+than a single parameter .
+The protocol parameters for Snowflake+
+. The protocol parameters are , 1, 2,  ∈ N>0 and
+satisfy the constraints that 1 > /2 and 2 ≥ 1. Each processor  also maintains a variable
+val
+, initially set to input
+. The parameter  determines sample sizes. The parameter 1 is used
+to determine when processor  changes val
+. Parameters 2 and  are used to determine the
+conditions under which  will output and terminate.
+The protocol instructions for Snowflake+
+. The instructions are divided into rounds, with round
+ occurring at time 2Δ. In round , processor
+:
+(1) Sets h1, , . . . , i to be a sequence of  processors (specific to ). For  ∈ [1, ], , is sampled from the uniform distribution2 on all processors (so sampling is “with replacement”).
+(2) Requests each , (for  ∈ [1, ]) to report its present value val
+.
+(3) Waits time Δ and reports its present value val to any processor that has requested it in
+round .
+(4) Waits another Δ and considers the values reported in round :
+• If at least 1 of the reported values are 1 − val
+, then  sets val
+:= 1 − val
+.
+• If  has seen  consecutive rounds in which at least 2 of the reported values are equal to
+val
+, then  outputs this value and terminates.
+The pseudocode is described in Algorithm 1.
+In Section 4, we will show that Snowflake+
+satisfies agreement and validity for appropriate choices
+of the protocol parameters, and so long as  < /5. We do not give a formal analysis of termination
+for Snowflake+
+: Once Snowflake+ has been used to define Snowman in Section 5, in Section 7 we
+2
+In proof-of-stake implementations, sampling will be stake-weighted, but, for the sake of simplicity of presentation, we
+ignore such issues here.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 6
+will describe how to augment Snowman with a liveness module (guaranteeing termination), which
+is formally analysed in Section 8.
+Algorithm 1 Snowflake+
+: The instructions for processor
+1: Inputs
+2: input ∈ {0, 1} ⊲
+’s input
+3: Δ, , 1, 2,  ∈ N ⊲ Protocol parameters
+4: Local variables
+5: val
+, initially set to input ⊲
+’s present ‘value’
+6: count, initially set to 0 ⊲ Output once count reaches
+7: (, ), initially undefined ⊲ Stores at most one received value per round
+8:
+9: The instructions for round , beginning at time 2Δ:
+10: Form sample sequence h1, , . . . , i; ⊲ Sample with replacement
+11: For  ∈ [1, ], send  to , ; ⊲ Ask , for present value
+12: Wait Δ;
+13: For each  such that  has received  from
+:
+14: Send (, val) to
+;
+15: Wait Δ;
+16: For each  ∈ [1, ]:
+17: If  has received a first message (, ) from , ;
+18: Set (, ) := ;
+19: Else set (, ) := ⊥;
+20: If |{  : 1 ≤  ≤ , (, ) == 1 − val }| ≥ 1, set val
+:= 1 − val
+, count := 0;
+21: If |{  : 1 ≤  ≤ , (, ) == val }| < 2, set count := 0;
+22: If |{  : 1 ≤  ≤ , (, ) == val }| ≥ 2, set count := count + 1;
+23: If count ≥ , output val and terminate.
+4 SECURITY ANALYSIS OF SNOWFLAKE+
+We assume  < /5. For the sake of concreteness, we establish satisfaction of agreement and
+validity for  = 80, 1 = 41, 2 = 72, and  = 12, under the assumption that the population size
+ ≥ 500. We make the assumption that  < /5 and  ≥ 500 only so as to be able to give as simple
+a proof as possible: a more fine-grained analysis for smaller  is the subject of future work.
+Coloring the processors. Since 0 and 1 are not generally used as adjectives, let us say a correct
+processor
+is ‘blue’ in round  if val = 0 at the beginning of round , and that
+is ‘red’ in
+round  if val = 1 at the beginning of round . Recall (from Algorithm 1) that (, ) is the color
+that  reports to
+in round . We’ll say a correct processor
+‘samples  blue’ in round  if
+|{  : 1 ≤  ≤ , (, ) = 0}| =  (and similarly for red). We’ll also extend this terminology in the
+obvious way, by saying that a processor outputs ‘blue’ if it outputs 0 and outputs ‘red’ if it outputs
+1. In the below, we’ll focus on the case that, in the first round in which a correct processor outputs
+(should such a round exist), some correct processor outputs red. A symmetric argument can be
+made for blue.
+In the following argument, we will adopt the conventions described in Section 2 concerning
+the treatment of small error probabilities. We will identify certain events as occurring with small
+probability (e.g. with probability < 10−20), and may then condition on those events not occurring.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 7
+Where there are multiple opportunities for an event of a certain type to occur, one must be careful
+to account for the accumulation of small error probabilities. To deal with the accumulation of small
+error probabilities, we suppose that at most 10,000 processors execute the protocol for at most 1000
+years, executing at most 5 rounds per second.
+Establishing Agreement. The argument consists of four parts:
+Part 1. First, let us consider what happens when the proportion of correct processors that are red
+reaches a certain threshold. In particular, let us consider what happens when at least 75% of the
+correct processors are red in a given round . A direct calculation for the binomial distribution
+shows that the probability a given correct processor is red in round  + 1 is then at least 0.9555,
+i.e. Bin(80, 0.8 × 0.75, ≥ 41) > 0.9555. Assuming a population of at least 500, of which at least
+80% are correct (meaning that at least 400 are correct), another direct calculation for the binomial
+distribution shows that the probability that it fails to be the case that more than 5/6 of the correct
+processors are red in round  + 1 is upper bounded by 1.59 × 10−20, i.e. Bin(, 0.9555, ≤ 5/6) <
+1.59 × 10−20 for  ≥ 400. Note that this argument requires no knowledge as to the state of each
+processor in round , other than the fact that at least 75% of the correct processors are red.
+The analysis above applies to any single given round . Next, we wish to iterate the argument
+over rounds in order to bound the probability that the following statement holds for all rounds:
+(†1) If at least 75% of the correct processors are red in any round , then, in all rounds
+′ with
+
+′ > , more than 5/6 of the correct processors are red.
+To bound the probability that (†1) fails to hold, we can bound the number of rounds, and then apply
+the union bound to our analysis of the error probability in each round. Suppose that the protocol
+is executed for at most 1000 years, with at most 5 rounds executed per second. This means that less
+than 1.6 × 1011 rounds are executed. The union bound thus gives a cumulative error probability of
+less than (1.6 × 1011) × (1.59 × 10−20) < 3 × 10−9
+, meaning that (†1) fails to hold with probability
+at most 3 × 10−9
+.
+Part 2. A calculation for the binomial distribution shows that if at least 75% of correct processors
+are red in a given round , then the probability that a given correct processor  samples at least 72
+blue in round  is upper bounded by 1.18×10−20, i.e. Bin(80, 0.2+ (0.8×0.25), ≥ 72) < 1.18×10−20
+.
+If at most 10,000 processors execute the protocol for at most 1000 years, executing at most 5 rounds
+per second, we can then apply the union bound to conclude that the following statement fails to
+hold with probability at most (1.18 × 10−20) × 10000 × (1.6 × 1011) < 2 × 10−5
+:
+(†2) If at least 75% of the correct processors are red in any round , then no correct processor
+samples at least 72 blue in round .
+Part 3. Another direct calculation for the binomial distribution shows that, if at most 75% of correct
+processors are red in a given round , then the probability a given correct processor  samples 72
+or more red in round  is upper bounded by 0.0131, i.e. Bin(80, (0.75 × 0.8) + 0.2, ≥ 72) < 0.0131.
+If, for some  ≥ 1 it then holds that at most 75% of correct processors are red in round  + ,
+then (independent of previous events), the probability  samples 72 or more red in round  +  is
+again upper bounded by 0.0131. So, if we consider any 12 given consecutive rounds and any given
+correct processor , the probability that at most 75% of correct processors are red and  samples
+at least 72 red in all 12 rounds is upper bounded by 0.013112 < 10−22. If at most 10,000 processors
+execute the protocol for at most 1000 years, executing at most 5 rounds per second, we can then
+apply the union bound to conclude that the following statement fails to hold with probability at
+most 10−22 × 10000 × (1.6 × 1011) < 2 × 10−7
+:
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 8
+(†3) If a correct processor outputs red in some round  + 11, then, for at least one round
+′ ∈
+[,  + 11], at least 75% of correct processors are red in round
+′
+.
+Part 4. Now we put parts 1–3 together. From the union bound and the analysis above, we may
+conclude that (†1)− (†3) all hold, except with probability at most (3×10−9
+)+ (2×10−5
+)+ (2×10−7
+) <
+3 × 10−5
+. So, suppose that (†1) − (†3) all hold. According to (†3), if a correct processor is the
+(potentially joint) first to output and outputs red after sampling in round  + 11, at least one round
+
+′ ∈ [,  + 11] must satisfy the condition that at least 75% of correct processors are red in round
+′
+.
+From (†1), it follows that at least 5/6 of the correct processors must be red in all rounds >
+′
+. From
+(†2), it follows that no correct processor ever outputs blue. This suffices to show that Agreement
+is satisfied, except with small error probability.
+Establishing Validity. A similar (but even simpler) argument suffices to establish validity. Suppose that all honest nodes have the same input, red say (i.e. 1). By the same reasoning as above,
+since round 0 satisfies the condition that at least 75% (in fact 100%) of correct processors are red,
+the following statement fails to hold with probability at most 3 × 10−9
+:
+(†4) In every round, more than 5/6 of the correct processors are red.
+From (†2) and (†4) it follows that no correct processor outputs blue, as required.
+Dealing with different parameter values. The argument above is easily adapted to deal with
+alternative parameter values. If we fix 1 := ⌊/2⌋ + 1, then error probabilities will be smaller for
+larger values of 2 and . For smaller values of 2, similar error probabilities can be obtained by
+increasing  – the required values for  are easily found by adapting the binomial calculations
+above. Examples are given in Section 4.1.
+4.1 Error-driven Snowflake+
+In Section 4, we considered a fixed value 2 = 72, for  = 80. While considering a fixed 2 suffices
+for the analysis there, it is also useful to consider multiple values of 2, giving rise to a number of
+different conditions for termination. Considering a range of termination conditions for different
+values of 2 serves two functions: Considering lower values of 2 allows one to deal with a greater
+percentage of offline/faulty processors, while higher values of 2 give quick decision conditions
+and low latency in the good case.
+Error-driven Snowflake+
+is the same as Snowflake+
+, except that one simultaneously considers
+multiple possible values of 2 ≤ . Each 2 now gives rise to a different  that determines the
+conditions for termination. The corresponding values are shown in Table 1.
+How the values in Table 1 are calculated. In Section 4, it was (†3) which played a crucial role in
+establishing the relationship between 2 and  for a given error probability  > 0. Assuming that
+at most 75% of correct processors are red, a calculation for the binomial distribution then upper
+bounds the probability  that a given correct processor samples at least 2 red in a given round.
+For a given error probability , the corresponding  shown in Table 1 is the least integer such that
+
+ < . The value
+ upper bounds the probability of a given correct processor sampling at least
+2 red in  given consecutive rounds, under the assumption that at most 75% of correct processors
+are red in each round.
+Table 1 also shows how  depends on 2 for larger error bounds ( < 10−14 and  < 10−6
+).
+Correct processors may use the corresponding lower values of  in the case that they are willing
+to accept higher error probabilities for the sake of achieving low latency, i.e. terminating in a small
+number of rounds.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 9
+2  for  for  for
+ < 10−22  < 10−14  < 10−6
+80 3 2 1
+79 4 3 1
+78 5 3 2
+77 5 4 2
+76 6 4 2
+75 7 5 2
+74 9 6 3
+73 10 7 3
+72 12 8 4
+71 15 10 4
+70 18 12 5
+69 23 15 7
+68 29 18 8
+67 37 24 10
+66 48 31 14
+65 65 41 18
+Table 1. The required  as a function of 2 and the error bound.
+Low latency in standard operation. Analysis of data from the Avalanche blockchain shows
+that, at any given point in time, one can expect close to 100% of contributing processors to act
+correctly. For Error-driven Snowflake+
+, this corresponds to a scenario where the vast majority of
+processors are correct, and where initial inputs are generally highly biased in favor of one color.
+The conditions in Table 1 that allow for quick termination (using  = 3, 4 or 5, say) can therefore be
+expected to be commonly satisfied, and give a significant improvement in latency for the standard
+case that most processors act correctly.
+The accumulation of error probabilities. Accepting multiple conditions for termination gives
+an overall error probability that can be (generously) upper bounded simply by applying the union
+bound. In Table 1, 16 different termination conditions are listed. If processors apply all of these
+termination conditions simultaneously, then this will lead to at most a 16-fold increase in error
+probability.
+5 THE SNOWMAN PROTOCOL
+Since the Snowman protocol is not specified in the original whitepaper [30], we give a precise
+description and pseudocode here.
+5.1 Transactions and blocks
+To specify a protocol for State-Machine-Replication (SMR), we suppose processors are sent (signed)
+transactions during the protocol execution: Formally this can be modeled by having processors be
+sent transactions by an environment, e.g. as in [22]. Processors may use received transactions to
+form blocks of transactions. To make the analysis as general as possible, we decouple the process of
+block production from the core consensus engine. We therefore suppose that some given process
+for block generation operates in the background, and that valid blocks are gossiped throughout
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 10
+the network. We do not put constraints on the block generation process, and allow that it may produce equivocating blocks, etc. In practice, block generation could be specified simply by having a
+rotating sequence of leaders propose blocks, or through a protocol such as Snowman++, as actually
+used by the present implementation of the Avalanche blockchain (for a description of Snowman++
+,
+see [23]).
+Blockchain structure. We consider a fixed genesis block 0. In a departure from the approach
+described in the original Avalanche whitepaper [30], which built a directed acyclic graph (DAG)
+of blocks, we consider a standard blockchain architecture in which each block  other than 0
+specifies a unique parent. If
+′
+is the parent of , then  is referred to as a child of
+′
+. In this case,
+the ancestors of  are  and any ancestors of
+′
+. Every block must have 0 as an ancestor. The
+descendants of any block  are  and any descendants of its children. The height of a block  is its
+number of ancestors other than , meaning that the height of 0 is 0. By a chain (ending in ℎ), we
+mean a sequence of blocks 0 ∗ 1 ∗ · · · ∗ ℎ, such that ℎ′+1 is a child of ℎ′ for ℎ
+′ < ℎ.
+3
+5.2 Overview of the Snowman protocol
+To implement SMR, our approach is to run multiple instances of Snowflake+
+. To keep things simple,
+consider first the task of reaching consensus on a block of height 1. Suppose that multiple children
+of 0 are proposed over the course of the execution and that we must choose between them. To
+turn this decision problem into multiple binary decision problems, we consider the hash value
+(1) of each proposed block 1 of height 1, and then run one instance of Snowflake+
+to reach
+consensus on the first bit of the hash. Then we run a second instance to reach consensus on the
+second bit of the hash, and so on. Working above a block of any height ℎ, the same process is then
+used to finalize a block of height ℎ + 1. In this way, multiple instances of Snowflake+
+are used to
+reach consensus on a chain of hash values (0) ∗ (1) ∗ . . . .
+This process would not be efficient if each round required a separate set of correspondences
+for each instance of Snowflake+
+, but this is not necessary. Just as in Snowflake+
+, at the beginning
+of each round , processor  samples a single sequence h1, , . . . , i of  processors. Since we
+now wish to reach consensus on a sequence of blocks, each processor , in the sample is now
+requested to report its presently preferred chain, rather than a single bit value. The first bit of
+the corresponding hash sequence is then used by  as the response of , in a first instance of
+Snowflake+
+. If this first bit agrees with
+’s resulting value in that instance of Snowflake+
+, then the
+second bit is used as the value reported by , in a second instance of Snowflake+
+, and so on.
+A note on some simplifications that are made for the sake of clarity of presentation. When
+a processor , is requested by  to report its presently preferred chain (ending with , say), we
+have , simply send the given sequence of blocks. In reality, this would be very inefficient and
+the present implementation of Snowman deals with this by having , send a hash of  instead.
+This potentially causes some complexities, because  may not have seen  (meaning that it does
+not necessarily know how to interpret the hash). This issue is easily dealt with, but it would be a
+distraction to go into the details here.
+The variables, functions and procedures used by
+. The protocol instructions make use of
+the following variables and functions (as well as others whose use should be clear from the pseudocode):
+• 0: The genesis block.
+3Throughout this paper, ‘∗’ denotes concatenation.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 11
+• blocks: Stores blocks received by  (and verified as valid). Initially it contains only 0, and
+it is automatically updated over time to include any block included in any message received
+or sent by
+.
+• val(): For each finite binary string , val() records
+’s presently preferred value for the
+next bit of the chain of hash values (0) ∗ (1) ∗ . . . , should the latter extend .
+• pref: The initial segment of the chain of hash values that  presently prefers. We write
+|pref| to denote the length of this binary string.
+• final: The initial segment of the chain of hash values that  presently regards as final.
+• chain(): If there exists a greatest ℎ ∈ N such that  = (0) ∗ · · · ∗(ℎ) ∗  for a chain of
+blocks 0 ∗ · · · ∗ ℎ all seen by
+, and for some finite string , then chain() := 0 ∗ · · · ∗ ℎ.
+Otherwise, chain() := 0.
+• reduct(): If there exists a greatest ℎ ∈ N such that  = (0) ∗ · · · ∗ (ℎ) ∗  for a
+chain of blocks 0 ∗ · · · ∗ ℎ all seen by
+, and for some finite string , then reduct() :=
+(0) ∗ · · · ∗ (ℎ). Otherwise, reduct() := (0).
+• last(): If there exists a greatest ℎ ∈ N such that  = (0) ∗ · · · ∗ (ℎ) ∗  for a chain
+0 ∗ · · · ∗ ℎ all seen by
+, and for some finite string , then last() := ℎ. Otherwise,
+last() := 0.
+• : If  = 0 ∗ 1 ∗ · · · ∗ ℎ is a chain, then  := (0) ∗ (1) ∗ . . . (ℎ), and if not then
+ is the empty string ∅.
+The pseudocode is described in Algorithm 2. For strings  and , we write  ⊆  to denote that
+is an initial segment of . For the sake of simplicity, the pseudocode considers a fixed value for 2,
+but one could also incorporate approaches such as Error-Driven Snowflake+
+, described in Section
+4.1.
+6 CONSISTENCY ANALYSIS FOR SNOWMAN
+We write pref and final to denote the values pref and final as locally defined for
+. We say
+ finalizes , or  becomes final for
+, if there exists some round during which  ⊆ final
+. We
+say  becomes final if it becomes final for all correct processors. A block  becomes final if there
+exists some chain  = 0 ∗ · · · ∗  such that  becomes final.
+The requirements. A probabilistic protocol for SMR is required to satisfy the following properties,
+except with small error probability:
+Liveness: Unboundedly many blocks become final.4
+Consistency: Suppose  := final as defined at the beginning of round  and that
+′
+:= final as
+defined at the beginning of round
+′
+. Then, whenever  and  are correct:
+(i) If  =  and
+′ ≥  then  ⊆
+′
+.
+(ii) Either  extends
+′
+, or
+′
+extends .
+In this section, we show that Snowman satisfies consistency (except with small error probability)
+for appropriate choices of the protocol parameters, and so long as  < /5. As in Section 4, for
+the sake of concreteness we give an analysis for  = 80, 1 = 41, 2 = 72, and  = 12, under the
+assumption that the population size  ≥ 500. As before, we make the assumption that  < /5 and
+ ≥ 500 only so as to be able to give as simple a proof as possible: a more fine-grained analysis for
+smaller  is the subject of future work. In Section 7 we will describe how to augment Snowman
+with a module guaranteeing liveness, which is formally analysed in Section 8.
+4To ensure that transactions are not censored, it is natural also to require the stronger condition that unboundedly blocks
+produced by correct processors become final. We initially consider the version of liveness stated above for the sake of simplicity, but describe how to deal with the stronger requirement in Section 8. In Section 8, we will also analyse the maximum
+time required to finalize new values.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 12
+Algorithm 2 Snowman: The instructions for processor
+1: Inputs
+2: Δ, , 1, 2,  ∈ N
+3: Local values
+4: val(), initially undefined
+5: count(), initially set to 0
+6: rpref(, ), initially undefined ⊲ Records preferred chain of ,
+7: blocks, initially contains just 0 ⊲ Automatically updated
+8: pref, initially set to (0)
+9: final, initially set to (0)
+10:
+11: The instructions for round , beginning at time 2Δ:
+12: Form sample sequence h1, , . . . , i; ⊲ Sample with replacement
+13: For  ∈ [1, ], send  to , ; ⊲ Ask , for preferred chain
+14:
+15: Wait Δ;
+16:
+17: For each  such that  has received  from
+:
+18: Send (, chain(pref)) to
+; ⊲ Report preferred chain to
+19:
+20: Wait Δ;
+21:
+22: For each  ∈ [1, ]:
+23: If  has received a first message (, ) from , s.t.  is a chain;
+24: Set rpref(, ) := ; ⊲ Record preferred chain of ,
+25: Else set rpref(, ) := (0);
+26:
+27: Set pref := final, end := 0; ⊲ Begin iteration to determine pref for round  + 1
+28: While end == 0 do:
+29: Set  := { ∈ blocks :  is a child of last(pref) and pref ⊆ reduct(pref) ∗ ()};
+30: If  is empty, set end := 1;
+31: Else: ⊲ Carry out the next instance of Snowflake+
+32: If val(pref) is undefined:
+33: Let  be the first block in  enumerated into blocks;
+34: Set val(pref) to be the (|pref| + 1)
+th bit of reduct(pref) ∗ ();
+35: If |{  ∈ [1, ] : rpref(, ) ⊇ pref ∗ 1 − val(pref)}| ≥ 1:
+36: Set val(pref) := 1 − val(pref); For all  ⊇ pref, set count() := 0;
+37: If |{  ∈ [1, ] : rpref(, ) ⊇ pref ∗ val(pref)}| < 2:
+38: For all  ⊇ pref, set count() := 0;
+39: If |{  ∈ [1, ] : rpref(, ) ⊇ pref ∗ val(pref)}| ≥ 2:
+40: Set count(pref) := count(pref) + 1;
+41: If count(pref) ≥ :
+42: Set final := pref ∗ val(pref);
+43: Set pref := pref ∗ val(pref);
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 13
+The proof of consistency. It follows directly from the protocol instructions that (i) in the definition of consistency is satisfied. To see this, note that, initially, pref = final = (0). The values
+pref and final are not redefined during round  prior to line 27, when we set pref
+:= final
+.
+If pref
+is subsequently redefined during round , then we redefine it to be an extension of its
+previous value. If final
+is redefined during round , then it is defined to be an extension of the
+present value of pref
+.
+To argue that (ii) in the definition of consistency is satisfied, we again adopt the conventions
+described in Section 2 concerning the treatment of small error probabilities and suppose the protocol is run by at most 10,000 processors for at most 1000 years, executing at most 5 rounds
+per second. We’ll say a correct processor
+‘samples  values extending ’ in round  if |{  :
+1 ≤  ≤ , rpref(, ) ⊇ }| =  and that
+‘samples  values not extending ’ in round  if
+|{  : 1 ≤  ≤ , rpref(, ) + }| = , where rpref(, ) is as locally defined for  at the end of
+round . We define  to be the longest string such that at least 75% of correct processors have local
+pref values extending  at the beginning of round , and such that no correct processor finalizes
+any value incompatible with  in any round < . We define
+∗
+
+to be the longest string such that
+at least 75% of correct processors have local pref values extending
+∗
+
+at the beginning of round .
+The argument consists of four parts, similar to those described in Section 4.
+Part 1. As in Section 4, a calculation for the binomial distribution shows that the probability a
+given correct processor has local pref value extending  at the beginning of round  +1 is at least
+0.9555, i.e. Bin(80, 0.8 × 0.75, ≥ 41) > 0.9555. To see this, note that if  samples at least 41 values
+extending  in round , then, by the definition of  , it must set pref
+to be compatible with  in
+line 27 during round . The while loop (lines 28–43) will then set pref
+to be an extension of
+(possibly  itself). Assuming a population of at least 500, of which at least 80% are correct, another
+direct calculation for the binomial distribution shows that the probability that it fails to be the case
+that more than 5/6 of the correct processors have local pref values extending  at the beginning
+of round +1 is upper bounded by 1.59×10−20, i.e. Bin(, 0.9555, ≤ 5/6) < 1.59×10−20 for  ≥ 400.
+If the protocol is executed for at most 1000 years, with at most 5 rounds executed per second, this
+means that less than 1.6 × 1011 rounds are executed. Applying the union bound, we conclude that
+the statement below holds, except with probability at most (1.6×1011) × (1.59×10−20) < 3×10−9
+:
+(†1) For every , more than 5/6 of correct processors have local pref values extending  at the
+beginning of round  + 1.
+Part 2. A calculation for the binomial distribution shows that the probability that a given correct
+processor  samples at least 72 values not extending
+∗
+
+in round  is upper bounded by 1.18×10−20
+,
+i.e. Bin(80, 0.2+ (0.8×0.25), ≥ 72) < 1.18×10−20. If the protocol is run by at most 10,000 processors
+for at most 1000 years, executing at most 5 rounds per second, then we can apply the union bound
+to deduce that the following statement holds, except with probability at most (1.18 × 10−20) ×
+10000 × (1.6 × 1011) < 2 × 10−5
+:
+(†2) For every , no correct processor samples at least 72 values not extending
+∗
+
+in round .
+Part 3. A direct calculation for the binomial distribution shows that, irrespective of events prior
+to round , the probability a given correct processor  samples 72 or more values in round  that
+are not extended by
+∗
+
+is upper bounded by 0.0131, i.e. Bin(80, (0.75 × 0.8) + 0.2, ≥ 72) < 0.0131.
+So, if we consider any 12 given consecutive rounds [,  + 11] and any given correct processor
+,
+the probability that, for every
+′ ∈ [,  + 11],  samples at least 72 values in round
+′
+that are
+not extended by
+∗
+
+′ is upper bounded by 0.013112 < 10−22. If at most 10,000 processors execute
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 14
+the protocol for at most 1000 years, executing at most 5 rounds per second, we can then apply
+the union bound to conclude that the following statement fails to hold with probability at most
+10−22 × 10000 × (1.6 × 1011) < 2 × 10−7
+:
+(†3) If a correct processor finalizes some string  in some round  +11, then, for at least one round
+
+′ ∈ [,  + 11],
+∗
+
+′ extends .
+Part 4. Now we put parts 1–3 together. From the union bound and the analysis above, we may
+conclude that (†1)− (†3) all hold, except with probability at most (3×10−9
+)+ (2×10−5
+)+ (2×10−7
+) <
+3 × 10−5
+. So, suppose that (†1) − (†3) all hold. Define −1 =
+∗
+−1
+= (0). We show by induction
+on rounds ≥ 0 that: (a)  =
+∗
+
+; (b)  ⊇ −1, and; (c) if correct  finalizes some  in a round < ,
+then  ⊆  . The induction hypothesis clearly holds for round 0. Suppose that it holds for round .
+From (†1), it follows that
+∗
++1 ⊇  . From (†2), it follows that no correct processor finalizes a value
+incompatible with  in round , meaning that +1 ⊇  . From (†3), it follows that if correct
+finalizes some string  during round , then there exists
+′ ∈ [ − 11, ] with
+′ =
+∗
+
+′ and
+′ ⊇ .
+By the induction hypothesis,  ⊇
+′ . Since +1 ⊇  , it follows that +1 ⊇ . So, +1 =
+∗
++1
+and any string finalized by correct
+in a round <  + 1 is extended by +1. This suffices to show
+that the induction hypothesis holds for round  + 1. Consistency is therefore satisfied, except with
+small probability.
+7 FROSTY
+Recall that our next aim is to augment Snowman with a liveness module, allowing us to guarantee
+liveness in the case that  < /5.
+7.1 Overview of Frosty
+In what follows, we assume that all messages are signed by the processor sending the message. We
+also suppose that  < /5. Recall that the local variable pref is a processor’s presently preferred
+chain and that final is its presently finalized chain.
+The use of epochs. As outlined in Section 1, the basic idea is to run the Snowman protocol during
+standard operation, and to temporarily fall back to a standard ‘quorum-based’ protocol in the event
+that a substantial adversary attacks liveness for Snowman. We therefore consider instructions that
+are divided into epochs. In the first epoch (epoch 0), processors implement Snowman. In the event
+of a liveness attack, processors then enter epoch 1 and implement the quorum-based protocol to
+finalize the next block. Once this is achieved, they enter epoch 2 and revert to Snowman, and so
+on. Processors only enter each odd epoch and start implementing the quorum-based protocol if
+a liveness attack during the previous epoch forces them to do so. The approach taken is reminiscent of Jolteon and Ditto [17], in the sense that a view/epoch change mechanism is used to move
+between an optimistic and fallback path.
+Adding a decision condition. In even epochs, and when a processor sees sufficiently many consecutive rounds during which its local value final remains unchanged, it will send a message
+to others indicating that it wishes to proceed to the next epoch. Before any correct processor
+enters the next epoch, however, it requires messages from at least 1/5 of all processors indicating
+that they wish to do the same. This is necessary to avoid the adversary being able to trigger a
+change of epoch at will, but produces a difficulty: some correct processors may wish to enter the
+next epoch, but the number who wish to do so may not be enough to trigger the epoch change.
+To avoid such a situation persisting for an extended duration, we introduce an extra decision condition. Processors now report their value final as well as their value pref when sampled. We
+consider an extra parameter 3: for our analysis here, we suppose 3 = 48 (since 48 =
+3
+5
+· 80). If
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 15
+sees two consecutive samples in which at least 3 processors report final values that all extend
+, then  will regard  as final. For  = 80, 3 = 48 and if  < /5, the probability that at least 3/5
+of
+’s sample sequence in a given round are Byzantine is less than 10−14, so the probability that
+this happens in two consecutive rounds is small. Except with small probability, the new decision
+rule therefore only causes  to finalize  in the case that a correct processor has already finalized
+this value, meaning that it is safe for  to do the same. Using this new decision rule, we will be
+able to argue below that epoch changes are triggered in a timely fashion: either the epoch change
+is triggered soon after any correct  wishes to change epoch, or else sufficiently many correct
+processors do not wish to trigger the change that
+is quickly able to finalize new values.
+Epoch certificates. While in even epoch , and for a parameter  (chosen to taste),5
+ will send
+the (signed) message (stuck, , final) to all others when it sees  consecutive rounds during which
+its local value final remains unchanged. This message indicates that  wishes to enter epoch  +1
+and is referred to as an ‘epoch  + 1 message’. For any fixed , a set of messages of size at least /5,
+each signed by a different processor and of the form (stuck, , ), is called an epoch certificate (EC)
+for epoch  + 1.6 When  sees an EC for epoch  + 1, it will send the EC to all others and enter
+epoch  + 1. This ensures that when any correct processor enters epoch  + 1, all others will do so
+within time Δ.
+Ensuring consistency between epochs. We must ensure that the value finalized by the quorumbased protocol during an odd epoch+1 extends all final values for correct processors. To achieve
+this, the rough idea is that we have processors send out their local pref values upon entering epoch
+ + 1, and then use these values to extract a chain that it is safe for the quorum based protocol to
+build on. Upon entering epoch  + 1, we therefore have  send out the message (start,  + 1, pref).
+This message is referred to as a starting vote for epoch  + 1 and, for any string , we say that the
+starting vote (start,  + 1, pref) extends  if  ⊆ pref. By a starting certificate (SC) for epoch  + 1
+we mean a set of at least 2/3 starting votes for epoch  + 1, each signed by a different processor.
+If  is an SC for epoch  + 1, we set Pref∗
+() to be the longest  extended by more than half of the
+messages in . The basic idea is that Pref∗
+() must extend all final values for correct processors,
+and that consistency will therefore be maintained if we have the quorum-based protocol finalize
+a value extending this string.
+To argue that this is indeed the case, recall the proof described in Section 6 (and recall that
+ < /5). We argued there that, if any correct processor  finalizes  in a given round, then
+(except with small error probability), more than 5/6 of the honest processors must have local pref
+values that extend  by the end of that round, and that this will also be the case in all subsequent
+rounds. This might seem to ensure that Pref∗
+() will extend : since 5
+6
+·
+4
+5
+=
+2
+3
+, and since  contains
+at least 2/3 starting votes, it is tempting to infer that more than half the votes in  must extend .
+A complexity here, however, is that this reasoning only applies if all Pref values are reported in the
+same round. We can’t (easily) ensure that all correct processors enter  +1 epoch in the same round,
+meaning that some correct processors may send their Pref values in one round, while others send
+them in the next round. To deal with this, we increase the  parameter from 12 to 14. This ensures
+(except with small error probability) that, when a correct processor  finalizes , more than 11/12
+of correct processors have local pref values that extend  by the end of the previous round, and
+that this is also true in all subsequent rounds. If  and  + 1 are two consecutive rounds after
+finalizes , and if we partition the correct processors arbitrarily so that some report their pref
+5
+In Section 8, we suppose  ≥ 300.
+6To ensure ECs are strings of constant bounded length (independent of ), one could use standard ‘threshold’ cryptography
+techniques [7, 33], but we will not concern ourselves with such issues here.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 16
+value in round , while the rest do so in round  +1, then at least 5/6 of the correct processors must
+report values extending .
+The choice of quorum-based protocol. While any of the standard quorum-based protocols
+could be implemented during odd epochs, for the sake of simplicity we give an exposition that
+implements a form of Tendermint, and we assume familiarity with that protocol in what follows.
+Let
+∗ be the greatest integer less than /3. Recall that the instructions for Tendermint are divided
+into rounds (sometimes called ‘views’). Within each round, there are two stages of voting, each
+of which is an opportunity for processors to vote on a block proposed by the leader of the round.
+The first stage of voting may establish a stage 1 quorum certificate (QC) for the proposed block,
+which is a set of stage 1 votes from  −
+∗ distinct processors. In this event, the second stage may
+establish a stage 2 QC for the block. The protocol also implements a locking mechanism. Processor
+ maintains a value Q
++
+. When they cast a stage 2 vote during round , meaning that they have
+seen some  which is a stage 1 QC for the proposal they are voting on, they set
++
+:= .
+In our version of Tendermint, each leader will make a proposal , and other processors will then
+vote on the proposal (so our ‘proposals’ play the role of blocks in Tendermint).
+7.2 Further terminology
+We consider the following new variables and other definitions (in addition to those used in previous
+sections).
+
+∗
+: The greatest integer less than /3.
+e: The epoch in which
+is presently participating (initially 0).
+stuckcount: Counts the number of consecutive rounds with final unchanged.
+ready(): Indicates whether we have already initialized values for epoch . Initially, ready() = 0.
+Processor  sets ready() := 1 upon entering epoch  after initializing values so that it is ready
+to start executing instructions for the epoch.
+Init(): This process is run at the beginning of even epoch , and performs the following: Set
+pref := final, stuckcount := 0, and for all  set count() := 0, primed() := 0, and make
+val() undefined.
+M: The set of all messages so far received by
+.
+lead(): The leader of round  while in an odd epoch. We set lead() =
+, where  =  mod .
+primed(): Used to help implement the new decision rule. This value is initially 0, and is set to
+1 when  sees sufficiently many sampled final values extending . In the next round,  either
+finalizes  (if the same holds again), or else resets primed() to 0.
+Starting votes: A starting vote for epoch  is a message of the form (start, , ) for some . For
+any string
+′
+, we say that the starting vote (start, , ) extends
+′
+if
+′ ⊆ .
+Starting certificates: A starting certificate for epoch  is set of at least 2/3 starting votes for
+epoch , each signed by a different processor.
+Pref∗
+(): If  is a starting certificate (SC) for epoch , we set Pref∗
+() to be the longest  extended
+by more than half of the messages in .
+Votes. A vote  (for a proposal) is entirely specified by the following values:
+P( ): The proposal for which  is a vote.
+st( ): The stage of the vote (1 or 2).
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 17
+The empty proposal. We call ∅ the empty proposal, and also let ∅ be a stage 1 QC for the empty
+proposal. We set r(∅) := 0. The empty proposal is -valid for any set of messages .
+Proposals. A proposal  other than the empty proposal is entirely specified by the following
+values:
+r(): The round corresponding to the proposal.
+e(): The epoch corresponding to the proposal.
+par(): A proposal which is called the parent of P.
+7
+QCprev(): A stage 1 QC for par().
+final(): The value that  attempts to finalize.
+SC(): A starting certificate justifying the proposed value for finalization.
+-valid proposals. Let  be a set of messages. A proposal  other than the empty proposal is
+-valid if it satisfies all of the following:
+•  ∈ .
+•  has the empty proposal as an ancestor.
+• par() is -valid.
+• If par() is not the empty proposal, then e() = e(par()).
+• If par() is not the empty proposal, then final() = final(par()).
+• QCprev() is a stage 1 QC for par().
+• SC() is a starting certificate for epoch e().
+• final() extends Pref∗
+(SC()).
+An M-valid proposal for round . Let M, blocks and e be as locally defined for
+. While in round
+, at time 3Δ + Δ,  will regard the proposal  as an M-valid proposal for round  if all of the
+following are satisfied:
+•  is M-valid.
+• r() =  and  is signed by lead().
+• e() = e.
+• There exists a chain  = 0 ∗· · ·∗ℎ such that final() =  and, for  ∈ [1, ℎ],  ∈ blocks.
+-confirmed proposals. For any set of messages , a proposal  is -confirmed if a descendant
+
+′ of  (possibly  itself) is -valid and  contains a stage 2 QC for
+′
+.
+Epoch certificates. For any fixed , a set of messages of size at least /5, each signed by a different
+processor and of the form (stuck, , ), is called an epoch certificate (EC) for epoch  + 1.
+Quorum certificates. If  is any proposal other than the empty proposal, then, by a stage  QC
+for , we mean a set of votes  of size  −
+∗
+, each signed by a different processor, and such
+that P() =  and st( ) =  for each  ∈ . If  is a (stage 1 or 2) QC for , then we define
+r() := r().
+The procedure MakeProposal. If  = lead(), then this procedure is used by  while in odd
+epochs to send an appropriate proposal to all:
+• If  has not seen an SC for epoch , then do not send any proposal. Otherwise, let  be such
+an SC and proceed as follows.
+7We adopt similar terminology for proposals and blocks: If
+′
+is the parent of , then  is referred to as a child of . In this
+case, the ancestors of  are  and any ancestors of
+′
+. The descendants of any proposal  are  and any descendants of its
+children.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 18
+• Let
+′ be the greatest such that M contains an M-valid proposal
+′ with r(
+′
+) =
+′
+, e(
+′
+) = e
+if
+′ > 0, and such that M also contains  which is a stage 1 QC for
+′
+.
+• Set r() := , e() := e, par() :=
+′
+, QCprev() := .
+• If
+′ = 0, i.e. if
+′
+is the empty proposal, then proceed as follows. Set SC() := . Let  =
+0 ∗ · · · ∗ ℎ be a chain such that  extends Pref∗
+() and, for  ∈ [1, ℎ],  ∈ blocks (if
+there exists no such  then do not send a proposal). Set final() := .
+• If
+′ > 0, then set SC() := SC(
+′
+) and final() := final(
+′
+).
+• Send  to all.
+Conventions regarding the gossiping of blocks, proposals and QCs while in an odd epoch.
+While in odd epochs, we suppose that correct processors automatically gossip received blocks,
+proposals and QCs for proposals. This means that if
+is correct and sees a QC (for example) at
+time , then all correct processors see that QC by time  + Δ. When  sends a message to all, it is
+also convenient to assume  regards that message as received (by ) at the next timeslot.
+For ease of reference, inputs and local variables are listed in the table below. The pseudocode
+appears in Algorithms 3 and 4.
+Frosty: The inputs and local values for processor
+Inputs
+Δ, , 1, 2, 3, ,  ∈ N
+Local values
+val(), initially undefined.
+count(), initially set to 0
+primed(), initially set to 0
+stuckcount, initially set to 0
+rpref(, ), initially undefined
+final(, ), initially undefined
+blocks, initially contains just 0
+pref, initially set to (0)
+final, initially set to (0)
+e, initially set to 0
+ready(), initially set to 0 for all  ∈ N≥0
+Q
++
+, initially set to ∅
+M, initially contains just 0
+P, initially undefined
+8 FROSTY: CONSISTENCY AND LIVENESS ANALYSIS
+We give an analysis for the case that  = 80, 1 = 41, 2 = 72, 3 = 48,  = 14,  ≥ 300, and under
+the assumption that  ≥ 500 and  < /5. As before, we make the assumption that  ≥ 500 only
+so as to be able to give as simple a proof as possible: a more fine-grained analysis for smaller  is
+the subject of future work.
+8.1 The proof of consistency
+Section 6 already established that Snowman satisfies consistency (except with small error probability). To establish consistency for Frosty, we must show that, if an odd epoch  finalizes any
+value, then it finalizes a single value extending any values finalized by correct processors during
+previous epochs. Before considering the instructions during odd epochs, however, there are three
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 19
+Algorithm 3 Frosty: The instructions for processor  while e is even
+1: At every  if ready(e) == 0 then Init(), set ready() := 1; ⊲ Initialise values for epoch e
+2:
+3: At  = 3Δ if ready(e) == 1: ⊲ For any  ∈ N≥1
+4: Form sample sequence h1, , . . . , i; ⊲ Sample with replacement
+5: For  ∈ [1, ], send (, e) to , ; ⊲ Ask , for preferred chain
+6: If M contains an EC for epoch e + 1: send the EC to all, set e := e + 1; ⊲ Enter next epoch
+7:
+8: At  = 3Δ + Δ if ready(e) == 1:
+9: For each  such that  has received (, e) from
+:
+10: Send (, e, chain(pref), chain(final)) to
+; ⊲ Report present values to
+11: If M contains an EC for epoch e + 1: send the EC to all, set e := e + 1; ⊲ Enter next epoch
+12:
+13: At  = 3Δ + 2Δ if ready(e) == 1:
+14: Form sample sequence h1, , . . . , i if not already formed.
+15: For each  ∈ [1, ]:
+16: If  has received a first message (, e, 1, 2) from , s.t. 1, 2 are chains;
+17: Set rpref(, ) := 1
+, final(, ) := 2
+; ⊲ Record values from ,
+18: Else set rpref(, ) := (0), final(, ) := (0);
+19: If M contains an EC for epoch e + 1: send the EC to all, set e := e + 1; ⊲ Enter next epoch
+20:
+21: At  = 3Δ + 2Δ if ready(e) == 1: ⊲ Execute instructions above first and re-check ready(e)
+22: Set
+∗
+:= { ∈ block :  is a child of last(final)};
+23: Set pref := final, end := 0. If
+∗
+is non-empty: stuckcount + +;
+24: While end == 0 do: ⊲ Iteration to determine pref for round  + 1
+25: Set  := { ∈ block :  is a child of last(pref) and pref ⊆ reduct(pref) ∗ ()};
+26: If  is empty, set end := 1;
+27: Else: ⊲ Carry out the next instance of Snowflake+
+28: If val(pref) is undefined:
+29: Let  be the first block in  enumerated into block;
+30: Set val(pref) to be the (|pref| + 1)
+th bit of reduct(pref) ∗ ();
+31: If |{  ∈ [1, ] : rpref(, ) ⊇ pref ∗ 1 − val(pref)}| ≥ 1:
+32: Set val(pref) := 1 − val(pref); For all  ⊇ pref, set count() := 0;
+33: If |{  ∈ [1, ] : rpref(, ) ⊇ pref ∗ val(pref)}| < 2:
+34: For all  ⊇ pref, set count() := 0;
+35: If |{  ∈ [1, ] : rpref(, ) ⊇ pref ∗ val(pref)}| ≥ 2: count(pref) + +;
+36: If count(pref) ≥ :
+37: Set final := pref ∗ val(pref), stuckcount := 0; ⊲ Finalize and reset stuckcount
+38: If count(pref) <  then for  ∈ {0, 1} do: ⊲ New decision rule
+39: If |{  ∈ [1, ] : final(, ) ⊇ pref ∗ }| ≥ 3:
+40: If primed(pref ∗ ) == 1; ⊲ previous round primed pref ∗  for finalization
+41: Set final := pref ∗ , stuckcount := 0; ⊲ Finalize and reset stuckcount
+42: Else set primed(pref ∗ ) := 1; ⊲ Prime pref ∗  for finalization
+43: Else set primed(pref ∗ ) := 0;
+44: Set pref := pref ∗ val(pref);
+45: If stuckcount ≥  then send (stuck, e, final) to all; ⊲ After completing while loop
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 20
+Algorithm 4 Frosty: The instructions for processor  while e is odd
+1: At every  if ready(e) == 0 then:
+2: Send (start, e, pref) to all; ⊲ Send starting vote
+3: Set Q
++
+:= ∅; ⊲ Initialize Q
++
+4: Set ready() := 1;
+5:
+6: At every , if there exists proposal  ∈ M with e() == e which is M-confirmed then:
+7: Set final := final(); ⊲ Finalize next block
+8: Set e := e + 1; ⊲ Enter next epoch. Others will do so within Δ (due to gossiping)
+9:
+10: At  = 3Δ if lead() == : ⊲ For any  ∈ N≥1
+11: MakeProposal;
+12:
+13: At  = 3Δ + Δ:
+14: Set P to be undefined.
+15: If  has received a first M-valid proposal  for round  and r(QCprev()) ≥ r(Q
++
+):
+16: Set P := ;
+17: Send vote  to all, with P() := P, st( ) := 1; ⊲ Send stage 1 vote
+18:
+19: At  = 3Δ + 2Δ:
+20: If P is defined and  has received a first  which is a stage 1 QC for P:
+21: Set Q
++
+:= ; ⊲ Set lock
+22: Send vote  to all, with P() := P, st( ) := 2; ⊲ Send stage 2 vote
+new complexities with respect to the instructions during an even epoch , which we must check
+cannot lead to a consistency violation during the same epoch:
+(i) The new decision rule.
+(ii) Players may not enter epoch  + 1 entirely simultaneously.
+(iii) Players may not enter epoch  entirely simultaneously.
+Dealing with (i). Suppose
+is correct. A calculation for the binomial distribution shows that the
+probability that at least 3/5 of
+’s sample sequence in a given round are Byzantine is less than
+10−14. The probability that this happens in two given consecutive rounds is therefore less than
+10−28. We may therefore condition on the following event (letting final(, ) and final(,  + 1)
+be as locally defined for  at the end of rounds  and  + 1 respectively):
+(⋄0): If there exists  and  such that |{  ∈ [1, ] : final(, ) ⊇ }| ≥ 3 and |{  ∈ [1, ] :
+final(,  +1) ⊇ }| ≥ 3, then some correct processor has already finalized a value extending  by the end of round .
+Conditioned on (⋄0), it is not possible for the new decision rule to cause a first consistency violation.
+Dealing with (ii). If any correct processor enters epoch  + 1 at , then they send an EC for epoch
+ + 1 to all. All correct processors therefore enter epoch  + 1 by  + Δ. In particular, this means
+that if correct
+is in epoch  at time 3Δ + 2Δ (when considering values reported during round ),
+no correct processor will have entered epoch  + 1 prior to reporting their values during round
+(lines 8–11 of the pseudocode). The distribution on reported values is thus unaffected by the fact
+that some correct processors may have already entered epoch  + 1 at that point.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 21
+Dealing with (iii). If  > 0 is even and some correct processor enters epoch  at  because there
+exists  ∈ M with e() =  − 1 which is M-confirmed, then (due to the gossiping of blocks and
+QCs) all correct processors will enter epoch  by  + Δ. The arguments of Section 6 are unaffected
+if we allow that some correct processors only begin executing instructions midway through the
+first round of an epoch (this just means that some correct processors might not report values or
+ask for values in the first round).
+Let M be as locally defined for correct  and say that a proposal  becomes confirmed for
+if
+there is some timeslot at which  is M-confirmed. Suppose  is odd and that no consistency violation
+occurs prior to the first point at which any correct processor enters epoch . To complete the proof
+of consistency, it suffices to establish the two following claims:
+Claim 1. If the proposal  with e() =  becomes confirmed for correct
+, then final() extends
+any values finalized by correct processors during previous epochs.
+Claim 2. If  and
+′
+are proposals with e() = e(
+′
+) = , and if  becomes confirmed for correct
+ and
+′ becomes confirmed for correct
+, then final() = final(
+′
+).
+Establishing Claim 1. If the proposal  becomes confirmed for correct
+, then some correct
+processors must produce votes for the proposal, which implies that:
+• SC() is a starting certificate for epoch .
+• final() extends Pref∗
+(SC()).
+We argued in Section 6 that, when  = 12, if some correct processor is the first to finalize the value
+ and does so in some round  + 11, say, then at least one round
+′ ∈ [,  + 11] must satisfy the
+condition that at least 75% of correct processors have local pref values extending  in round
+′
+and
+that at least 5/6 of the correct processors must have local pref values extending  (by the end of
+round
+′
+and) in all rounds >
+′
+. Now consider Frosty for the case that  = 14. Suppose that some
+correct processor is the first to finalize the value  while in epoch  −1 and does so in some round
+ + 13 (the case that no processor finalizes any new values while in epoch  − 1 is similar). Then,
+by the same reasoning as in Section 6, at least one round
+′ ∈ [,  + 11] must satisfy the condition
+that at least 5/6 of correct processors have local pref values extending  at the end of round
+′
+.
+Let
+′′ be the greatest round such that some correct processor completes round
+′′ before entering
+epoch . A calculation for the binomial then shows that, except with small error probability, at the
+end of each round in [ +12, ′′] (and even if some correct processors have already moved to epoch
+ during round
+′′), at least 11/12 of the correct processors must have local pref values extending
+. Note that the local pref values reported by correct processors in the starting certificate SC()
+are either those defined at the end of round
+′′ or round
+′′ − 1. We conclude that at least 5/6 of
+correct processors must send starting votes of the form (start, , pref) such that pref extends .
+Since SC() contains at least 2/3 starting votes, more than half the votes in SC() must extend ,
+so that final() extends , as required.
+Establishing Claim 2. Towards a contradiction, suppose there exists some least  and some least
+
+′ ≥  such that:
+• Some proposal  with e() =  and r() =  receives stage 1 and 2 QCs, 1 and 2 respectively;
+• Some proposal
+′ with e(
+′
+) =  and r() =
+′
+receives a stage 1 QC,
+′
+1
+;
+• final() ≠ final(
+′
+).
+Suppose first that  =
+′
+. Then, since each QC contains votes from at least  −
+∗ distinct processors, some correct processor must produce votes in both 1 and
+′
+1
+. This gives an immediate
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 22
+contradiction, because correct processors do not produce more than one stage 1 vote in any single
+round.
+So, suppose that
+′ > . In this case, some correct processor  must produce votes in both 2
+and
+′
+1
+. Since final() ≠ final(
+′
+), our choice of  and
+′
+implies that r(QCprev(
+′
+)) < . We
+reach a contradiction because  sets its lock Q
++
+so that r(Q
++
+) =  while in round , and so would
+not vote for
+′
+in round
+′
+(line 15 of the pseudocode).
+The accumulation of small error probabilities. The analysis is the same as in Section 6, except
+that we must now account for two new assumptions on which we have conditioned in the argument above. Previously, we assumed that if at least 75% of the correct processors have local pref
+values extending  at the beginning of round , then at least 5/6 of the correct processors will have
+pref values extending  by the end of round . Now, we require the additional assumption that if
+5/6 of the correct processors have local pref values extending  at the beginning of round , then
+at least 11/12 of the correct processors will have pref values extending  by the end of round .
+For a given round , a calculation for the binomial distribution shows that this holds, except with
+probability at most 2 × 10−47. If there are five rounds per second then, over a period of 1000 years,
+this means that less than 1.6 × 1011 rounds are executed. Applying the union bound, we conclude
+that this adds less than 4 × 10−36 to the cumulative error probability.
+We must also account for the new decision condition. As noted previously, a calculation for the
+binomial distribution shows that if
+is correct then the probability that at least 3/5 of
+’s sample
+sequence in a given round are Byzantine is less than 10−14. The probability that this happens in
+two given consecutive rounds is therefore less than 10−28. If at most 10,000 processors execute at
+most 5 rounds per second for 1000 years, this therefore adds less than 2 × 10−13 to the cumulative
+error probability.
+Overall, the same error bound of 3 × 10−5
+that was established in Section 4 can be seen to hold
+here.
+8.2 The proof of liveness
+Throughout this section, we assume that the value
+∗
+(specified in line 22 of the pseudocode for
+even epochs) is never empty for correct
+, i.e. there are always new blocks to finalize.
+Defining final
+. At any timeslot , let final be the shortest amongst all local values final for
+correct processors (by Section 8.1 this value is uniquely defined, except with small error probability).
+The proof of liveness breaks into two parts:
+Claim 3. Suppose that all correct processors are in even epoch  at . Then, except with small error
+probability, either final+6Δ properly extends final or else all correct processors enter epoch
+ + 1 by time  + 6Δ.
+Claim 4. If all correct processors enter the odd epoch  + 1, this epoch finalizes a new value.
+In Claim 4, the number of rounds during epoch  + 1 required to finalize a new value is bounded
+by the maximum number of consecutive faulty leaders. Since we make the simple choice of using
+deterministic leader selection during odd epochs, this means that the number of required rounds
+is ( ), but one could ensure the number of required rounds is (1) and maintain a small chance
+of liveness failure by using random leader selection.
+Establishing Claim 3. Given the conditions in the statement of the claim, let
+⋄ be the set of
+correct processors that have local final values properly extending final at time 1 :=  + 3Δ.
+If |
+⋄
+| ≤ 3/5, then at least /5 correct processors send epoch  + 1 messages (stuck, , final)
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 23
+by time 1, and all correct processors enter epoch  + 1 by time 1 + Δ. So, suppose |
+⋄
+| > 3/5
+and that it is not the case all correct processors enter epoch  + 1 by time  + 6Δ. Let  ∈ {0, 1}
+be such that some correct processor finalizes final ∗ , and (by consistency) condition on there
+existing a unique such . Consider the instructions as locally defined for correct  when executing
+any round  of epoch  that starts subsequent to 1. A calculation for the binomial shows that the
+probability |{  ∈ [1, ] : final(, ) ⊇ final ∗ }| ≥ 48 is at least 0.548. The probability that
+this holds in both of any two such consecutive rounds  and  + 1 is therefore at least 0.3. Since we
+suppose  ≥ 300, the probability that  fails to finalize a value extending final by time  + 6Δ
+is therefore at most 0.71150 < 10−22
+.
+Establishing Claim 4. Towards a contradiction, suppose that all correct processors enter odd
+epoch  + 1, but that the epoch never finalizes a new value. Let  = 3Δ be such that lead() is
+correct and all correct processors are in epoch  + 1 at , with their local value ready( + 1) equal
+to 1. Let
+′ be the greatest such that any correct processor has a local value Q
++
+at  with r(Q
++
+) =
+′
+.
+Note that either
+′ = 0, or else any correct processor that has set is local value Q
++
+so that r(Q
++
+) =
+′
+,
+did so at a timeslot ≤  − Δ. According to our conventions regarding the gossiping of QCs, this
+means that lead() will receive a QC,  say, with r() ≥
+′ by . The correct processor lead()
+will then send out a proposal  during round  that will be regarded as an M-valid proposal for
+round  by all correct processors. If Q
++
+is as locally defined for any correct processor at  +Δ,  will
+also satisfy the condition that r(QCprev()) ≥ r(Q
++
+). All correct processors will therefore send
+stage 1 and 2 votes for , and  will be confirmed for all correct processors.
+A comment on the finalization of blocks produced by correct leaders and the length of
+odd epochs. For the sake of simplicity, we have structured the instructions for odd epochs so as
+to ensure the finalization of one more block, rather than so as to ensure the finalization of at least
+one more block produced by a correct leader. Of course, one could achieve the latter result simply
+by running odd epochs until at least  + 1 distinct leaders have produced finalized blocks.
+9 RELATED WORK
+The Snow family of consensus protocol was introduced in [30]. Subsequent to this, Amores-Sesar,
+Cachin and Tedeschi [3] gave a complete description of the Avalanche protocol8
+and formally established security properties for that protocol, given an (
+√
+) adversary and assuming that the
+Snowball protocol (a variant of Snowflake+
+) solves probabilistic Byzantine Agreement for such
+adversaries. The authors also described (and provided a solution for) a liveness attack. As noted in
+[3], the original implementation of the Avalanche protocol used by the Avalanche blockchain (before replacing Avalanche with a version of Snowman that totally orders transactions) had already
+introduced modifications avoiding the possibility of such attacks.
+In [2], Amores-Sear, Cachin and Schneider consider the Slush protocol and show that coming
+close to a consensus already requires a minimum of Ω
+
+log
+log
+
+rounds, even in the absence of adversarial influence. They show that Slush reaches a stable consensus in (log ) rounds, and that
+this holds even when the adversary can influence up to (
+√
+) processors. They also show that
+the Ω
+
+log
+log
+
+lower bound holds for Snowflake and Snowball.
+There is a vast literature that considers a closely related family of models, from the Ising model
+[9] as studied in statistical mechanics, to voter models [19] as studied in applied probability and
+other fields, to the Schelling model of segregation [31] as studied by economists (and more recently
+8The Avalanche protocol is a DAG-based variant of Snowman that does not aim to produce a total ordering on transactions,
+and was only described at a high level in [30]. It is not used in the present instantiation of the Avalanche blockchain.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 24
+by computer scientists [4, 8] and physicists [24–26]). Within this family of models there are many
+variants, but a standard approach is to consider a process that proceeds in rounds. In each round,
+each participant samples a small number of other participants to learn their present state, and
+then potentially updates their own state according to given rule. A fundamental difference with
+our analysis here is that, with two exceptions (mentioned below), such models do not incorporate
+the possibility of Byzantine action. Examples of such research aimed specifically at the task of
+reaching consensus include [6, 11–13, 15, 18] (see [5] for an overview). Amongst these papers, we
+are only aware of [6] and [13] considering Byzantine action, and those two papers deal only with
+an (
+√
+) adversary.
+FPC-BI [28, 29] is a protocol which is closely related to the Snow family of consensus protocols,
+but which takes a different approach to the liveness issue (for adversaries which are larger than
+(
+√
+)) than that described here. The basic idea behind their approach is to use a common random
+coin to dynamically and unpredictably set threshold parameters (akin to 1 and 2 here) for each
+round, making it much more difficult for an adversary to keep the honest population split on
+their preferred values. Since the use of a common random coin involves practical trade-offs, their
+approach and ours may be seen as complementary.
+10 FINAL COMMENTS
+In this paper, we have considered the case that the adversary controls at most  < /5 processors.
+We described the protocol Snowflake+
+and showed that it satisfies validity and agreement, except
+with small error probability. We showed how Snowflake+
+can be adapted to give an SMR protocol,
+Snowman, which satisfies consistency, except with small error probability. We then augmented
+Snowman with a liveness module, to form the protocol Frosty, which we proved satisfies liveness
+and consistencty except with small error probability. We note that Avalanche presently implements
+Snowflake, rather than Snowflake+
+, and uses different parameters than those used in the proofs
+here. Snowflake+ was implemented a few months prior to the writing of this paper, but is not
+yet activated. Error-driven Snowflake+
+is planned for implementation in the coming months. The
+community may consider adopting the parameters proposed in this paper because they provide a
+good tradeoff between consistency and latency.
+In future work, we aim to expand the analysis here as follows:
+(i) The bounds  < /5 and  ≥ 500 were used only so as to be able to give as simple a proof
+as possible in Section 4. In subsequent papers, we intend to carry out a more fine-grained
+analysis for smaller  and larger  .
+(ii) The analysis here was simplified by the assumption that processors execute instructions in
+synchronous rounds. In a follow-up work, we will show how the methods described here
+can be adapted to give formal proofs of consistency and liveness for a responsive form of the
+protocol, allowing each processor to proceed individually through rounds as fast as network
+delays allow.
+(iii) While the liveness module described here achieves (probabilistic) liveness when  < /5, we
+aim to explore ways in which slashing can be implemented for liveness attacks. For  < /3
+this may be possible, if one can show that liveness attacks require the adversary either to
+give provably false information to others, or else execute sampling that is provably biased.
+11 ACKNOWLEDGEMENTS
+The authors would like to thank Christian Cachin, Philipp Schneider, and Ignacio Amores Sesar
+for a number of very useful conversations.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 25
+REFERENCES
+[1] Ittai Abraham, TH Hubert Chan, Danny Dolev, Kartik Nayak, Rafael Pass, Ling Ren, and Elaine Shi. Communication
+complexity of byzantine agreement, revisited. In Proceedings of the 2019 ACM Symposium on Principles of Distributed
+Computing, pages 317–326, 2019.
+[2] Ignacio Amores-Sesar, Christian Cachin, and Philipp Schneider. An analysis of avalanche consensus. arXiv preprint
+arXiv:2401.02811, 2024.
+[3] Ignacio Amores-Sesar, Christian Cachin, and Enrico Tedeschi. When is spring coming? a security analysis of
+avalanche consensus. arXiv preprint arXiv:2210.03423, 2022.
+[4] George Barmpalias, Richard Elwes, and Andy Lewis-Pye. Digital morphogenesis via schelling segregation. In 2014
+IEEE 55th Annual Symposium on Foundations of Computer Science, pages 156–165. IEEE, 2014.
+[5] Luca Becchetti, Andrea Clementi, and Emanuele Natale. Consensus dynamics: An overview. ACM SIGACT News,
+51(1):58–104, 2020.
+[6] Luca Becchetti, Andrea Clementi, Emanuele Natale, Francesco Pasquale, and Luca Trevisan. Stabilizing consensus
+with many opinions. In Proceedings of the twenty-seventh annual ACM-SIAM symposium on Discrete algorithms, pages
+620–635. SIAM, 2016.
+[7] Dan Boneh, Ben Lynn, and Hovav Shacham. Short signatures from the weil pairing. In International conference on
+the theory and application of cryptology and information security, pages 514–532. Springer, 2001.
+[8] Christina Brandt, Nicole Immorlica, Gautam Kamath, and Robert Kleinberg. An analysis of one-dimensional schelling
+segregation. In Proceedings of the forty-fourth annual ACM symposium on Theory of computing, pages 789–804, 2012.
+[9] Stephen G Brush. History of the lenz-ising model. Reviews of modern physics, 39(4):883, 1967.
+[10] Jing Chen and Silvio Micali. Algorand. arXiv preprint arXiv:1607.01341, 2016.
+[11] Colin Cooper, Robert Elsässer, and Tomasz Radzik. The power of two choices in distributed voting. In International
+Colloquium on Automata, Languages, and Programming, pages 435–446. Springer, 2014.
+[12] Emilio Cruciani, Hlafo Alfie Mimun, Matteo Quattropani, and Sara Rizzo. Phase transitions of the k-majority dynamics
+in a biased communication model. In Proceedings of the 22nd International Conference on Distributed Computing and
+Networking, pages 146–155, 2021.
+[13] Benjamin Doerr, Leslie Ann Goldberg, Lorenz Minder, Thomas Sauerwald, and Christian Scheideler. Stabilizing consensus with the power of two choices. In Proceedings of the twenty-third annual ACM symposium on Parallelism in
+algorithms and architectures, pages 149–158, 2011.
+[14] Danny Dolev and Rüdiger Reischuk. Bounds on information exchange for byzantine agreement. Journal of the ACM
+(JACM), 32(1):191–204, 1985.
+[15] Robert Elsässer, Tom Friedetzky, Dominik Kaaser, Frederik Mallmann-Trenn, and Horst Trinker. Brief announcement:
+rapid asynchronous plurality consensus. In Proceedings of the ACM symposium on principles of distributed computing,
+pages 363–365, 2017.
+[16] Juan A Garay, Aggelos Kiayias, and Nikos Leonardos. The bitcoin backbone protocol: Analysis and applications. 2018.
+[17] Rati Gelashvili, Lefteris Kokoris-Kogias, Alberto Sonnino, Alexander Spiegelman, and Zhuolun Xiang. Jolteon and
+ditto: Network-adaptive efficient consensus with asynchronous fallback. In International conference on financial cryptography and data security, pp. 296-315. Cham: Springer International Publishing, 2022.
+[18] Mohsen Ghaffari and Johannes Lengler. Nearly-tight analysis for 2-choice and 3-majority consensus dynamics. In
+Proceedings of the 2018 ACM Symposium on Principles of Distributed Computing, pages 305–313, 2018.
+[19] Richard A Holley and Thomas M Liggett. Ergodic theorems for weakly interacting infinite systems and the voter
+model. The annals of probability, pages 643–663, 1975.
+[20] Valerie King and Jared Saia. Breaking the o (n 2) bit barrier: scalable byzantine agreement with an adaptive adversary.
+Journal of the ACM (JACM), 58(4):1–24, 2011.
+[21] Leslie Lamport, Robert Shostak, and Marshall Pease. The byzantine generals problem. ACM Transactions on Programming Languages and Systems (TOPLAS), 4(3):382–401, 1982.
+[22] Andrew Lewis-Pye and Tim Roughgarden. Permissionless consensus. arXiv preprint arXiv:2304.14701, 2023.
+[23] Patrick O’Grady. Apricot Phase Four: Snowman++ and Reduced C-Chain Transaction Fees.
+https://medium.com/avalancheavax/apricot-phase-four-snowman-and-reduced-c-chain-transaction-fees-1e1f67b42ecf
+[24] Hamed Omidvar and Massimo Franceschetti. Self-organized segregation on the grid. In Proceedings of the ACM
+Symposium on Principles of Distributed Computing, pages 401–410, 2017.
+[25] Hamed Omidvar and Massimo Franceschetti. Improved intolerance intervals and size bounds for a schelling-type
+spin system. Journal of Statistical Mechanics: Theory and Experiment, 2021(7):073302, 2021.
+[26] Diego Ortega, Javier Rodríguez-Laguna, and Elka Korutcheva. A schelling model with a variable threshold in a closed
+city segregation model. analysis of the universality classes. Physica A: Statistical Mechanics and its Applications,
+574:126010, 2021.
+Aaron Buchwald, Stephen Buttolph, Andrew Lewis-Pye, Patrick O’Grady, and Kevin Sekniqi 26
+[27] Rafael Pass and Elaine Shi. Hybrid consensus: Efficient consensus in the permissionless model. Cryptology ePrint
+Archive, 2016.
+[28] Serguei Popov and William J Buchanan. Fpc-bi: Fast probabilistic consensus within byzantine infrastructures. Journal
+of Parallel and Distributed Computing, 147:77–86, 2021.
+[29] Serguei Popov and Sebastian Müller. Voting-based probabilistic consensuses and their applications in distributed
+ledgers. Annals of Telecommunications, pages 1–23, 2022.
+[30] Team Rocket, Maofan Yin, Kevin Sekniqi, Robbert van Renesse, and Emin Gün Sirer. Scalable and probabilistic leaderless bft consensus through metastability. arXiv preprint arXiv:1906.08936, 2019.
+[31] Thomas C Schelling. Models of segregation. The American economic review, 59(2):488–493, 1969.
+[32] Fred B Schneider. Implementing fault-tolerant services using the state machine approach: A tutorial. ACM Computing
+Surveys (CSUR), 22(4):299–319, 1990.
+[33] Victor Shoup. Practical threshold signatures. In Advances in Cryptology—EUROCRYPT 2000: International Conference
+on the Theory and Application of Cryptographic Techniques Bruges, Belgium, May 14–18, 2000 Proceedings 19, pages
+207–220. Springer, 2000.
