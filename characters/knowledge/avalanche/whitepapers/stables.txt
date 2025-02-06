@@ -1,0 +1,1001 @@
+A Classification
+Framework for Stablecoin Designs
+Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+Cornell University and AVA Labs
+Abstract. Stablecoins promise to bridge fiat currencies with the world
+of cryptocurrencies. They provide a way for users to take advantage of
+the benefits of digital currencies, such as ability to transfer assets over the
+internet, provide assurance on minting schedules and scarcity, and enable
+new asset classes, while also partially mitigating their volatility risks. In
+this paper, we systematically discuss general design, decompose existing stablecoins into various component design elements, explore their
+strengths and drawbacks, and identify future directions.
+Keywords: Stablecoins - Stable Payments
+1 Introduction
+Cryptoasset prices are famous for their volatility. Though many cryptoassets
+aspire to become world currencies, most are frequently dismissed as no more
+than speculative assets due to their wild price swings.
+Money is supposed to have three functions: a store of value, a unit of account,
+and a medium of exchange. Stability is key to all these functions. Store of value is
+the most salient; if people store their wealth in an asset that constantly fluctuates
+in value, their wealth will fluctuate accordingly. A volatile asset is also a poor unit
+of account, because it is inconvenient to denominate prices in something which
+constantly changes in value. Every time the value of the unit of account changes,
+all prices must be adjusted accordingly. Finally, and most crucially, a currency
+needs to be stable to function as a medium of exchange; this allows people to be
+be fairly and predictably compensated for goods and services without changes
+in value during the payment process.
+Stablecoins are a class of cryptoassets created to address this problem. As the
+name implies, they are designed to be price stable with respect to some reference
+point. There has recently been an explosion in the number of stablecoin projects
+announced, especially following the crash in Bitcoin prices in early 2018. There
+are over a hundred stablecoins in existence or in progress, with the top three
+projects now representing a market capitalization of $4
+.6B [22]. Although the
+sheer number of projects seems overwhelming, they can all be decomposed into
+a few key features.
+arXiv:1910.10098v1 [q-fin.GN] 18 Sep 2019
+2 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+Roadmap. We briefly review related works in Section 2. In Section 3, we break
+down the taxonomy of stablecoins based on the first three constituent axes: the
+peg type, the collateral type, and the collateral amount. In Section 4, we expand
+on additional axes by discussing the mechanism of action chosen by various
+stablecoin families. In Section 5 we discuss methods to measure prices. In Section
+6, we discuss some design features relevant to digital currencies in general, but
+especially important for stablecoins. Finally, we discuss future directions for
+stablecoins in Section 7.
+2 Related Work
+One of the first stablecoin taxonomies classified stablecoin projects by collateral type and discussed pros and cons of each category [56]. Several papers
+and reports have followed a similar taxonomy, adding more detail on individual projects [57] [58] [48]. A paper by Pernice et. al takes a different approach,
+categorizing stablecoins by monetary and exchange rate regimes [54]. Our contribution is extending the existing taxonomies with a discussion of other important
+stablecoin design aspects, namely price stabilizing mechanisms and price measurement methods. We also categorize many of the existing stablecoin projects
+according to our extended taxonomy.
+3 Peg and Collateral
+3.1 Peg
+The most salient choice for stablecoin design is the peg, which oftentimes is
+included in the name of the stablecoin.1 USD is a popular choice, likely due
+to USD being typically considered a stable store of value around the world. In
+fact, it is not uncommon for foreign citizens, especially those in emerging and
+developing economies, to store their wealth in USD rather than their national
+currency. The other benefit of using USD is that price comparison is easy. A
+singular fiat currency peg allows one to check whether the peg holds by simply
+comparing the dollar price of an object to the pegged coin price of the same
+object. Other stable fiat currencies, such as the Euro, the Japanese Yen, and the
+Swiss Franc, are also popular choices for similar reasons.
+Besides fiat, there are also stablecoins pegged to commodities, most commonly gold. Some examples include Digix [27] and HelloGold [31]. It is interesting to note that, in general, there are fewer commodity-pegged coins than
+fiat-pegged coins. A possible explanation is that commodity prices fluctuate in
+value more than fiat currencies, although typically less severely than most digital
+currencies.
+Other stablecoins may choose to peg to a bundle of currencies and/or commodities. This has the benefit of insulating the stablecoin against shocks to any
+1 Examples include TrueUSD [69], USDC [20], USDX [55], USDVault [71], A-Eurs [61],
+and many others.
+A Classification Framework for Stablecoin Designs 3
+Stablecoins
+Peg
+Fiat
+Commodity
+Combination
+Index
+Collateral
+Type
+Fiat
+Commodity
+Combination
+None
+Crypto
+Amount
+Full	Reserve
+Partial	Reserve
+None
+Overcollateralized
+Mechanism
+Reserve	of	Backed	Asset
+Dual	Coin
+Algorithmic
+Leveraged	Loans
+Price	Info
+Oracle
+Voting
+Trades
+Fig. 1. Stablecoin taxonomy, decomposed into four main axes: peg, collateral, mechanism, and price information.
+one country, currency, or commodity. However, pegging to a bundle can also
+have the opposite effect and introduce noise if some of the assets included in the
+bundle are very volatile. Saga [60], for example, is pegged to the IMF’s special
+drawing rights (SDR), a basket of world currencies curated by the IMF. Currencies are selected into the SDR if the issuing country is one of the world’s top
+exporters, the currency is widely used in international transactions, and the currency is widely traded in foreign exchange markets. However, the SDR is seldom
+used in any context other than the IMF’s store of value and unit of account,
+making it a less practical choice than the dollar. Facebook’s upcoming Libra
+also plans to peg its currency to an as of yet undetermined basket of currencies
+and assets.
+Saga plans to later peg their currency to the consumer price index (CPI)
+if they outgrow the SDR, i.e. if they become a dominant world currency. The
+CPI is a unitless index which tracks the inflation of the price of a basket of
+consumer goods. No stablecoin is currently pegged to the CPI, so it is unclear
+how this would be executed. It is possible, for example, that the stablecoin supply
+would be adjusted so the nominal price level remains constant. Pegging to a
+fiat currency or commodity with finite supply can eventually lead to problems
+4 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+of scale, and pegging to an index can circumvent this problem.2 However, the
+choice of CPI as a peg is not ideal for a variety of reasons. It is typically measured
+monthly or even less frequently, due to logistical challenges in determining what
+should be in the basket and how much each component should be weighted. There
+are also regional differences in consumption, so it is unclear how to construct a
+basket that reflects global spending patterns.
+3.2 Collateral
+Emergent currencies often make use of collateral to ensure that the circulating
+currency has redemption value. This provides a lower bound on the price, thereby
+mitigating some of the risk of holding, using, and denominating debts in the
+currency. Since the goal of collateralizing is to bound the redemption value, it is
+easiest and most effective, but not necessary,3
+to use whatever the stablecoin is
+pegged to. If users can always redeem one unit of the stablecoin for one dollar,
+arbitrageurs should ensure that it never trades at any other price.
+Unfortunately, collateralizing a coin creates the problem of securely storing
+large quantities of the collateral.Traditionally, the best place to store large quantities of cash is in a bank, because it is secure, relatively easy to audit, and often
+comes with deposit insurance. However, this is also centralized, thus making it
+prone to deceptive practices. For example, Tether [66] recently admitted it was
+only 74% collateralized [65], despite initially claiming full collateralization [66].
+Moreover, there are often limits to how much deposit insurance covers, potentially leaving the majority of the reserve uninsured. Some stablecoins avoid this
+problem by storing their collateral as physical cash in a vault instead of a bank.
+For example, Rockz [59] stores 90% of its collateral in the form of physical fiat
+currency in an underground vault in the Swiss Alps.
+Commodity backed stablecoins also suffer from the problem of where to store
+their collateral, since there are fewer institutions which accept and insure deposits in the form of commodities than ones that accept cash. This, in turn,
+leads to a high degree of centralization.
+One way to avoid having to store large amounts of fiat is to collateralize
+with another cryptocurrency. This has the advantage of potentially decentralized
+operation, and allows for easier diversification across backing assets. The problem
+with this approach is that digital collateral can itself be very volatile, making it
+hard to use as a guarantee of value. Any stablecoin backed by cryptocurrencies
+must have some mechanism built in to safely handle large swings in the value of
+the underlying collateral. We discuss these mechanisms in section 4.
+Other stablecoins do away with the problem of volatile collateral by simply
+not collateralizing the currency at all. This has many advantages. First, not
+having any collateral to store or unlock simplifies many logistical challenges.
+Second, it is also cheap to operate, since it does not require the issuer to keep
+real or crypto assets on hand. Unfortunately, this ease of operation comes with
+2 This is one of the reasons the US went off of the gold standard.
+3 USDVault for example is pegged to USD but collateralized with gold.
+A Classification Framework for Stablecoin Designs 5
+0.0
+0.3
+0.6
+0.9
+1.2
+2015 2016 2017 2018 2019
+Date
+Nubits Price (USD)
+Fig. 2. NuBits price collapse
+drawbacks. Algorithms are usually gameable. The value of the currency in this
+case stems purely from the reliability of the issuing mechanism and/or people’s
+beliefs. Once users’ expectations of the coin’s stability change, whether due to a
+flaw in design or idiosyncratic changes in sentiment, there may be little to keep
+the price afloat because there is no inherent redemption value. Consequently,
+when these stablecoins fail, they tend to do so swiftly and catastrophically. One
+example is NuBits [45], which dropped from its pegged price of $1 to less than
+$0.30 over the course of 2 weeks in early 2018. It never recovered its peg, and
+has been trading below $0.10 for the past six months.4
+3.3 Collateral amount
+Hand in hand with the decision of collateral type comes the decision of collateral amount. Since collateral serves to support the price by creating a reliable
+redemption value, the best choice seems to be a fully collateralized stablecoin.
+If every unit of currency can be redeemed for the underlying asset, there is virtually no rational reason they should ever trade at different prices, thus making
+price fluctuations minimal. However, one to one collateralization is sometimes
+excessive, and sometimes insufficient.
+Having a full reserve, where the value of the collateral is exactly the value of
+the circulating currency, makes it hard for a currency to scale. As the stablecoin
+4 Note that USD is not collateralized, and yet it remains stable. However, when the
+dollar was a fledgling currency it was backed by gold. It was only after extensive
+global adoption that the backing was gradually eased-off. Additionally, the US government has the infrastructure to support this type of regime. US federal law makes
+it so that businesses are required to accept US issued currency as legal tender. There
+are also regulatory and executive agencies that enforce compliance.
+6 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+becomes more widely used, the issuers have to keep buying more collateral in
+order to keep up with demand. Nevertheless, this stablecoin design has been
+successfully utilized by Hong Kong’s currency board; the Hong Kong Dollar is
+fully collateralized by USD and has maintained a roughly 7.8 to 1 peg to the US
+dollar since the early 1980s. It is currently the 13th most traded currency in the
+world [36].
+Instead of staying fully collateralized, some currencies, like Saga, try to mimic
+the historical trajectory taken by the US Dollar. Such currencies initially fully
+collateralize their stablecoin, then slowly reduce their collateral ratio and ease off
+the peg once the money supply has exceeded some threshold. Although Tether
+eventually admitted they were not fully collateralized as they initially claimed,
+there was no ostensible detriment to the price. A reason for the continued stability despite only partial collateralization is that full collateral is not necessary
+as long as people do not believe that more than the entire reserve amount will
+ever be cashed out at once. It is also worth noting that almost any supposedly
+fully collateralized fiat backed stablecoin whose collateral is being held in a bank,
+such as USDC, is functionally a partial reserve currency. All commercial banks
+keep only some of their deposits on hand and use the rest for investments or to
+issue loans. This does not cause any problems as long as they keep enough on
+hand to satisfy demand for withdrawals.
+Other coins, especially algorithmic ones such as Basis [2], do not keep any
+collateral at all. Instead, value is preserved purely by expanding supply when
+the price is too high and contracting it when the price is too low. On the other
+end of the spectrum, many currencies collateralized by crypto-currencies keep
+more than the value of the circulating currency in reserve to guard against price
+swings in the collateral. This way, even if the collateral asset depreciates, there
+is still enough for each unit of the stablecoin to be redeemed for an equivalent
+amount of the underlying asset.
+4 Mechanics
+All stablecoins require some mechanism to adjust the price when it deviates
+from the peg. Usually, this is done by expanding supply when the price is too
+high and contracting it when the price is too low. This means that there usually
+needs to be some way of measuring the price (covered further in the next section)
+and knowing how much to expand or contract the supply. Most stablecoins are
+designed such that rational, self interested users will act to restore the peg when
+the price deviates. For example, this could be achieved by allowing users to
+redeem stablecoins for collateral when the price of the stablecoin is too low.
+Other stablecoins issue a secondary token designed to absorb the volatility of
+the first, resulting in a stablecoin/volatilecoin pair. Still others depend on an
+algorithmic market making mechanism or central-bank contract to manage the
+supply.
+A Classification Framework for Stablecoin Designs 7
+Reserve of Pegged Asset Many stablecoins will build a mechanism where
+users will be incentivized to expand or contract the supply until the price returns to the peg. The simplest way to achieve this is in a fully collateralized
+system backed by the pegged asset, and allow users to expand supply when
+the price is too high and redeem when the price is too low. Arbitrageurs earn
+money while helping maintain the peg. For example, if a stablecoin pegged to
+USD is trading at less than $1, stablecoin holders should redeem the coin for
+the underlying collateral, thereby buying a dollar for less than a dollar. This
+will contract the supply until the price returns to the peg and the arbitrage
+opportunity disappears, or until the reserve runs out.
+On the other hand, if the market price of the stablecoin is above $1, many systems will allow users to expand the supply by wiring funds to the account where
+the rest of the collateral is being held. This allows the user to buy something
+worth more than $1 by paying only $1 for it. The simplicity and autonomy of
+this system makes it extremely appealing, which is why a majority of stablecoins
+in circulation today use this method, or a very similar one. However, it is not
+foolproof. On October 15, 2018, the price of Tether briefly dropped below $0.93
+due to a large selloff. The price recovered to above $0.98 within the day and
+appears to have suffered no lasting effects [22]. Other notable examples of this
+design include USDC, TrueUSD, Carbon [18], Paxos [19], Gemini Dollars [23],
+and many others.
+As stated previously, the main problem with allowing users to always redeem
+for collateral is storing large amounts of collateral at some physical location.
+Since it is expensive to provide the security needed to protect large sums of
+money, most stablecoins rely on one central location, like a bank. This introduces
+two issues: centralization and dependency on legacy financial institutions. USDC
+gets around one of these problems by storing collateral at a network of banks
+rather than a single one. However, it still relies heavily on existing banks. The
+other problem with this type of system is the ability to scale. As previously
+discussed, this makes it difficult, though not impossible, to become a global
+currency due to the inconvenience of storing assets of such high value in a large
+number of locations. This inconvenience, is one of the reasons USD outgrew the
+gold standard.
+A common variation on this design requires a central authority to mint the
+coins, but allows people to redeem the stablecoin for the underlying collateral.
+This creates a lower bound on the price of the stablecoin but not an upper
+bound, since users can redeem when the stablecoin price is too low but cannot
+mint when the price is too high. This is common in cases where the collateral is
+not necessarily dollars, such as Digix. Since it would be inconvenient to accept
+and verify gold deposits from individual users, users are not allowed to mint
+Digix by contributing capital to the collateral pool. They can, however, still
+redeem their Digix for physical gold, thereby creating a lower bound on the
+value of Digix.
+In addition to allowing people to mint coins, Tether was released in waves,
+allegedly at strategic times to prop up the price of Bitcoin [34]. Users can redeem
+8 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+Tether for USD, but since Tether is no longer fully collateralized, they also
+reserve the right to deny people the right to redeem.
+Another variation being employed by Facebook’s Libra [46] is to allow only
+the set of validators to mint or redeem coins, instead of all users. This reduces
+overhead since presumably larger amounts would be transacted each time, and
+at a lower frequency. This may come at the cost of a lower speed of adjustment,
+since the set of potential arbitrageurs who can correct the price is restricted.
+Dual coin Another way to maintain stability is to pair the pegged coin with
+a secondary coin which absorbs the volatility of the first. The most well known
+example of this is the seigniorage shares model employed by the original formulation of Carbon. When the price of the stablecoin dips below the peg, a secondary
+coin is auctioned in exchange for the stablecoin. The proceeds from the auction
+are then burned to contract the supply. When the price of the stablecoin is above
+the peg, additional coins are minted to holders of the secondary token. Holders
+of the secondary token help prop up the price when the currency inflates and
+are rewarded during deflationary periods.
+There are two big concerns with this type of system. One is that the secondary
+coin often meets the SEC’s definition of a security. Regulatory complications
+stemming from this designation were enough to keep Basis from launching [1].
+Carbon also changed from a dual coin system to a fiat backed system, for undisclosed reasons, possibly due to regulatory hurdles. The second concern is that if
+holders of the primary token do not believe that the stablecoin will appreciate
+in the future, there is no incentive to buy or hold the secondary token. In other
+words, one needs a strong contingent of users who, even during a downturn, believe that the stablecoin will eventually appreciate in value. Additionally, since
+cryptocurrency markets are often subject to long downturns, people may be reluctant to wait for extended, indeterminate amounts of time for their investment
+to pay off. Since there is no collateral backing this system, if people are not willing to buy the secondary coin, there will be no force propping up the value of
+the stablecoin.
+Variations on this design include USDX and Celo [39], which use concepts
+from dual coin systems and redemption based systems to peg their tokens. USDX
+is a stablecoin collateralized with Lighthouse (LHT), a digital currency. USDX is
+pegged to USD but backed over 200% by LHT, which is stored in two centralized
+funds. People are free to exchange LHT to USDX and vice versa at a valuation
+of $1/USDX. As such, when USDX is trading at a price of less than $1, people
+are incentivized to redeem it for $1 worth of LHT, contracting the supply and
+raising the price. LHT ends up absorbing the volatility of USDX because the
+supply of USDX is contracted by expanding the circulating supply of LHT. The
+main issue in this design stems from USDX being 200% collateralized by LHT.
+The largest possible market cap for USDX is half the market cap of LHT, and
+if the market value of LHT declines, so does the potential market cap of USDX.
+It is unclear what LHT derives its value from, so the potential market cap of
+USDX might be small and/or unstable.
+A Classification Framework for Stablecoin Designs 9
+Celo works similarly to USDX, but with a few additions. Celo is backed by
+CeloGold,5 Bitcoin, and Ethereum. In addition to allowing people to redeem
+Celo for CeloGold and vice versa, there is an algorithmic central bank which
+buys and sells Celo and CeloGold to stabilize the price.
+StatiCoin/RiskCoin [62] is another variation of the dual coin system which
+allows creation and redemption of coins to maintain a peg. Users who want
+to mint StatiCoin send ETH to the contract and receive a dollar equivalent
+amount of StatiCoin in return. When they want to redeem, they send StatiCoin
+to the contract and receive an equivalent dollar amount of ETH. Users who want
+to mint RiskCoin also send ETH to the contract and receive a corresponding
+amount of RiskCoin in return, depending on what the current RiskCoin price
+is. StatiCoin can always be redeemed for $1 worth of ETH, provided there is
+enough collateral, while RiskCoin holders are the residual claimant to the ETH
+held by the contract. If there is $100 worth of ETH held by the contract, 90
+StatiCoins in circulation, and 2 RiskCoins in circulation, the value of all of the
+outstanding Riskcoin is $10 and each RiskCoin is worth $5. If the next day the
+value of the ETH held in the contract drops to $90, RiskCoin will be worth
+$0 and users will not be allowed to mint additional RiskCoin until the dollar
+value of collateral exceeds the number of StatiCoin issued. StatiCoin is unique
+because it is crypto-collateralized but does not require overcollateralization, an
+inefficient mechanism for absorbing volatility. If the value of the collateral falls
+below the market cap of StatiCoin, StatiCoin may become unpegged because
+not all holders of StatiCoin will be able to redeem for the underlying collateral.
+If the price of ETH drops enough to reduce the price of RiskCoin to 0, then
+StatiCoin will become an unreliable store of value precisely when Ethereum is
+losing value and a stable valued asset is most needed.
+Terra [40] is yet another dual coin stablecoin, with its volatility absorbed by
+the secondary token Luna. Luna serves two purposes in this system. It absorbs
+volatility because it is auctioned to contract the supply when the stablecoin
+price is too low and purchased with Terra when the stablecoin price is too high.
+It is also the staking token of the system. Fees and mining rewards, paid in
+Terra, are increased when Terra decreases in value to incentivize holding Luna
+and smooth the pro-cyclicality of the value of Luna. Unlike previously discussed
+designs, such as Staticoin/Riskcoin, the secondary token Luna can retain value
+and creates payoffs from fees and mining rewards even in an extended contraction. However, it does this by raising fees when the value of Terra is decreasing,
+which discourages Terra use when the value of Terra is already low. Terra also
+increases the staking pool in times when the market cap of Terra is small and
+there is less need for stakers, and decreases it when the market cap is large and
+more security is needed.
+Yet another variation on the dual coin system is the triple coin system proposed by Basis. Instead of having a singular volatility absorbing coin, Basis has
+bond tokens and share tokens. Bond tokens are auctioned off when the price of
+Basis decreases below $1, and each one is redeemable for 1 Basis when the price
+5 Despite its name, CeloGold not actually backed by gold or any other asset
+10 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+of Basis is above $1. If all of the Bond tokens have been redeemed and the price
+of Basis is still above $1, additional Basis is minted pro rata to holders of share
+tokens until the price of Basis returns to $1. Holders of Basis bonds absorb the
+downside and are the first to benefit from increases in the market cap of Basis,
+while holders of Basis shares benefit only when there are large expansions in the
+value of Basis. There are infinite ways to tranche the volatility absorbing coin;
+in theory there could be systems with four or more coins splitting the stablecoin
+volatility across several parties.
+Algorithmic Other currencies use a fully algorithmic approach to adjust the
+supply of the stablecoin in response to price fluctuations. One such example
+is Ampleforth, previously named Fragments [42]. Whenever the value of Ampleforth changes, token holders have their balances adjusted proportionally to
+preserve the value of a single token. For example, if Ampleforth is originally
+worth $1, then, after an increase of 10% to $1.10, all balances will automatically
+be inflated by 10%. Likewise, if the value of Ampleforth declines, each Ampleforth holder’s balance will be decreased accordingly. This makes Ampleforth a
+stable unit of account, since by design, the ratio of Ampleforth’s market cap
+to the number of Ampleforth tokens is periodically adjusted to be $1. Unfortunately, this is not a good store of value. Holding Ampleforth is no different
+than holding a non-pegged coin: if the market cap of Ampleforth declines, users’
+balances and outstanding payments will decline proportionally.
+A different algorithmic approach is employed by Saga. Although Saga does
+not peg the value of its coin, it uses an algorithmic path-independent market
+maker inspired by Bancor [35] to provide liquidity and to dampen sudden price
+fluctuations. The market maker sets the price and bid ask spread for Saga based
+on how much collateral it has in its reserve. For example, when Saga is just
+starting out and its reserve is small, the price will be set at 1 SDR, and the
+market maker will sell a Saga for 1.0015 SDR and buy for 0.9985 SDR. This
+makes it so that users should not sell Saga on secondary markets for less than
+0.9985 or buy for more than 1.0015 SDR, which limits how suddenly the price
+can change. As the reserve grows and shrinks, the price and spread are gradually
+adjusted in response. Like Ampleforth, Saga does not guarantee that the value
+of Saga holdings will be stable over time. However, the market maker does guard
+against sudden price movements, and thus provides short-term stability.
+Leveraged loans Leveraged loans are a system of stablecoins which utilize
+components from all the above classes. Dai [47] is the most successful example of
+such a system. Users lock up collateral, such as Ethereum and other cryptoassets,
+in collateralized debt positions (CDPs). They can then mint Dai, a stablecoin
+pegged to $1, up to 2/3 the value of the collateral in the CDP. Users can then
+unlock their collateral by paying back the borrowed Dai, plus a stability fee that
+accrues over time. Dai is destroyed once it is paid back.
+If the value of the collateral in a CDP drops below 1.5x the Dai borrowed, the
+debt position is automatically liquidated, and the collateral is used to purchase
+A Classification Framework for Stablecoin Designs 11
+the amount of Dai borrowed against it. Any remaining collateral, minus a liquidation fee, is returned to the original CDP owner. If the value of the collateral
+depreciates quickly and drops below the value of the Dai borrowed, a secondary
+coin is minted to cover the difference. Currently, the secondary coin is PETH,
+but eventually it will be transitioned to MKR. Since MKR is the governance
+token, and MKR holders are diluted when CDPs are underwater, there is an
+incentive for the holders of the governance token to set parameters such that
+users are not defaulting on their loans. However, we note that the probability of
+the value of the collateral declining to less than the Dai borrowed is low since
+the price of the collateral would have to suddenly drop by over 33%.
+Users are incentivized to buy Dai and unlock their collateral when the price
+of Dai decreases, because a decrease in the price of Dai makes it cheaper for
+them to unlock their collateral. This contracts the supply and restores the peg.
+If Dai continues to trade at a price lower than its intended peg, MKR holders
+can vote to raise the stability fee charged to CDP holders. This serves as further
+incentive for CDP holders to liquidate their positions and contract supply.
+Dai received a lot of attention in March 2019 for consistently trading around
+$0.98 instead of $1 as it was supposed to. Since then, it underwent a series
+of stability fee increases, some of which quixotically lowered the price of Dai
+instead of raising it as intended. Despite this issue and Ethereum’s price decrease
+by ∼ 90% since Dai launched, Dai has managed to remain within ∼ 2% of its
+pegged value.
+0.5
+1.0
+500
+1000
+2018−01 2018−07 2019−01 2019−07
+Date
+Dai Price (USD)
+Ethereum Price (USD)
+Dai
+Ethereum
+Fig. 3. DAI remains relatively price stable despite decline in ETH price.
+Miscellaneous There are a few other designs that do not neatly fit into any of
+the above categories. For example, Steem [63] props up the price of its stablecoin,
+Steem Dollars, by paying interest on Steem Dollars. However, since they don’t
+12 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+set negative interest rates, this mechanism may not work if the price of Steem
+is too high and the interest rate is already low. Consequently, Steem Dollars
+traded for more than its $1 peg for months despite an interest rate of 0%.
+Another design is employed by NuBits (now defunct), a stablecoin which is
+minted when holders of a secondary coin (NuShares) vote to create more. Users
+are also paid interest if they temporarily remove their NuBits from circulation.
+This project is no longer in operation, possibly due to voting on supply changes
+being a slow process, thus forcing adjustments in price to lag by several days
+or more. Additionally, if holders of NuShares also hold NuBits, they may be
+reluctant to dilute the value of NuBits by printing more.
+Kowala [4] keeps the price stable by adjusting its mining rewards. When the
+price of the stablecoin is too high, rewards increase to dilute the supply; when
+the price of the stablecoin is too low, transaction fees are burned to contract the
+supply. Unfortunately, a decline in the price of the stablecoin might be correlated
+with fewer transactions occurring, since a break from the peg would diminish
+users’ confidence in the stablecoin. Since price adjustments are effected through
+mining and transactions, recovering from a decrease in price would take a long
+time. Also, since mining rewards decrease during contractionary periods, miners
+have less incentive to provide security which may further diminish the value of
+Kowala. This could lead to a feedback loop where Kowala never recovers from a
+price decrease.
+Finally, Phi [30] offers people the opportunity to issue loans denominated in
+Phi, a stablecoin. The loan issuer has to put up collateral, which is used to pay
+the loan if the borrower defaults. Although the issuer does collect interest on the
+loan, the issuer has have no way to recover their capital if the borrower defaults.
+Moreover, because there is no connection to real world identities, there is no
+ostensible consequence to defaulting, so borrowers will likely abscond with the
+loan. If the borrower does pay back the loan, they are supposed to pay it with
+interest denominated in Phi. Since, for every loan originated in Phi, the amount
+paid exceeds the amount created, there could be not enough coins in existence
+to pay back all existing loans with interest. Finally, although Phi serves as a
+unit of account for the loans issued, it is not clear why the value should remain
+stable, or why Phi might be used as a store of value or medium of exchange.
+5 Price information
+A crucial step in making supply adjustments at the appropriate times is accurately measuring the price. Most stablecoins make use of an external oracle, an
+independent price feed(s) deemed trustworthy by the issuers of the stablecoin.
+This leaves a crucial component of the system completely out of the hands of
+the stablecoin issuer. The entities publishing the price feed might deviate from
+their standard practice in how they calculate prices and trigger disastrous downturns or upturns for the stablecoin. This is not unheard of, since, for example,
+CoinMarketCap suddenly and abruptly decided to stop including prices from
+exchanges in South Korea, resulting in a sudden drop in reported prices [21].
+A Classification Framework for Stablecoin Designs 13
+If a stablecoin was formerly using this price feed and desired no change in how
+prices are calculated, the system would be left with few options other than to
+accept the new price feed, find a different oracle, or adjust oracle prices to correct for the new calculation method. Short term pricing errors can arise from
+using an oracle too, as was the case with Synthetix. In June 2019, a commercial
+API used by Synthetix suffered a glitch and began to report incorrect exchange
+rates, resulting in a bot making over $1B during this period [9]. Although the
+bot owner chose to reverse the trades during this episode, there is no guarantee
+that the next profiteer will be as generous. Note that these are examples which
+arose even with no malicious adversaries in the system.
+On the other hand, if there is a malicious actor intent on sabotaging the
+stability, a price oracle can serve as a potential target. Increasing the number
+of price feeds might be a potential solution to this issue. However using the
+median makes price updating slow, since the system must wait for sufficient
+majority of price feed reports. As a result, even some of the most active and
+popular stablecoins, including MakerDao, use only a few price oracles, making
+them a potential source of attack vectors [49]. There are only 14 price oracles for
+MakerDao, so hijacking of any 8 would corrupt the median-price rule. Moreover,
+these oracles may not be fully independent, as they might have overlap in where
+they obtain their price information or in their deployment platform.
+Nonetheless, the use of external oracles persists because the alternatives are
+generally worse. Prices for most assets are generated based on the prices at
+which the assets are transacted on exchanges. However, many crypto exchanges,
+both centralized and decentralized, have stale prices and/or inflation of trade
+volumes [7]. If trades are being inflated by the exchange, it is possible that
+exchanges might just be taking prices from some external feed and adding noise.
+Unless the initial exchanges are chosen wisely and with near perfect foresight, a
+non-noisy price feed is just as good or better.
+Alternately, Schelling point mechanisms [16], a.k.a. crowd oracles, can also
+be used to set the price. The justification for this method is that it is hard for
+voters to coordinate on a deceptive answer. However, with a pegged coin, there
+exists a natural alternate coordination point: the pegged price. If this is a more
+advantageous equilibrium for voters, then information obtained in this manner
+is not going to be trustworthy. Many of these schemes use rewards for being close
+to the median and slashing for voters far from the median to incentivize truth
+telling. However, this may incentivize people to answer how they think others
+will answer, commonly known in economics as the beauty pageant problem.
+Take for example Basis, a variant of the dual coin example discussed earlier,
+whose original design mentioned the possibility of using a crowd oracle. If users
+correctly express that the stablecoin has appreciated and is trading above its peg,
+more of the stablecoin will be minted, and users who only hold the stablecoin
+and not the secondary coin will be diluted. This makes it such that the payoff
+for holders of the stablecoin is higher if they lie and claim that the stablecoin
+is trading at its intended price rather than its true price. Even if a user wants
+14 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+to tell the truth, when enough people are incentivized to divert, the rest of the
+honest users will have to lie, abstain from voting, or be penalized.
+Terra tries to get around the problem of dishonest voting by sampling only
+a subset of voters to make collusion difficult. However, if there is a non truthful
+equilibrium that is beneficial for a majority of voters, then the subsampling may
+not help. Celo also uses a crowd oracle and acknowledges that there is potential
+for price manipulation. The designers of Celo trust that holders of the voting
+token will prioritize long term growth over short term profit, which may be an
+incorrect assumption.
+Some stablecoins are designed so that no external oracle is needed for the
+stablecoin to remain stable. In systems where users can always trade in for the
+underlying collateral, such as Tether or Saga, there is no need for a price feed.
+Instead, prices are measured using users’ trades. Individual users decide how
+to value the token and then cash in or out accordingly. However, as previously
+discussed, the convenience of not having to measure the price usually comes at
+the cost of having to store collateral.
+6 Other Considerations
+Governance Flexible governance is the ability to change system parameters
+and operation dynamically in response to changes in the environment, allowing
+a coin to scale or overcome unforeseen obstacles. This is an emerging choice
+for digital currencies, first popularized by Tezos. It has since been adopted by
+others, including several stablecoins.
+Although the idea of crowd-sourcing system parameters caters to a democratic ideal consistent with crypto’s ethos of decentralization, in actuality, participation may be low. This may leave important decisions in the hands of a
+motivated minority. For example, the March 7, 2019 stability fee increase in Dai
+was approved with less than 1% of MKR holders voting and a single address
+contributing more than 50% of the stake [50]. Besides low turnout, voting may
+suffer from high latency. If specific governance changes require human participation, then the process becomes highly contentious and complicated. On the other
+hand, if there is no way to amend the governance, the founding team must foresee every problem or potentially hard fork every time a change has to be made.
+This can lead to systems which are inflexible and react poorly to changing global
+environments.
+Fees Fees can be used to incentivize good behavior, such as how Dai’s liquidation
+fee penalizes low levels of collateral. The presence of this fee rewards MKR
+holders who are supposed to police the CDPs and penalizes CDP owners who are
+negligent with their balances. However, they can also introduce pricing frictions.
+For example, if a fully collateralized fiat backed token has no fees, arbitrageurs
+should guarantee that it never trades at anything but $1. However, fees (such as
+those employed by TrueUSD) introduce a friction which prevents arbitrageurs
+from taking advantage of and correcting price discrepancy. Suppose that a coin
+A Classification Framework for Stablecoin Designs 15
+which is supposed to trade for $1 is instead trading for $0.99. If there is a cashing
+out fee of $70 (as with TrueUSD), someone would have to buy $6930 worth of
+TrueUSD and cash it in at $7000 just to break even. To make a profit, they would
+have to invest even more money into this strategy. This is can be capital intensive
+for the arbitrageur. Moreover, the cashing out process is not instantaneous since
+wire transfers take time to process. This introduces an opportunity cost as this
+strategy can tie up capital for a day or more each time it is used.
+Regulatory Compliance Another aspect some coins are grappling with is
+the degree of regulatory compliance. Although KYC/AML compliance avoids
+the possibility of regulatory problems down the road, it also alienates some
+potential users. Some people may demand absolute privacy, be concerned about
+secure consumer data storage, or be unbanked because they lack the paperwork
+necessary to go through the KYC process. Other regulatory costs, such as the
+time, effort, and lawyers required to file with the relevant regulatory agencies,
+make it prohibitively expensive to launch a coin, as was the case with Basis [1].
+And finally, being KYC/AML compliant in one country does not protect the
+issuer from liability if the coin is being used in another country.
+It is especially crucial for coins that are fiat backed with collateral stored in
+banks to not break any laws because banks can freeze accounts if they suspect
+suspicious or illegal activity. For example, if the stablecoin is being abused for
+money laundering or other similar purposes, depository banks can stop money
+from being withdrawn or deposited in the account. This would prevent users
+from creating or redeeming tokens and hinder quantity adjustments necessary
+to keep the price stable. This is not a purely hypothetical problem. In April
+2017, Tether found themselves unable to accept international wire transfers into
+their Singapore bank accounts and were denied outgoing wire transfers by Wells
+Fargo [72].
+7 Future Directions
+7.1 Stable Pay
+One alternative to stabilizing an entire currency supply is to only stabilize payments. This can be a cheaper and easier than stabilizing the entire monetary
+supply. The only currency currently incorporating this strategy is Xank [41].
+Payments on the Xank network have the option of being stabilized by the algorithmic central bank; the bank subtracts Xank tokens when the price of Xank
+increases and adds them when it declines so the dollar value stays constant. The
+central bank continues to make these adjustments until the tokens are used in
+another transaction or the user cashes out of their Xank position. Although such
+a currency can serve as a medium of exchange and, to some extent, a store of
+value, it cannot serve as a unit of account because the value of individual tokens
+is allowed to fluctuate. The largest problem with this design is that the central
+bank is essentially providing a free put option, and providing a valuable service
+for free is a difficult business model to sustain. Crypto markets tend to have
+16 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+fairly long run ups and declines, so there is a high degree of serial correlation in
+returns. If users expect prices to increase, they should unpeg their transactions.
+If users expect prices to decrease, they will keep their payments stabilized. In
+a prolonged downturn, this can lead to the central bank running out of money
+and being unable to continue to stabilize payments.
+7.2 Peg to Other Assets
+Another area for stablecoin expansion is assets pegged to financial assets other
+than currencies, such as real estate or stock or bond indices. This would make
+it easier for people to diversify their holdings across digital currencies and real
+assets without the inconvenience of cashing out of crypto in order to do so. The
+traditional finance sector is slowly becoming more interested in crypto markets.
+Bitcoin futures have been listed on the Chicago Mercantile exchange since the
+end of 2017. Also, NASDAQ lists several blockchain companies and is exploring
+uses for blockchain technology, indicating an openness to an integration between
+the traditional financial sector and crypto. Although there are several regulatory
+hurdles in the way, it is possible that a broader range of financial assets might
+eventually be available on crypto markets.
+8 Conclusion
+Stablecoins, that is, low-volatility, programmable, and auditable currencies, promise
+to bridge the chasm between fiat currencies and digital currencies. Their importance in on-ramping the trillions of assets into digital form is evident in the
+sheer number of stablecoins issued over the last few years. In this paper, we
+provided a systematic overview of all the different types of stablecoins developed, and divided the various proposals into constituent design elements, based
+on peg, collateral type and amount, stability mechanism, and price information. Although there are hundreds of projects in existence, most are variations
+of the same few components. There is still much potential for growth in this
+area. Although there are many promising designs, none are without their flaws.
+Further innovation will be necessary before cryptocurrencies adequately fulfill
+the functions of money well enough to be adopted by mainstream users.
+References
+1. Basis: A stable, algorithmic cryptocurrency protocol (2018), https://www.basis.
+io
+2. Al-Naji, N., Chen, J., Diao, L.: Basis: A price-stable cryptocurrency with an algorithmic central bank (2017), https://www.basis.io/basis_whitepaper_en.pdf
+3. Alchemint: Alchemint (2018), https://tinyurl.com/yy4vbn7o
+4. Ancheta, A.: For a few dollars less: Kowala stablecoin backed
+by math and code (2018), https://cryptobriefing.com/
+for-a-few-dollars-less-kowala-stablecoin-backed-by-math-and-code/
+A Classification Framework for Stablecoin Designs 17
+5. Anchored by the global economy (2019), https://theanchor.io/
+6. Augment: Stable cryptocurrencies as a medium of exchange (2017), https://bit.
+ly/2LhMeXm
+7. https://www.sec.gov/comments/sr-nysearca-2019-01/
+srnysearca201901-5164833-183434.pdf
+8. Barghuthi, Y., Mezrin, V.: Jibrel network (2018), https://github.com/
+jibrelnetwork/
+9. Biggs, J.: https://tinyurl.com/y5bxzn6q
+10. Bitbay: Bitbay: Decentralized peg (David Zimbeck), https://bitbay.market/
+downloads/whitepapers/bitbay-dynamic-peg.pdf?utm_source=medium&utm_
+medium=blog&utm_campaign=dynamic-peg-whitepaper
+11. Bitcoin.com: Mongolian central bank authorizes a digital coin (2018), https://
+tinyurl.com/y8gsynkb
+12. Price-stable cryptocurrencies, https://bitshares.org/technology/
+price-stable-cryptocurrencies/
+13. Brent, T., Colson, D., Elder, M., Fisher, H., Freeman, N., Ostman, J., Nostrand,
+E.V.: Reserve stabilization protocol (2019), https://reserve.org/whitepaper.
+pdf
+14. Brooks, S., Jurisevic, A., Spain, M., Warwick, K.: Havven: A decentralised
+payment network and stablecoin (2018), https://www.synthetix.io/uploads/
+havvenwhitepaper.pdf
+15. Brooks, S., Jurisevic, A., Spain, M., Warwick, K.: Havven: A decentralised
+payment network and stablecoin (2018), https://www.synthetix.io/uploads/
+havven_whitepaper.pdf
+16. Buterin, V.: Schellingcoin: A minimal-trust universal data feed, https://blog.ethereum.org/2014/03/28/
+schellingcoin-a-minimal-trust-universal-data-feed/
+17. Carats.io: Whitepaper (2018), https://www.carats.io/whitepaper.pdf
+18. Carbon money, https://www.carbon.money/
+19. Cascarilla, C.: Paxos standard (2018), https://account.paxos.com/whitepaper.
+pdf
+20. Centre: Centre whitepaper (2018), https://www.centre.io/pdfs/
+centre-whitepaper.pdf
+21. https://tinyurl.com/y7bb64r5
+22. https://coinmarketcap.com/
+23. Company, G.T.: The gemini dollar: A regulated stable value coin, https://bit.
+ly/2oVLfkI
+24. Eisele, S.: The white company launches white standard $usd-backed stablecoin,
+bringing long-awaited liquidity, transparency, and stability to cryptocurrency holders (2018), https://tinyurl.com/y3ngachk
+25. English, J.: Bridging the gap to a stable token (2018), https://blog.sweetbridge.
+com/bridging-the-gap-to-a-stable-token-c4fdbd70e9c3
+26. EOSDT: Technical specification (2019), https://eosdt.com/specification
+27. Eufemio, A., Chng, K., Djie, S.: Digix’s whitepaper (2016), https://digix.
+global/whitepaper.pdf
+28. Epay usd: A compliant, stable value currency (2019), https://www.epay.com/en/
+eusd_white_paper_en.pdf
+29. Findlay, S.W.: Q&a introduction to aaa reserve currency (2017), https://medium.com/arc-blog/
+q-a-introduction-to-arc-reserve-currency-in-1-000-words-49bea91c22eb
+18 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+30. Finlay, D.: Phi: Decentralized lending and stable currency might not actually be
+stable (2016), https://tinyurl.com/julelge
+31. Foundation, H.: Technical whitepaper (2017), https://static.coinpaprika.com/
+storage/cdn/whitepapers/763.pdf
+32. Georgen, C.: Topl: Empowering growth by enabling investment (2017), https:
+//tinyurl.com/y4suph2r
+33. Globcoin: https://globcoin.io/howitworks.html
+34. Griffin, J.M., Shams, A.: Is bitcoin really un-tethered? (2018), https://ssrn.com/
+abstract=3195066orhttp://dx.doi.org/10.2139/ssrn.3195066
+35. Hertzog, E., Benartzi, G., Benartzi, G.: Bancor protocol (2018), https:
+//storage.googleapis.com/website-bancor/2018/04/01ba8253-bancor_
+protocol_whitepaper_en.pdf
+36. Triennial central bank survey: Foreign exchange turnover in april 2016, https:
+//www.bis.org/publ/rpfx16fx.pdf
+37. Hoang, K., Zhang, D., Diwan, A., Guy, B.: Stably: Transparent reserve-backed
+stablecoins for multiple blockchain protocols (2018), https://www.stably.io/
+static/whitepaper.pdf
+38. J.p. morgan creates digital coin for payments (2019), https://www.jpmorgan.com/
+global/news/digital-coin-payments
+39. Kamvar, S., Olszewski, M., Reinsberg, R.: Celo: A multi-asset cryptographic protocol for decentralized social payments, https://bit.ly/2HyGvLK
+40. Kereiakes, E., Kwon, D., Maggio, M.D., Platias, N.: Terra money: Stability and adoption (2019), https://s3.ap-northeast-2.amazonaws.com/terra.
+money.home/static/Terra_White_paper.pdf?201904
+41. Kim, R., Choi, B.: Xank: A treasury-backed stability-guaranteed cryptocurrency
+(2018), http://paper.xank.io
+42. Kuo, E., Iles, B., Cruz, M.R.: Ampleforth - a new synthetic commodity (2019),
+https://www.ampleforth.org/paper/
+43. Labs, A.: Aurora: A decentralized financial institution utilizing distributed computing and the ethereum network (2019), https://auroradao.com/whitepaper/
+Aurora-Labs-Whitepaper-V0.9.7.pdf
+44. Lebed, A.: Stableunit: A low-volatility p2p electronic cash system (2018), https:
+//stableunit.org/StableUnit-whitepaper.pdf
+45. Lee, J.: Nu (2014), https://nubits.com/NuWhitepaper.pdf
+46. Libra white paper (2019), https://libra.org/en-US/white-paper/
+#introducing-libra
+47. Maker: The dai stablecoin system (2017), https://bit.ly/2DwX21S
+48. Mita, M., Ito, K., Ohsawa, S., Tanaka, H.: What is stablecoin?: A survey on price
+stabilization mechanisms for decentralized payment systems, https://arxiv.org/
+abs/1906.06037
+49. https://mkr.tools/system/feeds
+50. https://finance.yahoo.com/news/makerdao-governance-risk-call-march-191947369.
+html
+51. Neetzel, D., Konopka, R., Jeger, F., Trobe, B.L., Heyden, H.: Instant, feeless and
+green p2p value transfer with fiat stablecoins (2018), https://docsend.com/view/
+k9hyw3f
+52. Neutral: Faq (2019), https://blog.neutralproject.com/posts/2019/05/14/
+what-is-neutral.html
+53. OneGram: Whitepaper (2018), https://onegram.org/whitepaper
+A Classification Framework for Stablecoin Designs 19
+54. Pernice, I.G., Henningsen, S., Proskalovich, R., Florian, M., Elendner, H., Scheuermann, B.: Monetary stabilization in cryptocurrencies - design approaches and open
+questions, https://arxiv.org/pdf/1905.11905.pdf
+55. Peshkov, A., Sapunov, E., Zhuravlenko, D.: Usdx whitepaper (2018), https://
+drive.google.com/file/d/10Ph2AhPHDXsgqXwD1CglRFTVCvxW0SSC/view
+56. Qureshi, H.: Stablecoins: designing a price-stable
+cryptocurrency (2018), https://hackernoon.com/
+stablecoins-designing-a-price-stable-cryptocurrency-6bf24e2689e5
+57. https://www.blockchain.com/ru/static/pdf/StablecoinsReportFinal.pdf
+58. https://bit.ly/2v9pZuM
+59. Rockz: Whitepaper, https://s3.eu-central-1.amazonaws.com/alprockz-docs/
+RockzWhitePaperEnglish_v7.pdf
+60. Saga: Saga, https://www.saga.org/static/files/saga-whitepaper.pdf
+61. Stasis: Eurs (2019), https://eurs.stasis.net/
+62. Staticoin: Whitepaper (2017), http://staticoin.com/whitepaper/
+63. Steem: An incentivized, blockchain-based, public content platform (2018), https:
+//steem.com/steem-whitepaper.pdf
+64. Stronghold: Stronghold, https://docsend.com/view/gg3p9ce
+65. Stuart Hoegner Affidavit 4-30
+66. https://tether.to/wp-content/uploads/2016/06/TetherWhitePaper.pdf
+67. Titus, J.: From many, unum (2017), https://medium.com/unum/
+from-many-unum-8c8493a8db9d
+68. Stablecoin for instant payments and for use on exchanges—token (2019), https:
+//token.io/x-consumers
+69. TrustToken: Trusttoken - trueusd, https://tether.to/wp-content/uploads/
+2016/06/TetherWhitePaper.pdf
+70. Valfells, S.: Why monerium e-money is unlike facebooks libra cryptocurrency (2019), https://monerium.com/monerium/2019/08/12/
+why-monerium-e-money-is-unlike-facebook-libra-cryptocurrency.html
+71. Vault: Usdvault stablecoin, http://vault.ch/usdvault-stablecoin-gold-standard/
+72. https://tether.to/tether-update/
+73. X8Currency: Faq (2018), https://www.x8currency.com/faq/
+20 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+9 Appendix A: Illustration of Stablecoin Mechanisms
+User $100 Reserve
+User	Balance:	$100,	0	USDC
+User 100	USDC Reserve
+User	Balance:	$0,	100	USDC
+Fig. A1. Reserve of Pegged Asset (ex. USDC)
+User Market
+Maker Exchange Market	Maker	Bid:	100
+Market	Maker	Ask:	101
+Exchange	Bid:	102
+Exchange	Ask:	103 SGA
+Δ
+SGA
+Δ
+User Market
+Maker Exchange Market	Maker	Bid:	100
+Market	Maker	Ask:	101
+Exchange	Bid:	100
+Exchange	Ask:	101
+Fig. A2. Algorithmic (ex. Saga)
+A Classification Framework for Stablecoin Designs 21
+User 50	BASIS
+User	Balance:	500	BASIS
+Contract
+PRICE	CHANGE	OF	BASIS	:	$1	to	$0.90
+User 80	BASIS	BONDS Contract
+PRICE	CHANGE	OF	BASIS	:	$0.90	to	$1
+PRICE	CHANGE	OF	BASIS	:	$1	to	$1.1
+User 80	BASIS	BONDS Contract
+User 80	BASIS Contract
+PRICE	CHANGE	OF	BASIS	:	$1.1	to	$1
+User	Balance:	450	BASIS,	80	BASIS	BONDS
+User	Balance:	450	BASIS,	80	BASIS	BONDS
+User	Balance:	530	BASIS
+Fig. A3. Dual Coin (ex. Basis)
+User 100	ETH CDP
+User	Balance:	100	ETH	($150	/	1	ETH)
+CDP	Balance:	0
+User 6750	DAI CDP
+User
+User 6750	DAI CDP
+User 100	ETH CDP
+Exchange
+DAI
+ETH
+PRICE	CHANGE	OF	ETH	:	$150	to	$165
+User	Balance:	6750	DAI
+CDP	Balance:	100	ETH	($150	/	1	ETH)
+User	Balance:	4.1	ETH	($165	/	1	ETH)
+CDP	Balance:	100	ETH
+User	Balance:	104.1	ETH	($165	/	1	ETH)
+CDP	Balance:	0
+INITIAL	PRICE	OF	ETH	:	$150
+User	Balance:	45	ETH
+CDP	Balance:	100	ETH	($150	/	1	ETH)
+User Exchange
+DAI
+ETH
+User	Balance:	4.1	ETH,	6750	DAI
+CDP	Balance:	100	ETH	($150	/	1	ETH) Fig. A4. Leveraged Loans (ex. Dai)
+22 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+Appendix B: Classification of Existing Stablecoins
+Name Peg Collateral Collateral
+Amount
+Price & Supply Adjustments Price Information
+Carbon USD USD Full Reserve of pegged asset Trades
+Tether [66] USD USD/Euro Partial Reserve of pegged asset Trades
+TrueUSD [69] USD USD Full Reserve of pegged asset Trades
+Basis USD None None Two coin Oracle
+BitUSD [12] USD BTS Full or over leveraged loans Elected delegates
+input exchange
+prices
+Saga [60] initially
+SDR,
+later CPI
+or none
+Basket of Fiat
+(SDR)
+Full to partial Algorithmic market maker Based on amount of
+reserve
+Bancor [35] ETH ETH Over Algorithmic market maker Based on token balances
+Dai [47] USD ETH Over Leveraged loans Median oracle
+Gemini Dollar [23]
+USD USD Full Reserve of pegged asset Trades
+USDC [20] USD USD Full Reserve of pegged asset Trades
+AAA Reserve [29]
+Avg inflation
+for G-10
+countries
+Fiat, fixed income, and loan
+investments
+Full Determined by by Arc Fiduciary
+Ltd
+Trades and oracle
+DGX [27] Gold Gold Full Reserve of pegged asset Trades
+EURS [61] Euro Euro Full Reserve of pegged asset Trades
+StableUSD/
+Stably/
+USDS [37]
+USD USD Full Reserve of pegged asset Trades
+PAX [19] USD USD Full Reserve of pegged asset Trades
+White standard [24]
+USD USD Full Reserve of pegged asset Trades
+SDUSD [3] USD NEO Over Leveraged loans External oracle
+elected by SDS
+holders
+JPM Coin [38] USD USD Full Reserve of pegged asset Trades
+USDX [55] USD Lighthouse (LHT) 200%+ Dual coin variant Median of exchange
+prices, validated by
+users
+Stronghold
+USD [64]
+USD USD Full Reserve of pegged asset Trades
+sUSD [14] USD Synthetix (SNX) 5x Leveraged loans External oracle
+A Classification Framework for Stablecoin Designs 23
+eUSD
+(Havven) [15]
+USD ETH Over Leveraged loans External oracle
+eUSD by
+Epay [28]
+USD USD Full Reserve of pegged asset Trades
+NuBits [45] USD None None Nushareholders vote whether to
+list more NuBits on an exchange,
+or offer interest to take NuBits out
+of circulation
+Voting
+Token [68] USD USD Full Reserve of pegged asset Trades
+Monerium [70] One for
+each
+major
+currency
+Same as peg Full Reserve of pegged asset Trades
+Reserve [13] initially
+USD
+initially USD, later
+other assets
+Initially full Reserve of pegged asset Trades
+Terra [40] SDR None None Dual coin Randomly sample
+users who vote on
+price
+Ampleforth [42] USD None None Supply is expanded or contracted
+proportional to market cap
+Whitelist of trusted
+oracles
+Augmint [6] Euro ETH 2x Leveraged loans Exchanges
+Bridgecoin [25] USD ETH 2x Leveraged loans +algorithmic
+market maker
+Oracle
+HelloGold [31] Gold Gold Full Reserve of pegged asset Trades
+Kowala [4] USD None None Block rewards increase when price
+is high and are burned when price
+is low
+Large holders of
+mUSD(staking token) act as oracles
+x8c [73] None Gold, USD, Euro,
+GBP, JPY, AUD,
+CAD, NZD,CHF
+Full AI shifts funds across currencies to
+keep value constant
+External oracle
+NOS [51] USD USD Full Reserve of pegged asset Trades
+Phi [30] USD TBD Over Phi is minted when validators issue a loan and burned when the
+loan is paid back
+TBD
+Celo [39] USD Celo Gold, BTC,
+ETH
+Variable Dual coin + algorithmic central
+bank
+Crowd oracle
+Aurora Boreal [43]
+USD ETH and other reserves
+Partial Supply expands when Decentralized Capital issues loans denominated in Boreal and contracts
+when loans are repaid, users will
+also receive grants to act as market makers
+Unknown
+Stableunit [44] USD Cryptoassets Initially over Algorithmic market maker Median oracle
+24 Amani Moin, Emin G¨un Sirer, and Kevin Sekniqi
+Rockz [59] CHF CHF Full Reserve of pegged asset Trades
+Steem Dollars [63]
+USD None None Interest accrues to Steem Dollar
+holders
+Steem Power holders elect oracles
+USDVault [71] USD Gold Full Reserve of pegged asset, ”sophisticated gold hedging process” to
+maintain peg
+Trades
+Globcoin.io [33] Gold and
+currency
+basket
+Gold and 15 largest
+currencies
+Full Reserve of pegged assets, can cash
+out to any one currency in basket
+Oracle
+JCash [8] USD,
+KRW
+and other
+assets
+USD, KRW and
+other assets
+Full Reserve of Pegged asset Trades
+Staticoin [62] USD Eth Full Dual coin variant 24h exchange price
+Unum [67] USD Cryptoassets Under to over
+depending on
+prices
+Algorithmic market maker: users
+sell crypto or Unum to smart contract
+External oracle
+Poly [32] None Tokenized commodities
+Full Reserve of pegged asset Trades
+BitBay [10] None None None Freeze and unfreeze tokens based
+on transaction and staking history. Users receive interest on
+frozen coins
+Dynamic Peg oracle
+BitCNY [12] Chinese
+Yuan
+BTS Full or over leveraged loans Elected delegates
+input exchange
+prices
+EOSDT [26] USD EOS Over Leveraged loans Oracle
+Neutral [52] USD Other stablecoins
+(PAX, TUSD, DAI,
+and USDC)
+Full Reserve of pegged asset Trades
+Candy [11] Mongolian
+Tugrik
+Mongolian Tugrik Full Reserve of pegged asset Trades
+Onegram [53] Gold Gold Full Reserve of pegged asset Trades
+Carats.io [17] Diamonds Diamonds Full Reserve of pegged asset Trades
+Libra [46] Collateral
+basket
+Bank deposits and
+short-term government securities
+Full Reserve of pegged asset Trades and oracle
+Anchor [5] Monetary
+measurement
+unit
+None None Dual coin Oracle
