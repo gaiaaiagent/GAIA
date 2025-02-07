@@ -1,6 +1,7 @@
-// src/index.ts
 import { type Plugin } from '@elizaos/core';
 import { createSafeAction } from './actions/createSafeAction';
+import { deployNewSafeAction } from './actions/deployNewSafeAction';
+import { checkSafeAction } from './actions/checkSafeAction'; 
 
 console.log("Initializing Safe Plugin...");
 
@@ -10,7 +11,7 @@ export const safePlugin: Plugin = {
   providers: [],
   evaluators: [],
   services: [],
-  actions: [createSafeAction] // add the action here
+  actions: [deployNewSafeAction, checkSafeAction]
 };
 
 export const pluginSafe = safePlugin;
