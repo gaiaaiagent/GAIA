@@ -1,0 +1,1398 @@
+POLKADOT ECONOMIC SYSTEM SPECIFICATION
+A PREPRINT
+Michael Zargham
+Founder, BlockScience
+zargham@block.science
+Krzysztof Paruch
+Sr. Researcher, Vienna CryptoEconomics Institute
+Krzysztof.Paruch@wu.ac.at
+Gal Mordechai
+Researcher, BlockScience
+gal@block.science
+Matthew Barlin
+Lead Systems Engineer, BlockScience
+barlin@block.science
+Shermin Voshmgir
+Director, Vienna CryptoEconomics Institute
+shermin.voshmgir@wu.ac.at
+August 19, 2019
+ABSTRACT
+To remain a viable platform beyond the life of its technical novelty and into the future, the Polkadot
+network must be secure, flexible, and economically stable; it must generate value predictably and
+sustainably for its many types of stakeholders. In addition to these key objectives, the ecosystem must
+attract a sufficient number of participants through its vision and financial incentives to decentralize
+itself as originally planned, while gaining wide-spread adoption. This paper is the result of a
+deep architectural and economic analysis of the Polkadot ecosystem, starting from its protocol
+specifications and arriving to a systemic abstraction focused on the network goals. The analysis
+of this systemic abstraction is robust to changes in the designs of low level component algorithms
+and protocols. Through this research we defined key objectives, health metrics, and KPIs for the
+Polkadot economy, and mapped out Polkadot’s subsystems, stakeholders, and mechanisms in detail.
+We formulated a multiscale state space representation of the economic system, including a differential
+specification encoding the way in which the system evolves over time. These formalisms allowed for
+a structural analysis of the relationships between low level parameters and the consequences changing
+those parameters may have on the overall system goals. These representations are a prerequisite for
+the development of computational models capable of testing economic subsystems and eventually
+producing a system level digital twin to serve a support role in design and governance of the economic
+system at large, through the informed use of the control levers designed by the Polkadot protocols.
+At each stage of the design, development, and governance of such an economic system the goals of
+our process are to improve our understanding of the system and to leverage that understanding to
+mitigate risks. This paper contains the results of the first stage of our work focusing on constructing a
+representative economic system which emerges around the deployed software and co-evolves with it.
+The current work includes the interactions between its various subsystems and stakeholders, based on
+these we generated a wide range of insights and recommendations, which will be presented in this
+paper.
+Keywords Economics · CryptoEconomics · Token Engineering · Token Economics · Systems Engineering
+1 Introduction
+As decentralized platforms achieve wider adoption and are implemented to create new types of business models and
+efficiently solve existing problems, it is apparent that the current architecture of these platforms suffers from two main
+issues: scalability and extensibility. Often this problem is due to a platform’s approach to canonicality and validity.
+Polkadot, a blockchain with a heterogeneous multi-chain architecture, addresses these shortfalls by separating these
+two concepts to create a scalable, secured network of decentralized platforms able to interoperate with existing public
+(e.g. Bitcoin, Ethereum) and private (e.g. Hyperledger) chains. To achieve these goals, the Polkadot team designed a
+A PREPRINT - AUGUST 19, 2019
+new type of a hybrid consensus mechanism, nominated proof-of-stake (NPoS), in which DOT holders act in various
+capacities using their DOT tokens to create new blocks (through the BABE mechanism) and achieve validation (finality)
+on the aggregated relay chain state (through the GRANDPA consensus), [ 1]. To regulate this process, the team designed
+multiple on-chain rewarding and slashing mechanisms that promote alignment and good behavior while punishing
+misalignment and misconduct among the networks’ stakeholders. Through its network of connected chains, Polkadot
+acts and can be described as any other known blockchain but with two additional attributes: 1) Pooled security - the
+more chains and stakes invested in the system the higher its security becomes as it requires a malicious entity to
+invest more resources in order to damage the system; and 2) Trust-free interchain transactability (interoperability) -
+the heterogeneous multi-chain architecture of Polkadot, in which there are multiple parachains and bridges to existing
+chains, that are all of connected to an aggregated relay chain, allows the various network’s stakeholders and mechanisms
+to interact with each other in a trustworthy manner regardless of their native platform. To establish the efficient and
+smooth operation of Polkadot, its design includes a treasury function which acts as the system’s "shock absorber" and
+minimizes the volatility created by the multiple forces inflicted on Polkadot during its regular operation.
+On top of its core mechanisms and value flows, Polkadot’s decentralized vision required the design of several peripheral
+mechanisms to ensure its decentralized decision making process and ability to adapt from governance, economic,
+design, and technical perspectives in a way that will maximally benefit its stakeholders. Moreover, an inclusion auction
+mechanism was designed to enable parachains to bid on the right to be part of the network and benefit from its unique
+value proposition.
+The interdependence among its subsystems fits the Polkadot network into the definition of a complex system and makes
+its states, behaviors, and end states often unintuitive and difficult to predict relative to the system’s objectives. To
+address this complexity and mitigate the risks associated with launching and operating such a network, we designed a
+model that represents the system’s multiple subsystems and mechanisms which will be able to predict the economy’s
+behavior and outcomes under various assumptions and conditions. To increase the usability and accuracy of the insights
+generated from this model, it may be evolved into a mathematical model and expressed in a programming language to
+allow teams to run simulations and experiments on the network and test various data sets and assumptions impact on
+the network and its members.
+This is part of a broader infrastructure systems engineering practice that includes data driven refinements of the
+computational models that serve to inform the body of decision makers steering the system. Such practice is necessary
+even when the governing body is comprised of a centralized group of experts, and becomes increasingly critical as
+decision making power is decentralized to stakeholders. Skin in the game presents an incentive to act in the systems’
+best interest, but does not provide by default the necessary information to make a well informed decision about what is in
+fact in the best interest of the system. Methods from systems engineering, industrial automation, and infrastructure scale
+systems management are integrated with economics in order to facilitate informed input on the part of the governing
+bodies and the analytics provided by this approach facilitate ’what-if’-style experiments in order to allow participants to
+discover and support their positions through computational demonstrations.
+2 Goals
+The Polkadot economy can generate significant value to its stakeholders. However, to do so it must strive to achieve
+four key goals: security, sustainability, value creation, and stability. These objectives will be the lens through which we
+explore the network, its subsystems, and mechanisms throughout this document:
+1. Security - Due to its NPoS Consensus mechanism, Polkadot’s security is defined by the total stake amount that is
+captured within the network at any specific point in time. Moreover, due to the random assignments of stakeholders as a
+security enhancement mechanism, this goal also refers to the network’s capability to fill all of its "regulator" roles (i.e.
+validators, nominators, fishermen, collators) to ensure the network participants’ good behavior and ability to capture
+any malicious activity.
+2. Sustainability - Polkadot will be used as an infrastructure platform for many other applications and solutions.
+Therefore, it must have the flexibility and adaptability to change and evolve over time. This can be achieved with
+an efficient governance process that can navigate the network through changes without biases towards any specific
+stakeholders’ group.
+3. Value creation - The true value of Polkadot develops through the parachains that build on and connect to it. This
+value can be measured by the parachain’s choice to develop on top of Polkadot rather than on different platforms and
+the resources that flow through the network as a result of that. This value’s true measurement can be captured by the
+external entry point into the system, the parachain slots auction mechanism. When parachains bid for a specific slot,
+they are assigning a specific, real-world value to the network and "lock" it into it. Furthermore, by connecting to the
+2
+A PREPRINT - AUGUST 19, 2019
+network, parachains bring new real-world value into the ecosystem. Therefore, from a network perspective, maximizing
+the total value of parachain deposits and the total value that they bring into the platform are integral goals for the
+network’s success.
+4. Stability - Investors and developers continually evaluate a wide range of investment opportunities. In this process,
+they measure their potential return on investment (ROI) for these various investments based on two factors: the return
+that they can earn from the investment and the risk associated with that return. Risk, in the context of an infrastructure
+platform like Polkadot, can be measured as the volatility and predictability of the network. Therefore, to ensure that
+investors will be attracted to the network, the "noise" generated by the network must be minimal and its predictability
+should be as consistent as possible.
+These economy-level goals (in contrast with lower protocol level goals) can be achieved through the analyses of the
+network architecture, the signals generated by the network’s subsystems, and their interactions among each other
+even prior to the network’s launch. Once these analyses are completed, the insights generated can be encoded into
+the network’s implementation and assist Polkadot to reach these highest level objectives with a much higher level of
+certainty. In the following sections we will go through that process and explore how these goals could be best encoded
+into the network.
+3 Methods
+The methodology underpinning this analysis is rooted in Economics and Systems Engineering and is detailed at length
+in the forthcoming publication of the research roadmap of the Vienna Institute for Cryptoeconomics. To enable a good
+understanding of this paper, first the general approach is described followed by all the core concepts applied in this
+paper, outlined in the form of a descriptive glossary:
+3.1 General Approach
+A systemic analysis of Polkadot’s economy is enabled by building a multiscale model of the ecosystem and connecting
+its layers to each other. Different scales provide both macro insights into how the economy interacts with the outside
+world as well as micro insights into how single interactions of actors within the economy influence each other. A
+multiscale model of an economy should have two layers at least, but with more granularity better observations can be
+made. In the case of a complex system, where more interacting subsystems can be identified, the simplest multiscale
+model will have a minimum of three layers, see figure 1(b). Such a representation manages to answer three key
+questions:
+• How does the ecosystem interact with the outside economy in which it is embedded?
+• How do the subsystems of the ecosystem interact and influence each other, and how are their interfaces
+defined?
+• How do the mechanisms in each of the subsystems work and which actions lead to which state updates?
+Representing an economy via a multiscale model alone is still not sufficient. These layers need to be connected to each
+other in order to draw significant conclusions. This connection has to be established in two directions: For each pair of
+neighbouring layers, both top-down and bottom-up linkages are required. As shown in figure 1(a), a proper system
+model has to be embedded into the macro perspective to provide context on the one side, but on the other side it has to
+be appropriately based on the micro specification to provide foundations. These connections ensure that for each layer
+of the multiscale model:
+• Sufficient context within the layer above (macro) is given
+• Sufficient foundations in the layer below (micro) are secured
+3
+A PREPRINT - AUGUST 19, 2019
+(a) Applying Lucas Critique in practice based on systems
+engineering. (b) MultiScale Economic Systems Model.
+Figure 1: Multiscale modeling is a critical element in large scale systems because critical decisions are implemented as
+part of low level components, but effects are determined in part by processes and dependencies in the systems, and
+ultimately the appropriateness of those decisions is determined at the high level goal or metric.
+Figure 2: The focus of this research project highlighted as part of the broader economic systems engineering
+methodology.
+4
+A PREPRINT - AUGUST 19, 2019
+3.2 Core Concepts
+• A complex system is a collection of (more than one) subsystems that are interconnected and affect each other.
+The subsystems are interdependent: events in one subsystem influence events in one or more other subsystems.
+For that reason, distinct subsystems cannot be analyzed on their own without carefully defining their interfaces,
+as effects cannot be disentangled. Feedback loops between subsystems reinforce the dynamics described
+above.
+• A dynamic system is a system where time plays a role. Taking a snapshot of the system, which would only
+represent the system at a point in time, only allows limited understanding of how subsystems and thus the
+system as a whole will evolve. Many considerations need to explicitly consider the dynamics of the system to
+enable operational security without unintended consequences in the long run.
+• A multiscale model is a representation describing the same item in different scales. It presents the item from
+very distant or very close allowing for zooming in or out on particular aspects. The most outer layer is the
+macro perspective of the system, whereas the most granular picture can focus on various micro elements as
+necessary. In between arbitrarily many layers can exist, depending on the concepts that need to be highlighted
+and analyzed. A core rule is to make a (multiscale) model as simple as possible, but no simpler.
+• An abstraction hierarchy is the order of succession of layers in a multiscale model. The outermost represen-
+tation provides the most holistic perspective of the system and its boundaries to the environment, whereas
+many specific microscale representations might be used to address particular concepts on a lower level. An
+abstraction hierarchy consists of many micro-macro pairs similar to a staircase allowing for stepping up or
+down in detail as required.
+• The concept of microfoundations describes the required top down connection between two consecutive
+elements of a micro-macro pair. It states that aggregate relationships on the macro level have to be consistent
+with the principles that are valid on the micro level, and statements on the macro level have to be derived from
+the fundamentals on the micro level. Only by using this approach reasonable conclusions on any macro level
+can be made as the macro level is reasonably grounded in its corresponding micro level.
+• The concept of macro-contextualization describes the required bottom-up connection between two consecu-
+tive elements of a micro-macro pair. It states that the definition and design of principles on any level has to be
+put in the context of targeted achievements on the corresponding higher abstraction level.
+• The concept of different perspectives describes the added value to the analysis of a system by viewing
+it from different angles. Some examples therefore are economic, technical, financial, and so on. Specific
+characteristics of a systems only become visible when light is shed from different perspectives.
+• A purpose-driven system is an environment that allows for interactions that are streamlined to serve a
+common system goal. This goal can be described by one or more health metrics, KPIs, or a (weighted)
+combination thereof. The system is designed with the intention to support the achievement of the system goals
+by attracting specific types of behaviors that result in intended outcomes.
+• A health metric or key performance indicator (KPI) is a measure of the state of the system focusing on
+specific characteristics thereof and highlighting distinguished properties. Health metrics in dynamical systems
+vary over time, and a healthy system is one that stays within, and exhibits attraction to a neighborhood in the
+state space deemed (subjectively) healthy under these KPIs.
+• An instrument is a well defined mechanism that might be used to influence or steer the system. This instrument
+might be automated or discretionary and it might influence particular parameters or even whole structures of
+specific parts of the system. The instrument might be thought of as a lever controlled by the governing entity
+with the aim to push the system in the direction of the system goals.
+• A trade-off is the marginal positive change of one variable in comparison to the marginal negative change in a
+second variable. The properties of this connection ensure that both values cannot be increased at the same time
+and that a compromise has to be found.
+• A transmission mechanism is the way how changes triggered by instruments propagate and spread through
+the system. Instruments do not affect KPIs directly, more often they activate a series of consecutive and
+inter-dependant events that materialize in specific outcomes. A transmission mechanism might be compared to
+a domino effect.
+• A policy is a vector with a selection of parameters for all instruments out of the set of all feasible parameters
+for each instrument. A policy will very likely imply a trade-off between contradicting goals and needs to be
+balanced out.
+• Dynamic control is the continuous adaptation of policies contingent on the system state, the health metrics,
+and the system goals.
+5
+A PREPRINT - AUGUST 19, 2019
+4 Mapping Polkadot from Multiple Perspectives
+In this section the Polkadot economic system is examined from multiple perspectives in order to synthesize a holistic
+view of the economy. The macro-economic perspective looks at how Polkadot’s internal economy relates to the open
+economy. The most micro-economic perspective is the interrelations of the protocols themselves. However, to create a
+complete picture it is necessary to take the meso-scale perspective both from the angle of the users, and from the angle
+of the Polkadot economies subsystems while considering how DOTs flow between or are leveraged by or within those
+subsystems.
+4.1 Polkadot Economy relative to the Open Economy
+The Polkadot ecosystem cannot be analyzed on its own, as it is embedded in the cryptoeconomy of all blockchain
+projects, which again is a part of the global real economy. Therefore, all discussions about Polkadot have to be framed
+in this global and open context as crucial interconnections to and influences from the outside will affect the observed
+economy. Questions that might be addressed from this view are:
+• How will the Polkadot economy evolve over time relative to the open economy?
+• How will the value of the currency native to the Polkadot economy (DOTs) evolve over time represented by its
+exchange rate on the secondary market?
+• How will the outside demand for products and services provided by the Polkadot economy evolve over time
+and what will drive this demand?
+• How will outside demand shocks influence the Polkadot ecosystem and the activity within?
+• Why should (necessarily foreign) working capital be allocated to serve the economy in the first place?
+• How much working capital will be allocated to the economy to operate the ecosystem?
+• Based on which metrics will foreign investors decide to interact with the Polkadot economy?
+• What is the connection between significant indicators such as nominal and real interest rates, inflation rate,
+and exchange rates.
+A very important connection between any closed economy and the open outside economy is reflected in the exchange
+rate of the economy’s currency. The exchange rate will serve as a valve reacting to events inside and outside of the
+economy. A growing, reliable, stable and secure economy will also show strength in the price of the currency as long as
+there exists external demand for the products and services created in the economy. When the economy is destabilized
+from the inside by either inefficient markets or governance, the price of the currency will collapse.
+Within the economy, inflation effects play a significant role. They will diminish the value of the currency in terms
+of purchasing power and affordability of services in DOTs. Any DOT holder will perceive inflation as a system
+participation tax, since his holdings will lose their value relative to the total value of the economy. Minting new token
+and distributing them among selected participants will favor them and discriminate others. Careless increase of the
+monetary base might put the stability of the economy at risk and cause the value of the token to collapse.
+Both these effects are visualized in (figure 3). A more detailed analysis is enabled based on (figure 4), where the
+questions listed above might be addressed. Here, the economy can be thought of as a machine that will produce
+a product or a service as an output, given working capital is provided as an input. Investors will always base their
+decisions whether to provide working capital or not on their expected return on capital per period. They will compare
+these expectations to alternative uses of their capital, their personal discount rate, and risk appetite.
+This logic describes the supply side of capital to the economy. In the Polkadot economy, this capital will be provided by
+investors if their return after inflation and exchange rate effects will be higher than returns on other possible investments
+in this period with the same risk profile. To make their investment decisions, investors will observe two key variables
+before deciding whether to allocate working capital or not: Returns on Working Capital in FX and Market Price of the
+service in FX. In some sense, this means that they will be highly interested in the ’growth rate’ and the ’price level
+stability rate’ of the Polkadot economy. Both of these variables will influence their expectations about their potential
+future profit.
+The demand side of the economy is described by the Market Price in FX and captures the value of the service produced
+by Polkadot to the outside world. If the service of interoperability between chains will be highly demanded and
+functioning properly and reliably, this will have a positive effect on the market price. This will also reflect in higher
+demand for the parachain slots in auctions, putting upwards pressure on the exchange rate of DOTs, given that the
+inflation rate within the economy remains constant or at least stable and predictable.
+6
+A PREPRINT - AUGUST 19, 2019
+Figure 3: Working capital required for running the economy is affected by inflation and exchange rates before returns
+can be calculated.
+Figure 4: Showing the service economy as an investment case: Working capital will be provided as long as expectations
+about future returns outweigh the risks associated with the investment.
+7
+A PREPRINT - AUGUST 19, 2019
+4.2 System Wide Protocol Map
+Figure 5: The Polkadot Systemic map seven interconnected subsystems.
+The Polkadot platform is constructed out of seven interconnected subsystems (Figure 5): Parachains, Relay chain,
+Fishing process, Validator assignment, Treasury management, Governance, and Parachain slot auctions. The core value
+flows in the network are generated when multiple parachains process their individual transactions, aggregate them
+together into blocks, and suggest their validated block summaries to the relay chain validators (Parachain subsystem).
+These block summaries are then aggregated through an NPoS hybrid consensus mechanism into the relay chain and
+reach finality through GRANDPA (Polkadot’s finality gadget). To ensure the security and validity of this process,
+validators are randomly assigned to participate in the relay chain block creation (BABE) and finality (GRANDPA) as
+part of the NPoS process using Phragmen’s sequential method. NPoS consensus is integral for increasing the platform’s
+security as part of the network pooled security concept and for promoting the network’s decentralization and distribution
+of wealth among its multiple participants. To align the incentives of all platform members, a comprehensive list of
+financial rewarding and slashing mechanisms were designed promoting good behavior and demoting misconducts by
+stakeholders (Relay chain and Validator assignement subsystems).
+To enhance the reliability and trustworthiness of the platform and regulate it even further, a Fishing process was also
+created (Fishing subsystem). In this subsystem, entities are incentivized to be on the lookout for significant misconducts
+(level 4 misconducts) and are financially rewarded to discover and flag these problematic events. In addition to this
+mechanism, a lower level problem detection mechanism exists as well that is regulated by the network stakeholders and
+occurs automatically and financially incentivize the reporting stakeholders for good behavior (level 1,2,3 misconducts).
+To ensure the platform is inclusive to other projects and solutions and continue to grow and evolve, a parachain slot
+auction mechanism was introduced in which parachains can bid for up to two years slots on 80 percent of the platform’s
+8
+A PREPRINT - AUGUST 19, 2019
+parachain slots. Winning an auction means that the parachains will be eligible for connection to the relay chain and
+the wider Polkadot ecosystem (the Parachain slot auction subsystem). If interested, alternatively parachains can pay
+for inclusion of their blocks in the relay chain on a block-by-block basis (for the purposes of our analysis, since we
+abstracted this subsystem high enough we can treat the various types of parachains consistently).
+For the system’s smooth operations and to enable its adaptation and development over time, a Treasury subsystem was
+created as well to collect funds from the network’s wide range of value flows and then distribute these to the relevant
+stakeholders based on the platform’s rules and protocols (Treasury subsystem).
+Finally, to define the rules, policies and protocols of the network and adjust them over time, a Governance subsystem,
+which is comprised of voters and a governing body, was created with a clear definition of its responsibilities and
+processes in which voting power is determined by the amount of DOTs held by the voter. Within the governing body,
+there is a distinction between regular voters (DOT holders) and the Governance council that is elected periodically
+(Governance subsystem) and has a veto power on votes.
+An important note about the protocol level map: over the time of this project, several changes have been proposed or
+implemented by the Polkadot team (e.g. parathreads). This layer is necessarily evolving ,and while the particular map
+may become out of sync with the design, it is critical that the overall system structure is properly captured and used to
+inform the higher level abstractions. The best measure of these maps is not necessarily precise replication of the current
+protocol specification but rather the ability of the abstractions to remain useful despite changes. It is however a best
+practice to maintain the protocol maps with period updates, but every proposed design change need not be reflected
+immediately unless it causes a change that propagates across subsystem boundaries. Broadly speaking, a system of
+systems engineering processes requires the freedom from subsystems to be iterated upon in an agile fashion without
+constraining each other unnecessarily, but also being aware of the conditions under which a change can be expected to
+impact another subsystem or the broader system’s structure.
+9
+A PREPRINT - AUGUST 19, 2019
+4.3 User Taxonomy
+Figure 6: The roles which actors can take within the Polkadot ecosystem and how their actions affect each other.
+10
+A PREPRINT - AUGUST 19, 2019
+Within the Polkadot ecosystem, different actors can act within a predefined set of roles. Each of these roles has specific
+action sets and serves for a specific purpose. A user of the system might choose to become an actor and fulfill one or
+more roles at any given time. These roles may transition into each other contingent on the system circumstances and the
+user’s choices and actions. It is necessary to characterize the relations in the roles as a precursor to defining a state space
+model as one critical aspect of a state space model in defining how agents may have strategies that include participation
+in multiple roles. Oftentimes, the outcomes that are most challenging to analyze are strategies that involve acting in
+multiple roles concurrently (e.g, taking an action that cause a systemic shift in price and then utilizing knowledge of
+that to extract financial returns on the secondary market).
+In total, eight roles within the broader Polkadot ecosystems have been identified. These actors can be subdivided into
+three categories, depending on the environment where they operate. This results in a classification into governance
+roles (role: Council), relay chain roles (role: Account holder, DOT holder, Nominator, Validator) and parachain roles
+(role: User, Collator, Fisherman, Validator). Notice, that the actor Validator can act in a role as a (passive) candidate or
+an (active) validator on the relay chain or parachain respectively. Within the broader economy, it is also assumed that
+any dot holder may participate in trading on a secondary market, which is part of the relation to the outside economy
+discussed in an earlier section.
+The visual (see figure 6) represents the interdependence of the actors, their action sets, and their allocation to the
+environment of conduct.
+Specifically focusing on the role-perspective in this diagram, insights into system-relevant interactions can be gained.
+Interactions in the Polkadot economy and corresponding state-updates of the whole system (especially value and token
+flows) will be partially triggered by deterministic or stochastic actions of these agents. Understanding how these
+transmissions are connected and how they influence the state variables of the system is crucial for modeling system
+mechanisms and their dynamics.
+4.4 Multigraph State Space Model
+Figure 7: The multigraph data model of the Polkadot economy.
+11
+A PREPRINT - AUGUST 19, 2019
+The multiscale modeling paradigm used for the Polkadot economy requires that there is a model of agents by roles,
+which is capable of tracking both agent level state information and maintaining pointers to functions encoding strategies
+regarding those roles. An agent has a link to a role if that agent has a strategy regarding the mechanism related to
+that role. More details about modeling approach can be found in the appendices. In the specific case of Polkadot, the
+multigraph data model contains the following roles:
+• Validator: any agent who has a non-empty strategy relating to the mechanisms which allow participation as a
+validator will have a link to the validator role node in the multigraph data model and that link will include
+metadata related to this role including, but not limited to, a pointer to the function defining their state dependent
+strategy, their rate of inclusion in the validator set, their commission, and their reputation.
+• Nominator: any agent who has a non-empty strategy relating to the mechanism allowing nomination of
+validators will have a link to the nominator role node as well as a link to the node of any other agent they are
+nominating; the sum of all nomination stake is enforced to equal the total nominal stake, and the decision to
+nominate specific validators is a state dependent behavior function.
+• Fisherman: any agent who has a non-empty strategy relating to the mechanisms associated with being a
+fisherman will have a link to the fisherman role node. Staking for fisherman is optional but may affect rewards.
+• Collator: any agent who has a non-empty strategy relating to the mechanisms associated with being a
+fisherman will have a link to the collator role node. Filling the collator role may affect access to other roles or
+reward profiles in other roles.
+• Parachain Depositor: any agent who has a non-empty strategy relating to the mechanisms associated with
+the auction mechanisms for parachain slots will have a link to the parachain depositor role node. Parachain
+depositors may have have complex strategies related to the how much they are willing to deposit as well
+as which timescales they are willing to participate in. Some agents may prefer to only engage in real-time
+parathread auctions, whereas others may only participate in auctions for long term parachain slots. The nature
+of the strategies may change as a result of changes to the parachain auction mechanisms.
+• Governance Participant: any agent who has a non-empty strategy relating to the mechanisms associated
+with governance will have a link to the governance role node. The governance role differs from other roles in
+that the voting power in governance includes all tokens an agent holds irrespective of the other roles those
+tokens are being used for. In addition to voting power, the governance link may include other metadata such as
+engagement rates and whether or not the agent is currently a member of the council.
+• Secondary Market trader: any agent who has a non-empty strategy relating to secondary market trading will
+have a link to the secondary market role node. It is anticipated that all agents will have a link over this edge as
+it necessary to buy DOTs to participate in the other roles, and any agent accruing DOTs can be expected to
+occasionally realize profits through the sale of DOTs. While all agents are expected to have this role, there
+will be a wide range of strategies regarding the use of this mechanism and it will be important to track how the
+composition of strategies in understanding the health of the economy.
+In addition to the role based links in the multigraph data model, there are additional links encoding agent to agent
+information. The most notable of which is the sending of funds from one agent to another. This mixing process will
+effect wealth distributions and thus must be modeled into the system. Initially, the mixing process is modeled with
+data drawn from the early days of the Ethereum network, but will later be substituted with real data from the Polkadot
+network.
+Another important note about the multigraph data model is its ability to generalize from agent based models to
+subpopulation based data models. As the network grows in size it becomes impractical to model every individual as a
+unique agent but rather each agent node becomes a characterization of a group of agents that share a strategy profile.
+The subpopulation modeling paradigm follows the same overall approach as an agent based model, but additional state
+variables are required to track the number of agents in the subpopulation and other characteristics may be included to
+ensure the subpopulation model is sufficiently rich to handle the system dynamics of the associated mechanisms.
+12
+A PREPRINT - AUGUST 19, 2019
+5 Subsystem Specifications
+Figure 8: The overall Polkadot economy specification.
+Subsystem specifications are broken down in order to facilitate subsystem testing using well defined boundary conditions
+that respect the interconnections between subsystems without needing to start the computational modeling with a
+complete model of the entire economic system. Subsystems generally contain one or more core protocol and at least
+one interconnection with another subsystem even when a full model of the connected subsystems is not included in the
+analysis. Subsystem analysis can help identify how changes from one subsystem propagate into other subsystems using
+controlled tests. Such tests inform systemic risk and allow potentially harmful cascade failure modes to be identified in
+advance, and the risks of such failures to be mitigated.
+13
+A PREPRINT - AUGUST 19, 2019
+5.1 Polkadot Regulatory Subsystem
+Figure 9: Polkadot Economic Regulatory Subsystem.
+The most critical and most complex subsystem in the Polkadot ecosystem is the Regulatory subsystem (Figure 9). This
+subsystem contains the protocols for identifying and punishing misbehavior of validators in order ensure that no invalid
+transactions are included in blocks on the relay chain. At the protocol level, these dynamics are well characterized by
+the protocol specifications. At the economic system level, the critical properties of this subsystem are its relation to the
+DOT distribution.
+A central observation is that much of the DOT flow as a consequence of the regulator subsystems proper operations is
+within the subsystem. For example, fisherman and validators get rewards for submitting fault reports and fault proofs
+in addition to penalties being imposed upon the agents responsible for those faults in accordance with the protocol
+specifications. At the economic systems level, an important observation is that when the fault rates are high then the
+regulatory subsystem is experiencing taxation because the treasury captures a share of the penalties. When the fault rates
+are low then the regulatory system is experiencing subsidies as minted rewards are being funneled into this subsystem.
+14
+A PREPRINT - AUGUST 19, 2019
+One way to interpret the routing of minted rewards to the regulator subsystem is that the entire economy is paying
+the regulator subsystem to provide a service. This process increases the share of the DOT economy that is owned by
+agents fulfilling roles in the regulator subsystem even if not all of those DOTs are staked into the regulator subsystem.
+If the agents operate with the strategy of staking their rewards then there will be an increasing share of the total DOT
+economy which is bound up with the regulatory subsystem over time. Up to a point this is good because it is an increase
+in security, however taken to an extreme it can result in low liquidity preventing participation in other roles, as well as a
+feed forward concentration of wealth amongst the wealthy.
+Initial parameter tuning should be done to attempt to ensure that there is a slowly increasing stake in the validator
+subsystem, but this cannot occur too quickly lest it disrupt the rest of the economy. In the long term, when desirable
+security condition are met, it may be advisable to attempt to balance the inflows and outflows of the regulator stake to
+ensure the wealth concentration process doesn’t become the dominant property of the economy. Fiscal and Monetary
+policy are the core concepts needed to further understand the levers related to this subsystem.
+5.2 Monetary and Fiscal Policy
+Figure 10: The instruments and dynamics of economic control of the Polkadot’s ecosystem.
+As described in Appendix (C), instruments exist that might be used by the governing entity to intervene in the economy.
+In the case of Polkadot figure (10) describes the dynamics observed in this subsystem.
+The task of fiscal policy is entrusted to the treasury. It is responsible for the taxation of specific events in the ecosystem
+and the redistribution of funds according to chosen goals. This is designed with the following ideas in mind:
+• penalize behaviour harmful to the security, safety and proper functioning of the ecosystem.
+• guarantee proper maintenance, servicing and upkeep of the ecosystem.
+• ensure stable growth of the ecosystem.
+All DOTs available to the treasury are partitioned into several baskets with dedicated spending purposes. The main
+distinction is the grant allocation, renumeration allocation, rewards allocation and reimbursement allocation.
+The grant allocation partition pool summarizes all types of ’government spending’ measures with the purpose of
+maintenance and improvements of the systems. Allocation decisions are made in a consensus-driven fashion by the
+governance entities and represent a collective goal of investment in the economy’s infrastructure. Grants provide
+payments for coding or testing of new mechanisms as well as funding of new projects within the economy.
+The renumeration partition pool summarizes all types of payments with the purpose of operating the economy. These
+flows are defined by the variables configuring the operational mechanisms of the system. These payments can be
+thought of as wages in a ’labor market’ of the economy.
+15
+A PREPRINT - AUGUST 19, 2019
+The reward partition pool summarizes all types of payments that aim at increasing the economy’s security. These flows
+are defined by the variables configuring the security and governance mechanisms of the system. These payments can be
+thought of as wages for securing the ’labor market’ of the economy.
+The reimbursement partition pool summarizes all types of payments aimed at increasing the fairness and liability within
+the economy. These flows are dependent upon council decisions whenever errors in punishments need to be undone.
+These payments can be thought of as compensation payments for unfair punishment and forgone profits
+Monetary policy in the Polkadot ecosystem is limited to the automated and algorithmic increase of the monetary supply.
+DOTs created by inflation are directly forwarded to the validators and nominators involved in block production. The
+main idea behind this is:
+• rewarding the participants of the regulatory sub-system
+• ensuring that DOTs in float, thus not allocated to secure the economy will be subject to opportunity costs
+caused by inflation
+5.3 Treasury Subsystem
+Figure 11: The Polkadot Economic Treasury Subsystem.
+Although current design only has inflows from penalties of validators, it is possible for the minted rewards to be
+allocated to the treasury. In the subsystem diagram (Figure 11), the monetary policy inputs and reward outputs are
+colored to denote their absence from the current design. In general, it is possible for a design including direct flows into
+the treasury from the minting process to exist. This is consistent with a general model that accounts for both Fiscal and
+Monetary Policy. For the most part this subsystem is entirely under the control of the governance and is thus outlined
+primarily to serve as an example of how it might allocate funds over time. An important aspect of this subsystem is
+the fact that tokens are moving from a functionally illiquid state into a floating state. While technically tokens in the
+treasury are liquid they are not circulating, so it is important to manage the rate at which tokens go into circulation
+relative to the rate at which they enter the treasury as a result of the Fiscal Policy and the outcomes of the regulator
+subsystem. It is recommended that the percentage of funds allocated to granting processes be managed through an
+16
+A PREPRINT - AUGUST 19, 2019
+allocation policy and a buffering process that releases a fraction of the total funds available in each allocation to the
+community according to a granting policy that on average balances the inflows with the outflows at both the treasury
+level and the allocation level.
+5.4 Governance Subsystem
+Figure 12: Polkadot Economic Governance Subsystem
+The governance subsystem is comparatively simple in the economic systems model. This is in part because the
+governance system does not directly require tokens. Token holding affects the voting power of those participating in
+governance, but those tokens may be used in other mechanisms as well. This is important because it means that those
+actively participating have also the most say on decisions and not merely those with spare capital available to reserve
+for exercising influence.
+However, from an economic system modeling perspective this means the state space has some non-trivial relationships
+between participating in governance and other roles. Still, the multigraph state space model handles these relations
+elegantly and it suffices to view this subsystem more as representing engagement in the governance process than it is
+important to model whether capital is locked up in the governance process. From a parameter testing perspective, it
+should be sufficient to model and analyze the governance subsystem in isolation with some relatively basic assumptions
+about the behavior of the rest of the economy. However, things will get quite complex when it is time to evaluate how
+parameter change proposals passed by the governance might cause shocks to the broader economy. This second order
+effect of the governance subsystem will be critical to model as part of a broader computer aided governance scheme to
+ensure that governance participants are apprised of the potential impact of such proposals before choosing whether to
+support those proposals.
+17
+A PREPRINT - AUGUST 19, 2019
+6 Differential Specification
+The differential specification is a characterization of how the economic system evolves over time. It contains the logic
+required to characterize the system dynamics even when those dynamics are not under the control of the system designer.
+In figure 13 one can see a general expression of a dynamic system factored out into a feedback loop. The differential
+specification addresses all of these elements but specifically maps out the logical blocks required to match the economic
+system specification.
+Figure 13: A dynamical system containing decision making processes, state updates, and private information represents
+the evolution of an economic system in terms of decision making and consequence of decision making even when the
+outcomes were not those intended by the decision makers.
+The multigraph state space model is not fully represented in the differential specification figure, but they are closely
+related perspectives on the system. First of all, the full state of the system contains additional system level states which
+are not directly reflected in the multigraph model, but the differential specification must enforce consistency between
+the states in the multigraph data structure and system level states. For example, the total supply of DOTs is a system
+level state and the sum of all DOTs in the multigraph model, plus those in the treasury, necessary equals the total supply.
+While the state space data model defines an abstraction for the current status of the economy, the differential specification
+encodes how that status evolves over time. In computational models, data may be used to estimate the current state of the
+system using the state space model, but the differential specification is required to make projections about future states
+or to characterize trends. In practice, state estimators are also improved by knowledge of the differential specification
+through the use of tools, such as the Kalman filter. The detailed syntax for the differential specification diagram can be
+found in the appendix.
+18
+A PREPRINT - AUGUST 19, 2019
+Figure 14: The differential specification contains the logic for how the state of the economic system evolves over time
+as a result of endogenous and exogenous processes, including both controlled and uncontrolled decisions and the
+mechanisms which resolve the consequences of those decisions irrespective of whether the decision maker’s intended
+outcome was achieved.
+6.1 Component Specification
+The component specification contains a simple description of each of the logical blocks in the differential specification.
+Each block contains an abstraction of an element of the system which is sufficiently broken down to allow easy
+implementation in a computational model while still allowing the system design to change without severely affecting
+the model. The precise logic in each block will be derived from the most up to date protocol specifications, but is
+not included explicitly to avoid bloating the document and to limit the risk of inconsistencies between specifications.
+Economic system model code implemented regarding this specification will be factored by the relevant component.
+6.2 Uncontrolled processes: Environment (yellow)
+Uncontrolled processes representing activity that can be modeled with potentially state dependent stochastic processes
+are reflected in yellow. These are driving processes which will be stochastic process generator models during the design
+phase and fed with real data during the live system phase.
+Environmental Process Driver 1 Transaction Volume
+This external process is a model of the transaction volume data feed and outputs to three mechanisms. The Compute
+Rewards and Compute Slash are dependent upon this driver and the Fault Rates driver. The transaction volume feed
+directly affects the Transaction Fees mechanism.
+Environmental Process Driver 2 Fault Rates
+This external process is a model of assumed fault rates. Fault rates are classified according to level of violation (1, 2, 3,
+or 4). Sets of rates can be modeled to simulate assumed frequency of violations. Performance data of a live network can
+replace assumed models, with learned models providing a transition. The faults types are output to the Compute Slash
+mechanism.
+Environmental Process Driver 3 Correction Volume
+This external process is a model of the correction volume data. This driver outputs to the Compute Reimbursments
+mechanism.
+Environmental Process Driver 4 Sends
+19
+A PREPRINT - AUGUST 19, 2019
+This external process is modelled as a Markov mixing process representing fund transfer activity. This driver outputs to
+the Transfer Funds mechanism.
+Environmental Process Driver 5 Tips
+This external process is modelled as a Markov mixing process representing the tip amount based on the size of the
+transaction and market conditions. This driver outputs to the Transfer Funds mechanism.
+Environmental Process Driver 6 Enabled Economy
+This external process represents the intrinsic fiat value generated by the enabled economy in the secondary market. This
+driver outputs to the Intrinsic Value Model mechanism.
+Environmental Process Driver 7 Demand
+This external process represents the activity on the secondary market exchange modelling buy and sell demand.
+Transaction volume and prices are modelled through assumed functions, historical performance, machine learning,
+and live exchange data when available. The output of this process updates the Price Change Model and the Volume
+Change Model.
+6.3 Uncontrolled processes: Behavior (pink)
+Uncontrolled processes representing activity that can be modeled with state dependent functions, which are deterministic
+responses to the state by uncontrolled actors and are represented as pink diamonds. Pink diamonds are often heuristics
+determined by the behavioral economics literature. These heuristics may be bounded-rational best response given what
+the actor knows or estimates about the system or naive strategies. In all cases, these models are treated as assumptions
+since they cannot be known or enforced. In a live system it may be possible in some cases to estimate the composition
+strategies or aggregate effect of the agents strategies through machine learning techniques. However, in design phase a
+wide array of behavioral assumptions should be tested as means of ensuring the designs are robust to the uncertainty in
+the agents behavior patterns.
+User Behavior Function 1 Depositor Role
+The user behavior/action representing Depositors. Agents choosing the role of Depositor are submitting bids in
+parachain auctions. Evaluation of the state through logic will determine whether the agent submits a bid, as well as
+output the lease period and amount of DOTs to bid.
+User Behavior Function 2 Collator Role
+The user behavior/action representing Collators. Collators can choose to participate in the economy based on an
+opportunity from the Validator stake. The output of this decision is conveyed to the Regulator Staking mechanism
+indicating their participation, but not as a direct flow that will be transferred to the agents’ Regulator Stake account.
+User Behavior Function 3 Nominator Role
+The user behavior/action representing Nominators. Agents may choose to use an amount of their DOT holdings to stake
+as a proof of trust to other parties. Thus, the agent becomes a nominator of a validator. The output of this decision and
+the amount of DOTs is conveyed to the Regulator Staking mechanism to account for the stakes of each agent and the
+portion of that stake that is in the Nominator role.
+User Behavior Function 4 Validator Role
+The user behavior/action representing validators. The Validator chooses to stake their DOTs on themselves. The
+Validator increases their probability of being chosen to validate blocks by convincing nominators to support them. The
+output of this decision and amount of DOTs is conveyed to the Regulator Staking mechanism to account for the stakes
+of each agent and the portion of that stake that is in the Nominator role.
+User Behavior Function 5 Fisherman Role
+The user behavior/action representing Fishermen. The Fishermen choose to stake their DOTs to support the claim of a
+level 4 misconduct. The output of this decision and amount of DOTs is conveyed to the Regulator Staking mechanism
+to account for the stakes of each agent and the portion of that stake that is in the Fisherman role.
+20
+A PREPRINT - AUGUST 19, 2019
+User Behavior Function 6 Voter Role
+The user behavior/action representing Voters. An agent may choose to participate as a Voter on proposals brought
+forward by the Council or other members. The output of this determination goes to the Voter Participation mechanism.
+User Behavior Function 7 Governance Decision
+The user behavior/action representing Governance Decisions. The Governance Decision is an actor which is responsible
+for the fiscal policy. Decisions from the Governance Role are sent as output to the Update Parameter mechanism.
+6.4 Controlled Processes: Algorithmic Policy (green)
+Controlled decision processes are the elements of the decision making layer which remain under the control of the
+systems designers. The purpose of factoring these decision processes from the state update logic layer is that the
+mechanisms in the state update layer are more structural, encoding concepts such as conservation of tokens or other
+lower level constraints, whereas the decision making systems are necessarily going to evolve in order to steer the
+system. One can imagine adjusting the algorithm for setting the inflation rate or the rules of the auction mechanisms for
+parachain deposits much more readily than the underlying structure of the incentives for the regulatory subsystem. Even
+the exact distribution of rewards and penalties is better viewed as algorithmic policy compared to the conditions under
+which rewards are given and penalties are imposed. The latter is more structural. Though ultimately the distinction is
+subjective, the goal in separating them in the abstraction is to facilitate governance using more mutable parameters, with
+a focus on supporting the use of the available instruments to steer the economic system relative to the health metrics.
+Control Function 1 Parachain Auction
+Policy governing the control of parachain auctions. An algorithm developed to accept the addition of new parachains.
+The output of this policy will determine accepted bids and trigger the mechanisms affecting the deposited bids,
+specifically Bid Selection, Deposit Release, and Bid Submit mechanisms.
+Control Function 2 Inflation Rate
+Policy governing the control of inflation rates. This decision is informed by secondary market dynamics and driven by
+the fiscal policy. Setting the inflation rate is output to the Mint mechanism.
+Control Function 3 Grant Allocation
+Policy governing the control of allocating grants. The decision is governed by the Treasury subsystem. The output of
+this policy affects the Issue Grants mechanism.
+Control Function 4 Accounting Partition
+Policy governing the control of how DOTs held by the treasury are distributed into its accounts. The decision is governed
+by the treasury subsystem to execute its fiscal policy. The output of this policy affects the Accounting mechanism.
+Control Function 5 Proposal Consideration
+Policy governing the process of how proposals are considered. This process will govern the Council actions and methods,
+which will affect proposals brought to the Voter roles. The output of this policy affects the Voter Participation
+mechanism.
+6.5 Exogenous State Updates: Mechanisms (yellow ovals)
+Environmental Process Model 1 Intrinsic Value Model
+Exogenous state update mechanism representing the intrinsic value of DOTs. This mechanism is informed by the
+Enabled Economy Fiat Value process and updates the Intrinsic Value Estimate state.
+Environmental Process Model 2 Volume Change Model
+Exogenous state update mechanism representing the transaction volume on the secondary markets. Input to this model
+comes from the Demand process. The output of this mechanism updates the DOT holdings for each agent in its
+Secondary Market graph.
+21
+A PREPRINT - AUGUST 19, 2019
+Environmental Process Model 3 Price Change Model
+Exogenous state update mechanism representing the transaction prices on the secondary markets. Input to this model
+comes from the Demand process. The output of this model updates the Secondary Market Price.
+6.6 System State Updates: Mechanisms
+The mechanism or state update logic blocks represent the deterministic consequences of potentially non-deterministic
+inputs. These logical blocks are direct consequences of the protocol specification applied over the state space data
+model. Critically, many of these mechanisms will contain parameters which are themselves state variables. Ideally,
+these mechanisms will not change unless the sub-protocols themselves are changed, which is expected to be less
+frequent than changes to the decision making layer. In the event that there are changes to the mechanism, they will
+be reflected exactly once in the model code even if they are called as a consequence of multiple decision making
+processes. Furthermore, the abstraction level chosen is intended to preserve the differential specification structure
+against significant changes in these mechanisms, as long as the overall structure of the system is preserved.
+Mechanism 1 Bid Selection
+State update mechanism representing bid selection. This mechanism is controlled by the Parachain Auction policy
+and determines winning bids. This determination updates two states in the Depositors’ DOT graph by moving DOTs
+from the Parachain Bids (subtracting DOTs) to Parachain Deposit (adding DOTs). If the bid is not selected, the
+Parachain Bids is returned to the Floating Holdings state.
+Mechanism 2 Deposit Release
+State update mechanism representing deposit release at the expiration of the lease, which is governed by the Parachain
+Auction policy. Deposit Release will subtract DOTs from the Parachain Deposit state and move (add) to the Floating
+Holdings state in the Depositors’ DOT graph.
+Mechanism 3 Bid Submit
+State update mechanism representing bid submission, receives the bids from Depositors in DOTs and lease period, and
+controlled by the Parachain Auction policy. Bid submission will update the State of Agents’ DOTs by adding DOTs
+to the Parachain Bids state and subtracting DOTs from the Floating Holdings state.
+Mechanism 4 Regulator Staking
+State update mechanism accounting for regulator staking. This mechanism receives input when agents participate in
+any of the regulator roles: Collator, Validator, Nominator, and Fisherman with a quantity of DOTs. The output of
+this mechanism properly designates the stakes according to role for each agent in the Regulator Stake state.
+Mechanism 5 Compute Rewards
+State update mechanism for computing rewards. The Compute Rewards mechanism takes the Transaction Volume
+and Fault Levels processes as inputs. Computed rewards are output to the Reward Allocation account in the treasury.
+Rewards are disbursed to the Floating Holdings state in the agent multi-graph. If rewards are minted, then the Mint
+Buffer for Rewards and Total Supply states are updated as well.
+Mechanism 6 Transaction Fees
+State update mechanism for charging transaction fees. The Transaction Fee mechanism takes the Transaction Volume
+process as input. Computed transaction fees output to the Unallocated funds account in the treasury.
+Mechanism 7 Compute Slash
+State update mechanism for computing slash. The Compute Slash mechanism takes the Fault Levels process as
+input. Computed slash DOTs are sent to the Unallocated funds account in the treasury and taken from the offending
+Regulator Stake in the agent multi-graph.
+Mechanism 8 Compute Reimbursements
+22
+A PREPRINT - AUGUST 19, 2019
+State update mechanism for computing reimbursements. The Transaction Volume process is the input to this mecha-
+nism. The output is accounted for by updating the Reimbursement Allocation.
+Mechanism 9 Mint
+State update mechanism representing the Mint function. The rate of minting is controlled by the Inflation Rate policy.
+The minted DOTs through this mechanism add to the Mint Buffer for Rewards state.
+Mechanism 10 Issue Grants
+State update mechanism representing the issuance of grants. Governed by the Allocate Grants policy. This mechanism
+disburses funds from the treasury’s Grant Allocation account.
+Mechanism 11 Accounting
+State update mechanism representing the distribution of funds into separate accounts held by the treasury. Governed by
+the Accounting Partition policy, this mechanism manages the structure of treasury’s accounts.
+Mechanism 12 Voter Participation
+State update mechanism representing Voter Participation. This mechanism receives input from the Voter role decision
+via an agent. The Voter Participation mechanism updates the Governance Participation state of the graph for each
+agent.
+Mechanism 13 Parameter Update
+State update mechanism updating the set of economic control parameters. The input to this mechanism comes from
+the Governance Decision role. The Parameter Update mechanism executes changes to the Economic Parameter Set
+state.
+Mechanism 14 Transfer Funds
+State update mechanism representing transfers of funds. The inputs to this mechanism are the Sends and Tips
+environmental processes. The Transfer Funds mechanism updates the Wealth Distribution state of the graph for each
+agent.
+6.7 State Variables
+In the section on state variables the focus is on the system level state variables with some of the details regarding
+the multigraph state space reduced for simplicity. The full state space includes the full multigraph data model as a
+subset of the state even if though only summary descriptors are represented in the differential specification diagram.
+Note that not all state variables are observable and some represent states that are modeled representations of private
+signals, preferences, or other concepts related to the human parts of the system. The economic system is an abstraction
+representing the whole system above and beyond the implemented software. Modeling and analysis of the human parts
+of the system is necessary despite the lack of certainty or control over these elements. Fortunately, there is a strong
+precedence in engineering for steering systems despite a lack of controllability or even observability for a large subset
+of a system’s states.
+State Variable 1 Parachain Deposits
+State variable of parachain deposits structured within the multigraph of agents data model as a result of Depositor
+Role activity. The Bid Selection mechanism adds DOTs in this edge when the bid is selected. The Deposit Release
+mechanism subtracts DOTs in this edge when the lease term expires.
+State Variable 2 Parachain Bids
+State variable of parachain bids structured within the multigraph of agents data model when a bid is submitted by an
+agent in the Depositor role. The Bid Submit mechanism adds DOTs in this edge when a bid is submitted. The Bid
+Mechanism mechanism subtracts DOTs in this edge if the bid is chosen.
+State Variable 3 Regulator Stake
+23
+A PREPRINT - AUGUST 19, 2019
+State variable of regulator stakes structured within the multigraph of agents data model. The Account Regulator
+Staking mechanism adds DOTs to this edge as a result of any of the regulator roles: Collator, Validator, Nominator,
+and Fisherman. Regulator Stake state represents the amount eligible for calculation of rewards, and are added through
+the Compute Rewards and Compute Reimbursement mechanisms, but also subject to subtraction through Compute
+Slash mechanism.
+State Variable 4 Floating Holdings
+State variable of floating holdings structured within the multigraph of agents data model. The Bid Submit mechanism
+subtracts DOTs in this edge when a bid is submitted. The Deposit Release mechanism adds DOTs in this edge when a
+lease term expires.
+State Variable 5 Governance Participation
+State variable of governance participation structured within the multigraph of agents’ data model. The Voter Participa-
+tion mechanism updates DOTs in this edge when an agent acts a Voter.
+State Variable 6 Secondary Market
+State variable of secondary market structured within the multigraph of agents data model. The Modeled Change
+Volume exogenous mechanism updates DOTs in this edge when an agent trades on the secondary market.
+State Variable 7 Wealth Distribution
+State variable of wealth distribution structured within the multigraph of agents data model. The Transfer Funds
+mechanism updates DOTs in this edge for each agent as a result of Tips and Sends activities.
+State Variable 8 Mint Rewards Buffer
+State variable containing the pool of DOTs for minted rewards. The Mint mechanism sends DOTs to this state. These
+DOTs are held in this state until disbursed to regulators.
+State Variable 9 Total Supply
+State variable of the total supply of DOTs. While the compute rewards mechanism directly updates the state variable,
+the state variable is also updated by the sum of holdings within the multigraph data model.
+State Variable 10 Unallocated Funds
+State variable of unallocated funds structured within the treasury accounting model. Several mechanisms execute
+deposits and withdrawals from this account, specifically, the Issue Grants, Compute Slash, and Transaction Fees
+mechanisms.
+State Variable 11 Grant Allocation
+State variable of grant allocation structured within the treasury accounting model. The Issue Grants mechanism
+disburses grants and thus updates by subtracting corresponding DOTs from this account.
+State Variable 12 Reward Allocation
+State variable of reward allocation structured within the treasury accounting model. The Compute Rewards mechanism
+disburses rewards and thus updates by subtracting corresponding DOTs from this account.
+State Variable 13 Reimbursement Allocation
+State variable of reimbursement allocation structured within the treasury accounting model. The Compute Reim-
+bursements mechanism disburses reimbursements and thus updates by subtracting corresponding DOTs from this
+account.
+State Variable 14 Economic Parameter Set
+24
+A PREPRINT - AUGUST 19, 2019
+State variable of the array of economic parameters. The set of parameters are determined to achieve a fiscal policy goal.
+The governance subsystem executes updates to this state through the Parameter Update mechanism.
+State Variable 15 Intrinsic Value Estimate
+State variable of the intrinsic value estimate. This state is updated through the Intrinsic Value Model exogenous
+mechanism.
+State Variable 16 Secondary Market Price
+State variable of the secondary market price. This value is updated by the Price Change Model exogenous process.
+6.8 Metrics: Goals and Measures of System Health
+The goals of the system are expressed in natural language as part of the system overview, but in practice they need
+to be captured as computable functions of the system state. There is not necessarily a one-to-one mapping between
+goals and metrics, so there are many more than four metrics expressed in the differential specification. More generally,
+the metrics category contains any facts computed from the system states that would be necessary either for computing
+the decisions in the decision layer at the next time step, or for judging the health of the system relative to the system
+goals. Both analysis of computational experiments and of real data could lead to changes in the metrics of interest. The
+metrics layer is the most easily adjusted layer of the differential specification because it contains only calculations of
+additional facts based on the current system state.
+Performance Indicator 1 Distribution Error
+Metric indicating the deviation in the distribution of Parachain Deposit across agents versus a determined desired
+distribution of selected parachain auctions. The determined distribution may be based on simulated results, representing
+auction bid amounts, time commitments, and actor roles, using the Tokens Not in Regulator Stake or Parachain
+Deposits state.
+Performance Indicator 2 Regulator Working Capital Return
+Metric indicating the return on working capital for regulators. Choosing to participate in the regulator economy should
+offer a return on that investment across the regulator roles. The net return in DOTs can be further quantified as a fiat
+value using the secondary market price at time of commitment and at reward disbursement are used. Computation
+depends on the Regulator Stake and the Floating Holdings in the agent graph, as well as the Secondary Market
+Price state.
+Performance Indicator 3 Tokens Not in Regulator Stake or Parachain Deposits
+Metric indicating the quantity of DOTs not in regulator stakes or parachain deposits. This is an indicator for economic
+activity of DOTs in the regulatory subsystem and parachain auction interface, computed from the agent multi-graph.
+Performance Indicator 4 Token Velocity
+Metric indicating the token velocity of DOTs, calculated as the quantity of DOT transfers over a specified unit of time.
+The sum of DOT movement per timestep is the most granular velocity available. This is essentially the number of times
+a token changes ownership. Under the equation of exchange theory and its crypto-derived versions, token velocity is a
+fundamental economic indicator.
+Performance Indicator 5 Wealth Distribution
+This metric is computed from the Wealth Distribution state in the agent graph. The Gini coefficient is a singular value
+that quantifies the area between a Lorenz Curve and the equality line (a perfect diagonal). The Gini coefficient is an
+indicator that describes the degree of inequality across a distribution of wealth over the various stakeholders.
+Performance Indicator 6 Adjusted Working Capital Return
+Metric indicating the inflation adjusted return on working capital, using the Realized Inflation metric. The return on
+investment for participating in the regulator economy is diminished by the inflation of DOT (computed in the Realized
+Inflation metric) experienced during the period between commit and disbursal. Adjusted Working Capital Return must
+be computed after those two metrics.
+25
+A PREPRINT - AUGUST 19, 2019
+Performance Indicator 7 Realized Inflation
+Metric indicating the realized inflation of DOTs. As the state Total Supply of DOTs increases due to minting, the
+inflation rate is computed. This is a leading indicator for other metrics and must be computed prior to them, specifically
+Interest Rate Gap and Adjusted Working Capital Return.
+Performance Indicator 8 Tax:Subsidy Ratio
+Metric indicating the ratio of taxes paid to subsidies. This is computed from the set of Treasury Accounting states.
+Performance Indicator 9 Interest Rate Gap
+The interest rate gap measures the difference between the Realized Inflation and the Target Inflation Rate metrics.
+This metric expresses the effectiveness of the governance subsystem, in terms of its control. The time from an economic
+parameter update and the interest rate gap will indicate the responsiveness of the subsystem.
+Performance Indicator 10 Enabled Economy Value
+Metric indicating the fiat value of parachain deposits using the enabled economy value derived from secondary market
+dynamics. The value is computed from the Parachain Deposit state in the agent multi-graph and the Secondary
+Market Price state.
+Performance Indicator 11 Target Inflation Rate
+Metric indicating the target inflation rate computed from the Economic Parameter Set state. The decision to update
+the economic parameter set will have an expressed or implied (as a result of other parameters) target inflation rate.
+Performance Indicator 12 Price Gap
+Metric indicating difference between the Intrinsic Fiat Value of DOT and the performance of DOTs on the secondary
+market, the Secondary Market Price state.
+Performance Indicator 13 Market Price Volatility
+Metric indicating the volatility of the price of DOT on the secondary market. Statistical measures can be computed
+from the Secondary Market Price state, including its time-based central moments and frequency-based power spectral
+density.
+7 Insights and Recommendations
+By analysing the Polkadot network from various perspectives, we made a number of insights that will assist the Web3
+team in constructing a secure, sustainable, value generating, and stable network. These insights were generated from
+the work we have done so far and prior to developing a digital twin–a computational model–for the system, that will
+assist in further evaluating the network and run experiments to scientifically test the network under different conditions
+and assumptions.
+As a general recommendation, based on our interactions with the Web3 team and the analysis we have done on the
+Polkadot network, we would advise adding an economics researcher into the core project team. We believe that adding
+this skillset to the team will help ensure that a robust Polkadot economy incorporating the best practices will be built on
+top of the novel technical infrastructure.
+7.1 Security
+In this section we discuss insights related to forces that impact the total stake amount captured within the network’s
+regulatory body.
+From analyzing the constituent subsystems in the network, we understand that the regulatory subsystem members are
+subsidized by network inflation and are incentivized for good behavior and penalized for bad behavior. In practice,
+regulators charge the network for their services and pay back taxes through slashable faults. As a result, over time these
+subsystem members benefit from a wealth gaining economic force for good valid transactions and a wealth reducing
+26
+A PREPRINT - AUGUST 19, 2019
+economic force proportionally to their faults. These dynamics make the network a healthy economic system insofar as
+their incentives are aligned with the health of the network.
+Due to the entanglement of the various stakeholders behaviors and their parameters in one another, to efficiently model
+the network’s behavior, the regulatory sub-system should be managed as a "policy space" rather than as individual
+stakeholders. This means that the computational model will include higher-level parameters that will be related to the
+subsystem as a group and its impact will be measured collectively on the network.
+7.2 Sustainability
+For insights related to sustainability we focus on Polkadot’s governance and its ability to adapt to change and evolve
+through time.
+The governing body has several levers of control it can use to steer the network towards its objectives. These levers take
+the form of policies, parameter changes, and budget allocation. To ensure that the governing body is driving the network
+towards the desired overall goals and ensure that the decision makers are well informed about their decisions, clear
+visibility, and a sense of how governance choices impact the network are critical. The complexity of these intensifies
+due to the network’s architecture: choices that relate to one subsystem may have cascading effects on multiple other
+subsystems. Therefore, monitoring the network’s parameters through the lens of specific KPIs and network’s health
+metrics on an ongoing basis will be beneficial to the network and contribute to steering it successfully towards long
+term growth. Furthermore, establishing a model that represents all the subsystems in the network and the relationships
+among them will assist decision makers in running experiments and "what-if" scenarios that will result in making better
+decisions.
+Due to the complexity of the network and its various subsystems, the governing body must be the source of novel
+interpretation of the system’s behavior to steer it towards its objectives. However, due to the decentralized nature of
+the platform algorithms and their parameters will be the ones to make most of the decisions in reality. Therefore,
+the governing body must be well informed on the system’s state and the impact of their decisions on the network.
+Specifically, governance decisions should be made based on processes that incorporate inputs from multiple parties
+and include human interpretations as much as possible based on these experts’ systemic understanding. The reason
+that discretionary involvement is so important for platform automation, which will be the result of these decisions
+(through the algorithmic policies), is that complex systems are frequently subject to unintended consequences due to the
+feedback wired into them. To enhance the adaptability of the network’s governing body even further, we recommend the
+governing body use a combination of discretionary long term and short term policies and delegate lower level decisions
+to specialized sub-groups on specific fields, similar to the Polkadot’s technical committee’s involvement in technical
+oriented decisions.
+Through our analysis, we believe that establishing an economic advisory team to address the system’s complexity on
+this topic is key for the success of the network. For implementation purposes, this team can either be responsible for
+making a limited number of decisions or have only a limited amount of decision power in choices that are related to
+their field of expertise. Alternatively, the team’s responsibility could be to write reports prior to votes related to their
+field of expertise that will then be shared with voters and governance council members. Due to the current development
+stage of Polkadot and its maturity, the latter design is preferable in our opinion as it will minimize any code changes
+while maximizing the overall adaptability of the network.
+7.3 Value Creation
+A proxy for the value captured in the platform is the parachain slot auction mechanism. Therefore, in order to show
+how the network’s value might be impacted over time we will focus on insights related to that subsystem.
+Polkadot cannot assert anything in real world value (fiat), as all current values in the system are denominated in DOTs.
+Therefore, the system is currently exposed to a value risk due to its current structure in which the only connection
+between DOTs and real value is through the parachains’ slot auction mechanism. As a result, the value derived from
+parachains will cascade into the value of the platform and create its intrinsic real value. Until that value is discovered
+over time, the value of DOTs will only be defined by other DOTs and investor speculation.
+Parachain activity is effectively buffered from the financial system as the regulatory subsystem successfully delimits it
+from the relay chain from a correctness standpoint without requiring any explicit financial flows. Moreover, the financial
+flows are isolated to the parachain deposits locking mechanism, which forcibly align the incentives of parachains to the
+DOT value due to its stakeholders’ "skin in the game." This means that for a network attack, which can be achieved
+through undermining the health of the network’s regulatory subsystems, the attacker will be required to undermine the
+27
+A PREPRINT - AUGUST 19, 2019
+health of the DOT economy and thus cause its own DOTs to lose value. These dynamics perfectly align the incentives
+of the parachains and the network and make the network healthier.
+7.4 Stability
+Economic stability is key for Polkadot to increase its appeal and adoption, therefore in this section we will focus on
+insights related to minimizing network volatility and increasing its predictability.
+Generally, Economies are open systems by definition and interact with the external environment regularly (as described
+in section 4.1). Polkadot in this regard is no different and is connected to the world and other cryptocurrency projects.
+As a result, it will definitely be impacted by other systems and forces and vice versa. To smooth this impact, navigation
+and control of the network through policies cannot be limited to policies with internal effects only and must include
+mechanisms that will soften the external forces and their impact on the economy.
+Polkadot’s power over parachain deposits and governance decisions periodicity is key for proper systemic governance
+and control, as from a systemic view a lot of systemic properties are characterized by their frequency domain and their
+power to magnify or suppress the system’s signals rather than the magnitude of these individual events. Therefore,
+through these 2 sub-systems, Polkadot can control the periodicity of "shocking" the system as levers to steer it towards
+specific directions even without controlling the intensity of each specific event’s magnitude.
+In managing the network’s treasury subsystem, a treasury buffer partition should be introduced to serve as a "shock
+absorber" for volatility in the network. In the early days of the system, the levels of "volatility in behaviors" will be
+significant, leading to rapid swings in value. To soften these movements, our recommendation is that the treasury buffer
+be large at the beginning to support the network to reach a a steadier state. Over time, real system data will expose
+the reasons for this volatility and these issues could be addressed. Once actions will be taken and tested to solve these
+issues, the treasury buffer could be significantly reduced as long as it remains large enough to absorb and cover any
+plausible shocks. The risk in cases that the buffer will not be sufficient to cover system shocks is that inflation will
+be forced and compound through the economy. These scenarios should be diligently avoided due to their significant
+impact on the economy and its stakeholders. Hence, our recommendation is that the buffer should be defined by the
+governing body as a percent of the treasury funds and that this parameter should adapt over time based on the maturity
+of the network.
+As part of the governance control on economy’s funds and as part of the economy’s attempt to create predictability
+for the network and its spending, treasury funds should be allocated for specific objectives (i.e. grants, subsidies).
+Doing so will enable the governing body to better manage its control levers without overwhelming itself with data and
+decisions. Furthermore, by doing so and changing these allocations on a periodic manner, the governing body creates
+less "economic shocks" to the system and establishes a more predictable economy. A risk of using this control lever is
+the fact that the flow of funds is only unidirectional from the treasury to the other network’s subsystems and therefore
+the impact of these actions must be closely metered to ensure that programmatic actions that are triggered under certain
+circumstances are not creating economic shocks to the system.
+In the current design, funds go directly from minting to rewards which creates a 100 percent flow-through rate and a lot
+of signal noise in the network.
+To mitigate this economic shock, a buffering process which mints new tokens at a fixed inflation rate over time into a
+treasury partition and from there to rewards subsidies is important for creating a filtering mechanism that will reduce
+the funds pace and the flow-through rate of funds in the network. This mechanism ensures that all required funds will
+be minted and eventually injected into the system at a consistent pace. It will also ensure that although the rewards may
+vary over time, the network’s inflation will remain constant. This approach also enables the governing body to focus
+only on longer term inflation decisions.
+The network’s inflation rate is an economic force that acts on the economy while the rest of the network’s created
+"value" and economic growth acts as a counter balancing force. Therefore, it is key to refine the assessment of the
+network’s true value, so the inflation rate can always be kept below the economic growth force and thus eventually the
+network as a whole will experience aggregate growth. This will be impossible to predict directly in advance, however it
+can be managed over time through the governing body by setting inflation rates appropriately and using proper tools
+and transparency in the various network’s parameters and KPIs.
+To better understand the network stability and how funds are flowing through the system, Polkadot should define a
+health metric that is comprised of a target distribution among funds in the treasury, staked funds in the regulatory
+subsystem, backing funds for votes in the governance subsystem, deposited funds in the parachain auction mechanism
+subsystem and floating DOTs in the network. As these subsystems are isolated, maintaining a constant ratio among
+28
+A PREPRINT - AUGUST 19, 2019
+these over time will keep the network stable and act as a landmark toward which the economy should be steered in
+order to achieve growth and maintain the dynamics among its various stakeholders.
+8 Next Steps
+The economic system presented provides the structure for implementing a computation model, and the specification is
+aligned with the cadCAD modeling framework and computational science software developed by BlockScience. The
+detail presented is sufficient to allow direct characterization of the appropriate mathematics for each component in the
+differential specification in accordance with the protocol and subprotocol specifications even as they evolve as part of
+Polkadot’s ongoing design and implementation processes.
+The next steps are to implement this economic system model as a computational model, define clear test cases relating
+the parameters under the control of the web3 foundation to the measures of economic health characterizing the economic
+health of the post-launch Polkadot economy.
+Where possible data from other networks (including the live test net implementation of substrate as appropriate) will be
+used to define assumptions in computational experiments. Additional models of user behavior will be drawn from the
+behavioral economics literature. Since behavior cannot be known a priori, behavioral model choices are considered part
+of the test cases, and where applicable can be A/B tested using the cadCAD feature set.
+With an implemented computational economic model and a set of well defined experiments respecting the economic
+specifications, the web3 team can make scientifically informed decisions about their parameter choices for the livenet
+launch of the network.
+Broadly speaking this document should be considered a snapshot of a living document which can evolve with input from
+key Polkadot system stakeholders. By design, efforts to refine these specification should be far less labor than producing
+an initial holistic perspective for the Polkadot economy. The emerging practice of economic systems engineering, which
+merges the domain expertise of an economist and the methods of a systems engineer, should be drawn on in the ongoing
+maintenance of these specifications.
+9 Further Reading
+This paper leverages a very wide range of domain specific knowledge ranging from economics to large scale infrastruc-
+ture automation. In an effort to make it as accessible as possible key terminology and syntax for our diagrams has been
+organized into appendices. In addition to these appendices the following materials may be useful to the reader.
+• On the modeling systems for applications:[2], [3], [4], [5], [6], [7], [8] [9], [10], [11], [12]
+• On systems of systems Engineering: [13], [14], [15], [16], [17], [18]
+• On optimization, dynamics and distributed control: [19], [20], [21], [22], [23], [24]
+• On dynamic games: [25], [26], [27], [28], [29], [30]
+• On coordination and cooperation: [31], [32], [33], [34], [35],[36] [37], [38]
+• On (in)stability of financial networks: [39], [40], [41], [42]
+• On multi-scale models:[43], [44], [45], [46], [47]
+• On the relation between Micro and Macro Economic system Models: [48],[49], [50], [51], [52]
+• On Incentives, uncertainty and behavioral economics: [53], [54], [55], [56], [53], [57]
+• On hybrid systems and uncertainty in decision algorithms: [18], [58], [17], [59]
+• On learning in games and networks: [60], [61], [62], [63], [64], [65]
+• On cybernetics and governance: [66], [67], [68], [69],
+• On fairness, social choice and ethics: [70], [71], [72], [73], [74]
+• Automated Infrastructure, economics and Industrial IoT: [75], [76], [77], [78], [79], [80]
+29
+A PREPRINT - AUGUST 19, 2019
+A Appendix: Extended Definitions of Systems Concepts
+System: A system is a group of interacting or interrelated entities that form a unified whole. A system is delineated
+by its spatial and temporal boundaries, surrounded and influenced by its environment, described by its structure and
+purpose, and expressed through its functioning. Systems are the subjects of study of systems theory.
+Complex System: A complex system is a system where the behavior of the whole within a given environment cannot
+be understood directly by understanding the behavior of the parts and the environment as separate additive entities.
+Rather the system level behavior is deeply dependant on the relations between the parts. Complex systems are systems
+whose behavior is intrinsically difficult to model due to the dependencies, competitions, relationships, or other types
+of interactions between their parts or between a given system and its environment. Systems that are "complex" have
+distinct properties that arise from these relationships, such as non-linearity, emergence, spontaneous order, adaptation,
+and feedback loops, among others. In practice, complex systems exhibit unintuitive behaviors when acted upon. In
+many cases it is useful to represent such a system as a model (for example a network where the nodes represent the
+components and the links their interactions). Because such systems appear in a wide variety of fields, the commonalities
+among them have become the topic of their own independent area of research.
+Model: A model is a graphical, mathematical (symbolic), physical, verbal representation, or simplified version of a
+concept, phenomenon, relationship, structure, system, or an aspect of the real world. The objectives of a model include
+(1) to facilitate understanding by eliminating unnecessary components, (2) to aid in decision making by simulating
+’what if’ scenarios, (3) to explain, control, and predict events on the basis of past observations. Since most objects and
+phenomenon are very complicated (have numerous parts) and are much too complex (parts have dense interconnections)
+to be understood in their entirety, a model contains only those features that are of primary importance to the model
+maker’s purpose.
+Formal model: A formal model is a model in which the description is complete and non-ambiguous. It has well-formed
+syntax and semantics, such that it is amenable to systematic (usually automatable) processing and analysis subject to
+logical rules. It is based on rigorous methods and formats; it often enables analysis to be performed on the models.
+Mathematical model: A mathematical model is a special type of formal model, and a description of a system using
+mathematical concepts and language.
+Computational model: A computational model is a special type of a mathematical model which is expressed in a
+programming language. It allows one to run simulations, or backtest against data.
+A Digital Twin: A computational model integrated with data from an implemented system that aids the operations
+and governance of that implemented system. Digital twins support both automated operations and human governing
+mechanisms, increasing visibility into the systemic effects of using specific instruments to change the system’s behavior.
+(a) Automated (b) Autonomous
+Figure 15: Automated versus Autonomous systems.
+Automated System: A closed feedback loop between a computational system and another system being controlled that
+dynamically enforces a set of rules with the intent to drive a particular system behavior. The goals and behavior of
+agents are extrinsic to the automated system. Decentralized network software provide an automated system.
+Autonomous System: A closed feedback loop at a sufficiently high level of abstraction as to require no additional
+inputs in order to act. The goals and behaviors of an autonomous system are intrinsic.
+30
+A PREPRINT - AUGUST 19, 2019
+Economic System: An autonomous system including but not limited to assets, mechanisms, agents, instruments, and
+policy makers. An economy may include automated software as part of its infrastructure, but the economic system is
+characterized by the interplay between the human and machine elements.
+Commentary Regarding Models:
+• Computational models are used extensively to explore complex systems because complex systems exhibit both
+non-ergodicity and non-linearity. Both non-ergodicity and non-linearity limit our capacity to extrapolate our
+past observations about a system’s past behavior into predictions about future behavior. Understanding the
+boundaries of our models is paramount to using them properly.
+• Models are subjective framing and modeling choices that directly effect the conclusions one reaches when
+using them. This is true of all fields and places an onus on the systems engineer to make choices which
+improve the usefulness of the models, even at the cost of precision. Models should be as simple as possible but
+no simpler.
+• While there is no optimal model per se, it is not fair to say all models are equal. In practice, models are
+judged by usefulness where usefulness is measured relative to some desired end. A model is useful when its
+application in the manner described above facilitates the operation and governance of the economic system in
+accordance with its goals.
+31
+A PREPRINT - AUGUST 19, 2019
+B Appendix: On Controls and Policies in Economies
+Figure 16: Government impact markets with the aim of guidance towards its set objectives.
+An economy is a rule-based trade environment in which humans organize their interactions to pursue common goals.
+These goals are typically set by the society in a democratic process, and compliance with the targets is monitored by the
+directly elected governance entity. How well the economy performs with respect to its goals is tracked by economic
+indicators and health metrics as described above. In order to steer the society towards its goals, if the metrics suggest
+otherwise, policy instruments exist which may be used to intervene in the markets. These instruments are used to
+enable corrections caused by market inefficiencies, as well as internal and external shocks to the economy. (Figure 17)
+demonstrates the process of governance intervention on markets with the aim of guidance towards the set objectives.
+In the most abstract sense, the economy desires to achieve the state of stability and growth. However, trade-offs between
+these goals exist, since both cannot be reached at the same time to a full extent because measures necessary to get there
+partially contradict each other. To ensure the appropriate balance between both forces, in most evolved economies the
+mechanisms driving growth and stability are subject to supervision of two distinct entities: the monetary authority and
+the fiscal authority. They engage in a coordination game and base their decisions on their counterpart’s actions as well
+as the conditions of the economy.
+The monetary authority, most often a central bank or the currency board, sets a monetary policy by choosing parameters
+for controlling money supply and the short-term interest rate within the economy. Their main goal is to ensure price
+stability relative to factors both inside and outside of the economy, observing the changes in prices of consumption
+goods and the foreign exchange rate.
+32
+A PREPRINT - AUGUST 19, 2019
+The fiscal authority, most often a representative-based government, sets a fiscal policy to ensure stimulation of growth
+and redistribution of wealth in accordance with the economic goals. To do so, it sets taxes and provides social transfers
+within the economy and decides the amount of government spending. A fiscally responsible government will make sure
+not to go into debt and thus place a burden on future generations.
+These interventions, but also simple market inefficiencies and shocks, make the economy react in business cycles of
+alternating phases of growth and recession.
+33
+A PREPRINT - AUGUST 19, 2019
+C Appendix: Economic System Specification Syntax
+Setting the boundaries of a system defines which of the component processes are considered internal and which are
+external. External processes may affect a defined system but should not directly interact with the internal system
+processes. The systems view specifies a set of intellectual tools that can be applied to any sized set of processes,
+resources, and information. The systems approach simplifies problems, describes for significant processes, and identifies
+controls. The system view is used to create simulations of future conditions. Another of the benefits of this approach is
+that it clearly identifies the assumptions on which simulations are based. A systems model is both a valuable research
+tool and a platform for communication and decision-making. Thus, a carefully constructed system model is necessary
+for capturing the structural dynamics of an economic system.
+Colors in the Economic System Specification refer to:
+Flow of DOTs
+Interface between Subsystems
+Economic Subsystem
+External Process
+Uncontrolled Behavior
+Controlled or Automated Behavior
+State Information
+Symbols in the Economic System Specification refer to:
+Mechanism Action: A method exposed to a set of actors, which can include agents,
+expected populations, and controlling entities. The mechanism receives user actions and
+input, employing state information and control policy parameters to provide an update to
+a defined set of state variables.
+Mechanism Control: The action space available exclusively to the controlling entity.
+May be actively controlled through a strategy developed using information gathered from
+available publicly and privately known state variables, metrics, external factors, internal
+beliefs, and utility functions. The control mechanism may change controllable parameters
+and/or invoke a phase change of the system via the control.
+34
+A PREPRINT - AUGUST 19, 2019
+State Variable: Defined to capture the shape and property of the network, representing
+publicly or privately held output of the system. Mechanisms provide updates to the state
+variable. The set of all state variables defines the state of the system.
+Conserved Flow: A flow represents the mass of currency movement. The currency must
+be the same as the stock at either end. The link identifies the relationship between nodes.
+The flow is conserved through accounting for all sources and sinks of the currency.
+Information Flow: Any data structure used to convey a decision to a mechanism action
+or a control mechanism. The information may be the result of a change from external
+processes, a state update, or a control policy change.
+Decision/Process: Logic that informs action on an action mechanism, control mechanism,
+or other decision. The condition accepts inputs from a subset of state variables, metrics,
+external factors, internal beliefs, policy goals, and utility functions.
+External Perspective: Information from the outside world that affects user action control
+policy decisions on the internal system. This feed may be based purely on external factors
+or may represent the external view of the performance of the internal system.
+Detailed Relation: External dynamic not part of the internal system. However, it may
+contain a level of complexity and exert critical influence on the internal system to require
+further development.
+35
+A PREPRINT - AUGUST 19, 2019
+D Appendix: Agent-Role Data Models
+For economic systems comprised of multiple mechanisms, agents will have more advanced strategies including
+the ability to manipulate those mechanisms through mixed strategies that use one mechanism to create exploitative
+opportunities over other mechanisms. In this framework, an agent is mapped to a role if that agent has a strategy relating
+that role. It may be that the conditions for an action with respect to the role are never met, but as long as there is a
+condition under which the agent would take such an action there is a mapping between the agent and the role.
+In order to build a model capable of exploring multi-mechanism strategies it is necessary to maintain information about
+each agents strategy across each role. The multi-graph model contains nodes and edges. Nodes have two types: (1)
+Agent and (2) Role. Edges generally have two types: (1)Agent-Agent, (2) Agent-Role, though in principal Role-Role
+edges are also well defined as needed. There are also more advanced relations such as agent-agent-role which are
+required to manage data such as stakes in systems where agents can stake to delegate authority to another agent.
+These multi-graph models allow us to enforce token conservation laws, encode complex multi-mechanism strategies,
+view the state from an agent-centric view or from a role-centric view while maintaining internal consistency. See Figure
+17 for a visual overview of the multi-graph agent-role data model.
+Figure 17: The multi-graph data model has two types of nodes, agents and roles. Edges encode relationships between
+agents and agents, as well as agents and roles.
+36
+A PREPRINT - AUGUST 19, 2019
+E Appendix: Differential Specification Syntax
+The differential specification is effectively described through a system modelling syntax. The symbols referenced in
+the differential specification diagram are described here. Note that all information flows described are feed-forward,
+feedback of state to any process is implicit. Furthermore, the differential specification is laid on a grid where the rows
+are:
+• The Policies determine the inputs to the system dynamics regardless of whether they come from the outside
+environment, user behavior or algorithmic decision systems.
+• The State Update Logic determines how the state of the system changes as a result of the inputs provided.
+Note that not all outcomes are the outcomes intended by the actor (system or agent) when the input decision
+was made due to the interdependence of these inputs.
+• The State is flattened and summarized in order to keep track of the the interdependence of the mechanisms on
+the same state variables. Note that the full data model for the state space is generally a network object for
+which the shown states are mid-level aggregates or summary statistics.
+• The Metrics are values computed from the state variables in order to assess the economic system. In a
+computational model, metrics may be used for governance decisions, algorithmic policies or to inform the
+behavior of individual agents.
+The columns in a differential specification refer to the Partial State Update Block also called substeps, which break
+the logic up into an ordered sequence in order to support second order dependencies. For example, there may be a set
+of user behavior functions that resolve a decision to participate and incur some costs, and then a set of environmental
+process drivers that determine the rewards those participants receive as a result of all of their decisions and the events
+which transpire there after. A simple differential specification will have one or two substeps, whereas a complex
+economic system could have 8 to 10 substeps.
+Information Flow: Any data structure may be used to convey state update execution. The
+expected path is from actions, policies, and processes to mechanisms to states variables to
+metrics.
+Environmental Process Driver: Data feed that informs an exogenous process. This may
+be real or assumed data to provide updated input for a model representing a change of
+external conditions.
+User Behavior Function: A population or agent-based strategy developed using informa-
+tion gathered from available state variables, metrics, external factors, internal beliefs, and
+utility functions. The action space available to achieve the strategy is executed through
+the mechanisms. No action may be fulfillment of the strategy. The user behavior/action
+should not directly be a state variable.
+37
+A PREPRINT - AUGUST 19, 2019
+Control Function: The controllable action space under the controlling entity. May be
+actively controlled through a strategy developed using information gathered from available
+publicly and privately known state variables, metrics, external factors, internal beliefs, and
+utility functions. The action space available to achieve the strategy is executed through
+the mechanisms. Passive control (no action) may correctly model this behavior. Policy
+functions should not directly modify a state variable, but may affect any parameters in a
+mechanism as well as the availability of a mechanism.
+Environmental Process Model: A modelled generator providing an update to state
+variables using external input signals from an environmental process driver. User action
+behavior and control functions should not affect this model. The affected state variables
+should be purely exogenously based, but may be blended from the internal state if
+necessary to model the system. The exogenous state variables are the link between
+the changes from the outside world germane to the modeled system, and provides the
+information necessary for users and controllers to make decisions.
+Mechanism: System defined functions that take user actions and control policy input to
+update a set of state variables. Mechanism functions may be logically or operationally
+grouped to be executed concurrently as a partial state update.
+State Variable: Defined to capture the shape and property of the network, representing
+publicly or privately held output of the system. The updates to the information can only
+come through mechanisms and exogenous models and not user or control actions. The
+data may be updated repeatedly within a simulated step. The resolution of all partial
+updates is the state update.
+Performance Indicator: Metrics calculated from a subset of state variables. The indica-
+tor may represent actual publicly or privately available data. The metric could also be a
+computed signal from the state used to determine the condition of a control policy. Also,
+this may be an expected indicator employed by users to execute on their strategy. Care
+must be taken to update the metric after the input state variable(s) are updated as to obtain
+the correct result within a state update.
+38
+A PREPRINT - AUGUST 19, 2019
+References
+[1] Dr. Gavin Wood. Polkadot: Vision for a heterogeneous multi-chain framework.
+https://polkadot.network/PolkaDotPaper.pdf, 2019.
+[2] Iman Jahandideh, Fatemeh Ghassemi, and Marjan Sirjani. Hybrid rebeca: Modeling and analyzing of cyber-
+physical systems. In Roger Chamberlain, Walid Taha, and Martin Törngren, editors, Cyber Physical Systems.
+Model-Based Design, pages 3–27, Cham, 2019. Springer International Publishing.
+[3] Marten Lohstroh, Patricia Derler, and Marjan Sirjani. Principles of Modeling, volume 10760. Springer: Lecture
+Notes in Computer Science book series, 2018.
+[4] John Sterman. Business dynamics, system thinking and modeling for a complex world. http://lst-iiep.iiep-
+unesco.org/cgi-bin/wwwi32.exe/[in=epidoc1.in]/?t2000=013598/(100), 19, 01 2000.
+[5] Michael Zargham, Zixuan Zhang, and Victor Preciado. A state-space modeling framework for engineering
+blockchain-enabled economic systems. In Proceeding of the International Complex Systems Conference. New
+England Complex Systems Institute, 2018.
+[6] Z. Zhang, M. Zargham, and V.M. Preciado. On modeling blockchain-enabled economic networks as stochastic
+dynamical systems. Applied Network Science: Blockchain and Cryptocurrency [accepted], 2019 [forthcoming].
+[7] Jamsheed Shorish. Blockchain state machine representation. SocArXiv, Janu 2018.
+[8] Dmitry Novikov. Systems Theory and Systems Analysis. Systems Engineering, volume 47, pages 39–44. 01 2016.
+[9] S. Voshmgir and M. Zargham. Cryptoeconomics research roadmap: A cybernetics approach to token economics
+and economic systems engineering. Vienna University of Economics and Business Working Paper Series, 2019.
+[10] A Wayne Wymore. Model-based systems engineering. CRC press, 1993.
+[11] Yaneer Bar-Yam. When systems engineering fails-toward complex systems engineering. In SMC’03 Conference
+Proceedings. 2003 IEEE International Conference on Systems, Man and Cybernetics. Conference Theme-System
+Security and Assurance (Cat. No. 03CH37483), volume 2, pages 2021–2028. IEEE, 2003.
+[12] Yaneer Bar-Yam. General features of complex systems. Encyclopedia of Life Support Systems (EOLSS), UNESCO,
+EOLSS Publishers, Oxford, UK, 1, 2002.
+[13] Daniel DeLaurentis. Role of humans in complexity of a system-of-systems. In Vincent G. Duffy, editor, Digital
+Human Modeling, pages 363–371, Berlin, Heidelberg, 2007. Springer Berlin Heidelberg.
+[14] Iohan Vargas, Thiago Gottardi, and Rosana Braga. Approaches for integration in system of systems: a systematic
+review. pages 32–38, 05 2016.
+[15] Radhakisan Baheti and Helen Gill. Cyber-physical systems. The impact of control technology, 12(1):161–166,
+2011.
+[16] James M. Tien. On integration and adaptation in complex service systems. Journal of Systems Science and
+Systems Engineering, 17(4):385–415, Dec 2008.
+[17] Lotfi A. Zadeh. Outline of a new approach to the analysis of complex systems and decision processes. IEEE
+Trans. Systems, Man, and Cybernetics, 3(1):28–44, 1973.
+[18] J. S. Shamma. Robust stability with time-varying structured uncertainty. IEEE Transactions on Automatic Control,
+39(4):714–724, April 1994.
+[19] J.N. Tsitsiklis, D.P. Bertsekas, and M. Athans. Distributed asynchronous deterministic and stochastic gradient
+optimization algorithms. IEEE Transactions on Automatic Control, 31(9):803–812, 1986.
+[20] M. Chiang, S.H. Low, A.R. Calderbank, and J.C. Doyle. Layering as optimization decomposition: A mathematical
+theory of network architectures. Proceedings of the IEEE, 95(1):255–312, 2007.
+[21] Angelia Nedic, Asuman Ozdaglar, and Pablo A Parrilo. Constrained consensus and optimization in multi-agent
+networks. IEEE Transactions on Automatic Control, 55(4):922–938, 2010.
+[22] Reza Olfati-Saber and Richard M. Murray. Distributed cooperative control of multiple vehicle formations using
+structural potential functions. IFAC Proceedings Volumes, 35(1):495 – 500, 2002. 15th IFAC World Congress.
+[23] A. Jadbabaie, J. Lin, and S. Morse. Coordination of groups of mobile autonomous agents using nearest neighbor
+rules. IEEE Transactions on Automatic Control, 48(6):988–1001, 2003.
+[24] Reza Olfati-Saber. Flocking for multi-agent dynamic systems: Algorithms and theory. CALIFORNIA INST OF
+TECH PASADENA CONTROL AND DYNAMICAL SYSTEMS, 2004.
+39
+A PREPRINT - AUGUST 19, 2019
+[25] Engelbert J Dockner, Steffen Jorgensen, Ngo Van Long, and Gerhard Sorger. Differential games in economics and
+management science. Cambridge University Press, 2000.
+[26] Avner Friedman. Differential games. Courier Corporation, 2013.
+[27] Yu-Chi Ho. Differential games, dynamic optimization, and generalized control theory. Journal of Optimization
+Theory and Applications, 6(3):179–209, 1970.
+[28] Rufus Isaacs. Differential games: a mathematical theory with applications to warfare and pursuit, control and
+optimization. Courier Corporation, 1999.
+[29] Tamer Basar and Geert Jan Olsder. Dynamic noncooperative game theory, volume 23. Siam, 1999.
+[30] J. R. Marden, G. Arslan, and J. S. Shamma. Joint strategy fictitious play with inertia for potential games. IEEE
+Transactions on Automatic Control, 54(2):208–220, Feb 2009.
+[31] David WK Yeung and Leon A Petrosjan. Cooperative stochastic differential games. Springer Science & Business
+Media, 2006.
+[32] Yongcan Cao, Wenwu Yu, Wei Ren, and Guanrong Chen. An overview of recent progress in the study of distributed
+multi-agent coordination. IEEE Transactions on Industrial informatics, 9(1):427–438, 2012.
+[33] Robert Axelrod and William D Hamilton. The evolution of cooperation. science, 211(4489):1390–1396, 1981.
+[34] Reza Olfati-Saber, J. Alex Fax, and Richard M. Murray. Consensus and cooperation in networked multi-agent
+systems. Proceedings of the IEEE, 2007.
+[35] Ernst Fehr and Klaus M Schmidt. A theory of fairness, competition, and cooperation. The quarterly journal of
+economics, 114(3):817–868, 1999.
+[36] J. R. Marden, G. Arslan, and J. S. Shamma. Cooperative control and potential games. IEEE Transactions on
+Systems, Man, and Cybernetics, Part B (Cybernetics), 39(6):1393–1407, Dec 2009.
+[37] David W Johnson and Roger T Johnson. Cooperation and competition: Theory and research. Interaction Book
+Company, 1989.
+[38] Yoad Lewenberg, Yoram Bachrach, Yonatan Sompolinsky, Aviv Zohar, and Jeffrey S Rosenschein. Bitcoin
+mining pools: A cooperative game theoretic analysis. In Proceedings of the 2015 International Conference on
+Autonomous Agents and Multiagent Systems, pages 919–927. International Foundation for Autonomous Agents
+and Multiagent Systems, 2015.
+[39] Raymond A DeCarlo, Michael S Branicky, Stefan Pettersson, and Bengt Lennartson. Perspectives and results on
+the stability and stabilizability of hybrid systems. Proceedings of the IEEE, 88(7):1069–1082, 2000.
+[40] Daron Acemoglu, Vasco M. Carvalho, Asuman Ozdaglar, and Alireza Tahbaz-Salehi. The network origins of
+aggregate fluctuations. Econometrica, 80(5):1977–2016, 2012.
+[41] Dion Harmon, Marco Lagi, Marcus AM de Aguiar, David D Chinellato, Dan Braha, Irving R Epstein, and Yaneer
+Bar-Yam. Anticipating economic market crises using measures of collective panic. PloS one, 10(7):e0131871,
+2015.
+[42] Daron Acemoglu, Asuman Ozdaglar, and Alireza Tahbaz-Salehi. Systemic risk and stability in financial networks.
+American Economic Review, 105(2):564–608, February 2015.
+[43] Yaneer Bar-Yam. Multiscale variety in complex systems. Complexity, 9(4):37–45, 2004.
+[44] Yaneer Bar-Yam. A mathematical theory of strong emergence using multiscale variety. Complexity, 9(6):15–24,
+2004.
+[45] Dan Braha and Yaneer Bar-Yam. Topology of large-scale engineering problem-solving networks. Physical Review
+E, 69(1):016113, 2004.
+[46] Christian Wernz and Andrew Henry. Multi-level coordination and decision-making in service operations. Service
+Science, 1(4):270–283, 2009.
+[47] Christian Wernz and Abhijit Deshmukh. Multiscale decision-making: Bridging organizational scales in systems
+with distributed decision-makers. European Journal of Operational Research, 202(3):828 – 840, 2010.
+[48] Robert E. Lucas. Econometric policy evaluation: A critique. Carnegie-Rochester Conference Series on Public
+Policy, 1:19 – 46, 1976.
+[49] Kenneth J Arrow, Hollis B Chenery, Bagicha S Minhas, and Robert M Solow. Capital-labor substitution and
+economic efficiency. The review of Economics and Statistics, 43(3):225–250, 1961.
+[50] Ole Peters and Alexander Adamou. Ergodicity Economics. London Mathematical Laboratory, 2018.
+40
+A PREPRINT - AUGUST 19, 2019
+[51] John B Taylor, Michael Woodford, and Harald Uhlig. Handbook of macroeconomics. Elsevier, 1999.
+[52] B. M. Friedman and Frank Hahn, editors. Handbook of Monetary Economics, volume 1. Elsevier, 1 edition, 1990.
+[53] Nicholas Barberis and Richard Thaler. A survey of behavioral finance. Handbook of the Economics of Finance,
+1:1053–1128, 2003.
+[54] Edwin A Locke. Toward a theory of task motivation and incentives. Organizational behavior and human
+performance, 3(2):157–189, 1968.
+[55] Amos Tversky and Daniel Kahneman. Advances in prospect theory: Cumulative representation of uncertainty.
+Journal of Risk and uncertainty, 5(4):297–323, 1992.
+[56] Daniel Kahneman, Stewart Paul Slovic, Paul Slovic, and Amos Tversky. Judgment under uncertainty: Heuristics
+and biases. Cambridge university press, 1982.
+[57] John H Kagel and Alvin E Roth. The handbook of experimental economics, volume 2. Princeton university press,
+2016.
+[58] Michael S Branicky. Multiple lyapunov functions and other analysis tools for switched and hybrid systems. IEEE
+Transactions on automatic control, 43(4):475–482, 1998.
+[59] Georgios Piliouras, Evdokia Nikolova, and Jeff S Shamma. Risk sensitivity of price of anarchy under uncertainty.
+ACM Transactions on Economics and Computation (TEAC), 5(1):5, 2016.
+[60] Alvin E Roth and Ido Erev. Learning in extensive-form games: Experimental data and simple dynamic models in
+the intermediate term. Games and economic behavior, 8(1):164–212, 1995.
+[61] Ali Jadbabaie, Pooya Molavi, Alvaro Sandroni, and Alireza Tahbaz-Salehi. Non-bayesian social learning. Games
+and Economic Behavior, 76(1):210 – 225, 2012.
+[62] Daron Acemoglu and Asuman Ozdaglar. Opinion dynamics and learning in social networks. Dynamic Games and
+Applications, 1(1):3–49, 2011.
+[63] Ido Erev and Alvin E Roth. Predicting how people play games: Reinforcement learning in experimental games
+with unique, mixed strategy equilibria. American economic review, pages 848–881, 1998.
+[64] Jianshu Chen and Ali H Sayed. Diffusion adaptation strategies for distributed optimization and learning over
+networks. IEEE Transactions on Signal Processing, 60(8):4289–4305, 2012.
+[65] Ilan Lobel and Evan Sadler. Information diffusion in networks through social learning. Theoretical Economics,
+10(3):807–851, 2015.
+[66] Michael Grieves and John Vickers. Digital twin: Mitigating unpredictable, undesirable emergent behavior in
+complex systems. In Transdisciplinary perspectives on complex systems, pages 85–113. Springer, 2017.
+[67] Flo Conway, Jim Siegelman, and Gerald L Alexanderson. Dark hero of the information age: In search of norbert
+wiener, the father of cybernetics. The Mathematical Intelligencer, 28(2):70–73, 2006.
+[68] K. W. Hipel, M. M. Jamshidi, J. M. Tien, and C. C. White III. The future of systems, man, and cybernetics:
+Application domains and research methods. IEEE Transactions on Systems, Man, and Cybernetics, Part C
+(Applications and Reviews), 37(5):726–743, Sep. 2007.
+[69] Thomas Fischer and Christiane Herr. An Introduction to Design Cybernetics, pages 1–23. 07 2019.
+[70] Richard Thaler. Toward a positive theory of consumer choice. Journal of Economic Behavior & Organization,
+1(1):39–60, 1980.
+[71] Elinor Ostrom. A behavioral approach to the rational choice theory of collective action: Presidential address,
+american political science association, 1997. American political science review, 92(1):1–22, 1998.
+[72] Heinz Von Foerster. Ethics and second-order cybernetics. In Understanding understanding, pages 287–304.
+Springer, 2003.
+[73] Hoda Heidari, Claudio Ferrari, Krishna Gummadi, and Andreas Krause. Fairness behind a veil of ignorance: A
+welfare analysis for automated decision making. In Advances in Neural Information Processing Systems, pages
+1265–1276, 2018.
+[74] Kenneth Joseph Arrow. The economics of agency. Technical report, STANFORD UNIV CA INST FOR
+MATHEMATICAL STUDIES IN THE SOCIAL SCIENCES, 1984.
+[75] Martin Wollschlaeger, Thilo Sauter, and Juergen Jasperneite. The future of industrial communication: Automation
+networks in the era of the internet of things and industry 4.0. IEEE industrial electronics magazine, 11(1):17–27,
+2017.
+41
+A PREPRINT - AUGUST 19, 2019
+[76] Alasdair Gilchrist. Industry 4.0: the industrial internet of things. Apress, 2016.
+[77] Charith Perera, Chi Harold Liu, Srimal Jayawardena, and Min Chen. A survey on internet of things from industrial
+market perspective. IEEE Access, 2:1660–1679, 2014.
+[78] Jay Lee, Behrad Bagheri, and Hung-An Kao. A cyber-physical systems architecture for industry 4.0-based
+manufacturing systems. Manufacturing letters, 3:18–23, 2015.
+[79] Janusz J Sikorski, Joy Haughton, and Markus Kraft. Blockchain technology in the chemical industry: machine-to-
+machine electricity market. In Applied Energy, volume 195, pages 234–246. Elsevier, 2017.
+[80] Ragunathan Rajkumar, Insup Lee, Lui Sha, and John Stankovic. Cyber-physical systems: the next computing
+revolution. In Design Automation Conference, pages 731–736. IEEE, 2010.
+42

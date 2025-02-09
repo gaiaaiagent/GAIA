@@ -89,6 +89,22 @@
         {
             "path": "avalanche/resources/when_spring.txt",
             "shared": false
+        },
+        {
+            "path": "avalanche/economic-specification/avalanche-economic-specification.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/economic-specification/roles-taxonomy.txt",
+            "shared": false
+        },
+        {
+            "path": "avalanche/templates/eth-economic-math-spec.md",
+            "shared": false
+        },
+        {
+            "path": "avalanche/templates/polkadon-economic-system-specification.txt",
+            "shared": false
         }
     ],
     "messageExamples": [

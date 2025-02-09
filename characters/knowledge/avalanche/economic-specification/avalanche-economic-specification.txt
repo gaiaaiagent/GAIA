@@ -1,0 +1,370 @@
+Avalanche Economic Specification
+ Publication Stage: Draft―
+IDEATION:
+Working Title: <A short title that is descriptive of the piece>
+Adaptive Economics for Avalanche: An Reengineered Approach to Network Sustainability and Security
+Client or Squad: <Which client or squad is this article for?>
+TE Research Working Group and specifically Avalanche Research Group athough they overlap.
+Audience for the article: <Knowing the background or experience level of our audience helps to set tone and vocabulary for an article>
+The primary audience for this article includes:
+Subnet Developers and Token Designers: Technical professionals designing subnet-specific tokenomics who need insights into how Avalanche's overarching economic model can influence subnet behavior and scalability.
+Governance Bodies and Protocol Owners: Decision-makers involved in protocol adjustments who benefit from understanding adaptive mechanisms for emissions, staking requirements, and inflation control.
+Investors and Validators: Stakeholders seeking transparency on Avalanche's approach to network security, staking rewards, and economic sustainability, helping them make informed decisions on their participation.
+Purpose of the article: <The purpose of the article enables us to focus in on key points and potential TL;DR action steps. It also helps the comms group distinguish between the need for academic language & citations, or de-jargoning and simple explanations.>
+The purpose of this article is to present a reengineered economic model for Avalanche, inspired by the Ethereum cadCAD Economic Model  to enhance network sustainability, security, and adaptability. By applying differential specifications and adaptive economic controls, the article aims to outline how Avalanche can maintain balance within its ecosystem across varying market conditions.
+This piece is crafted to provide stakeholders with actionable insights on economic decision-making, highlighting control theory inspired mechanisms that dynamically adjust staking rewards, emissions, and validator incentives. The goal is to offer both a technically rigorous framework and clear, digestible explanations, ensuring accessibility for readers with varying levels of technical expertise.
+
+TL;DR Action Steps:
+Apply differential models to control inflation, staking rewards, and network fees.
+Leverage adaptive governance to maintain network stability across market cycles.
+Use probabilistic security frameworks to ensure resilient and scalable consensus.
+
+
+Desired Outcomes: <What are the desired outcomes of this piece?>
+Informed Economic Decisions for Stakeholders: Empower subnet developers, governance bodies, and validators to make data-driven decisions regarding staking incentives, emissions, and fee structures, aligned with Avalanche's goals of sustainability, security, and scalability.
+Enhanced Transparency and Trust: Increase investor and validator confidence by clearly articulating Avalanche’s adaptive economic mechanisms, demonstrating how the network can withstand market volatility and maintain long-term stability.
+Guidance for Adaptive Governance Implementation: Provide governance bodies with a practical framework for implementing differential and probabilistic economic models, enabling responsive governance actions that adjust key parameters based on real-time metrics.
+Positioning Avalanche as an Economic Model Leader: Showcase Avalanche’s unique approach to network sustainability and scalability, positioning it as a forward-thinking model for Layer 1 blockchain economics, comparable to Ethereum structure but optimized for Avalanche's unique architecture.
+Encourage Broader Adoption and Participation: By clarifying economic mechanisms and security benefits, attract more developers, validators, and investors to the Avalanche ecosystem, fostering a vibrant and well-balanced network.
+
+Publishing platform: <Will this article be published on the Inverter account, the Avalanche’s  account, or the authors account?> Need answers for this
+Publication & distribution notes: <Include distribution notes or link a document with further plans / do or have stakeholders been informed of publication?> Need answers for this
+Reference links / related docs:
+<Links to background documents or further context can be helpful> Later
+What support is needed from the Comms team? i.e. scaffolding/writing/content editing/polish edit/tweet thread
+Roles / Acknowledgements & CItations:
+Writer(s):
+Content Editor(s): (substantive i.e. structure/language)
+Final polish / publish:  (corrective edits i.e. grammar, punctuation):
+***PLEASE CHECK THAT ALL PARTIES ARE OKAY WITH & WOULD LIKE TO BE CITED ON THE PIECE***
+
+
+Deadline for publication:Note from Comms Team: It is ideal to have a minimum of 2 weeks heads up (more if the request includes writing or heavy content editing). We will turn around requests as quickly as possible depending what else is in the pipeline across several streams. Keep in mind we prioritize paid client work, but will do our best to give an estimate for turning around research pieces - timelines can move depending on what’s in the queue. Please let us know if you have any feedback, suggestions or questions.
+🙏Thank you for precious attention!
+💙 Comms
+
+OUTLINE:
+
+WHO
+WHAT
+WHEN
+WHERE
+WHY
+HOW
+MAIN POINTS to cover:
+Introduction & background
+Sub point 1
+Main point 1
+Sub point 1
+Sub point 2
+Main point 2
+Sub point 1
+Sub point 2
+Conclusion
+Call-to-Action
+Outline for "Adaptive Economics for Avalanche: A Reengineered Approach to Network Sustainability and Security"
+
+WHO
+Subnet Developers and Token Designers: Professionals creating application-specific tokenomics for Avalanche subnets.
+Governance Bodies and Protocol Owners: Decision-makers responsible for overseeing economic parameters and network incentives.
+Investors and Validators: Participants interested in the long-term value, security, and staking returns within Avalanche.
+WHAT
+Purpose: This article details a reengineered economic model for Avalanche, showcasing how dynamic controls inspired by Ethereum’s  framework can be adapted to Avalanche’s unique architecture. It focuses on mechanisms to adjust emissions, staking incentives, and fee structures based on real-time data.
+WHEN
+Context: Following the introduction of ACP-77, which allows more flexible design choices for subnet developers, this article is timely for stakeholders evaluating economic models that can adapt to market changes and stakeholder demands.
+WHERE
+Platform: Published in Inverter’s research or documentation hub, with potential cross-posting on industry blogs to reach a broader crypto-economic audience.
+WHY
+Motivation: Providing a resilient economic framework is essential for Avalanche’s long-term scalability, security, and user engagement. Adaptive economic controls ensure stability and growth even in volatile market conditions, giving stakeholders confidence in the network’s viability.
+HOW
+Approach: The article employs differential modeling and dynamic parameter control, drawn from Ethereum’s economic model, to demonstrate an adaptable approach suited for Avalanche’s decentralized structure. Examples will illustrate how these models maintain economic health across different phases of the network’s lifecycle.
+
+Main Points to Cover
+Introduction & Background
+Context Setting: Introduce Avalanche’s objectives of security, sustainability, value creation, and stability, with a focus on the challenges and opportunities of implementing an adaptive economic model.
+Overview of Ethereum’s Economic Model: Briefly explain Ethereum’s economic model, particularly its differential specifications, as a foundational concept for the adaptive model being developed for Avalanche.
+
+Main Point 1: The Need for Adaptive Economics in Avalanche
+Sub Point 1: Key Economic Goals for Avalanche
+Security, sustainability, stability, and value creation as overarching goals.
+Explanation of the importance of balancing these goals within a volatile crypto-economic environment.
+Sub Point 2: Challenges in Static Economic Models
+Limitations of static models that don’t adapt to market changes.
+Overview of risks like inflation, validator centralization, and fee volatility.
+
+Main Point 2: Core Components of the Adaptive Model for Avalanche
+Sub Point 1: Differential Specifications for Real-Time Adjustments
+Explanation of differential modeling and its application for adjusting staking rewards, emissions, and fee structures based on network health metrics.
+Examples of how differential specifications can control emissions during bear markets or boost rewards during growth phases.
+Sub Point 2: Role of Probabilistic and Multigraph Models in Economic Stability
+Overview of the multigraph model to represent agents (validators, delegators, developers,governors) within Avalanche, outlining agent behaviors and economic impacts.
+Explanation of probabilistic security measures from the Snow protocols to show resilience in Avalanche’s leaderless BFT structure.
+
+Main Point 3: Implementation of Adaptive Governance
+Sub Point 1: Adaptive Governance Mechanisms
+Outline governance-controlled parameters, such as staking rewards, validator requirements, and inflation adjustments.
+Description of how governance bodies can implement flexible rules for emissions and rewards, making adjustments based on real-time metrics.
+Sub Point 2: System-Wide Protocol Map and Stakeholder Interactions
+Mapping of Avalanche’s ecosystem protocols, including fee structures, validator incentives, and subsystem relationships.
+Visual representation of how governance interacts with the economic model, ensuring transparency and accountability.
+
+Conclusion
+Summary of Adaptive Economic Model Benefits: Reiterate how this model provides Avalanche with tools to manage security, stability, and scalability over the long term.
+Comparative Advantage: Position Avalanche’s model as a leader in adaptive Layer 1 economic frameworks.
+
+Call-to-Action
+For Subnet Developers: Explore the adaptive model in designing tokenomics that can dynamically adjust to market and usage shifts.
+For Governance Bodies: Consider implementing the proposed governance tools to manage emissions, staking rewards, and other economic parameters.
+For Investors and Validators: Engage with Avalanche’s governance to support policies that align with long-term network sustainability and value creation.
+
+
+
+
+
+DRAFT:
+
+TITLE:
+SUBTITLE: Master Model
+
+Context paragraph (in italics explaining the piece, any collaborators and nature of collaboration)
+
+<Draft content goes here, following from outlined points above>
+
+Streamline Simulation Experience
+Scope down parameters→ 	Focus on the core
+Minimum Viable Model
+How to eliminate parameter???
+ → Issuance of Native token
+
+
+Introduction
+Etna Upgrade Guiding philosophy:
+Primary Network Validator Requirement:
+Complex Staking Process: Subnet creators must issue staking tokens on the X-Chain, transfer them to the P-Chain, and then stake them. This multi-chain process adds unnecessary complexity.Validator set management and reward mechanisms are tightly controlled by the P-Chain. Subnet operators have limited autonomy in customizing these aspects.
+Reward mechanisms are predefined
+
+Goals
+Economy Level Goals
+These economy level goals (in contrast to protocol level goals) can be achieved through analyses of  network architecture, the signals generated by the network’s subsystems, and their interactions among each other.Once insights are generated they can be encoded into the network’s implementation and assist subnet developers to reach these highest level objectives with a much higher level of certainty.
+Security: Due to Avalanche's consensus mechanism how is the security being measured?
+Could be the total stake and one of the parameters in the utility function that was highlighted by Felix could be max(stake_amount) that is captured within the network at any specific point in time. Also due to the random assignments (citation from Stellar vs Avalanche paper on committee selection sub-sampling) as a security enhancement mechanism, this goal also refers to the network’s capability to fill all of its regulator roles (validators, etc vs polkadot RR – fishermen, collators, nominators) to ensure network’s participants good behavior and ability to capture any malicious activity.
+Sustainability: Avalanche has a gazillion use cases and can serve as an infrastructure platform for many applications and solutions. Therefore it must be flexible and adaptable to change and evolve over time.
+How can this be achieved?
+Efficient Governance Process (fair, just , unbiased towards any stakeholder’ group)
+Adaptive Economic Design: Rohan spoke about the PID controllers , Examples that come to mind are Olympus RBS, Any of the adaptive controls that gyroscope employs to maintain a stable peg
+What are we measuring here though , optimizing for?(Refer to ChorusOne Cosmos report for more insights)
+Value Creation:
+How does the true value of Avalanche develop?  (Rohan's hackmd doc)
+Total Value Locked
+Market Cap
+Volume
+Fees Generated
+Any external flow into the economy. Is the value generation somehow also internal e.g. Could time of lockup somehow be tied to a future value or cashflow.
+ Subnets are a resource conduit into Avalanche From network’s perspective Maximizing the total value of subnet deposits and total value they bring into the platform are integral goals for network success.
+max(total_subnet_value_locked) &
+max(daily_inflow)
+Stability: Can be defined as return on Investment (ROI) . What are the investors' decisions based off on?
+Return that they earn
+Risk associated with that return (Volatility & Predictability–conviction)
+min(volatility)
+max(predictability)
+Mapping Avalanche from Multiple Perspectives
+ Avalanche Economy relative to the Open Economy
+The Avalanche ecosystem exists within a broader cryptoeconomic environment, which itself is a subset of the global real economy. The network’s success depends not only on internal factors (e.g., governance, validator incentives, and tokenomics) but also on external macroeconomic conditions like  investor sentiment, and demand for decentralized applications.
+
+Key Components and Flow:
+Working Capital (Input):
+Belief of Future ROI: Investors decide to allocate capital based on expected future returns.
+Allocation of Capital: Capital is invested into the token economy, enabling the creation of products or services.
+Realized ROI: Past returns influence whether investors reinvest or withdraw their capital.
+Capital at Work (Inside the Economy):
+Labour/Asset Market: Capital interacts with labor or token markets within the closed economy.
+Capital funds activities that lead to the production of Products or Services.
+Payments flow within the closed economy as compensation for these services.
+Nominal Returns:
+Nominal returns represent the gross returns generated within the economy before accounting for external influences like inflation.
+Inflation within the token economy diminishes the nominal returns and impacts purchasing power.
+Real Returns:
+After inflation effects are accounted for, nominal returns become real returns, reflecting the true value generated by the token economy.
+Returns in FX (Interaction with the Open Economy):
+Real returns are converted to foreign exchange (FX) terms when measured against the global economy.
+This is influenced by exchange rate effects, which depend on the health and demand for the token economy.
+Market Price of Products or Services:
+The inside aggregate demand is driven by the conditions and value added within the token economy.
+Outside aggregate demand arises from global interest in the economy’s services/products, influenced by:
+Technological innovation.
+Political and legal developments.
+Substitutes and competitors in the global economy.
+Feedback Loop to Working Capital:
+Market prices, real returns, and realized ROI feed back into the investor decision-making process, influencing whether they allocate additional working capital or withdraw investments.
+Risk and Preferences: Individual decisions depend on risk preferences, expected returns, and external economic conditions.
+Key considerations:
+How does AVAX behave relative to fiat and other cryptocurrencies?
+What are the primary economic forces driving external demand for Avalanche’s services?
+How will macroeconomic shifts (e.g., interest rates, inflation, regulation) impact Avalanche’s exchange rate?
+A crucial link between a closed economy (like Avalanche) and the broader economy is its exchange rate. This rate acts as a valve, responding dynamically to both internal economic policies and external market forces. A growing, stable, and secure ecosystem should see positive pressure on the AVAX price as long as external demand remains strong.
+A decline in AVAX value may indicate inefficiencies, governance failures, or capital flight.
+A stable or growing AVAX price signals strong investor confidence, effective economic policies, and sustained demand for Avalanche's network services.
+Avalanche’s inflation and token distribution policies influences its economy and this inflation affects:
+Staking incentives – If AVAX supply increases without proportional demand growth, staking rewards may become devalued.
+System participation costs – Holders perceive inflation as a tax that reduces the value of their holdings.
+Economic sustainability – Careless increases in the monetary base could destabilize the economy and trigger capital flight.
+Capital allocation within Avalanche follows mechanism design principles:
+Why should foreign capital be allocated to Avalanche? Investors require competitive returns after inflation and exchange rate effects, relative to alternative investment options.
+Key investment metrics: Foreign investors will assess Avalanche’s potential using:
+Returns on working capital in FX (fiat currency)
+Market price stability in FX
+Projected network growth and adoption rates
+Growth rate vs. Price stability trade-offs: Investors balance the risk-reward of AVAX compared to other crypto assets.
+The demand side of Avalanche’s economy is defined by the market price in FX and the value created by the ecosystem. If Avalanche’s interoperability solutions and dApps are highly functional and in demand, this strengthens AVAX demand. Conversely, weak adoption or unreliable network performance reduces its attractiveness.
+How will external demand shocks affect Avalanche? Sudden capital outflows from crypto markets, regulatory shifts, or technological changes could impact participation rates, AVAX pricing, and validator behavior.
+What mechanisms mitigate these risks? Dynamic governance, algorithmic policy adjustments, and adaptive inflation controls can ensure long-term economic stability.
+
+Key economic indicators for the Avalanche economy over time, include:
+Exchange Rate (AVAX/USD): Trends in the valuation of AVAX against USD.
+Inflation Rate (%): Changes in the purchasing power of AVAX over time.
+Capital Inflows (M USD): Foreign capital entering the Avalanche ecosystem.
+Market Demand (M transactions): Growth in dApp usage and network activity.
+System Wide Protocol Map
+Capture the current specifications but the goal is not to replicate them. System Structure must inform higher-level abstractions.
+These maps must remain useful despite changes
+What are the internconnected subsystems?
+Deep dive into Identifying  core value flows mechanics …. Transactions, aggregations, validation, finalization .
+How is security ensured during this entire value flow pipeline? Consensus gimmicks.(refer to liveness and safety paper on BFT )
+Does the consensus mechanism enhance decentralization and security because we know how multichain architecture improves scalability. Their value proposition.
+ACP-77 ensures inclusivity by relaxing requirements for subnet slots.
+To Lucian's point a treasury subsystem similar to augmented bonding curve (commons pool) and a distribution policy for stakeholders based on protocol rules and logic.
+
+ User Taxonomy
+Identify roles within the broader Avalanche Ecosystem.
+How do their actions effect each other?
+ deterministic or stochastic actions of these agents partially trigger state-updates of the whole system, especially value and token flow. Understanding how these transmissions are connected and how they influence the state variables of the system is crucial for modeling system mechanisms and their dynamics
+What categories do they belong to?
+Subnet ROles
+Primary Network Roles
+Governance Roles
+ Native Token or $AVAX holder are also agents interacting with secondary economy and therefore part of the relation to the outside economy
+
+Multigraph State Space Model
+Ability to generalize from agent based models to subpopulation based data models(strategy profile). It requires that there is a model of agents by roles, which is capable of tracking both agent level state information and maintaining pointers to functions encoding strategies regarding those roles.An agent has a link to a role if that agent has a strategy regarding the mechanism related to that role.
+
+Validator: any agent who has a non-empty strategy(at least one viable option or action) to the mechanisms which allow participation as a validator will have a link to the validator role node in the multigraph data model and that link will include metadata related to this role including, but not limited to, a pointer to the function defining their state dependent strategy, their rate of inclusion in the validator set, their commission, and their reputation.
+Governance Participant: agent related to governance mechanisms.How is voting power determined in a general case. What other metadata does the governance link include.
+Secondary Market trader: All agents expected to have this role. Wide range of strategies regarding the use of this mechanism. Composition of strategies is also perhaps important in understanding the health of the economy.
+Must also contain links encoding agent to agent information. E.g sending of funds from one agent to another → mixing process results in wealth distribution.
+
+Monetary and Fiscal Policy
+What is the task of fiscal policy? Whom is it entrusted to?.
+Taxation of specific events in the ecosystem and the redistribution of funds according to chosen goals. This is designed with the following ideas in mind:
+How is malicious behavior penalized?
+Does taxation guarantee some utility that can be justified like maintenance, servicing or upkeep ?
+Does it ensure stable growth of the ecosystem, how is the wealth distribution taking place?
+Differential Specification
+The multigraph state space model is not fully represented in the differential specification figure, but they are closely related perspectives on the system. The differential specification is a characterization of how the economic system evolves over time. It contains the logic required to characterize the system dynamics even when those dynamics are not under the control of the system designer.
+Differential Specification Grid must contain:
+Policies
+State Update Logic
+State
+Metrics
+
+Differential Specification Syntax:
+Information Flow : Any data structure may be used to convey state update execution. The expected path is from actions, policies, and processes to mechanisms to states variables to metrics
+Environmental Process Driver: Data feed that informs an exogenous process. This may be real or assumed data to provide updated input for a model representing a change of external conditions.
+User behavior Function:
+Control Function
+Environmental Process Model
+Mechanism: System defined functions that take user actions and control policy input to update a set of state variables. Mechanism functions may be logically or operationally grouped to be executed concurrently as a partial state update.
+State Variable: Defined to capture the shape and property of the network, representing publicly or privately held output of the system. The updates to the information can only come through mechanisms and exogenous models and not user or control actions. The data may be updated repeatedly within a simulated step. The resolution of all partial updates is the state update.
+Performance Indicator
+
+
+
+
+Component Specification:
+The component specification contains a simple description of each of the logical blocks in the differential specification. Each block contains an abstraction of an element of the system which is sufficiently broken down to allow easy implementation in a computational model while still allowing the system design to change without severely affecting the model. The precise logic in each block will be derived from the most up to date protocol specifications. (Would need Doga’s help here )
+Define a syntax  for components!!
+1. Uncontrolled processes: Environment: Uncontrolled processes representing activity that can be modeled with potentially state dependent stochastic processes.These are driving processes which will be stochastic process generator models during the design phase and fed with real data during the live system phase.
+Environmental Process Drivers:
+Demand: Represents the activity on the secondary market exchange modeling buy and sell demand.  Can be modeled through the assumed functions, historical performance, live data when available, machine learning. (ask Rohan)
+What does the output of this process tell us. What does it update?
+Xxx
+Yyy
+Zzz
+
+2. Uncontrolled Processes: Behavior
+Uncontrolled processes representing activity that can be modeled with state dependent functions, which are deterministic responses to the state by uncontrolled actors
+User Behavior Functions:
+	Validator Role: The Validator chooses to stake their $Avax…
+	Voter Role: Agent can chose to participate as a voter on proposals for protocol upgrade . Find out the high level mechanism of how updates to ecosystem occur? Is there a council or committee  or is it direct voting or some other voting scheme …blah blah
+
+3. Controlled Processes: Algorithmic Ploicy
+Controlled decision processes are the elements of the decision making layer which remain under the control of the systems designers.One can imagine adjusting the algorithm for setting the inflation rate. Exact distribution of rewards and penalties is better viewed as algorithmic policy compared to the conditions under which rewards are given and penalties are imposed.
+	Inflation Rate: Policy governing the control of inflation rates. This decision is informed by secondary market dynamics and also driven by the fiscal policy. Setting the inflation rate is output to the Mint mechanism.
+
+4. System State Updates: Mechanisms
+The mechanism or state update logic blocks represent the deterministic consequences of potentially non-deterministic inputs.  Many of these mechanisms will contain parameters which are themselves state variables.
+Compute Rewards
+Compute Slash
+Transaction Fees: State update mechanism for charging transaction fees.
+Mint
+Transfer Funds
+
+5. State Variables:
+	Reserve Amounts
+	Staked Amount
+6. Metrics: Goals and Measures of System Health
+	Token Velocity:
+	Target Inflation Rate
+	Market Price Volatility
+	FDV
+
+Insights and Recommendations
+Security: Impact on total stake amount captured within network
+Sustainability: Focus on Avalanche Governance and adaptability
+Value Creation:
+Stability: Insights on reducting network volatility and increased predictability
+
+
+Acknowledgements
+<Authors/Citations/thanks goes here>
+
+Suggested Citation: Last, First Initial., other authors in same format, 2023. "Title". …... Available online: [insert link]
+
+
+About Inverter
+
+
+
+
+
+
+EDITING & REVIEW
+This phase is spent editing the draft document above. Ensure all relevant stakeholders have input to the process, and understand the timeline of publication. Before publication, be sure to check for the three C’s:
+
+Correctness (signoff by project lead or client team)
+Clarity (signoff by Comms)
+Compliance (signoff by Ops)
+
+
+PUBLICATION
+Discuss publication strategy with comms team & client
+Typically we aim for primary publication on Inverter blog, secondary publication on xxxx
+Cross publication on client platform?
+Post distribution strategy into #comms-request channel on slack
+Add to a Quarterly newsletter
+Network sharing strategy
+Tracking & re-posting
+Ensure final article is logged in Article tracking system
+If content is evergreen, add to the distribution schedule regularly
+
+
+
+
+
+FOR PAPER SUMMARY BLOGS
+
+citation
+intro
+abstract
+about Inverter Network
+
