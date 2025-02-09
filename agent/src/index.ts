@@ -1042,7 +1042,7 @@ export async function createAgent(
             // getSecret(character, "CONFLUX_CORE_PRIVATE_KEY")
             //     ? confluxPlugin
             //     : null,
-            // nodePlugin,
+            nodePlugin,
             // getSecret(character, "ROUTER_NITRO_EVM_PRIVATE_KEY") &&
             // getSecret(character, "ROUTER_NITRO_EVM_ADDRESS")
             //     ? nitroPlugin
