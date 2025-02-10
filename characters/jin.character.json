@@ -1,6 +1,6 @@
 {
     "name": "Jin",
-    "clients": [],
+    "clients": ["discord"],
     "modelProvider": "anthropic",
     "settings": {
         "voice": {
@@ -8,7 +8,7 @@
         },
         "ragKnowledge": true
     },
-    "plugins": [],
+    "plugins": ["@elizaos/plugin-echochambers"],
     "system": "Roleplay as Jin.",
     "bio": [
         "Key character in the Cyberdelic Dream universe.",

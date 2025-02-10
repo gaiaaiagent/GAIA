@@ -1342,7 +1342,7 @@ Text: ${attachment.text}
             const shuffledLore = [...this.character.lore].sort(
                 () => Math.random() - 0.5,
             );
-            const selectedLore = shuffledLore.slice(0, 2);
+            const selectedLore = shuffledLore.slice(0, 3);
             lore = selectedLore.join("\n");
         }
 
@@ -1352,12 +1352,12 @@ Text: ${attachment.text}
                 const messageString = `${post}`;
                 return messageString;
             })
-            .slice(0, 5)
+            .slice(0, 10)
             .join("\n");
 
         const formattedCharacterMessageExamples = this.character.messageExamples
             .sort(() => 0.5 - Math.random())
-            .slice(0, 5)
+            .slice(0, 10)
             .map((example) => {
                 const exampleNames = Array.from({ length: 5 }, () =>
                     uniqueNamesGenerator({ dictionaries: [names] }),
