@@ -1030,11 +1030,11 @@ export async function createAgent(
             //     ? elizaCodeinPlugin
             //     : null,
             bootstrapPlugin,
-            getSecret(character, "CDP_API_KEY_NAME") &&
-            getSecret(character, "CDP_API_KEY_PRIVATE_KEY") &&
-            getSecret(character, "CDP_AGENT_KIT_NETWORK")
-                ? agentKitPlugin
-                : null,
+            // getSecret(character, "CDP_API_KEY_NAME") &&
+            // getSecret(character, "CDP_API_KEY_PRIVATE_KEY") &&
+            // getSecret(character, "CDP_AGENT_KIT_NETWORK")
+            //     ? agentKitPlugin
+            //     : null,
             // getSecret(character, "DEXSCREENER_API_KEY")
             //     ? dexScreenerPlugin
             //     : null,
@@ -1062,11 +1062,11 @@ export async function createAgent(
             // getSecret(character, "NEAR_WALLET_SECRET_KEY")
             //     ? nearPlugin
             //     : null,
-            getSecret(character, "EVM_PUBLIC_KEY") ||
-            (getSecret(character, "WALLET_PUBLIC_KEY") &&
-                getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
-                ? evmPlugin
-                : null,
+            // getSecret(character, "EVM_PUBLIC_KEY") ||
+            // (getSecret(character, "WALLET_PUBLIC_KEY") &&
+            //     getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
+            //     ? evmPlugin
+            //     : null,
             // (getSecret(character, "EVM_PUBLIC_KEY") ||
             //     getSecret(character, "INJECTIVE_PUBLIC_KEY")) &&
             // getSecret(character, "INJECTIVE_PRIVATE_KEY")
@@ -1080,70 +1080,70 @@ export async function createAgent(
             //         !getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith(
             //             "0x"
             //         ))) &&
-            getSecret(character, "SOLANA_ADMIN_PUBLIC_KEY") &&
-            getSecret(character, "SOLANA_PRIVATE_KEY") &&
-            getSecret(character, "SOLANA_ADMIN_PRIVATE_KEY")
-                ? nftGenerationPlugin
-                : null,
+            // getSecret(character, "SOLANA_ADMIN_PUBLIC_KEY") &&
+            // getSecret(character, "SOLANA_PRIVATE_KEY") &&
+            // getSecret(character, "SOLANA_ADMIN_PRIVATE_KEY")
+            //     ? nftGenerationPlugin
+            //     : null,
             // getSecret(character, "ZEROG_PRIVATE_KEY") ? zgPlugin : null,
             // getSecret(character, "COINMARKETCAP_API_KEY")
             //     ? coinmarketcapPlugin
             //     : null,
             // getSecret(character, "ZERION_API_KEY") ? zerionPlugin : null,
-            getSecret(character, "COINBASE_COMMERCE_KEY")
-                ? coinbaseCommercePlugin
-                : null,
-            getSecret(character, "FAL_API_KEY") ||
-            getSecret(character, "OPENAI_API_KEY") ||
-            getSecret(character, "VENICE_API_KEY") ||
-            getSecret(character, "NVIDIA_API_KEY") ||
-            getSecret(character, "NINETEEN_AI_API_KEY") ||
-            getSecret(character, "HEURIST_API_KEY") ||
-            getSecret(character, "LIVEPEER_GATEWAY_URL")
-                ? imageGenerationPlugin
-                : null,
-            getSecret(character, "FAL_API_KEY") ? ThreeDGenerationPlugin : null,
-            ...(getSecret(character, "COINBASE_API_KEY") &&
-            getSecret(character, "COINBASE_PRIVATE_KEY")
-                ? [
-                      coinbaseMassPaymentsPlugin,
-                      tradePlugin,
-                      tokenContractPlugin,
-                      advancedTradePlugin,
-                  ]
-                : []),
-            ...(teeMode !== TEEMode.OFF && walletSecretSalt ? [teePlugin] : []),
-            teeMode !== TEEMode.OFF &&
-            walletSecretSalt &&
+            // getSecret(character, "COINBASE_COMMERCE_KEY")
+            //     ? coinbaseCommercePlugin
+            //     : null,
+            // getSecret(character, "FAL_API_KEY") ||
+            // getSecret(character, "OPENAI_API_KEY") ||
+            // getSecret(character, "VENICE_API_KEY") ||
+            // getSecret(character, "NVIDIA_API_KEY") ||
+            // getSecret(character, "NINETEEN_AI_API_KEY") ||
+            // getSecret(character, "HEURIST_API_KEY") ||
+            // getSecret(character, "LIVEPEER_GATEWAY_URL")
+            //     ? imageGenerationPlugin
+            //     : null,
+            // getSecret(character, "FAL_API_KEY") ? ThreeDGenerationPlugin : null,
+            // ...(getSecret(character, "COINBASE_API_KEY") &&
+            // getSecret(character, "COINBASE_PRIVATE_KEY")
+            //     ? [
+            //           coinbaseMassPaymentsPlugin,
+            //           tradePlugin,
+            //           tokenContractPlugin,
+            //           advancedTradePlugin,
+            //       ]
+            //     : []),
+            // ...(teeMode !== TEEMode.OFF && walletSecretSalt ? [teePlugin] : []),
+            // teeMode !== TEEMode.OFF &&
+            // walletSecretSalt &&
             // getSecret(character, "VLOG")
             //     ? verifiableLogPlugin
             //     : null,
             // getSecret(character, "SGX") ? sgxPlugin : null,
-            getSecret(character, "ENABLE_TEE_LOG") &&
-            ((teeMode !== TEEMode.OFF && walletSecretSalt) ||
-                getSecret(character, "SGX"))
-                ? teeLogPlugin
-                : null,
+            // getSecret(character, "ENABLE_TEE_LOG") &&
+            // ((teeMode !== TEEMode.OFF && walletSecretSalt) ||
+            //     getSecret(character, "SGX"))
+            //     ? teeLogPlugin
+            //     : null,
             // getSecret(character, "OMNIFLIX_API_URL") &&
             // getSecret(character, "OMNIFLIX_MNEMONIC")
             //     ? OmniflixPlugin
             //     : null,
-            getSecret(character, "COINBASE_API_KEY") &&
-            getSecret(character, "COINBASE_PRIVATE_KEY") &&
-            getSecret(character, "COINBASE_NOTIFICATION_URI")
-                ? webhookPlugin
-                : null,
-            goatPlugin,
-            zilliqaPlugin,
-            getSecret(character, "COINGECKO_API_KEY") ||
+            // getSecret(character, "COINBASE_API_KEY") &&
+            // getSecret(character, "COINBASE_PRIVATE_KEY") &&
+            // getSecret(character, "COINBASE_NOTIFICATION_URI")
+            //     ? webhookPlugin
+            //     : null,
+            // goatPlugin,
+            // zilliqaPlugin,
+            // getSecret(character, "COINGECKO_API_KEY") ||
             getSecret(character, "COINGECKO_PRO_API_KEY")
                 ? coingeckoPlugin
                 : null,
-            getSecret(character, "MORALIS_API_KEY") ? moralisPlugin : null,
-            getSecret(character, "EVM_PROVIDER_URL") ? goatPlugin : null,
-            getSecret(character, "ABSTRACT_PRIVATE_KEY")
-                ? abstractPlugin
-                : null,
+            // getSecret(character, "MORALIS_API_KEY") ? moralisPlugin : null,
+            // getSecret(character, "EVM_PROVIDER_URL") ? goatPlugin : null,
+            // getSecret(character, "ABSTRACT_PRIVATE_KEY")
+            //     ? abstractPlugin
+            //     : null,
             // getSecret(character, "B2_PRIVATE_KEY") ? b2Plugin : null,
             // getSecret(character, "BINANCE_API_KEY") &&
             // getSecret(character, "BINANCE_SECRET_KEY")
@@ -1179,9 +1179,9 @@ export async function createAgent(
             //     ? squidRouterPlugin
             //     : null,
             // getSecret(character, "FUEL_PRIVATE_KEY") ? fuelPlugin : null,
-            getSecret(character, "AVALANCHE_PRIVATE_KEY")
-                ? avalanchePlugin
-                : null,
+            // getSecret(character, "AVALANCHE_PRIVATE_KEY")
+            //     ? avalanchePlugin
+            //     : null,
             // getSecret(character, "BIRDEYE_API_KEY") ? birdeyePlugin : null,
             getSecret(character, "ECHOCHAMBERS_API_URL") &&
             getSecret(character, "ECHOCHAMBERS_API_KEY")
@@ -1269,13 +1269,13 @@ export async function createAgent(
             // getSecret(character, "IMGFLIP_PASSWORD")
             //     ? imgflipPlugin
             //     : null,
-            getSecret(character, "FUNDING_PRIVATE_KEY") &&
-            getSecret(character, "EVM_RPC_URL")
-                ? litPlugin
-                : null,
-            getSecret(character, "ETHSTORAGE_PRIVATE_KEY")
-                ? ethstoragePlugin
-                : null,
+            // getSecret(character, "FUNDING_PRIVATE_KEY") &&
+            // getSecret(character, "EVM_RPC_URL")
+            //     ? litPlugin
+            //     : null,
+            // getSecret(character, "ETHSTORAGE_PRIVATE_KEY")
+            //     ? ethstoragePlugin
+            //     : null,
         //     getSecret(character, "MINA_PRIVATE_KEY") ? minaPlugin : null,
         //     getSecret(character, "FORM_PRIVATE_KEY") ? formPlugin : null,
         //     getSecret(character, "ANKR_WALLET") ? ankrPlugin : null,
