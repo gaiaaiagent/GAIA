@@ -504,7 +504,10 @@ export class TwitterPostClient {
                 "twitter"
             );
 
-            const topics = this.runtime.character.topics.join(", ");
+            const topics = this.runtime.character.topics
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 2)
+                .join(", ");
             const maxTweetLength = this.client.twitterConfig.MAX_TWEET_LENGTH;
             const state = await this.runtime.composeState(
                 {
