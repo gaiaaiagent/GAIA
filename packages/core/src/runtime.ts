@@ -1342,7 +1342,7 @@ Text: ${attachment.text}
             const shuffledLore = [...this.character.lore].sort(
                 () => Math.random() - 0.5,
             );
-            const selectedLore = shuffledLore.slice(0, 10);
+            const selectedLore = shuffledLore.slice(0, 2);
             lore = selectedLore.join("\n");
         }
 
@@ -1352,7 +1352,7 @@ Text: ${attachment.text}
                 const messageString = `${post}`;
                 return messageString;
             })
-            .slice(0, 50)
+            .slice(0, 5)
             .join("\n");
 
         const formattedCharacterMessageExamples = this.character.messageExamples
@@ -1469,7 +1469,7 @@ Text: ${attachment.text}
             knowledgeData = await this.ragKnowledgeManager.getKnowledge({
                 query: message.content.text,
                 conversationContext: recentContext,
-                limit: 10,
+                limit: 3,
             });
 
             formattedKnowledge = formatKnowledge(knowledgeData);
