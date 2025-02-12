@@ -27,6 +27,10 @@
         {
             "path": "our/grant-information.txt",
             "shared": false
+        },
+        {
+            "path": "our/grant-application.txt",
+            "shared": false
         }
     ],
     "messageExamples": [

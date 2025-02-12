@@ -1,0 +1,314 @@
+
+
+Feb 11, Daniel, Lee, Brandy, Shawn, Darren
+Brandy
+Play into ecotourism potential
+What do we already have funded? Homework for all of us
+Consult at 2x and donate back half
+Lee:
+developing AI skills is a great outcome of the awakening the dragon experience, especially for youth, has long term economic impacts too
+From mining, forestry etc to AI industry
+Way points of dragon are opportunities of introspection, how to go from that to convenings of the right sets of people that allow for symbiosis and action.  an initiation ritual?  Could culminate in ticket to community, here is the population of people engaged with that type of work in the local region,
+
+
+Application Questions
+Primary Contact Person
+Brandy Gallagher
+Secondary Contact Person
+Shawn Anderson
+Mr
+shawn@longtailfinancial.com
+12507970950
+Project Information
+Project Title
+Awaken the Dragon: A Journey of reSTORYing Climate Resilience, Justice, and Wellbeing
+Project Address
+Briefly describe your project activities in plain language. This is an important section as it will be used in summary documents to describe your project at various review stages (maximum of 1,000 characters including spaces).
+
+Awaken the Dragon is an AI-powered educational platform that transforms climate resilience education through personalized learning pathways and real-time adaptation strategies. The project implements proven AI technologies across 9 interactive learning kiosks at OUR Ecovillage, creating a scalable model for climate education and wellness programming. Building on existing partnerships with educational institutions and validated through years of on-site programming, this commercialization-ready system integrates predictive modeling, adaptive learning algorithms, and engagement metrics to deliver measurable outcomes in climate literacy and community resilience. The platform will generate revenue through licensing, professional development programs, and eco-tourism, while creating sustainable jobs in BC's growing AI sector.
+Briefly describe the economic benefits associated with this project (maximum of 1,000 characters including spaces).
+This project will generate significant economic impact through multiple revenue streams:
+Software licensing of our AI-enhanced learning platform to educational institutions, corporations, and government agencies.
+Professional development programs for educators, corporate trainers, and climate adaptation specialists.
+Eco-tourism revenue from visitors engaging with our interactive kiosks. The project will create high-quality jobs including AI developers, educational content creators, and program facilitators. Our university partnerships enable knowledge transfer and workforce development in BC's AI sector. Based on market analysis and existing program data, we project training 500+ professionals annually and creating 15+ full-time positions within two years.
+
+[talk about short, medium, and long term benefits, with longer including system benefits from reduced mental health problems, improved education, improved knowledge commons, healthy environment and communities, etc  some not easy to quantify but with large systemic value add]
+
+suggestion:
+The Awaken the Dragon project will create 15+ quality jobs in BC's AI sector, including AI developers ($80-120K), content creators ($60-80K), and program facilitators ($50-70K). Revenue will grow from $500K (Year 1) to $2.5M (Year 3) through commercialization of four AI technologies: an adaptive learning platform, AR/VR experiences, mental health support tools, and impact measurement analytics. The project will generate $200K in R&D expenditure and attract matching private investment of $500K-1M. Our training programs will develop 500+ highly qualified personnel annually, including 300 educators, 150 climate specialists, and 50 AI implementers. This creates a competitive technology cluster in climate education while fostering inclusive growth through Indigenous-led programming. Organizations adopting our AI tools will see productivity gains through streamlined training delivery and enhanced learning outcomes, establishing BC as a leader in AI-driven climate solutions.
+Which RDA Priority does this project best support?
+Competitive industry clusters: supporting local business clusters that collaborate to create products and services
+
+Also, Inclusive Growth?
+(see https://www.canada.ca/en/pacific-economic-development/corporate/transparency/departmental-plans/2024-2025-departmental-plan/at-a-glance.html)
+
+
+Advanced Manufacturing | Fabrication de pointe
+Clean Resources | Ressources propres
+Clean Technology | Technologies propres
+Digital Industries | Industries numériques
+Inclusiveness – Indigenous | Inclusivité – Autochtones
+Inclusiveness – Women | Inclusivité – Femmes
+Inclusiveness - Youth | Inclusivité – Jeunes
+Value-added Agriculture | Agriculture à valeur ajoutée
+Tourism | Tourisme
+Health/Bio-sciences | Sciences biologiques et de la santé
+Natural Resources Value-added Processing | Transformation à valeur ajoutée des ressources naturelles
+Other | Autre
+
+Explain how this project supports the indicated priority (maximum of 2,000 characters).
+
+[JEDI - justice, equity, diversity, inclusion]
+Natural resources value add (building materials (cob), textiles
+
+
+
+Our project creates a collaborative business cluster that unites BC's AI technology, education, and climate resilience sectors. By bringing together software developers, educational institutions, and sustainability organizations, we're establishing an innovative product development ecosystem that strengthens regional competitiveness.
+
+
+Product Creation & Commercialization emerges through development of market-ready AI learning platforms integrated with physical learning spaces. Our AI-enhanced educational tools adapt to individual and group learning needs while gathering valuable data on climate resilience education efficacy. The scalable products include customizable learning modules, assessment tools, and engagement metrics that can be licensed to educational institutions and organizations across Canada and internationally.
+
+
+Cross-Sector Collaboration happens through deep integration with academic partners like UVic for ongoing R&D and validation of our approaches. We're building bridges between K-12 educators, corporate training providers, and Indigenous knowledge holders to create comprehensive climate resilience education programs. This collaborative approach ensures our products meet real market needs while advancing BC's position as a leader in AI-enhanced education.
+
+
+Market Development grows through creation of export-ready educational technology solutions that can be deployed globally. Our professional development programming targets educators, corporate trainers, and climate adaptation specialists, creating ongoing revenue streams. The integration with eco-tourism opportunities at OUR Ecovillage provides a living laboratory that attracts international attention and investment.
+
+
+This cluster model strengthens BC's competitive advantage by fostering innovation at the intersection of AI, education, and climate action. It creates sustainable economic opportunities across the province while positioning BC as a global leader in climate resilience education technology.
+
+
+
+
+
+Project Timelines
+Phase 1: System Prototype Demonstration (June-November 2025)
+Source AI developers, education specialists
+Procure AI platform servers, kiosk hardware
+Installation of first kiosk
+Knowledge base platform initialization
+Phase 2: System Qualification (December 2025-May 2026)
+Teacher training development
+Educational program launch
+Licensing framework development
+Testing of kiosks in practice
+Installation of three total kiosks
+Development of knowledge base user interface
+Phase 3: Operational Proof (June 2026-May 2027)
+Platform tuning and iteration
+Educational platform commercial rollout
+Platform Impact assessment
+Installation of all nine kiosks
+Knowledge base commercialization rollout
+
+Funding
+[Spreadsheet here for more comprehensive budget breakdown]
+
+Confirmation of funding from third-party sources can include:
+official funding letters
+funding agreements
+signed term sheets
+
+
+Staffing
+Outreach and Marketing
+Focus meetings
+Class based
+Training Equipment
+Cultural competency trainers
+Technical Equipment
+Consulting
+Stack functions. Consult at double the cost and donate half back, also known as match funding. Write a project quote for costing, for which we will need a letter ‘Sam Smith is building AR platform X to do Y, charging the entire project, and listing all things being done loosely, developing the final fit, further consulting charged out at X amount of hour. Room for slippage and redesign.
+We will be building the knowledge kiosks spaces
+Conferences
+Economic station ,redefining value, all the BioFi stuff, this could be a case study at a BioFi conference
+Gaia AI
+Would agent starter grant (~50K USD) be eligible as matched funding?
+Possible overlap with work of Lee with local AI servers
+Re-villaging camp in July as a kickstarter when people are here. July 6-20.
+Project Costs
+Phase 1 (June-November 2025)
+
+Description: AI Development Team
+Type: Wages/Benefits
+Amount: $120,000
+Actions: Source and hire developers, begin platform development
+
+Description: Education Specialists
+Type: Wages/Benefits
+Amount: $80,000
+Actions: Content development, pedagogical framework
+
+Description: Computing Infrastructure
+Type: Equipment
+Amount: $60,000
+Actions: Procure and setup AI servers
+
+Description: Initial Kiosk Hardware
+Type: Equipment
+Amount: $40,000
+Actions: Procure and install first kiosk components
+
+Description: Installation Services
+Type: Technical Services
+Amount: $30,000
+Actions: Professional installation of first kiosk
+
+Description: Platform Setup
+Type: Technical Services
+Amount: $50,000
+Actions: Initial platform configuration and testing
+
+Description: Knowledge Base Development
+Type: Professional Services
+Amount: $40,000
+Actions: Development of initial knowledge base structure
+
+Phase 2 (December 2025-May 2026)
+
+Description: Development Team
+Type: Wages/Benefits
+Amount: $200,000
+Actions: Ongoing platform development and refinement
+
+Description: Training Program Development
+Type: Professional Services
+Amount: $80,000
+Actions: Create teacher training materials and programs
+
+Description: Marketing Launch
+Type: Marketing
+Amount: $40,000
+Actions: Program awareness and recruitment campaign
+
+Description: Licensing Framework
+Type: IP Costs
+Amount: $30,000
+Actions: Develop licensing structure and agreements
+
+Description: Testing & Refinement
+Type: Technical Services
+Amount: $50,000
+Actions: System testing and optimization
+
+Phase 3 (June 2026-May 2027)
+
+Description: Operations Team
+Type: Wages/Benefits
+Amount: $250,000
+Actions: Platform operations and maintenance
+
+Description: Platform Optimization
+Type: Technical Services
+Amount: $100,000
+Actions: Ongoing system improvements and scaling
+
+Description: Commercial Marketing
+Type: Marketing
+Amount: $80,000
+Actions: Full commercial rollout campaign
+
+Description: Impact Assessment
+Type: Professional Services
+Amount: $50,000
+Actions: Evaluation of platform effectiveness and outcomes
+
+
+Cash Flows
+Fiscal Year (24/25,25/26,26/27,27/28)
+Total Fiscal Expenditures
+RDA Funding
+Non-RDA funding
+Actions
+Funding Partners
+Funding Partner
+Funding Category
+Funding Confirmed
+
+Intellectual license
+Royalties on licenses of software, AI
+Team Page
+Shawn on LinkedIn: https://www.linkedin.com/in/shawnwanderson
+Shawn Personal Website: https://website-fdlm-git-main-linuxiscools-projects.vercel.app/
+Darren on LinkedIn: https://www.linkedin.com/in/zaldarren/
+GAIA AI
+Shawn and Darren affiliated
+https://www.gaiaai.app/
+https://x.com/gaiaaiagent
+Daniel
+LinkedIn: https://www.linkedin.com/in/daniel-lindenberger-00824916/
+Thaumazo (nonprofit): (https://www.thaumazo.org/) (update coming in a few days)
+Thaumazo’s AI Working group on Education presenting: https://emcop.ca/2024/02/15/march-2024-deepening-knowledge-and-learning/
+Letter of partnership from Thaumazo
+Industry Mentor at EML
+
+Budget
+Eligible costs
+Funding can cover essential project costs including:
+wages and benefits
+equipment and machinery
+marketing
+technology development and commercial demonstration costs (Technology Readiness Level 7-9)
+intellectual property costs
+professional, advisory and technical services
+All costs must be reasonable, incremental and essential to the implementation of the project.
+
+
+Timeline
+
+TRL 7: System prototype demonstration in operational environment
+TRL 8: System complete and qualified
+TRL 9: Actual system proven in operational environment
+
+
+
+
+
+Start October 1st?
+
+Proposal: Development of the system is scouring climate change adaptation design, permaculture design, bringing them down into a palatable and mythopoetic way of helping multi-age learners to access themselves as a designer. They can be grade 5s, they can be Nasa Engineers. The trick isn’t for us to build the knowledge platform, the trick is to build the knowledge platform that pulls from all the knowledge platforms. Tap into the movements. Bigger than OUR or even the eco village movement, think about all the domains, permaculture design, ecovillage design, environmental, restorative justice, truth and reconciliation, biofinance. How can all those domains be accessed? Systems and ecology based in nature, but on a holographic level, it has to speak to mental health databases. It’s important to give people who feel caught in the web of challenges some agency. Coming beyond mental health crisis, I can find a way to start trying to work in a group towards water solutions.
+
+Level 7: Prototype ready for demonstration in an appropriate operational environment
+Prototype at planned operational level and is ready for demonstration in an operational environment. Activities include prototype field testing.
+
+Level 8: Actual technology completed and qualified through tests and demonstrations
+Technology has been proven to work in its final form and under expected conditions. Activities include developmental testing and evaluation of whether it will meet operational requirements.
+
+Level 9: Actual technology proven through successful deployment in an operational setting
+Actual application of the technology in its final form and under real-life conditions, such as those encountered in operational tests and evaluations. Activities include using the innovation under operational conditions.
+
+Over what timeline? 12 months? 24 months? The actual technology is proven to work in its expected conditions.
+
+Document Checklist
+
+Financial statements
+Proof of incorporation/organization status
+Project timeline and milestones
+Letters of support from partners
+Detailed budget breakdown
+Technical documentation about the AI implementation
+Team bios highlighting relevant expertise
+Brandy Resume and Website
+Darren Resume and Website
+Shawn Resume and Website
+
+
+
+For internal funding: Current bank statements, unused portions of line of credit
+For third-party funding: Official funding letters, funding agreements, signed term sheets
+They specifically note they do NOT accept: forecasted revenues, accounts receivables, commitments to future funding, or SR&ED credit receivables.
+
+
+Letters of Support
+ChinookX
+GAIA AI
+(Maybe Kwaxala - Could Ask)
+
+
+
+Strong Application
+
+
+
+Questions
+There’s no clarification of in-kind funding vs. Cash
