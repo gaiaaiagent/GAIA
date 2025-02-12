@@ -10,41 +10,62 @@ import {
     type Goal,
     type State,
     type Evaluator,
+    elizaLogger,
+    GoalStatus,
 } from "@elizaos/core";
 
-const goalsTemplate = `TASK: Update Goal
-Analyze the conversation and update the status of the goals based on the new information provided.
+const CREATE_GOAL_REGEX = /\b(?:create|set|make|add|start)\s+(?:a\s+)?(?:new\s+)?goal/i;
+
+const createGoalTemplate = `TASK: Create a new goal based on the conversation.
 
 # INSTRUCTIONS
+Create ONE new goal with 2-3 specific, measurable objectives based on the recent conversation.
+- Do not modify or reference any existing goals
+- Keep objectives clear and achievable
+- Focus on what was explicitly mentioned in the conversation
 
-- Review the conversation and identify any progress towards the objectives of the current goals.
-- Update the objectives if they have been completed or if there is new information about them.
-- Update the status of the goal to 'DONE' if all objectives are completed.
-- If no progress is made, do not change the status of the goal.
-
-# START OF ACTUAL TASK INFORMATION
-
-{{goals}}
+# RECENT MESSAGES
 {{recentMessages}}
 
-TASK: Analyze the conversation and update the status of the goals based on the new information provided. Respond with a JSON array of goals to update.
-- Each item must include the goal ID, as well as the fields in the goal to update.
-- For updating objectives, include the entire objectives array including unchanged fields.
-- Only include goals which need to be updated.
-- Goal status options are 'IN_PROGRESS', 'DONE' and 'FAILED'. If the goal is active it should always be 'IN_PROGRESS'.
-- If the goal has been successfully completed, set status to DONE. If the goal cannot be completed, set status to FAILED.
-- If those goal is still in progress, do not include the status field.
-
-Response format should be:
+Response format:
 \`\`\`json
 [
   {
-    "id": <goal uuid>, // required
-    "status": "IN_PROGRESS" | "DONE" | "FAILED", // optional
-    "objectives": [ // optional
-      { "description": "Objective description", "completed": true | false },
-      { "description": "Objective description", "completed": true | false }
-    ] // NOTE: If updating objectives, include the entire objectives array including unchanged fields.
+    "name": "Goal name",
+    "objectives": [
+      { "description": "First objective" },
+      { "description": "Second objective" }
+    ]
+  }
+]
+\`\`\``;
+
+const updateGoalTemplate = `TASK: Update existing goals based on new information.
+
+# INSTRUCTIONS
+Review the conversation and update the status of existing goals ONLY:
+- Only update goals if there is clear evidence of progress
+- Mark objectives as completed only when explicitly achieved
+- Set goal status to DONE if all objectives are completed
+- Set status to FAILED if explicitly cancelled or impossible
+- Do not create new goals or objectives
+- Do not modify objective descriptions
+
+# CURRENT GOALS
+{{goals}}
+
+# RECENT MESSAGES
+{{recentMessages}}
+
+Response format:
+\`\`\`json
+[
+  {
+    "id": "<existing_goal_id>",
+    "status": "IN_PROGRESS" | "DONE" | "FAILED",
+    "objectives": [
+      { "description": "Exact existing objective text", "completed": true | false }
+    ]
   }
 ]
 \`\`\``;
@@ -56,71 +77,119 @@ async function handler(
     options: { [key: string]: unknown } = { onlyInProgress: true }
 ): Promise<Goal[]> {
     state = (await runtime.composeState(message)) as State;
+
+    // Determine if this is a create or update operation
+    const isCreateOperation = CREATE_GOAL_REGEX.test(message.content.text);
+
+
     const context = composeContext({
         state,
-        template: runtime.character.templates?.goalsTemplate || goalsTemplate,
+        template: isCreateOperation ? createGoalTemplate : updateGoalTemplate,
     });
 
-    // Request generateText from OpenAI to analyze conversation and suggest goal updates
+    elizaLogger.debug("Context:", context);
+
     const response = await generateText({
         runtime,
         context,
-        modelClass: ModelClass.LARGE,
+        modelClass: ModelClass.SMALL,
     });
 
-    // Parse the JSON response to extract goal updates
+    elizaLogger.debug("Response:", response);
+
     const updates = parseJsonArrayFromText(response);
+    elizaLogger.debug("Updates:", updates);
 
-    // get goals
-    const goalsData = await getGoals({
-        runtime,
-        roomId: message.roomId,
-        onlyInProgress: options.onlyInProgress as boolean,
-    });
+    // Handle both updates and new goals
+    const results = [];
 
-    // Apply the updates to the goals
-    const updatedGoals = goalsData
-        .map((goal: Goal): Goal => {
-            const update = updates?.find((u) => u.id === goal.id);
-            if (update) {
-                // Merge the update into the existing goal
-                return {
-                    ...goal,
-                    ...update,
-                    objectives: goal.objectives.map((objective) => {
-                        const updatedObjective = update.objectives?.find(uo => uo.description === objective.description);
-                        return updatedObjective ? { ...objective, ...updatedObjective } : objective;
-                    }),
-                };
-            }
-            return null; // No update for this goal
-        })
-        .filter(Boolean);
+    if (isCreateOperation) {
+        elizaLogger.debug("Create Operation");
+        // Handle new goal creation
+        const goalData = updates?.[0];
+        if (goalData?.name && Array.isArray(goalData?.objectives)) {
+            elizaLogger.debug("Creating Goal: ", goalData.name)
+            const newGoal: Goal = {
+                roomId: message.roomId,
+                userId: runtime.agentId,
+                name: goalData.name,
+                status: GoalStatus.IN_PROGRESS,
+                objectives: goalData.objectives.map(obj => ({
+                    description: obj.description,
+                    completed: false
+                }))
+            };
 
-    // Update goals in the database
-    for (const goal of updatedGoals) {
-        const id = goal.id;
-        // delete id from goal
-        if (goal.id) delete goal.id;
-        await runtime.databaseAdapter.updateGoal({ ...goal, id });
+            await runtime.databaseAdapter.createGoal(newGoal);
+            results.push(newGoal);
+            elizaLogger.debug("Goal Created: ", newGoal)
+        }
+    } else {
+        elizaLogger.debug("Update operation");
+        // Handle updates to existing goals
+        const goalsData = await getGoals({
+            runtime,
+            roomId: message.roomId,
+            onlyInProgress: options.onlyInProgress as boolean,
+        });
+
+        // Process updates for existing goals
+        for (const item of updates || []) {
+            if (!item?.id) continue;
+
+            const existingGoal = goalsData.find(g => g.id === item.id);
+            if (!existingGoal) continue;
+
+            const updatedGoal = {
+                ...existingGoal,
+                status: item.status || existingGoal.status,
+                objectives: existingGoal.objectives.map((objective) => {
+                    const updatedObjective = item.objectives?.find(
+                        uo => uo.description === objective.description
+                    );
+                    return updatedObjective ?
+                        { ...objective, completed: updatedObjective.completed } :
+                        objective;
+                })
+            };
+
+            const id = updatedGoal.id;
+            delete updatedGoal.id;
+            await runtime.databaseAdapter.updateGoal({ ...updatedGoal, id });
+            results.push({ ...updatedGoal, id });
+        }
     }
 
-    return updatedGoals; // Return updated goals for further processing or logging
+    return results;
 }
 
 export const goalEvaluator: Evaluator = {
-    name: "UPDATE_GOAL",
+    name: "MANAGE_GOALS",
     similes: [
         "UPDATE_GOALS",
+        "CREATE_GOAL",
         "EDIT_GOAL",
+        "NEW_GOAL",
+        "ADD_GOAL",
         "UPDATE_GOAL_STATUS",
         "UPDATE_OBJECTIVES",
     ],
+    alwaysRun: true,
     validate: async (
         runtime: IAgentRuntime,
         message: Memory
     ): Promise<boolean> => {
-        // Check if there are active goals that could potentially be updated
+        // Skip if this is the agent's own message
+        if (message.userId === runtime.agentId) {
+            return false;
+        }
+
+        // Validate if we should create a new goal
+        if (CREATE_GOAL_REGEX.test(message.content.text)) {
+            return true;
+        }
+
+        // Or if we should update existing goals
         const goals = await getGoals({
             runtime,
             count: 1,
@@ -130,182 +199,60 @@ export const goalEvaluator: Evaluator = {
         return goals.length > 0;
     },
     description:
-        "Analyze the conversation and update the status of the goals based on the new information provided.",
+        "Manage goals by analyzing the conversation to either update existing goals or create new ones based on the context.",
     handler,
     examples: [
         {
-            context: `Actors in the scene:
-  {{user1}}: An avid reader and member of a book club.
-  {{user2}}: The organizer of the book club.
-
-  Goals:
-  - Name: Finish reading "War and Peace"
-    id: 12345-67890-12345-67890
-    Status: IN_PROGRESS
-    Objectives:
-      - Read up to chapter 20 by the end of the month
-      - Discuss the first part in the next meeting`,
-
+            context: `Recent messages:`,
             messages: [
                 {
                     user: "{{user1}}",
                     content: {
-                        text: "I've just finished chapter 20 of 'War and Peace'",
+                        text: "Let's create a goal for improving our documentation",
                     },
                 },
                 {
                     user: "{{user2}}",
                     content: {
-                        text: "Were you able to grasp the complexities of the characters",
-                    },
-                },
-                {
-                    user: "{{user1}}",
-                    content: {
-                        text: "Yep. I've prepared some notes for our discussion",
+                        text: "We need API docs and user guides",
                     },
                 },
             ],
-
             outcome: `[
         {
-          "id": "12345-67890-12345-67890",
-          "status": "DONE",
+          "name": "Documentation Improvement",
           "objectives": [
-            { "description": "Read up to chapter 20 by the end of the month", "completed": true },
-            { "description": "Prepare notes for the next discussion", "completed": true }
+            { "description": "Create comprehensive API documentation", "completed": false  },
+            { "description": "Write end-user guides", "completed": false  }
           ]
         }
       ]`,
         },
-
         {
-            context: `Actors in the scene:
-  {{user1}}: A fitness enthusiast working towards a marathon.
-  {{user2}}: A personal trainer.
-
-  Goals:
-  - Name: Complete a marathon
-    id: 23456-78901-23456-78901
-    Status: IN_PROGRESS
-    Objectives:
-      - Increase running distance to 30 miles a week
-      - Complete a half-marathon as practice`,
-
+            context: `Goals:
+- Name: Learn React
+  id: abc-123
+  Status: IN_PROGRESS
+  Objectives:
+    - Learn basic components
+    - Build a sample project`,
             messages: [
                 {
                     user: "{{user1}}",
-                    content: { text: "I managed to run 30 miles this week" },
-                },
-                {
-                    user: "{{user2}}",
                     content: {
-                        text: "Impressive progress! How do you feel about the half-marathon next month?",
-                    },
-                },
-                {
-                    user: "{{user1}}",
-                    content: {
-                        text: "I feel confident. The training is paying off.",
+                        text: "I just finished my first React component!",
                     },
                 },
             ],
-
             outcome: `[
         {
-          "id": "23456-78901-23456-78901",
+          "id": "abc-123",
           "objectives": [
-            { "description": "Increase running distance to 30 miles a week", "completed": true },
-            { "description": "Complete a half-marathon as practice", "completed": false }
+            { "description": "Learn basic components", "completed": true },
+            { "description": "Build a sample project", "completed": false }
           ]
         }
       ]`,
-        },
-
-        {
-            context: `Actors in the scene:
-  {{user1}}: A student working on a final year project.
-  {{user2}}: The project supervisor.
-
-  Goals:
-  - Name: Finish the final year project
-    id: 34567-89012-34567-89012
-    Status: IN_PROGRESS
-    Objectives:
-      - Submit the first draft of the thesis
-      - Complete the project prototype`,
-
-            messages: [
-                {
-                    user: "{{user1}}",
-                    content: {
-                        text: "I've submitted the first draft of my thesis.",
-                    },
-                },
-                {
-                    user: "{{user2}}",
-                    content: {
-                        text: "Well done. How is the prototype coming along?",
-                    },
-                },
-                {
-                    user: "{{user1}}",
-                    content: {
-                        text: "It's almost done. I just need to finalize the testing phase.",
-                    },
-                },
-            ],
-
-            outcome: `[
-        {
-          "id": "34567-89012-34567-89012",
-          "objectives": [
-            { "description": "Submit the first draft of the thesis", "completed": true },
-            { "description": "Complete the project prototype", "completed": false }
-          ]
         }
-      ]`,
-        },
-
-        {
-            context: `Actors in the scene:
-        {{user1}}: A project manager working on a software development project.
-        {{user2}}: A software developer in the project team.
-
-        Goals:
-        - Name: Launch the new software version
-          id: 45678-90123-45678-90123
-          Status: IN_PROGRESS
-          Objectives:
-            - Complete the coding for the new features
-            - Perform comprehensive testing of the software`,
-
-            messages: [
-                {
-                    user: "{{user1}}",
-                    content: {
-                        text: "How's the progress on the new features?",
-                    },
-                },
-                {
-                    user: "{{user2}}",
-                    content: {
-                        text: "We've encountered some unexpected challenges and are currently troubleshooting.",
-                    },
-                },
-                {
-                    user: "{{user1}}",
-                    content: {
-                        text: "Let's move on and cancel the task.",
-                    },
-                },
-            ],
-
-            outcome: `[
-        {
-          "id": "45678-90123-45678-90123",
-          "status": "FAILED"
-      ]`,
-        },
     ],
 };
