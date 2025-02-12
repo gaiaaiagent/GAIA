@@ -1832,6 +1832,10 @@ export const generateImage = async (
             const base64s = await Promise.all(base64Promises);
             return { success: true, data: base64s };
         } else if (runtime.imageModelProvider === ModelProviderName.VENICE) {
+            const cleanedPrompt = data.prompt.includes("</think>")
+                ? data.prompt.split("</think>")[1].trim()
+                : data.prompt;
+            elizaLogger.log("cleanedPrompt:", cleanedPrompt);
             const response = await fetch(
                 "https://api.venice.ai/api/v1/image/generate",
                 {
@@ -1842,7 +1846,7 @@ export const generateImage = async (
                     },
                     body: JSON.stringify({
                         model: model,
-                        prompt: data.prompt,
+                        prompt: cleanedPrompt,
                         cfg_scale: data.guidanceScale,
                         negative_prompt: data.negativePrompt,
                         width: data.width,
@@ -1855,7 +1859,7 @@ export const generateImage = async (
                     }),
                 }
             );
-
+            elizaLogger.log("result:", response);
             const result = await response.json();
 
             if (!result.images || !Array.isArray(result.images)) {
@@ -2212,6 +2216,8 @@ export async function handleProvider(
             return await handleDeepSeek(options);
         case ModelProviderName.LIVEPEER:
             return await handleLivepeer(options);
+        case ModelProviderName.VENICE:
+            return await handleVenice(options);
         default: {
             const errorMessage = `Unsupported provider: ${provider}`;
             elizaLogger.error(errorMessage);
@@ -2559,6 +2565,38 @@ async function handleLivepeer({
     });
 }
 
+async function handleVenice({
+    model,
+    apiKey,
+    schema,
+    schemaName,
+    schemaDescription,
+    mode,
+    modelOptions,
+}: ProviderOptions): Promise<GenerateObjectResult<unknown>> {
+    console.log("Venice provider API key (or gateway URL):", apiKey);
+
+    if (!apiKey) {
+        throw new Error("Venice provider requires a valid API key (or gateway URL).");
+    }
+
+    // If Venice's implementation expects the API key to also be the gateway URL,
+    // then this is fine. Otherwise, consider having a separate configuration value.
+    const VeniceClient = createOpenAI({
+        apiKey,
+        baseURL: apiKey, // Ensure this is intended for Venice
+    });
+
+    // Generate the object using Venice's language model interface.
+    return await aiGenerateObject({
+        model: VeniceClient.languageModel(model),
+        schema,
+        schemaName,
+        schemaDescription,
+        mode,
+        ...modelOptions,
+    });
+}
 // Add type definition for Together AI response
 interface TogetherAIImageResponse {
     data: Array<{
