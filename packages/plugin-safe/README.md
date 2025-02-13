@@ -49,10 +49,8 @@ await safe.proposeTransaction({
 ```
 
 ## Actions
-- `createSafe` - Create and deploy new Safe
-- `proposeTransaction` - Propose new transaction
-- `executeTransaction` - Execute confirmed transaction
-- `batchTransactions` - Batch multiple transactions
-- `addOwner` - Add new Safe owner
-- `removeOwner` - Remove existing owner
-- `changeThreshold` - Update signing threshold
+- `createSafeAction` - initialize a safe
+- `deployNewSafeAction` - deploy a safe
+- `checkSafeAction` - check if a safe exists 
+- `addOwnerAction` - Add owner of a safe
+- `listOwnersAction` - List owners of a safe
