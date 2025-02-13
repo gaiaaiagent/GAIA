@@ -1,7 +1,9 @@
 import { type Plugin } from '@elizaos/core';
 import { createSafeAction } from './actions/createSafeAction';
 import { deployNewSafeAction } from './actions/deployNewSafeAction';
-import { checkSafeAction } from './actions/checkSafeAction'; 
+import { checkSafeAction } from './actions/checkSafeAction';
+import { addOwnerAction } from './actions/addOwnerAction';
+import { listOwnersAction } from './actions/listOwnersAction';
 
 console.log("Initializing Safe Plugin...");
 
@@ -11,7 +13,7 @@ export const safePlugin: Plugin = {
   providers: [],
   evaluators: [],
   services: [],
-  actions: [deployNewSafeAction, checkSafeAction]
+  actions: [deployNewSafeAction, checkSafeAction, createSafeAction, addOwnerAction, listOwnersAction],
 };
 
 export const pluginSafe = safePlugin;
