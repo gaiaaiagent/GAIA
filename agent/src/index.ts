@@ -158,6 +158,18 @@ import { MongoClient } from "mongodb";
 
 // import { trikonPlugin } from "@elizaos/plugin-trikon";
 // import arbitragePlugin from "@elizaos/plugin-arbitrage";
+import * as ai from "ai";
+
+if (ai && (ai as any).APICallError) {
+    const APICallError = (ai as any).APICallError;
+    if (typeof APICallError.isAPICallError !== "function") {
+      APICallError.isAPICallError = (err: any): boolean => err instanceof APICallError;
+      console.log("Patched APICallError with isAPICallError.");
+    }
+  } else {
+    console.warn("APICallError was not found on the 'ai' package.");
+  }
+
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
 

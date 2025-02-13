@@ -6,7 +6,7 @@ import {
     ModelProviderName,
     models,
     Service,
-    ServiceType,
+    ServiceType
 } from "@elizaos/core";
 import {
     AutoProcessor,
@@ -23,6 +23,7 @@ import sharp, { type AvailableFormatInfo, type FormatEnum } from "sharp";
 import fs from "fs";
 import os from "os";
 import path from "path";
+import { APICallError } from "./APICallError";
 
 const IMAGE_DESCRIPTION_PROMPT =
     "Describe this image and give it a title. The first line should be the title, and then a line break, then a detailed description of the image. Respond with the format 'title\\ndescription'";
@@ -215,7 +216,6 @@ class OpenAIImageProvider implements ImageProvider {
             this.runtime.imageVisionModelProvider === ModelProviderName.OPENAI
                 ? getEndpoint(this.runtime.imageVisionModelProvider)
                 : "https://api.openai.com/v1";
-
         const response = await fetch(endpoint + "/chat/completions", {
             method: "POST",
             headers: {
@@ -281,6 +281,7 @@ class GroqImageProvider implements ImageProvider {
     }
 }
 
+
 class GoogleImageProvider implements ImageProvider {
     constructor(private runtime: IAgentRuntime) {}
 
@@ -327,6 +328,152 @@ class GoogleImageProvider implements ImageProvider {
     }
 }
 
+class VeniceImageProvider {
+    constructor(private runtime: IAgentRuntime) {}
+  
+    async initialize(): Promise<void> {}
+  
+    async describeImage(
+        imageData: Buffer,
+        mimeType: string
+    ): Promise<{ title: string; description: string }> {
+        try {
+            // Convert image data to base64 Data URL
+            const imageUrl = convertToBase64DataUrl(imageData, mimeType);
+            elizaLogger.debug("Image converted to base64");
+  
+            // Get base endpoint and remove trailing slash if present
+            const baseEndpoint = getEndpoint(ModelProviderName.VENICE).replace(/\/$/, '');
+            elizaLogger.debug("Base endpoint:", baseEndpoint);
+            
+            // Remove /api/v1 if it's already in the base endpoint
+            const cleanEndpoint = baseEndpoint.replace(/\/api\/v1$/, '');
+            elizaLogger.debug("Clean endpoint:", cleanEndpoint);
+
+            // Construct final endpoint
+            const apiEndpoint = `${cleanEndpoint}/api/v1/chat/completions`;
+            elizaLogger.debug("Final API endpoint:", apiEndpoint);
+
+            const apiKey = this.runtime.getSetting("VENICE_API_KEY");
+            elizaLogger.debug("API key present:", !!apiKey);
+  
+            // Build the payload
+            const payload = {
+                model: "qwen-2.5-vl",
+                messages: [
+                    {
+                        role: "system",
+                        content: [
+                            {
+                                type: "text",
+                                text: "You are an AI assistant that describes images accurately and concisely."
+                            }
+                        ]
+                    },
+                    {
+                        role: "user",
+                        content: [
+                            {
+                                type: "text",
+                                text: IMAGE_DESCRIPTION_PROMPT
+                            },
+                            {
+                                type: "image_url",
+                                image_url: { url: imageUrl }
+                            }
+                        ]
+                    }
+                ],
+                temperature: 0.6,
+                max_tokens: 8192
+            };
+
+            elizaLogger.debug("Request details:", {
+                url: apiEndpoint,
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer [REDACTED]",
+                    "Accept": "application/json"
+                },
+                payloadStructure: {
+                    model: payload.model,
+                    messageCount: payload.messages.length,
+                    temperature: payload.temperature,
+                    max_tokens: payload.max_tokens
+                }
+            });
+  
+            // Make the API request
+            const response = await fetch(apiEndpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${apiKey}`,
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            elizaLogger.debug("Response status:", response.status);
+            elizaLogger.debug("Response headers:", {
+                contentType: response.headers.get('content-type'),
+                contentLength: response.headers.get('content-length')
+            });
+  
+            if (!response.ok) {
+                const responseText = await response.text();
+                elizaLogger.error("Venice API error response:", {
+                    status: response.status,
+                    statusText: response.statusText,
+                    responseText: responseText || "Empty response",
+                    headers: {
+                        contentType: response.headers.get('content-type'),
+                        contentLength: response.headers.get('content-length')
+                    }
+                });
+
+                // Log the full request URL and method
+                elizaLogger.error("Failed request details:", {
+                    url: apiEndpoint,
+                    method: "POST",
+                    statusCode: response.status,
+                    statusText: response.statusText
+                });
+
+                throw new APICallError(
+                    `HTTP error! status: ${response.status}`,
+                    new Error(responseText)
+                );
+            }
+  
+            const data = await response.json();
+            elizaLogger.debug("Venice API response structure:", {
+                hasChoices: !!data.choices,
+                choicesLength: data.choices?.length,
+                firstChoiceExists: !!data.choices?.[0],
+                firstChoiceHasMessage: !!data.choices?.[0]?.message
+            });
+
+            const content = data.choices[0].message.content;
+            let description = typeof content === 'string' ? content : content.text;
+            
+            return {
+                title: "Image Description",
+                description: description
+            };
+        } catch (error: any) {
+            elizaLogger.error("Error in VeniceImageProvider.describeImage:", {
+                error: error,
+                message: error.message,
+                name: error.name,
+                stack: error.stack
+            });
+            throw new APICallError(error.message, error);
+        }
+    }
+}
+
 export class ImageDescriptionService
     extends Service
     implements IImageDescriptionService
@@ -357,6 +504,7 @@ export class ImageDescriptionService
             ModelProviderName.GOOGLE,
             ModelProviderName.OPENAI,
             ModelProviderName.GROQ,
+            ModelProviderName.VENICE,
         ].join(", ");
 
         const model = models[this.runtime?.character?.modelProvider];
@@ -393,6 +541,9 @@ export class ImageDescriptionService
             ) {
                 this.provider = new GroqImageProvider(this.runtime);
                 elizaLogger.debug("Using Groq for vision model");
+            } else if (this.runtime.imageVisionModelProvider === ModelProviderName.VENICE) {
+                this.provider = new VeniceImageProvider(this.runtime);
+                elizaLogger.debug("Using Venice for vision model");
             } else {
                 elizaLogger.warn(
                     `Unsupported image vision model provider: ${this.runtime.imageVisionModelProvider}. ` +

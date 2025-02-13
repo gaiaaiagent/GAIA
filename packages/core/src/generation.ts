@@ -1643,7 +1643,9 @@ export const generateImage = async (
 }> => {
     const modelSettings = getImageModelSettings(runtime.imageModelProvider);
     if (!modelSettings) {
-        elizaLogger.warn("No model settings found for the image model provider.");
+        elizaLogger.warn(
+            "No model settings found for the image model provider."
+        );
         return { success: false, error: "No model settings available" };
     }
     const model = modelSettings.name;
@@ -2565,38 +2567,71 @@ async function handleLivepeer({
     });
 }
 
+/**
+ * Handles object generation for Venice models.
+ *
+ * @param {ProviderOptions} options - Options specific to Venice.
+ * @returns {Promise<GenerateObjectResult<unknown>>} - A promise that resolves to generated objects.
+ */
 async function handleVenice({
     model,
     apiKey,
     schema,
     schemaName,
     schemaDescription,
-    mode,
+    mode = "auto",
     modelOptions,
+    context,
 }: ProviderOptions): Promise<GenerateObjectResult<unknown>> {
-    console.log("Venice provider API key (or gateway URL):", apiKey);
-
+    const endpoint = getEndpoint(ModelProviderName.VENICE);
+    
     if (!apiKey) {
-        throw new Error("Venice provider requires a valid API key (or gateway URL).");
+        throw new Error("Venice provider requires a valid API key.");
     }
 
-    // If Venice's implementation expects the API key to also be the gateway URL,
-    // then this is fine. Otherwise, consider having a separate configuration value.
-    const VeniceClient = createOpenAI({
-        apiKey,
-        baseURL: apiKey, // Ensure this is intended for Venice
+    // Similar to handleDeepSeek, create OpenAI client with Venice endpoint
+    const VeniceClient = createOpenAI({ 
+        apiKey, 
+        baseURL: endpoint
     });
 
-    // Generate the object using Venice's language model interface.
+    // Ensure mode is compatible
+    if (mode === "json") {
+        elizaLogger.warn("Venice mode is set to json, changing to auto");
+        mode = "auto";
+    }
+
+    // Only include definitely supported options
+    const supportedOptions = {
+        temperature: modelOptions?.temperature,
+        maxTokens: modelOptions?.maxTokens
+    };
+
+    // Remove undefined values
+    const cleanOptions = Object.fromEntries(
+        Object.entries(supportedOptions).filter(([_, v]) => v !== undefined)
+    );
+
+    // Format the system message
+    const systemMessage = `JSON schema:\n${JSON.stringify(schema)}\n${schemaDescription || ''}`;
+
+    // Create the prompt object
+    const prompt = {
+        system: systemMessage,
+        prompt: context || '', // Use the context as the user prompt if provided
+    };
+
     return await aiGenerateObject({
         model: VeniceClient.languageModel(model),
         schema,
         schemaName,
         schemaDescription,
         mode,
-        ...modelOptions,
+        ...cleanOptions,
+        ...prompt, // Include the formatted prompt
     });
 }
+
 // Add type definition for Together AI response
 interface TogetherAIImageResponse {
     data: Array<{
