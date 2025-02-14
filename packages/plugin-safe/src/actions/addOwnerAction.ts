@@ -1,4 +1,4 @@
-// src/actions/addOwnerAction.ts
+/* // src/actions/addOwnerAction.ts
 
 import {
   type Action,
@@ -8,8 +8,12 @@ import {
   type State,
 } from '@elizaos/core';
 
-import Safe, { SafeTransactionDataPartial } from '@safe-global/protocol-kit';
+import { SafeTransactionDataPartial } from '@safe-global/protocol-kit';
 import { OperationType } from '@safe-global/safe-core-sdk-types';
+
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const Safe = require("@safe-global/protocol-kit").default;
 
 export const addOwnerAction: Action = {
   name: "ADD_SAFE_OWNER",
@@ -123,3 +127,4 @@ Transaction hash: ${executeTxResponse.transactionResponse?.hash}.`;
 };
 
 export default addOwnerAction;
+ */

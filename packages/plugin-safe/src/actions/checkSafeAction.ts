@@ -6,13 +6,18 @@ import {
   type IAgentRuntime,
   type Memory,
   type State,
+  elizaLogger
 } from '@elizaos/core';
 
-import Safe, {
+import {
   PredictedSafeProps,
   SafeAccountConfig,
   SafeDeploymentConfig,
 } from '@safe-global/protocol-kit';
+
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const Safe = require("@safe-global/protocol-kit").default;
 
 import { sepolia } from 'viem/chains';
 import { createPublicClient, http, formatUnits } from 'viem';
@@ -24,7 +29,12 @@ interface ExtendedSafeDeploymentConfig extends SafeDeploymentConfig {
 
 const RPC_URL = 'https://rpc.ankr.com/eth_sepolia';
 
-export const checkSafeAction: Action = {
+
+let checkSafeAction: Action | null = null;
+
+try {
+
+checkSafeAction = {
   name: "CHECK_SAFE_ACCOUNT",
   description:
     "Checks if the Safe smart account already exists (using the predicted configuration) and returns its details.",
@@ -87,7 +97,7 @@ export const checkSafeAction: Action = {
 
       // Initialize the Protocol Kit with the predicted safe configuration.
       // (Using (Safe as any).init() for simplicity. In production, create a proper signer instance.)
-      const protocolKit = await (Safe as any).init({
+        const protocolKit = await Safe.init({
         provider: RPC_URL,
         signer: formattedPrivateKey,
         predictedSafe,
@@ -135,5 +145,10 @@ export const checkSafeAction: Action = {
     }
   },
 };
+} catch (err) {
+  elizaLogger.error("[mintNFTAction] Error initializing:", err);
+  checkSafeAction = null;
+}
+
 
 export default checkSafeAction;

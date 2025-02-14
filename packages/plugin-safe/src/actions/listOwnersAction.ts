@@ -1,16 +1,22 @@
 // src/actions/listOwnersAction.ts
-
 import {
   type Action,
   type HandlerCallback,
   type IAgentRuntime,
   type Memory,
   type State,
-} from '@elizaos/core';
+  elizaLogger,
+} from "@elizaos/core";
 
-import Safe from '@safe-global/protocol-kit';
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const Safe = require("@safe-global/protocol-kit").default;
 
-export const listOwnersAction: Action = {
+let listOwnersAction: Action | null = null;
+
+try {
+
+listOwnersAction = {
   name: "LIST_SAFE_OWNERS",
   description: "Lists all owners/signers of a Safe smart account along with its threshold.",
   similes: ["list owners", "show owners", "get owners", "show signers", "list signers", "who are the owners", "who can sign"],
@@ -97,5 +103,9 @@ export const listOwnersAction: Action = {
     }
   },
 };
+} catch (err) {
+  elizaLogger.error("[listOwnersAction] Error initializing:", err);
+  listOwnersAction = null;
+}
 
 export default listOwnersAction;

@@ -1,26 +1,35 @@
 {
-    "name": "@elizaos/plugin-safe",
-    "version": "0.1.0",
-    "type": "module",
-    "main": "dist/index.js",
-    "module": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "files": ["dist"],
-    "dependencies": {
+  "name": "@elizaos/plugin-safe",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "dependencies": {
       "@elizaos/core": "workspace:*",
-      "@safe-global/relay-kit": "^1.0.0"
-    },
-    "devDependencies": {
+      "@safe-global/relay-kit": "^1.0.0",
+      "@fileverse/agents": "^1.0.0",
+      "ethers": "^6.3.0",
+      "viem": "^1.0.0"
+  },
+  "devDependencies": {
       "@safe-global/api-kit": "^2.5.8",
-      "@safe-global/protocol-kit": "5.2.1-alpha.0",
+      "@safe-global/protocol-kit": "5.2.2",
       "@safe-global/safe-core-sdk-types": "^5.1.0",
+      "@types/node": "^18.0.0",
       "tsup": "^7.0.0",
       "typescript": "^5.0.0"
-    },
-    "scripts": {
-		"build": "tsup --format esm --dts",
-		"dev": "tsup --format esm --dts --watch",
-		"test": "vitest run",
-		"test:watch": "vitest"
-    }
+  },
+  "scripts": {
+      "build": "tsup --format esm --dts",
+      "dev": "tsup --format esm --dts --watch",
+      "test": "vitest run",
+      "test:watch": "vitest"
+  },
+  "pnpm": {
+  "overrides": {
+    "@safe-global/protocol-kit": "5.2.2"
   }
+}
+}

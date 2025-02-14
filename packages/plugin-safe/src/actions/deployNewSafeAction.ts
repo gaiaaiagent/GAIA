@@ -1,18 +1,24 @@
 // src/actions/deployNewSafeAction.ts
 
+
 import {
-    type Action,
-    type HandlerCallback,
-    type IAgentRuntime,
-    type Memory,
-    type State,
-  } from '@elizaos/core';
-  
-  import Safe, {
+  type Action,
+  type HandlerCallback,
+  type IAgentRuntime,
+  type Memory,
+  type State,
+  elizaLogger
+} from '@elizaos/core';
+
+  import {
     PredictedSafeProps,
     SafeAccountConfig,
     SafeDeploymentConfig,
   } from '@safe-global/protocol-kit';
+
+  import { createRequire } from "module";
+  const require = createRequire(import.meta.url);
+  const Safe = require("@safe-global/protocol-kit").default;
   
   import { sepolia } from 'viem/chains';
   import { createPublicClient, createWalletClient, http, formatUnits } from 'viem';
@@ -26,7 +32,11 @@ import {
   
   const RPC_URL = 'https://rpc.ankr.com/eth_sepolia';
   
-  export const deployNewSafeAction: Action = {
+  let deployNewSafeAction: Action | null = null;
+
+  try {
+
+  deployNewSafeAction = {
     name: "DEPLOY_NEW_SAFE_ACCOUNT",
     description:
       "Deploys a new Safe smart account by submitting the deployment transaction on-chain and reconnecting with the deployed Safe.",
@@ -96,7 +106,7 @@ import {
   
         // Initialize the Protocol Kit with the predicted safe configuration.
         //    (Using (Safe as any).init() for simplicity. In production, create a proper signer instance.)
-        const protocolKit = await (Safe as any).init({
+        const protocolKit = await Safe.init({
           provider: RPC_URL,
           signer: formattedPrivateKey,
           predictedSafe,
@@ -160,6 +170,10 @@ import {
       }
     },
   };
-  
-  export default deployNewSafeAction;
-  
+} catch (err) {
+  elizaLogger.error("[mintNFTAction] Error initializing:", err);
+  deployNewSafeAction = null;
+}
+
+
+export default deployNewSafeAction;

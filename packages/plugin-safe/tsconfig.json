@@ -1,11 +1,14 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "es2020",
+    "target": "es2020",
       "outDir": "./dist",
       "rootDir": "./src",
       "types": ["node"],
-      "resolveJsonModule": true
-    },
-    "include": ["src/**/*"]
-  }
-
+      "resolveJsonModule": true,
+      "esModuleInterop": true,
+      "moduleResolution": "node"
+  },
+  "include": ["src/**/*"]
+}

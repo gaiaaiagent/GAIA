@@ -1,10 +1,11 @@
 import { type Plugin } from '@elizaos/core';
-import { createSafeAction } from './actions/createSafeAction';
-import { deployNewSafeAction } from './actions/deployNewSafeAction';
-import { checkSafeAction } from './actions/checkSafeAction';
-import { addOwnerAction } from './actions/addOwnerAction';
-import { listOwnersAction } from './actions/listOwnersAction';
+import createSafeAction from './actions/createSafeAction';
+import deployNewSafeAction from './actions/deployNewSafeAction';
+import checkSafeAction from './actions/checkSafeAction';
+// import { addOwnerAction } from './actions/addOwnerAction';
+import listOwnersAction from './actions/listOwnersAction';
 import nftCollectionUsingSafeAction from './actions/deployNFTContractAction';
+import mintNFTAction from './actions/mintNFTAction';
 
 console.log("Initializing Safe Plugin...");
 
@@ -14,7 +15,7 @@ export const safePlugin: Plugin = {
   providers: [],
   evaluators: [],
   services: [],
-  actions: [deployNewSafeAction, checkSafeAction, createSafeAction, addOwnerAction, listOwnersAction, nftCollectionUsingSafeAction],
+  actions: [deployNewSafeAction, listOwnersAction, deployNewSafeAction, checkSafeAction, nftCollectionUsingSafeAction, mintNFTAction],
 };
 
 console.log("Safe plugin actions:", safePlugin.actions.map(a => a.name));
