@@ -58,14 +58,33 @@ async function uploadNFTContent(
   let formattedKey = rawKey.trim();
   if (!formattedKey.startsWith("0x")) formattedKey = `0x${formattedKey}`;
 
+  const chain = runtime.getSetting("FILEVERSE_CHAIN") || "sepolia"; 
+  if (!["gnosis", "sepolia"].includes(chain)) {
+    throw new Error("FILEVERSE_CHAIN must be either 'gnosis' or 'sepolia'");
+  }
+
+  elizaLogger.log("[uploadNFTContent] Using chain:", chain);
+
+
+elizaLogger.log(`[DEBUG] Loaded formattedKey`, formattedKey);
+
+const pinataGateway = runtime.getSetting("FILEVERSE_PINATA_GATEWAY");
+elizaLogger.log(`[DEBUG] Loaded pinataGateway Key: ${pinataGateway ? pinataGateway.length + ' chars' : 'undefined'}`);
+
+const pimlicoAPIKey = runtime.getSetting("FILEVERSE_PIMLICO_API_KEY");
+elizaLogger.log(`[DEBUG] Loaded Pimlico API Key: ${pimlicoAPIKey ? pimlicoAPIKey.length + ' chars' : 'undefined'}`);
+
+
   const agent = new Agent({
-    chain: runtime.getSetting("FILEVERSE_CHAIN"),
+    chain,
     privateKey: formattedKey,
     pinataJWT: runtime.getSetting("FILEVERSE_PINATA_JWT"),
     pinataGateway: runtime.getSetting("FILEVERSE_PINATA_GATEWAY"),
     pimlicoAPIKey: runtime.getSetting("FILEVERSE_PIMLICO_API_KEY"),
   });
   await agent.setupStorage("nft-storage");
+
+  elizaLogger.log("[uploadNFTContent] FileverseAgent initialized");
 
   let imageBuffer: Buffer;
   if (imageInput.url) {
@@ -139,7 +158,21 @@ try {
     validate: async (runtime: IAgentRuntime, message: Memory) => {
       const key = runtime.getSetting("SIGNER_PRIVATE_KEY");
       const addresses = message.content.text.match(/0x[a-fA-F0-9]{40}/g) || [];
-      return Boolean(key && addresses.length >= 2);
+      
+      const recentMessages = await runtime.messageManager.getMemories({
+        roomId: message.roomId,
+        count: 50,
+        unique: false
+      });
+    
+      const hasRecentGeneratedImage = recentMessages.some(msg => 
+        msg.content.attachments?.some(attachment =>
+          attachment.source === 'imageGeneration' && 
+          attachment.url?.includes('generatedImages')
+        )
+      );
+    
+      return Boolean(key && addresses.length >= 2 && hasRecentGeneratedImage);
     },
     handler: async (
       runtime: IAgentRuntime,
@@ -186,10 +219,42 @@ try {
         });
         elizaLogger.log("[MINT_NFT] Safe SDK initialized successfully.");
 
-        elizaLogger.log("[MINT_NFT] imageInput got successfully.");
+        elizaLogger.log("[MINT_NFT] Searching for generated image...");
+        const recentMessages = await runtime.messageManager.getMemories({
+          roomId: message.roomId,
+          count: 50,
+          unique: false
+        });
+        
+        const lastImageMessage = recentMessages
+          .reverse()
+          .find(msg => {
+            const hasGeneratedImage = msg.content.attachments?.some(attachment =>
+              attachment.source === 'imageGeneration' && 
+              attachment.url?.includes('generatedImages')
+            );
+            return hasGeneratedImage;
+          });
+        
+        if (!lastImageMessage) {
+          throw new Error("No recently generated image found. Please generate an image first.");
+        }
+        
+        const imageAttachment = lastImageMessage.content.attachments?.find(attachment =>
+          attachment.source === 'imageGeneration' && 
+          attachment.url?.includes('generatedImages')
+        );
+        
+        if (!imageAttachment?.url) {
+          throw new Error("No recently generated image found. Please generate an image first.");
+        }
+        
         const imageInput: ImageInput = {
-          url: "https://media.discordapp.net/attachments/1339136642643922995/1339402956210176020/generated_1739388252074_0.png?ex=67afe935&is=67ae97b5&hm=f19355a3ccea04abd8e199fc96ca9f600a30a081a25d4d16ec56371d6124e012&=&format=webp&quality=lossless&width=1124&height=1124",
+          path: imageAttachment.url
         };
+        
+        elizaLogger.log(`[MINT_NFT] Using local image: ${imageInput.path}`);
+        
         const { metadataHash } = await uploadNFTContent(imageInput, metadata, runtime);
         elizaLogger.log(`[MINT_NFT] metadataHash: ${metadataHash}`);
 
@@ -240,7 +305,7 @@ try {
         elizaLogger.log("[MINT_NFT] setTokenURI Receipt: " + JSON.stringify(setTokenReceipt, null, 2));
 
         callback?.({
-          text: `Success! NFT minted with token ID ${mintedTokenId} and metadata set to ipfs://${metadataHash}`,
+          text: `Success! NFT minted with token ID ${mintedTokenId}.\nhttps://testnets.opensea.io/assets/sepolia/${contractAddress}/${mintedTokenId}`,
           content: {
             tokenId: mintedTokenId,
             metadataUri: `ipfs://${metadataHash}`,
