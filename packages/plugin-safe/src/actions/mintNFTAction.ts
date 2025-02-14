@@ -69,7 +69,7 @@ async function uploadNFTContent(
 elizaLogger.log(`[DEBUG] Loaded formattedKey`, formattedKey);
 
 const pinataGateway = runtime.getSetting("FILEVERSE_PINATA_GATEWAY");
-elizaLogger.log(`[DEBUG] Loaded pinataGateway Key: ${pinataGateway ? pinataGateway.length + ' chars' : 'undefined'}`);
+elizaLogger.log(`[DEBUG] Loaded pinataGateway API Key: ${pinataGateway ? pinataGateway.length + ' chars' : 'undefined'}`);
 
 const pimlicoAPIKey = runtime.getSetting("FILEVERSE_PIMLICO_API_KEY");
 elizaLogger.log(`[DEBUG] Loaded Pimlico API Key: ${pimlicoAPIKey ? pimlicoAPIKey.length + ' chars' : 'undefined'}`);
@@ -226,15 +226,13 @@ try {
           unique: false
         });
         
-        const lastImageMessage = recentMessages
-          .reverse()
-          .find(msg => {
-            const hasGeneratedImage = msg.content.attachments?.some(attachment =>
-              attachment.source === 'imageGeneration' && 
-              attachment.url?.includes('generatedImages')
-            );
-            return hasGeneratedImage;
-          });
+        const lastImageMessage = recentMessages.find(msg => {
+          const hasGeneratedImage = msg.content.attachments?.some(attachment =>
+            attachment.source === 'imageGeneration' && 
+            attachment.url?.includes('generatedImages')
+          );
+          return hasGeneratedImage;
+        });
         
         if (!lastImageMessage) {
           throw new Error("No recently generated image found. Please generate an image first.");
