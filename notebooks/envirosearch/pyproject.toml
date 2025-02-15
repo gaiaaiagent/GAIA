@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "envirosearch"
+version = "0.1.0"
+description = ""
+authors = ["Shawn Anderson <shawn@longtailfinancial.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+click = "^8.1.8"
+requests = "^2.32.3"
+python-dotenv = "^1.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
+responses = "^0.25.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
