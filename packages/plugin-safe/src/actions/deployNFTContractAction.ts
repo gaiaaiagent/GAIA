@@ -82,7 +82,7 @@ try {
         }
 
         // Use a valid RPC URL; here using Alchemy's Sepolia demo.
-        const rpcUrl = runtime.getSetting("RPC_URL") || "https://eth-sepolia.g.alchemy.com/v2/demo";
+        const rpcUrl = runtime.getSetting("RPC_URL") || "https://rpc.ankr.com/eth_sepolia";
 
         const chainId = 11155111;
 
@@ -121,11 +121,16 @@ try {
         elizaLogger.log(`Connected to Safe smart account at address: ${safeAddress}`);
 
         // Prepare deployment parameters.
-        const contractName = runtime.character.name.replace(".", "_");
+        const contractName = "Gaianthropocene";
+        // For simplicity, we're using the first character of the name as the symbol.
         const contractSymbol = contractName.toUpperCase().charAt(0);
-        const contractMaxSupply = 5000;
-        const royalty = 0;
-        const params = [contractName, contractSymbol, contractMaxSupply, royalty];
+        const contractMaxSupply = 100;
+        const royalty = 500;
+        // Using the provided base URI
+        const baseURI = "https://gray-random-rodent-913.mypinata.cloud/ipfs/";
+
+        // Updated constructor requires: name, symbol, maxSupply, royalty, baseURI, initialOwner
+        const params = [contractName, contractSymbol, contractMaxSupply, royalty, baseURI, safeAddress];
 
         // Use precompiled contract details.
         const abi = compiledNFT.abi as Abi;
@@ -141,27 +146,29 @@ try {
         });
         elizaLogger.log(`NFT Collection deployed via Safe at address: ${contractAddress}`);
 
-        callback?.({
-          text: `Congratulations! Your NFT Collection has been deployed using the Safe smart account.\nCollection Address: ${contractAddress}`,
-          content: { contractAddress },
-        });
-        return true;
-      } catch (error: any) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        callback?.({
-          text: `Error deploying NFT Collection using Safe smart account: ${errorMessage}`,
-          content: { error: errorMessage },
-        });
-        return false;
+        if (callback) {
+          callback({  // Notice there's no 'null' parameter here
+            text: `Your NFT Collection has been successfully deployed using the Safe smart account at address ${contractAddress}.`,
+            content: {  // Include a content object with relevant data
+              contractAddress,
+              safeAddress            }
+          });
+        }
+      } catch (error) {
+        elizaLogger.error(`Deployment failed: ${(error as Error).message}`);
+        if (callback) {
+          callback({
+            text: `Deployment failed: ${(error as Error).message}`,
+            content: {
+              error: (error as Error).message
+            }
+          });
+        }
       }
     },
   };
-
-  elizaLogger.info("[deployNFTContractAction] nftCollectionUsingSafeAction successfully initialized.");
-} catch (initError) {
-  console.error("[deployNFTContractAction] Error initializing nftCollectionUsingSafeAction:", initError);
-  elizaLogger.error("Error initializing nftCollectionUsingSafeAction:", initError);
-  nftCollectionUsingSafeAction = null;
+} catch (error) {
+  elizaLogger.error(`Failed to initialize nftCollectionUsingSafeAction: ${(error as Error).message}`);
 }
 
-export default nftCollectionUsingSafeAction;
+export default nftCollectionUsingSafeAction ;
