@@ -89,6 +89,7 @@ pnpm clean
   <img src="./docs/static/img/gaia_banner2.jpeg" />
 </a>
 
-### Star History
+## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=gaiaaiagent/gaia&type=Date)](https://star-history.com/#gaiaaiagent/gaia&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=gaiaaiagent/GAIA&type=Date)](https://www.star-history.com/#gaiaaiagent/GAIA&Date)
+
