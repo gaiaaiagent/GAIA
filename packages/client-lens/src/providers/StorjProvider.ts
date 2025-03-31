@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from "axios";
+import axios from 'axios';
 import FormData from "form-data";
 import type { IAgentRuntime } from "@elizaos/core";
 
@@ -8,7 +8,7 @@ class StorjProvider {
     private STORJ_API_USERNAME: string;
     private STORJ_API_PASSWORD: string;
     private baseURL: string;
-    private client: AxiosInstance;
+    private client: ReturnType<typeof axios.create>; // Let TS infer type safely
 
     constructor(runtime: IAgentRuntime) {
         this.STORJ_API_USERNAME = runtime.getSetting("STORJ_API_USERNAME")!;
@@ -17,7 +17,7 @@ class StorjProvider {
         this.client = this.createClient();
     }
 
-    private createClient(): AxiosInstance {
+    private createClient() {
         return axios.create({
             baseURL: this.baseURL,
             auth: {
@@ -53,7 +53,7 @@ class StorjProvider {
             "add?cid-version=1",
             formData.getBuffer(),
             { headers }
-        );
+        ) as { data: { Hash: string } };
 
         return this.gatewayURL(data.Hash);
     }
@@ -62,23 +62,26 @@ class StorjProvider {
         buffer: Buffer;
         originalname: string;
         mimetype: string;
-    }): Promise<string> {
+      }): Promise<string> {
         const formData = new FormData();
         formData.append("file", file.buffer, {
-            filename: file.originalname,
-            contentType: file.mimetype,
+          filename: file.originalname,
+          contentType: file.mimetype,
         });
-
+      
         const response = await this.client.post("add?cid-version=1", formData, {
-            headers: {
-                "Content-Type": `multipart/form-data; boundary=${formData.getBoundary()}`,
-            },
-            maxContentLength: Number.POSITIVE_INFINITY,
-            maxBodyLength: Number.POSITIVE_INFINITY,
-        });
-
-        return this.gatewayURL(response.data.Hash);
-    }
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${formData.getBoundary()}`,
+          },
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity,
+        } as any); // 👈 override type complaint here
+      
+        const data = response.data as { Hash: string }; // 👈 assert type here
+      
+        return this.gatewayURL(data.Hash);
+      }
+      
 }
 
 export default StorjProvider;

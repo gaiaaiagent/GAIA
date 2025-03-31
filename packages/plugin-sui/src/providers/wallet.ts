@@ -166,12 +166,23 @@ export class WalletProvider {
             }
             console.log("Cache miss for fetchPrices");
 
-            const suiPriceData = await this.fetchPricesWithRetry().catch(
-                (error) => {
-                    console.error("Error fetching SUI price:", error);
-                    throw error;
-                }
-            );
+            type SuiPriceResponse = {
+                pair: {
+                  priceNative: number;
+                };
+            };
+              
+            const rawPriceData = await this.fetchPricesWithRetry();         
+            if (
+                 !rawPriceData ||
+              typeof rawPriceData !== 'object' ||
+              !('pair' in rawPriceData) ||
+              typeof (rawPriceData as any).pair?.priceNative !== 'number'
+            ) {
+              throw new Error("Invalid response from fetchPricesWithRetry");
+            }
+            
+            const suiPriceData = rawPriceData as SuiPriceResponse;
             const prices: Prices = {
                 sui: { usd: (1 / suiPriceData.pair.priceNative).toString() },
             };
