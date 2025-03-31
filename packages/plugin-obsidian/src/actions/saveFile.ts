@@ -22,7 +22,10 @@ export const saveFileAction: Action = {
         "STORE_FILE",
         "PUT_FILE",
         "WRITE_TO_FILE",
-        "CREATE_NEW_FILE"
+        "CREATE_NEW_FILE",
+        "CREATE_NOTE",
+        "SAVE_NOTE",
+        "WRITE_NOTE"
     ],
     description:
         "Create or update a file in the Obsidian vault. Use format: 'Save FOLDER/SUBFOLDER/filename with content: your_content'",
@@ -49,12 +52,6 @@ export const saveFileAction: Action = {
         const obsidian = await getObsidian(runtime);
 
         try {
-            // Initialize or update state for context generation
-            // if (!state) {
-            //     state = (await runtime.composeState(message)) as State;
-            // } else {
-            //     state = await runtime.updateRecentMessageState(state);
-            // }
             let currentState: State;
             if (!state) {
                 currentState = (await runtime.composeState(message)) as State;
@@ -66,7 +63,6 @@ export const saveFileAction: Action = {
                 state: currentState,
                 template: fileTemplate(message.content.text),
             });
-
 
             const fileContext = await generateObject({
                 runtime,
@@ -91,7 +87,7 @@ export const saveFileAction: Action = {
                 return false;
             }
 
-            const { path, content } = fileContext.object;
+            let { path, content } = fileContext.object;
 
             if (!content) {
                 elizaLogger.error("File content is required for saving");
@@ -104,8 +100,29 @@ export const saveFileAction: Action = {
                 return false;
             }
 
+            // Check if this looks like it's meant to be a note and ensure it has .md extension
+            const looksLikeNote = (
+                // If the file contains markdown-like content
+                content.includes('#') || 
+                content.includes('**') || 
+                content.includes('- [ ]') ||
+                content.includes('[[') ||
+                // Or if it's explicitly mentioned as a note in the message
+                message.content.text.toLowerCase().includes('note')
+            );
+            
+            // If file has no extension or has .txt extension but looks like a note, use .md
+            if (looksLikeNote) {
+                if (!path.includes('.') || path.endsWith('.txt')) {
+                    path = path.endsWith('.txt') 
+                        ? path.substring(0, path.length - 4) + '.md'
+                        : path + '.md';
+                    elizaLogger.info(`Adjusted file path to use .md extension: ${path}`);
+                }
+            }
+
             elizaLogger.info(`Saving file at path: ${path}`);
-            // Note: Obsidian will create a new document at the path you have specified if such a document did not already exis
+            // Note: Obsidian will create a new document at the path you have specified if such a document did not already exist
             await obsidian.saveFile(path, content, true);
             elizaLogger.info(`Successfully saved file: ${path}`);
 
@@ -136,7 +153,7 @@ export const saveFileAction: Action = {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Save DOCUMENTS/report.txt with content: This is a test report",
+                    text: "Save DOCUMENTS/report.md with content: This is a test report",
                 },
             },
             {
@@ -151,7 +168,22 @@ export const saveFileAction: Action = {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Create PROJECTS/src/config.json with content: { \"version\": \"1.0.0\" }",
+                    text: "Create PROJECTS/meeting-notes with content: # Meeting Notes\n\n## Agenda\n\n- Discussion points",
+                },
+            },
+            {
+                user: "{{agentName}}",
+                content: {
+                    text: "{{responseData}}",
+                    action: "SAVE_FILE",
+                },
+            },
+        ],
+        [
+            {
+                user: "{{user1}}",
+                content: {
+                    text: "Create a new note about Project X with content: # Project X\n\n## Goals\n\n- Implement feature Y\n- Fix bug Z",
                 },
             },
             {
