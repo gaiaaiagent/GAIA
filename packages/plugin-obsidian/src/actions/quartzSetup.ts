@@ -375,24 +375,32 @@ git push -u origin ${branch}`,
                           callback({
                             text: `Quartz setup is complete, but I couldn't push to GitHub because the repository "${repoName}" doesn't exist yet.
 
-📘 **Create a new repository**:
-1. Go to [https://github.com/new](https://github.com/new)
-2. Name it \`${repoName}\`
-3. Do **not** initialize with README, license, or .gitignore
-4. Click **Create repository**
+📘 Create a new repository:
+1. Go to https://github.com/new
+2. Name it "${repoName}"
+3. Do not initialize with README, license, or .gitignore
+4. Click Create repository
 
-⚠️ **Important**: GitHub Pages only works with **public repositories** on free accounts. If your repository is private, Pages won't work unless you upgrade to GitHub Pro or Enterprise.
+⚠️ Important:
+- GitHub Pages only works with public repositories on free accounts.
+- If your repository is private, Pages won't work unless you upgrade to GitHub Pro or Enterprise.
 
-🔧 **Configure GitHub Pages deployment**:
-1. Go to your new repo: [https://github.com/${githubUsername}/${repoName}](https://github.com/${githubUsername}/${repoName})
-2. Navigate to **Settings → Pages**
-3. Under **Build and deployment**, choose **GitHub Actions**, then click **Save**
-4. Navigate to **Settings → Environments**
-5. Click on **github-pages**
-6. Under **Deployment branches and tags**, choose **No restriction** or explicitly allow \`${branch}\`
-7. Click **Save protection rules**
+🔐 Make sure you're logged into GitHub locally with an account that has push access to https://github.com/${githubUsername}/${repoName}
 
-Once done, say: \`Push Quartz\` to try again.`,
+You can test this by running:
+
+  git ls-remote https://github.com/${githubUsername}/${repoName}.git
+
+🔧 Configure GitHub Pages deployment:
+1. Go to your new repo: https://github.com/${githubUsername}/${repoName}
+2. Navigate to Settings → Pages
+3. Under Build and deployment, choose GitHub Actions, then click Save
+4. Navigate to Settings → Environments
+5. Click on github-pages
+6. Under Deployment branches and tags, choose No restriction or explicitly allow "${branch}"
+7. Click Save protection rules
+
+Once done, say: Push Quartz to try again.`,
                             metadata: {
                               repoName,
                               githubUsername,
