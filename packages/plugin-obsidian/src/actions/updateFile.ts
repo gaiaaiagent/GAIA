@@ -12,6 +12,7 @@ import {
 import { fileSchema, isValidFile } from "../types";
 import { getObsidian } from "../helper";
 import { fileTemplate } from "../templates/file";
+import { getQuartzPath, updateQuartzFile, doesQuartzExist } from "../helper/quartzHelper";
 
 
 // Add at the top with other imports
@@ -56,13 +57,6 @@ export const updateFileAction: Action = {
         const obsidian = await getObsidian(runtime);
 
         try {
-            // Initialize or update state for context generation
-            // if (!state) {
-            //     state = (await runtime.composeState(message)) as State;
-            // } else {
-            //     state = await runtime.updateRecentMessageState(state);
-            // }
-
             // Initialize or update state for context generation
             let currentState: State;
             if (!state) {
@@ -117,13 +111,27 @@ export const updateFileAction: Action = {
             await obsidian.patchFile(path, content);
             elizaLogger.info(`Successfully updated file: ${path}`);
 
+            // Check if Quartz is set up and update the file there as well
+            const quartzPath = getQuartzPath();
+            if (quartzPath && doesQuartzExist(quartzPath)) {
+                elizaLogger.info(`Quartz detected at ${quartzPath}, updating file there as well`);
+                const quartzUpdateSuccess = updateQuartzFile(path, content, quartzPath);
+                
+                if (quartzUpdateSuccess) {
+                    elizaLogger.info(`Successfully updated file in Quartz: ${path}`);
+                } else {
+                    elizaLogger.warn(`Failed to update file in Quartz: ${path}`);
+                }
+            }
+
             if (callback) {
                 callback({
-                    text: `Successfully updated file: ${path}`,
+                    text: `Successfully updated file: ${path}${quartzPath ? " (also updated in Quartz)" : ""}`,
                     metadata: {
                         path: path,
                         operation: "UPDATE",
-                        success: true
+                        success: true,
+                        quartzUpdated: quartzPath ? true : false
                     },
                 });
             }

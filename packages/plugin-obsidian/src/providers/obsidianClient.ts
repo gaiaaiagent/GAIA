@@ -241,56 +241,44 @@ export class ObsidianProvider {
         }
     }
 
-    /**
-     * Retrieves a list of all files within a specific directory.
-     * @param directoryPath - The path to the directory within the vault.
-     * @returns A promise that resolves to an array of file paths.
-     */
-// In ObsidianProvider class
-    async listDirectoryFiles(directoryPath: string): Promise<string[]> {
-        if (!this.connected) {
-            await this.connect();
-        }
 
-        try {
-            // Clean up directory path - remove leading and trailing slashes
-            directoryPath = directoryPath.replace(/^\/+|\/+$/g, '');
-
-            const response = await fetch(
-                `${this.host_url}/vault/${encodeURIComponent(directoryPath)}/`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${this.token}`,
-                        accept: "application/json",
-                    },
-                }
-            );
-
-            if (!response.ok) {
-                if (response.status === 404) {
-                    throw new Error(`Directory '${directoryPath}' not found`);
-                }
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const vaultDirectory: Record<string, string[]> = await response.json();
-            const files = vaultDirectory.files || [];
-
-            // If no files are found, throw an error
-            if (files.length === 0) {
-                throw new Error(`Directory '${directoryPath}' not found`);
-            }
-
-            // Rest of the existing code remains the same...
-            return files.map(file => file.includes('/')
-                ? file // File already has a path
-                : directoryPath ? `${directoryPath}/${file}` : file
-            );
-        } catch (error) {
-            elizaLogger.error("Failed to list directory contents:", error.message);
-            throw error;
-        }
+/**
+ * Lists files inside a specific directory in the vault.
+ * @param directoryPath - Directory to list
+ */
+async listDirectoryFiles(directoryPath: string): Promise<string[]> {
+    if (!this.connected) {
+        await this.connect();
     }
+
+    try {
+        const cleanedPath = directoryPath.replace(/^\/+|\/+$/g, '');
+
+        elizaLogger.debug(`Fetching directory listing for: "${cleanedPath}"`);
+        const response = await fetch(`${this.host_url}/vault/${encodeURIComponent(cleanedPath)}/`, {
+            headers: {
+                Authorization: `Bearer ${this.token}`,
+                accept: "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error(`Directory '${cleanedPath}' not found`);
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const vaultDirectory: Record<string, string[]> = await response.json();
+        const files = vaultDirectory.files || [];
+
+        return files;
+    } catch (error) {
+        elizaLogger.error("Failed to list directory contents:", error.message);
+        throw error;
+    }
+}
+
     /**
      * Retrieves the content of a specific file from the vault.
      * @param path - The path to the file within the vault.
@@ -677,89 +665,94 @@ export class ObsidianProvider {
     }
 
 
-    /**
-     * Recursively scans directories and builds a list of all files
-     * @param directory - The directory to scan, empty string for root
-     * @returns Array of file paths in format 'directory/file.md'
-     */
-    private async scanDirectoryRecursively(directory = ''): Promise<string[]> {
-        const allFiles: string[] = [];
-        const dirsToProcess: string[] = [directory];
-        const processedDirs = new Set<string>();
+  /**
+ * Recursively scans directories and builds a list of all files
+ * @param directory - The directory to scan, empty string for root
+ * @returns Array of file paths in format 'directory/file.md'
+ */
+  private async scanDirectoryRecursively(directory = ''): Promise<string[]> {
+    const allFiles: string[] = [];
+    const dirsToProcess: string[] = [directory];
+    const processedDirs = new Set<string>();
 
-        while (dirsToProcess.length > 0) {
-            const currentDir = dirsToProcess.shift();
-            if (currentDir === undefined) continue;
-
-            if (processedDirs.has(currentDir)) {
-                continue;
-            }
-
-            try {
-                elizaLogger.debug("Scanning directory:", currentDir);
-                const items = await this.listDirectoryFiles(currentDir);
-
-                for (const item of items) {
-                    if (item.endsWith('/')) {
-                        // It's a directory, add to processing queue
-                        const fullPath = currentDir ? `${currentDir}${item}` : item;
-                        if (!processedDirs.has(fullPath)) {
-                            dirsToProcess.push(fullPath);
-                        }
-                    } else if (item.endsWith('.md')) {
-                        // It's a markdown file, add to results
-                        const filePath = currentDir ? `${currentDir}${item}` : item;
-                        allFiles.push(filePath);
-                    }
-                }
-
-                processedDirs.add(currentDir);
-            } catch (error) {
-                elizaLogger.error(`Error scanning directory ${currentDir}:`, error);
-            }
-        }
-
-        return allFiles;
-    }
-
-    /**
-     * Retrieves all files in the vault.
-     * @returns A promise that resolves to an array of file paths.
-     */
-    async getAllFiles(): Promise<string[]> {
-        if (!this.connected) {
-            await this.connect();
-        }
+    while (dirsToProcess.length > 0) {
+        const currentDir = dirsToProcess.shift();
+        if (currentDir === undefined) continue;
+        if (processedDirs.has(currentDir)) continue;
 
         try {
-            elizaLogger.debug("Starting file scanning process");
+            elizaLogger.debug(`Scanning directory: '${currentDir}'`);
+            const items = await this.listDirectoryFiles(currentDir);
 
-            // Get root files and directories
-            const rootItems = await this.listFiles();
-            const allFiles: string[] = [];
+            for (const item of items) {
+                const isDir = item.endsWith('/');
+                const normalizedItem = item.replace(/^\/+|\/+$/g, '');
+                const fullPath = currentDir
+                    ? `${currentDir.replace(/\/$/, '')}/${normalizedItem}`
+                    : normalizedItem;
 
-            // Process root level markdown files
-            const rootMdFiles = rootItems.filter(item => item.endsWith('.md'));
-            allFiles.push(...rootMdFiles);
+                elizaLogger.debug(`Items in '${currentDir}':`, items);
+                elizaLogger.debug(`Normalized → fullPath = ${fullPath}`);
 
-            // Process directories
-            const directories = rootItems.filter(item => item.endsWith('/'));
-            for (const dir of directories) {
-                const dirFiles = await this.scanDirectoryRecursively(dir);
-                allFiles.push(...dirFiles);
+                if (isDir) {
+                    elizaLogger.debug(`→ Found subdirectory: ${fullPath}`);
+                    dirsToProcess.push(fullPath);
+                } else {
+                    elizaLogger.debug(`→ Found file: ${fullPath}`);
+                    allFiles.push(fullPath);
+                }
             }
 
-            elizaLogger.info(`Completed scanning. Found ${allFiles.length} files in vault`);
-
-            // Remove any duplicates
-            const uniqueFiles = Array.from(new Set(allFiles));
-
-            return uniqueFiles;
+            processedDirs.add(currentDir);
         } catch (error) {
-            elizaLogger.error("Error in getAllFiles:", error);
-            throw error;
+            elizaLogger.error(`Error scanning directory ${currentDir}:`, error);
         }
     }
+
+    return allFiles;
+}
+
+
+    
+
+  /**
+ * Retrieves all markdown and relevant attachment files in the vault.
+ * @returns A promise that resolves to an array of file paths.
+ */
+async getAllFiles(): Promise<string[]> {
+    if (!this.connected) {
+        await this.connect();
+    }
+
+    try {
+        elizaLogger.debug("Starting file scanning process");
+
+        const rootItems = await this.listFiles(); // e.g. ['Welcome.md', 'content/', 'personal/']
+        const allFiles: string[] = [];
+
+        const rootMdFiles = rootItems.filter(item => item.endsWith('.md'));
+        elizaLogger.debug(`Root-level markdown files: ${JSON.stringify(rootMdFiles)}`);
+        allFiles.push(...rootMdFiles);
+
+        const directories = rootItems.filter(item => item.endsWith('/'));
+        for (const dir of directories) {
+            elizaLogger.debug(`Recursively scanning directory: ${dir}`);
+            const dirFiles = await this.scanDirectoryRecursively(dir);
+            allFiles.push(...dirFiles);
+        }
+
+        const uniqueFiles = Array.from(new Set(allFiles));
+        elizaLogger.info(`Completed scanning. Found ${uniqueFiles.length} unique files in vault`);
+        elizaLogger.debug("Vault files:", uniqueFiles);
+
+        return uniqueFiles;
+    } catch (error) {
+        elizaLogger.error("Error in getAllFiles:", error);
+        throw error;
+    }
+}
+
+    
 
     /**
      * Creates memories from all files in the vault.

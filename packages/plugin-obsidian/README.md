@@ -1,6 +1,6 @@
 # @elizaos/plugin-obsidian
 
-An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian vaults, enabling powerful file and note management capabilities.
+An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian vaults, enabling powerful file and note management capabilities, as well as Quartz website publishing.
 
 ## Features
 
@@ -23,6 +23,12 @@ An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian
    - Showcasing integration of Naval's wisdom and quotes
    - Creating a knowledge base from Naval's vault notes for the agent
    - Naval's character json file is included in the PR for reference (found in the example directory)
+
+5. Quartz Website Publishing:
+   - Initialize a Quartz website from your Obsidian vault for digital garden publishing
+   - Sync and publish vault changes to your Quartz website
+   - Automatic deployment to GitHub Pages
+   - Preserve file structure and attachments from your vault
 
 ### Vault Operations
 
@@ -123,6 +129,28 @@ An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian
   await obsidian.patchFile("DOCUMENTS/report.txt", "New content"); // Example: "Update DOCUMENTS/report.txt"
   ```
 
+### Quartz Website Operations
+
+- **Setup Quartz**
+  - Initialize a Quartz website from your Obsidian vault
+  - Configure for GitHub Pages deployment
+  - Copy vault content to Quartz format
+
+  ```typescript
+  // Setup Quartz website
+  await obsidian.setupQuartz("my-digital-garden", "githubUsername"); // Example: "Setup Quartz with repo: my-digital-garden and username: githubUsername"
+  ```
+
+- **Publish Quartz**
+  - Sync vault changes to your Quartz website
+  - Handle added, modified, and deleted files
+  - Commit and push changes to GitHub for deployment
+
+  ```typescript
+  // Publish updates to Quartz website
+  await obsidian.publishQuartz("/path/to/quartz"); // Example: "Publish Quartz at path: /path/to/quartz"
+  ```
+
 ## Installation
 
 ```bash
@@ -197,6 +225,43 @@ The plugin provides several actions that can be used with ELIZA OS:
 - `CREATE_KNOWLEDGE`: Generate knowledge bases
 - `GET_ACTIVE_NOTE`: Get current note
 - `SUMMARIZE_ACTIVE_NOTE`: Summarize current note
+- `QUARTZ_SETUP`: Initialize a Quartz website
+- `QUARTZ_PUBLISH`: Publish changes to a Quartz website
+
+## Quartz Publishing Workflow
+
+To publish your Obsidian vault as a Quartz website:
+
+1. **Setup Quartz** (One-time setup):
+   ```
+   Setup Quartz with repo: my-digital-garden and username: githubUsername
+   ```
+   This will:
+   - Clone the Quartz repository
+   - Copy your Obsidian vault content to the Quartz content directory
+   - Configure GitHub Pages deployment
+   - Set up Git remotes for your repository
+
+2. **Create GitHub Repository** (One-time setup):
+   - Create a new repository on GitHub with the name you specified
+   - Push the initial Quartz setup to GitHub
+
+3. **Enable GitHub Pages** (One-time setup):
+   - Go to your GitHub repository settings
+   - Navigate to Pages settings
+   - Set the source to GitHub Actions
+
+4. **Publish Updates**:
+   ```
+   Publish Quartz at path: /path/to/quartz
+   ```
+   This will:
+   - Sync your latest Obsidian vault changes to the Quartz content directory
+   - Handle added, modified, and deleted files
+   - Commit and push changes to GitHub
+   - Trigger GitHub Actions to build and deploy your site
+
+Your Quartz site will be available at `https://[username].github.io/[repository-name]/`
 
 ## Error Handling
 
