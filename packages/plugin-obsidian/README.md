@@ -1,6 +1,6 @@
 # @elizaos/plugin-obsidian
 
-An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian vaults, enabling powerful file and note management capabilities, as well as Quartz website publishing.
+An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian vaults, enabling powerful file and note management capabilities, as well as Quartz website publishing with support for GitHub Pages and Arweave permanent storage.
 
 ## Features
 
@@ -24,10 +24,11 @@ An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian
    - Creating a knowledge base from Naval's vault notes for the agent
    - Naval's character json file is included in the PR for reference (found in the example directory)
 
-5. Quartz Website Publishing:
+5. Quartz Website Management:
    - Initialize a Quartz website from your Obsidian vault for digital garden publishing
    - Sync and publish vault changes to your Quartz website
-   - Automatic deployment to GitHub Pages
+   - Automatic deployment to GitHub Pages or Arweave permanent storage
+   - Preview your Quartz site locally before publishing
    - Preserve file structure and attachments from your vault
 
 ### Vault Operations
@@ -133,23 +134,25 @@ An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian
 
 - **Setup Quartz**
   - Initialize a Quartz website from your Obsidian vault
-  - Configure for GitHub Pages deployment
-  - Copy vault content to Quartz format
-
-  ```typescript
-  // Setup Quartz website
-  await obsidian.setupQuartz("my-digital-garden", "githubUsername"); // Example: "Setup Quartz with repo: my-digital-garden and username: githubUsername"
-  ```
+  - Configure for GitHub Pages or Arweave deployment
+  - Copy vault content from Public folder to Quartz format
+  - Install dependencies and build the site
 
 - **Publish Quartz**
   - Sync vault changes to your Quartz website
   - Handle added, modified, and deleted files
-  - Commit and push changes to GitHub for deployment
+  - Deploy to GitHub Pages or Arweave permanent storage
 
-  ```typescript
-  // Publish updates to Quartz website
-  await obsidian.publishQuartz("/path/to/quartz"); // Example: "Publish Quartz at path: /path/to/quartz"
-  ```
+- **Preview Quartz**
+  - Start a local preview server to test your site
+  - Sync latest changes from your vault
+  - Live preview at http://localhost:8080
+
+- **Setup Arweave**
+  - Generate an Arweave wallet for permanent storage
+  - Save wallet to .arweave/wallet.json
+  - Update .env with wallet path
+  - Check wallet balance
 
 ## Installation
 
@@ -171,7 +174,8 @@ The plugin requires the following character secret settings:
         "secrets": {
             "OBSIDIAN_API_TOKEN": "your-obsidian-api-token",
             "OBSIDIAN_API_PORT": "your-obsidian-api-port", // Optional (default: 27123)
-            "OBSIDIAN_API_URL": "https://your-obsidian-api-url" , // Optional (default: "http://127.0.0.1:27123")
+            "OBSIDIAN_API_URL": "https://your-obsidian-api-url", // Optional (default: "http://127.0.0.1:27123")
+            "ARWEAVE_WALLET_PATH": "./.arweave/wallet.json" // For Arweave publishing
         },
         // other settings...
     }
@@ -225,43 +229,53 @@ The plugin provides several actions that can be used with ELIZA OS:
 - `CREATE_KNOWLEDGE`: Generate knowledge bases
 - `GET_ACTIVE_NOTE`: Get current note
 - `SUMMARIZE_ACTIVE_NOTE`: Summarize current note
-- `QUARTZ_SETUP`: Initialize a Quartz website
-- `QUARTZ_PUBLISH`: Publish changes to a Quartz website
+- `QUARTZ_SETUP`: Initialize a Quartz website from vault
+- `QUARTZ_PUBLISH`: Publish changes to a Quartz website (GitHub Pages or Arweave)
+- `QUARTZ_PREVIEW`: Run local preview server
+- `ARWEAVE_SETUP`: Create new Arweave wallet and store in .env
 
 ## Quartz Publishing Workflow
 
-To publish your Obsidian vault as a Quartz website:
+### Arweave Permanent Storage Workflow
 
-1. **Setup Quartz** (One-time setup):
+To publish your Obsidian vault as a Quartz website on Arweave for permanent storage:
+
+1. **Generate Arweave Wallet** (One-time setup):
    ```
-   Setup Quartz with repo: my-digital-garden and username: githubUsername
-   ```
-   This will:
-   - Clone the Quartz repository
-   - Copy your Obsidian vault content to the Quartz content directory
-   - Configure GitHub Pages deployment
-   - Set up Git remotes for your repository
-
-2. **Create GitHub Repository** (One-time setup):
-   - Create a new repository on GitHub with the name you specified
-   - Push the initial Quartz setup to GitHub
-
-3. **Enable GitHub Pages** (One-time setup):
-   - Go to your GitHub repository settings
-   - Navigate to Pages settings
-   - Set the source to GitHub Actions
-
-4. **Publish Updates**:
-   ```
-   Publish Quartz at path: /path/to/quartz
+   Setup Arweave wallet
    ```
    This will:
-   - Sync your latest Obsidian vault changes to the Quartz content directory
-   - Handle added, modified, and deleted files
-   - Commit and push changes to GitHub
-   - Trigger GitHub Actions to build and deploy your site
+   - Generate a new Arweave wallet and save it to `.arweave/wallet.json`
+   - Automatically update your `.env` file with the wallet path
+   - Check your wallet balance and provide funding instructions if needed
 
-Your Quartz site will be available at `https://[username].github.io/[repository-name]/`
+2. **Setup Quartz** (One-time setup):
+   ```
+   Setup Quartz for Arweave
+   ```
+   This will:
+   - Initialize a Quartz digital garden from your Obsidian vault
+   - Copy notes from the Public folder into the Quartz content/ directory
+   - Install dependencies and build the site
+
+3. **Preview Before Publishing** (Optional):
+   ```
+   Preview Quartz website
+   ```
+   This will:
+   - Sync latest changes and start a live preview server at http://localhost:8080
+   - Allow you to test your site before publishing
+
+4. **Publish to Arweave**:
+   ```
+   Publish Quartz to Arweave
+   ```
+   This will:
+   - Sync latest Public folder contents into the Quartz site
+   - Rebuild the site and deploy it to Arweave for permanent hosting
+   - Handle 404.html, router.js, and single-page app (SPA) compatibility
+
+Your site will be published to: `https://arweave.net/[transaction-id]`
 
 ## Error Handling
 
