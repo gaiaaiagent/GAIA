@@ -13,9 +13,11 @@ import { readFileAction } from "./actions/file";
 import { saveFileAction } from "./actions/saveFile";
 import { openFileAction } from "./actions/openFile";
 import { updateFileAction } from "./actions/updateFile";
-import { quartzSetupAction } from "./actions/quartzSetup";
-import { quartzPublishAction } from "./actions/quartzPublish";
+import { quartzSetupAction } from "./actions/quartzSetupArweave";
+import { quartzPublishAction } from "./actions/quartzPublishArweave";
 import { quartzDiagnoseAction } from "./actions/quartzDiagnose";
+import { arweaveSetupAction } from "./actions/arweaveSetup";
+import { quartzPreviewAction } from "./actions/quartzPreview";
 
 export const obsidianPlugin = {
     name: "obsidian",
@@ -36,7 +38,9 @@ export const obsidianPlugin = {
         updateFileAction,
         quartzSetupAction,
         quartzPublishAction,
-        quartzDiagnoseAction
+        quartzDiagnoseAction,
+        arweaveSetupAction,
+        quartzPreviewAction
     ],
     evaluators: [],
     services: [],

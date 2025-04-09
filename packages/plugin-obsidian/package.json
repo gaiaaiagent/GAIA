@@ -6,6 +6,7 @@
 	"types": "dist/index.d.ts",
 	"dependencies": {
 		"@elizaos/core": "workspace:*",
+		"arweave": "^1.14.1",
 		"file-type-checker": "^1.1.2",
 		"mrmime": "^2.0.0",
 		"tsup": "8.3.5"
