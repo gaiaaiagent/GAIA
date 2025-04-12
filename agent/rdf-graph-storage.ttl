@@ -1,22 +1,12 @@
 @prefix : <#>.
-@prefix owl: <http://www.w3.org/2002/07/owl#>.
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix schema: <http://schema.org/>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix wor: <workouts/>.
 @prefix pl: <places/>.
 @prefix peo: <people/>.
 
-"_g_L118C2749" a owl:Ontology.
-
-"_g_L119C2750" a owl:Ontology.
-
-"_g_L58C1490" a owl:Ontology.
-
-"_g_L59C1491" a owl:Ontology.
-
 wor:4b1f0572-6f29-4e9c-b8bd-cece993a2090
-    a schema:Workout, schema:Workout;
+    a schema:Workout;
     schema:duration "PT1H"^^xsd:duration;
     schema:endDate "2025-04-10T08:00:00Z"^^xsd:dateTime;
     schema:exerciseType "Strength Training";
@@ -30,33 +20,3 @@ wor:4b1f0572-6f29-4e9c-b8bd-cece993a2090
         [ <http://schema.org/"@type"> "schema:ExerciseSet" ],
         [ <http://schema.org/"@type"> "schema:ExerciseSet" ];
     schema:startDate "2025-04-10T07:00:00Z"^^xsd:dateTime.
-schema:duration
-a owl:DatatypeProperty; rdfs:domain schema:Workout; rdfs:range xsd:string.
-schema:endDate
-a owl:DatatypeProperty; rdfs:domain schema:Workout; rdfs:range xsd:string.
-schema:exerciseType
-a owl:DatatypeProperty; rdfs:domain schema:Workout; rdfs:range xsd:string.
-schema:intensity
-a owl:DatatypeProperty; rdfs:domain schema:Workout; rdfs:range xsd:string.
-schema:location a owl:ObjectProperty; rdfs:domain schema:Workout.
-
-schema:name
-a owl:DatatypeProperty; rdfs:domain schema:Workout; rdfs:range xsd:string.
-schema:performer a owl:ObjectProperty; rdfs:domain schema:Workout.
-
-schema:sets
-    a owl:DatatypeProperty, owl:ObjectProperty;
-    rdfs:domain schema:Workout;
-    rdfs:range xsd:string.
-schema:startDate
-a owl:DatatypeProperty; rdfs:domain schema:Workout; rdfs:range xsd:string.
-schema:Workout a owl:Class.
-
-rdfs:domain a owl:ObjectProperty; rdfs:domain owl:DatatypeProperty.
-
-rdfs:range a owl:ObjectProperty; rdfs:domain owl:DatatypeProperty.
-
-[ a owl:Ontology ].
-
-[ a owl:Ontology ].
-

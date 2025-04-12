@@ -261,13 +261,26 @@ const addNoteToRdfGraph = (
             const typeValue = resolver.expandTerm(rawTypeValue);
             elizaLogger.debug(`Expanded @type to: ${typeValue}`);
             
-            rdfManager.addTriple(
+            // Check if this type triple already exists in the graph
+            const existingTriples = rdfManager.findTriples(
                 subjectUri,
                 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
                 typeValue
             );
             
-            elizaLogger.debug(`Added type triple: <${subjectUri}> <rdf:type> <${typeValue}>`);
+            elizaLogger.debug(`Found ${existingTriples.length} existing type triples for this subject/type`);
+            
+            if (existingTriples.length === 0) {
+                rdfManager.addTriple(
+                    subjectUri,
+                    'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+                    typeValue
+                );
+                
+                elizaLogger.debug(`Added type triple: <${subjectUri}> <rdf:type> <${typeValue}>`);
+            } else {
+                elizaLogger.debug(`Skipped adding duplicate type triple: <${subjectUri}> <rdf:type> <${typeValue}>`);
+            }
         }
         
         // Get information about class type to make better property namespace decisions

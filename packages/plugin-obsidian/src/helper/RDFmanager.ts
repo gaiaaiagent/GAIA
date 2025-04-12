@@ -302,6 +302,12 @@ public executeSparqlQuery(query: string): Array<Record<string, any>> {
                         results = [queryResults];
                     }
                 }
+                
+                // If the query returned 0 results, try the manual triple pattern matcher
+                if (results.length === 0) {
+                    elizaLogger.debug("Query returned 0 results, trying manual triple pattern matcher");
+                    results = this.manualTriplePatternMatch(query);
+                }
             } else if (
                 typeof this.graph.query === "function" &&
                 queryObj &&
@@ -313,6 +319,12 @@ public executeSparqlQuery(query: string): Array<Record<string, any>> {
                     if (result) callbackResults.push(result);
                 });
                 results = callbackResults;
+                
+                // If the query returned 0 results, try the manual triple pattern matcher
+                if (results.length === 0) {
+                    elizaLogger.debug("Query returned 0 results, trying manual triple pattern matcher");
+                    results = this.manualTriplePatternMatch(query);
+                }
             } else {
                 elizaLogger.error(
                     "No suitable query method available or query conversion failed"
@@ -421,58 +433,212 @@ private simplifyComplexQuery(query: string): string {
 
 /**
  * Last resort - manually match triple patterns for specific queries
+ * This is a generic implementation that attempts to extract meaningful results
+ * from the RDF graph based on the SPARQL query structure
  */
 private manualTriplePatternMatch(query: string): any[] {
-    // If this is a workout intensity query, try a direct approach
-    if (query.toLowerCase().includes('workout') && 
-        query.toLowerCase().includes('intensity') &&
-        query.toLowerCase().includes('high')) {
-        
-        elizaLogger.debug("Manually matching high intensity workouts");
+    elizaLogger.debug("Attempting manual triple pattern matching as fallback");
+    
+    try {
         const results: any[] = [];
-        
-        // Find all triples of type Workout
-        const workoutType = this.graph.sym('http://schema.org/Workout');
         const rdfType = this.graph.sym('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
-        const intensityPred = this.graph.sym('http://elizaos.local/ontology/intensity');
         
-        // Get all subjects of type Workout
-        const workouts = this.graph.statementsMatching(null, rdfType, workoutType);
+        // Extract all variable names from the query
+        const variableMatches = query.match(/\?(\w+)/g) || [];
+        const variables = variableMatches.map(v => v.substring(1));
         
-        for (const workoutStmt of workouts) {
-            const workout = workoutStmt.subject;
-            
-            // Find intensity values
-            const intensityStmts = this.graph.statementsMatching(workout, intensityPred, null);
-            
-            for (const intStmt of intensityStmts) {
-                const intensity = intStmt.object.value || intStmt.object.toString();
+        // Extract the SELECT variables
+        const selectMatch = query.match(/SELECT\s+(?:DISTINCT\s+)?(.+?)\s+WHERE/i);
+        const selectVars = selectMatch ? 
+            selectMatch[1].split(/\s+/).filter(v => v.startsWith('?')).map(v => v.substring(1)) : 
+            [];
+        
+        elizaLogger.debug(`Found ${variables.length} variables in query, ${selectVars.length} in SELECT clause`);
+        
+        // Extract type patterns from the query - handle both "a" and "rdf:type" syntax
+        // This regex handles both "?var a Type" and "?var a Type ;" patterns and other variations
+        const typePatterns = [];
+        
+        // Match "?var a Type" pattern with various terminators
+        const aTypeMatches = query.matchAll(/\?(\w+)\s+a\s+([^\.;\s]+)(?:\s*[\.;]|\s+\w+)/g);
+        for (const match of aTypeMatches) {
+            typePatterns.push({
+                variable: match[1],
+                type: match[2].replace(/[<>]/g, '')
+            });
+        }
+        
+        // Match "?var rdf:type Type" pattern
+        const rdfTypeMatches = query.matchAll(/\?(\w+)\s+(?:rdf:type|<[^>]*#type>)\s+([^\.;\s]+)(?:\s*[\.;]|\s+\w+)/g);
+        for (const match of rdfTypeMatches) {
+            typePatterns.push({
+                variable: match[1],
+                type: match[2].replace(/[<>]/g, '')
+            });
+        }
+        
+        // Extract property patterns from the query
+        const propertyPatterns = [];
+        
+        // Match "?var predicate ?obj" patterns
+        const propMatches = query.matchAll(/\?(\w+)\s+(?:<([^>]+)>|(\w+:\w+))\s+\?(\w+)/g);
+        for (const match of propMatches) {
+            const predUri = match[2] || (match[3] ? this.expandPrefixedName(match[3]) : null);
+            if (predUri) {
+                propertyPatterns.push({
+                    subject: match[1],
+                    predicate: predUri,
+                    object: match[4]
+                });
+            }
+        }
+        
+        // Extract filter conditions
+        const filterPatterns = [];
+        
+        // Match FILTER(condition) patterns
+        const filterMatches = query.matchAll(/FILTER\s*\(\s*(?:LCASE\s*\(\s*(?:STR\s*\(\s*)?)?\??(\w+)(?:\s*\)\s*\))?\s*=\s*["']([^"']+)["']\s*\)/g);
+        for (const match of filterMatches) {
+            filterPatterns.push({
+                variable: match[1],
+                value: match[2].toLowerCase() // Case-insensitive comparison
+            });
+        }
+        
+        elizaLogger.debug(`Extracted ${typePatterns.length} type patterns, ${propertyPatterns.length} property patterns, ${filterPatterns.length} filter patterns`);
+        
+        // If we have type patterns, use them to find matching subjects
+        if (typePatterns.length > 0) {
+            // Process each type pattern
+            for (const pattern of typePatterns) {
+                const typeUri = pattern.type.startsWith('http') ? pattern.type : 
+                                pattern.type.includes(':') ? this.expandPrefixedName(pattern.type) : null;
                 
-                // Check if it's high intensity
-                if (intensity.toLowerCase() === 'high') {
-                    // Create a result object
-                    const result: Record<string, any> = {
-                        workout: workout.value || workout.toString(),
-                        intensity: intensity
-                    };
+                if (typeUri) {
+                    const typeNode = this.graph.sym(typeUri);
+                    const typeInstances = this.graph.statementsMatching(null, rdfType, typeNode);
+                    elizaLogger.debug(`Found ${typeInstances.length} instances of type ${typeUri}`);
                     
-                    // Try to find name and startDate
-                    const nameStmts = this.graph.statementsMatching(
-                        workout, 
-                        this.graph.sym('http://elizaos.local/ontology/name'), 
-                        null
-                    );
-                    if (nameStmts.length > 0) {
-                        result.name = nameStmts[0].object.value || nameStmts[0].object.toString();
+                    // For each instance, collect all its properties
+                    for (const stmt of typeInstances) {
+                        const subject = stmt.subject;
+                        const result: Record<string, any> = {
+                            [pattern.variable]: subject.value || subject.toString()
+                        };
+                        
+                        // Find all predicates for this subject
+                        const properties = this.graph.statementsMatching(subject, null, null);
+                        
+                        // Process property patterns for this subject
+                        const relevantPropPatterns = propertyPatterns.filter(p => p.subject === pattern.variable);
+                        
+                        if (relevantPropPatterns.length > 0) {
+                            // Process each property pattern
+                            for (const propPattern of relevantPropPatterns) {
+                                const propValues = this.graph.statementsMatching(
+                                    subject, 
+                                    this.graph.sym(propPattern.predicate), 
+                                    null
+                                );
+                                
+                                if (propValues.length > 0) {
+                                    const value = this.formatRdfNode(propValues[0].object);
+                                    result[propPattern.object] = value;
+                                    
+                                    // Check if this property has a filter condition
+                                    const filterForProp = filterPatterns.find(f => f.variable === propPattern.object);
+                                    if (filterForProp && value.toLowerCase() !== filterForProp.value) {
+                                        // Skip this result if it doesn't match the filter
+                                        continue;
+                                    }
+                                }
+                            }
+                        } else {
+                            // If no specific property patterns, include all properties
+                            for (const propStmt of properties) {
+                                if (propStmt.predicate.value !== rdfType.value) {
+                                    const propName = this.getPredNameFromUri(propStmt.predicate.value);
+                                    const value = this.formatRdfNode(propStmt.object);
+                                    result[propName] = value;
+                                }
+                            }
+                        }
+                        
+                        // Check if this result matches all filter conditions
+                        let matchesAllFilters = true;
+                        for (const filter of filterPatterns) {
+                            if (result[filter.variable] && 
+                                result[filter.variable].toLowerCase() !== filter.value) {
+                                matchesAllFilters = false;
+                                break;
+                            }
+                        }
+                        
+                        if (matchesAllFilters) {
+                            // Only include variables that were in the SELECT clause
+                            if (selectVars.length > 0) {
+                                const filteredResult: Record<string, any> = {};
+                                for (const v of selectVars) {
+                                    if (result[v] !== undefined) {
+                                        filteredResult[v] = result[v];
+                                    }
+                                }
+                                results.push(filteredResult);
+                            } else {
+                                results.push(result);
+                            }
+                        }
                     }
-                    
-                    const dateStmts = this.graph.statementsMatching(
-                        workout, 
-                        this.graph.sym('http://elizaos.local/ontology/startDate'), 
-                        null
-                    );
-                    if (dateStmts.length > 0) {
-                        result.startDate = dateStmts[0].object.value || dateStmts[0].object.toString();
+                }
+            }
+        } else {
+            // If no type patterns, try a more general approach
+            elizaLogger.debug("No type patterns found, using general approach");
+            
+            // Get all subjects
+            const subjects = new Set<string>();
+            for (const stmt of this.graph.statements) {
+                if (stmt.subject) {
+                    const subjectValue = this.extractNodeValue(stmt.subject);
+                    if (subjectValue) subjects.add(subjectValue);
+                }
+            }
+            
+            // For each subject, check if it matches the query patterns
+            for (const subjectValue of subjects) {
+                const subject = this.graph.sym(subjectValue);
+                const result: Record<string, any> = {};
+                
+                // Find all predicates for this subject
+                const properties = this.graph.statementsMatching(subject, null, null);
+                
+                // Check if this subject has an rdf:type statement
+                const typeStmts = properties.filter(p => p.predicate.value === rdfType.value);
+                if (typeStmts.length > 0) {
+                    // Add the type information
+                    result.type = this.formatRdfNode(typeStmts[0].object);
+                }
+                
+                // Add all properties
+                for (const propStmt of properties) {
+                    const propName = this.getPredNameFromUri(propStmt.predicate.value);
+                    result[propName] = this.formatRdfNode(propStmt.object);
+                }
+                
+                // Check if this result matches all filter conditions
+                let matchesAllFilters = true;
+                for (const filter of filterPatterns) {
+                    if (result[filter.variable] && 
+                        result[filter.variable].toLowerCase() !== filter.value) {
+                        matchesAllFilters = false;
+                        break;
+                    }
+                }
+                
+                if (matchesAllFilters) {
+                    // Add a default subject property if not already present
+                    if (!result.subject) {
+                        result.subject = subjectValue;
                     }
                     
                     results.push(result);
@@ -480,10 +646,45 @@ private manualTriplePatternMatch(query: string): any[] {
             }
         }
         
+        elizaLogger.debug(`Manual triple pattern matching returned ${results.length} results`);
         return results;
+    } catch (error) {
+        elizaLogger.error("Error in manual triple pattern matching:", error);
+        return [];
+    }
+}
+
+/**
+ * Helper method to get a predicate name from a URI
+ */
+private getPredNameFromUri(uri: string): string {
+    // Try to extract the last part of the URI as the predicate name
+    const parts = uri.split(/[/#]/);
+    return parts[parts.length - 1];
+}
+
+/**
+ * Helper method to expand a prefixed name to a full URI
+ */
+private expandPrefixedName(prefixedName: string): string | null {
+    if (!prefixedName.includes(':')) return null;
+    
+    const [prefix, name] = prefixedName.split(':');
+    
+    const namespaces: Record<string, string> = {
+        rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        rdfs: "http://www.w3.org/2000/01/rdf-schema#",
+        schema: "http://schema.org/",
+        xsd: "http://www.w3.org/2001/XMLSchema#",
+        owl: "http://www.w3.org/2002/07/owl#",
+        foaf: "http://xmlns.com/foaf/0.1/",
+    };
+    
+    if (namespaces[prefix]) {
+        return `${namespaces[prefix]}${name}`;
     }
     
-    return [];
+    return null;
 }
     /**
      * Format SPARQL results into a more usable format
@@ -1219,8 +1420,45 @@ private manualTriplePatternMatch(query: string): any[] {
         format: string = "text/turtle"
     ): boolean {
         try {
-            // Serialize the graph
-            const serializedGraph = this.serializeGraph(format);
+            // Create a clean graph without schema/ontology data
+            const cleanGraph = new rdflib.IndexedFormula();
+            
+            // Copy only instance data (not schema/ontology data) to the clean graph
+            if (this.graph.statements && Array.isArray(this.graph.statements)) {
+                for (const statement of this.graph.statements) {
+                    // Skip schema/ontology triples
+                    const predicateValue = this.extractNodeValue(statement.predicate);
+                    const objectValue = this.extractNodeValue(statement.object);
+                    
+                    // Skip triples with owl: or rdfs: predicates or objects
+                    if (predicateValue && (
+                        predicateValue.startsWith("http://www.w3.org/2002/07/owl#") ||
+                        predicateValue.startsWith("http://www.w3.org/2000/01/rdf-schema#")
+                    )) {
+                        continue;
+                    }
+                    
+                    if (objectValue && (
+                        objectValue === "http://www.w3.org/2002/07/owl#ObjectProperty" ||
+                        objectValue === "http://www.w3.org/2002/07/owl#DatatypeProperty" ||
+                        objectValue === "http://www.w3.org/2002/07/owl#Class" ||
+                        objectValue === "http://www.w3.org/2002/07/owl#Ontology"
+                    )) {
+                        continue;
+                    }
+                    
+                    // Add the statement to the clean graph
+                    try {
+                        // @ts-ignore - Ignore TypeScript error about argument count
+                        cleanGraph.add(statement.subject, statement.predicate, statement.object);
+                    } catch (error) {
+                        elizaLogger.error(`Error adding statement to clean graph: ${error.message}`);
+                    }
+                }
+            }
+            
+            // Serialize the clean graph
+            const serializedGraph = rdflib.serialize(null, cleanGraph, this.baseUri, format);
             if (!serializedGraph) {
                 elizaLogger.error("Failed to serialize graph for saving");
                 return false;
@@ -1236,12 +1474,8 @@ private manualTriplePatternMatch(query: string): any[] {
             fs.writeFileSync(filePath, serializedGraph, "utf8");
             elizaLogger.info(`RDF graph saved to ${filePath}`);
             
-            // Generate and save the ontology
-            const ontologyContent = this.generateOntology();
-            if (ontologyContent) {
-                const ontologyPath = filePath.replace(/\.ttl$/, '-ontology.ttl');
-                this.saveOntologyToFile(ontologyPath, ontologyContent);
-            }
+            // Note: We no longer generate and save the ontology file here
+            // This is now handled by generateOntologyFromGraph in loadRDF.ts
             
             return true;
         } catch (error) {

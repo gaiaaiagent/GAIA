@@ -1,3 +1,9 @@
+# Generated Ontology Schema
+
+This file was automatically generated from the RDF graph.
+It contains the schema/ontology information extracted from your data.
+
+```turtle
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix schema: <http://schema.org/> .
@@ -83,3 +89,4 @@ owl:DatatypeProperty rdfs:isDefinedBy [ a owl:Ontology ; owl:imports (rdfs:domai
 owl:ObjectProperty a owl:Class .
 
 owl:ObjectProperty rdfs:isDefinedBy [ a owl:Ontology ; owl:imports (rdfs:domain) ] .
+```

@@ -53,6 +53,9 @@ export async function generateSparqlQuery(
     try {
         elizaLogger.debug("Generating SPARQL query from prompt:", prompt);
         
+        // We should not filter out "_g_L" entries as they are legitimate blank nodes
+        // Instead, we'll ensure the LLM understands how to handle them in SPARQL queries
+        
         // Get the property namespace resolver
         const resolver = PropertyNamespaceResolver.getInstance();
         
@@ -65,56 +68,6 @@ export async function generateSparqlQuery(
         // Get namespace prefixes for the SPARQL query
         const prefixes = resolver.getNamespacePrefixes();
         const prefixSection = generatePrefixSection(prefixes);
-        
-        // Check if this is a workout intensity query
-        const isWorkoutIntensityQuery = 
-            prompt.toLowerCase().includes("workout") &&
-            (prompt.toLowerCase().includes("intensity") || 
-             prompt.toLowerCase().includes("high"));
-        
-        // If it's a workout intensity query, create a specialized query with proper namespace handling
-        if (isWorkoutIntensityQuery) {
-            elizaLogger.debug("Detected workout intensity query, using specialized pattern");
-            
-            // Create a more robust version of the workout intensity query
-            const rdfTypeUri = resolver.expandTerm("rdf:type");
-            const workoutTypeUri = resolver.expandTerm("schema:Workout");
-            
-            // Use the resolver to create union patterns for each property that might exist in different namespaces
-            const intensityPattern = createPropertyPattern(resolver, "?workout", "intensity", "?intensity");
-            const namePattern = createPropertyPattern(resolver, "?workout", "name", "?name");
-            const startDatePattern = createPropertyPattern(resolver, "?workout", "startDate", "?startDate");
-            
-            // Build the specialized query
-            const query = `${prefixSection}
-
-SELECT DISTINCT ?workout ?name ?startDate ?intensity
-WHERE {
-  # Match Workout type
-  {
-    ?workout <${rdfTypeUri}> <${workoutTypeUri}> .
-  } UNION {
-    ?workout a <${workoutTypeUri}> .
-  }
-  
-  # Match intensity property with possible alternative namespaces
-  ${intensityPattern}
-  
-  # Filter for high intensity
-  FILTER(LCASE(STR(?intensity)) = "high")
-  
-  # Optional properties that might be in different namespaces
-  OPTIONAL { ${namePattern} }
-  OPTIONAL { ${startDatePattern} }
-}
-ORDER BY DESC(?startDate)`;
-
-            elizaLogger.debug("Generated specialized workout query:", query);
-            return query;
-        }
-        
-        // For other queries, use the LLM but with namespace guidance
-        elizaLogger.debug("Using LLM to generate query for general case");
         
         // Get a list of registered properties to help the LLM
         const registeredProperties = resolver.getRegisteredProperties();
@@ -225,7 +178,9 @@ export async function shouldUseSparql(
         // Shortcut for workout intensity queries
         if (query.toLowerCase().includes("workout") && 
             (query.toLowerCase().includes("intensity") || 
-             query.toLowerCase().includes("high"))) {
+             query.toLowerCase().includes("high") ||
+             query.toLowerCase().includes("moderate") ||
+             query.toLowerCase().includes("low"))) {
             elizaLogger.debug("Query is about workout intensity, so it should use SPARQL");
             return true;
         }
