@@ -18,6 +18,9 @@ import { quartzPublishAction } from "./actions/quartzPublishArweave";
 import { quartzDiagnoseAction } from "./actions/quartzDiagnose";
 import { arweaveSetupAction } from "./actions/arweaveSetup";
 import { quartzPreviewAction } from "./actions/quartzPreview";
+import { loadRdfAction } from "./actions/loadRDF";
+import { viewRdfAction } from "./actions/viewRDFGraph";
+import { generateOntologyAction } from "./actions/generateOntology";
 
 export const obsidianPlugin = {
     name: "obsidian",
@@ -40,7 +43,10 @@ export const obsidianPlugin = {
         quartzPublishAction,
         quartzDiagnoseAction,
         arweaveSetupAction,
-        quartzPreviewAction
+        quartzPreviewAction,
+        loadRdfAction,
+        viewRdfAction,
+        generateOntologyAction
     ],
     evaluators: [],
     services: [],

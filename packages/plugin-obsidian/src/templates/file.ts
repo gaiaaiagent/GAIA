@@ -1,5 +1,7 @@
-export const fileTemplate = (userRequest: string) => `
+export const fileTemplate = (userRequest: string, likelyPath?: string) => `
 Respond with a JSON markdown block containing only the extracted values. Use null for any values that cannot be determined.
+
+${likelyPath ? `The file most likely to be updated is: "${likelyPath}". Use this path unless the user explicitly specifies another.` : ''}
 
 Ensure that:
 1. The path is properly formatted with correct folder structure
@@ -16,7 +18,7 @@ Provide the details in the following JSON format:
 \`\`\`json
 {
     "path": "<folder>/<subfolder>/<filename>",
-    "operation": "<READ|WRITE>",
+    "operation": "<READ|WRITE|UPDATE|CREATE>",
     "content": "<file_content_to_write>"
 }
 \`\`\`
@@ -24,4 +26,5 @@ Provide the details in the following JSON format:
 Here are the recent user messages for context:
 ${userRequest}
 
-Respond ONLY with a JSON markdown block containing only the extracted values.`;
+Respond ONLY with a JSON markdown block containing only the extracted values.
+`;

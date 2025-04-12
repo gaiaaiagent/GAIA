@@ -1,4 +1,9 @@
-import type { NoteContent, ResultNoteApi, ResultNoteSearchApi, ServerInfo } from "../types";
+import type {
+    NoteContent,
+    ResultNoteApi,
+    ResultNoteSearchApi,
+    ServerInfo,
+} from "../types";
 import { createHash } from "node:crypto";
 import {
     elizaLogger,
@@ -6,6 +11,7 @@ import {
     knowledge,
     stringToUuid,
 } from "@elizaos/core";
+import { setStructuredMarkdownKnowledge } from "../helper/structuredKnowledge";
 
 export class ObsidianProvider {
     private connected = false;
@@ -15,7 +21,8 @@ export class ObsidianProvider {
     private constructor(
         private port = 27123,
         private token: string,
-        private host_url: string
+        private host_url: string,
+        private vaultPath: string,
     ) {}
 
     /**
@@ -30,10 +37,16 @@ export class ObsidianProvider {
         runtime: AgentRuntime,
         port: number,
         token: string,
-        host_url = `http://127.0.0.1:${port}`
+        host_url = `http://127.0.0.1:${port}`,
+        vaultPath = "/Users/darrenzal/GAIA/Vault", // default value or env var
     ): Promise<ObsidianProvider> {
         if (!this.instance) {
-            this.instance = new ObsidianProvider(port, token, host_url);
+            this.instance = new ObsidianProvider(
+                port,
+                token,
+                host_url,
+                vaultPath,
+            );
             await this.instance.connect();
             this.instance.runtime = runtime;
         }
@@ -102,6 +115,10 @@ export class ObsidianProvider {
         }
     }
 
+    getVaultPath(): string {
+        return this.vaultPath;
+    }
+
     /**
      * Retrieves the content of a specific note.
      * @param path - The path to the note within the vault.
@@ -114,15 +131,13 @@ export class ObsidianProvider {
 
         try {
             const response = await fetch(
-                `${this.host_url}/vault/${encodeURIComponent(
-                    path
-                )}`,
+                `${this.host_url}/vault/${encodeURIComponent(path)}`,
                 {
                     headers: {
                         Authorization: `Bearer ${this.token}`,
                         accept: "application/vnd.olrapi.note+json",
                     },
-                }
+                },
             );
 
             if (!response.ok) {
@@ -147,15 +162,12 @@ export class ObsidianProvider {
         }
 
         try {
-            const response = await fetch(
-                `${this.host_url}/active/`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${this.token}`,
-                        accept: "application/vnd.olrapi.note+json",
-                    },
-                }
-            );
+            const response = await fetch(`${this.host_url}/active/`, {
+                headers: {
+                    Authorization: `Bearer ${this.token}`,
+                    accept: "application/vnd.olrapi.note+json",
+                },
+            });
 
             if (!response.ok) {
                 if (response.status === 404) {
@@ -167,7 +179,10 @@ export class ObsidianProvider {
             const noteContent: NoteContent = await response.json();
             return noteContent;
         } catch (error) {
-            elizaLogger.error("Failed to fetch active note content:", error.message);
+            elizaLogger.error(
+                "Failed to fetch active note content:",
+                error.message,
+            );
             throw error;
         }
     }
@@ -182,7 +197,7 @@ export class ObsidianProvider {
     async saveNote(
         path: string,
         content: string,
-        createDirectories = true
+        createDirectories = true,
     ): Promise<void> {
         if (!this.connected) {
             await this.connect();
@@ -200,7 +215,7 @@ export class ObsidianProvider {
                         "X-Create-Directories": createDirsString,
                     },
                     body: content,
-                }
+                },
             );
 
             if (!response.ok) {
@@ -241,43 +256,51 @@ export class ObsidianProvider {
         }
     }
 
-
-/**
- * Lists files inside a specific directory in the vault.
- * @param directoryPath - Directory to list
- */
-async listDirectoryFiles(directoryPath: string): Promise<string[]> {
-    if (!this.connected) {
-        await this.connect();
-    }
-
-    try {
-        const cleanedPath = directoryPath.replace(/^\/+|\/+$/g, '');
-
-        elizaLogger.debug(`Fetching directory listing for: "${cleanedPath}"`);
-        const response = await fetch(`${this.host_url}/vault/${encodeURIComponent(cleanedPath)}/`, {
-            headers: {
-                Authorization: `Bearer ${this.token}`,
-                accept: "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error(`Directory '${cleanedPath}' not found`);
-            }
-            throw new Error(`HTTP error! status: ${response.status}`);
+    /**
+     * Lists files inside a specific directory in the vault.
+     * @param directoryPath - Directory to list
+     */
+    async listDirectoryFiles(directoryPath: string): Promise<string[]> {
+        if (!this.connected) {
+            await this.connect();
         }
 
-        const vaultDirectory: Record<string, string[]> = await response.json();
-        const files = vaultDirectory.files || [];
+        try {
+            const cleanedPath = directoryPath.replace(/^\/+|\/+$/g, "");
 
-        return files;
-    } catch (error) {
-        elizaLogger.error("Failed to list directory contents:", error.message);
-        throw error;
+            elizaLogger.debug(
+                `Fetching directory listing for: "${cleanedPath}"`,
+            );
+            const response = await fetch(
+                `${this.host_url}/vault/${encodeURIComponent(cleanedPath)}/`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`,
+                        accept: "application/json",
+                    },
+                },
+            );
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error(`Directory '${cleanedPath}' not found`);
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const vaultDirectory: Record<string, string[]> =
+                await response.json();
+            const files = vaultDirectory.files || [];
+
+            return files;
+        } catch (error) {
+            elizaLogger.error(
+                "Failed to list directory contents:",
+                error.message,
+            );
+            throw error;
+        }
     }
-}
 
     /**
      * Retrieves the content of a specific file from the vault.
@@ -290,12 +313,15 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
         }
 
         try {
-            const response = await fetch(`${this.host_url}/vault/${encodeURIComponent(path)}`, {
-                headers: {
-                    Authorization: `Bearer ${this.token}`,
-                    accept: "text/plain", // Adjust the accept header if necessary
+            const response = await fetch(
+                `${this.host_url}/vault/${encodeURIComponent(path)}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`,
+                        accept: "text/plain", // Adjust the accept header if necessary
+                    },
                 },
-            });
+            );
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -304,7 +330,10 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
             const content = await response.text(); // Use text() instead of json()
             return content;
         } catch (error) {
-            elizaLogger.error(`Failed to read file content for ${path}:`, error.message);
+            elizaLogger.error(
+                `Failed to read file content for ${path}:`,
+                error.message,
+            );
             throw error;
         }
     }
@@ -327,7 +356,7 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
                     headers: {
                         Authorization: `Bearer ${this.token}`,
                     },
-                }
+                },
             );
 
             if (!response.ok) {
@@ -336,7 +365,10 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
 
             elizaLogger.success(`Successfully opened file: ${filePath}`);
         } catch (error) {
-            elizaLogger.error(`Failed to open file '${filePath}':`, error.message);
+            elizaLogger.error(
+                `Failed to open file '${filePath}':`,
+                error.message,
+            );
             throw error;
         }
     }
@@ -352,7 +384,7 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
     async saveFile(
         path: string,
         content: string,
-        createDirectories = true
+        createDirectories = true,
     ): Promise<void> {
         if (!this.connected) {
             await this.connect();
@@ -370,7 +402,7 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
                         "X-Create-Directories": createDirsString,
                     },
                     body: content,
-                }
+                },
             );
 
             if (!response.ok) {
@@ -392,29 +424,29 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
     async patchFile(
         path: string,
         content: string,
-        lineNumber = 0
+        lineNumber = 0,
     ): Promise<void> {
         if (!this.connected) {
             await this.connect();
         }
         try {
             // Ensure path is properly formatted
-            const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
+            const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
 
             const requestUrl = `${this.host_url}/vault/${encodeURIComponent(normalizedPath)}`;
 
             const headers = {
                 Authorization: `Bearer ${this.token}`,
                 "Content-Type": "text/markdown", // Changed from application/json
-                "Operation": "replace",
+                Operation: "replace",
                 "Target-Type": "heading",
-                "Target": "0",
+                Target: "0",
             };
 
             const response = await fetch(requestUrl, {
                 method: "PATCH",
                 headers: headers,
-                body: content // Send content directly as a string
+                body: content, // Send content directly as a string
             });
 
             // Log response details for debugging
@@ -423,15 +455,17 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
                 elizaLogger.error("Patch File Response Error:", {
                     status: response.status,
                     statusText: response.statusText,
-                    errorText
+                    errorText,
                 });
-                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                throw new Error(
+                    `HTTP error! status: ${response.status}, message: ${errorText}`,
+                );
             }
         } catch (error) {
             elizaLogger.error("Failed to patch file content:", {
                 errorMessage: error.message,
                 path,
-                contentLength: content.length
+                contentLength: content.length,
             });
             throw error;
         }
@@ -447,21 +481,19 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
         }
 
         try {
-            const response = await fetch(
-                `${this.host_url}/commands/`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${this.token}`,
-                        accept: "application/json",
-                    },
-                }
-            );
+            const response = await fetch(`${this.host_url}/commands/`, {
+                headers: {
+                    Authorization: `Bearer ${this.token}`,
+                    accept: "application/json",
+                },
+            });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const commands: { id: string; name: string }[] = await response.json();
+            const commands: { id: string; name: string }[] =
+                await response.json();
             return commands;
         } catch (error) {
             elizaLogger.error("Failed to list commands:", error.message);
@@ -480,17 +512,14 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
         }
 
         try {
-            const response = await fetch(
-                `${this.host_url}/commands/execute`,
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${this.token}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ commandId }),
-                }
-            );
+            const response = await fetch(`${this.host_url}/commands/execute`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${this.token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ commandId }),
+            });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -510,14 +539,14 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
      */
     async search(
         query: string | object,
-        queryFormat: 'plaintext' | 'dataview' | 'jsonlogic' = 'plaintext',
+        queryFormat: "plaintext" | "dataview" | "jsonlogic" = "plaintext",
         options: {
             contextLength?: number;
             ignoreCase?: boolean;
             isRegex?: boolean;
             searchIn?: string[];
-        } = {}
-    ): Promise<ResultNoteApi[]|ResultNoteSearchApi[]> {
+        } = {},
+    ): Promise<ResultNoteApi[] | ResultNoteSearchApi[]> {
         if (!this.connected) {
             await this.connect();
         }
@@ -530,43 +559,42 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
         let body: string;
 
         switch (queryFormat) {
-            case 'dataview':
-                contentType = 'application/vnd.olrapi.dataview.dql+txt';
-                if (typeof query !== 'string') {
-                    throw new Error('Dataview query must be a string.');
+            case "dataview":
+                contentType = "application/vnd.olrapi.dataview.dql+txt";
+                if (typeof query !== "string") {
+                    throw new Error("Dataview query must be a string.");
                 }
                 body = query;
                 break;
-            case 'jsonlogic':
-                contentType = 'application/vnd.olrapi.jsonlogic+json';
-                if (typeof query !== 'object') {
-                    throw new Error('JsonLogic query must be an object.');
+            case "jsonlogic":
+                contentType = "application/vnd.olrapi.jsonlogic+json";
+                if (typeof query !== "object") {
+                    throw new Error("JsonLogic query must be an object.");
                 }
                 body = JSON.stringify(query);
                 break;
             default:
-                contentType = 'application/json';
-                if (typeof query !== 'string') {
-                    throw new Error('Plaintext query must be a string.');
+                contentType = "application/json";
+                if (typeof query !== "string") {
+                    throw new Error("Plaintext query must be a string.");
                 }
                 body = query;
                 break;
         }
 
         try {
-
             elizaLogger.log(
                 `Processing search query with format ${queryFormat}:`,
-                body
+                body,
             );
 
-            if (queryFormat === 'dataview' || queryFormat === 'jsonlogic') {
+            if (queryFormat === "dataview" || queryFormat === "jsonlogic") {
                 const response = await fetch(`${this.host_url}/search`, {
-                    method: 'POST',
+                    method: "POST",
                     headers: {
                         Authorization: `Bearer ${this.token}`,
-                        'Content-Type': contentType,
-                        Accept: 'application/json',
+                        "Content-Type": contentType,
+                        Accept: "application/json",
                     },
                     body: body,
                 });
@@ -579,14 +607,17 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
                 return results;
             }
 
-            const response = await fetch(`${this.host_url}/search/simple?query=${encodeURIComponent(body)}&contextLength=${contextLength}`, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${this.token}`,
-                    'Content-Type': contentType,
-                    Accept: 'application/json',
-                }
-            });
+            const response = await fetch(
+                `${this.host_url}/search/simple?query=${encodeURIComponent(body)}&contextLength=${contextLength}`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${this.token}`,
+                        "Content-Type": contentType,
+                        Accept: "application/json",
+                    },
+                },
+            );
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -595,11 +626,10 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
             const results: ResultNoteApi[] = await response.json();
             return results;
         } catch (error) {
-            elizaLogger.error('Search failed:', error.message);
+            elizaLogger.error("Search failed:", error.message);
             throw error;
         }
     }
-
 
     /**
      * Searches for notes in the vault based on the provided query and options.
@@ -610,7 +640,7 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
      */
     async searchKeywords(
         query: string,
-        contextLength = 100
+        contextLength = 100,
     ): Promise<ResultNoteApi[]> {
         if (!this.connected) {
             await this.connect();
@@ -619,10 +649,7 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
         // Split on OR to get main chunks
         const orQueries = query.split(/\s+OR\s+/).map((q) => q.trim());
 
-        elizaLogger.log(
-            'Processing search query with OR operator:',
-            orQueries
-        );
+        elizaLogger.log("Processing search query with OR operator:", orQueries);
 
         try {
             const allResults: ResultNoteApi[] = [];
@@ -637,7 +664,7 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
                             Authorization: `Bearer ${this.token}`,
                             accept: "application/json",
                         },
-                    }
+                    },
                 );
 
                 if (!response.ok) {
@@ -651,8 +678,8 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
             // Remove duplicates based on filename
             const uniqueResults = Array.from(
                 new Map(
-                    allResults.map((item) => [item.filename, item])
-                ).values()
+                    allResults.map((item) => [item.filename, item]),
+                ).values(),
             );
 
             elizaLogger.success(`Found ${uniqueResults.length} unique results`);
@@ -664,95 +691,325 @@ async listDirectoryFiles(directoryPath: string): Promise<string[]> {
         }
     }
 
+    /**
+     * Recursively scans directories and builds a list of all files
+     * @param directory - The directory to scan, empty string for root
+     * @returns Array of file paths in format 'directory/file.md'
+     */
+    private async scanDirectoryRecursively(directory = ""): Promise<string[]> {
+        const allFiles: string[] = [];
+        const dirsToProcess: string[] = [directory];
+        const processedDirs = new Set<string>();
 
-  /**
- * Recursively scans directories and builds a list of all files
- * @param directory - The directory to scan, empty string for root
- * @returns Array of file paths in format 'directory/file.md'
- */
-  private async scanDirectoryRecursively(directory = ''): Promise<string[]> {
-    const allFiles: string[] = [];
-    const dirsToProcess: string[] = [directory];
-    const processedDirs = new Set<string>();
+        while (dirsToProcess.length > 0) {
+            const currentDir = dirsToProcess.shift();
+            if (currentDir === undefined) continue;
+            if (processedDirs.has(currentDir)) continue;
 
-    while (dirsToProcess.length > 0) {
-        const currentDir = dirsToProcess.shift();
-        if (currentDir === undefined) continue;
-        if (processedDirs.has(currentDir)) continue;
+            try {
+                elizaLogger.debug(`Scanning directory: '${currentDir}'`);
+                const items = await this.listDirectoryFiles(currentDir);
+
+                for (const item of items) {
+                    const isDir = item.endsWith("/");
+                    const normalizedItem = item.replace(/^\/+|\/+$/g, "");
+                    const fullPath = currentDir
+                        ? `${currentDir.replace(/\/$/, "")}/${normalizedItem}`
+                        : normalizedItem;
+
+                    elizaLogger.debug(`Items in '${currentDir}':`, items);
+                    elizaLogger.debug(`Normalized → fullPath = ${fullPath}`);
+
+                    if (isDir) {
+                        elizaLogger.debug(`→ Found subdirectory: ${fullPath}`);
+                        dirsToProcess.push(fullPath);
+                    } else {
+                        elizaLogger.debug(`→ Found file: ${fullPath}`);
+                        allFiles.push(fullPath);
+                    }
+                }
+
+                processedDirs.add(currentDir);
+            } catch (error) {
+                elizaLogger.error(
+                    `Error scanning directory ${currentDir}:`,
+                    error,
+                );
+            }
+        }
+
+        return allFiles;
+    }
+
+    /**
+     * Retrieves all markdown and relevant attachment files in the vault.
+     * @returns A promise that resolves to an array of file paths.
+     */
+    async getAllFiles(): Promise<string[]> {
+        if (!this.connected) {
+            await this.connect();
+        }
 
         try {
-            elizaLogger.debug(`Scanning directory: '${currentDir}'`);
-            const items = await this.listDirectoryFiles(currentDir);
+            elizaLogger.debug("Starting file scanning process");
 
-            for (const item of items) {
-                const isDir = item.endsWith('/');
-                const normalizedItem = item.replace(/^\/+|\/+$/g, '');
-                const fullPath = currentDir
-                    ? `${currentDir.replace(/\/$/, '')}/${normalizedItem}`
-                    : normalizedItem;
+            const rootItems = await this.listFiles(); // e.g. ['Welcome.md', 'content/', 'personal/']
+            const allFiles: string[] = [];
 
-                elizaLogger.debug(`Items in '${currentDir}':`, items);
-                elizaLogger.debug(`Normalized → fullPath = ${fullPath}`);
+            const rootMdFiles = rootItems.filter((item) =>
+                item.endsWith(".md"),
+            );
+            elizaLogger.debug(
+                `Root-level markdown files: ${JSON.stringify(rootMdFiles)}`,
+            );
+            allFiles.push(...rootMdFiles);
 
-                if (isDir) {
-                    elizaLogger.debug(`→ Found subdirectory: ${fullPath}`);
-                    dirsToProcess.push(fullPath);
-                } else {
-                    elizaLogger.debug(`→ Found file: ${fullPath}`);
-                    allFiles.push(fullPath);
+            const directories = rootItems.filter((item) => item.endsWith("/"));
+            for (const dir of directories) {
+                elizaLogger.debug(`Recursively scanning directory: ${dir}`);
+                const dirFiles = await this.scanDirectoryRecursively(dir);
+                allFiles.push(...dirFiles);
+            }
+
+            const uniqueFiles = Array.from(new Set(allFiles));
+            elizaLogger.info(
+                `Completed scanning. Found ${uniqueFiles.length} unique files in vault`,
+            );
+            elizaLogger.debug("Vault files:", uniqueFiles);
+
+            return uniqueFiles;
+        } catch (error) {
+            elizaLogger.error("Error in getAllFiles:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Checks if a folder exists in the vault
+     * @param folderPath - Path to the folder to check
+     * @returns Promise<boolean> - True if the folder exists, false otherwise
+     */
+    async folderExists(folderPath: string): Promise<boolean> {
+        try {
+            if (!this.connected) {
+                await this.connect();
+            }
+
+            // Normalize path
+            const cleanPath = folderPath.replace(/^\/+|\/+$/g, "");
+            const normalizedPath =
+                cleanPath + (cleanPath.endsWith("/") ? "" : "/");
+
+            elizaLogger.debug(
+                `folderExists: Checking if folder exists: '${normalizedPath}'`,
+            );
+
+            // Get all files
+            const allFiles = await this.listFiles();
+            elizaLogger.debug(
+                `folderExists: Got ${allFiles.length} total files`,
+            );
+
+            // Debug: Log the first few files to see their format
+            if (allFiles.length > 0) {
+                const sampleFiles = allFiles.slice(
+                    0,
+                    Math.min(5, allFiles.length),
+                );
+                elizaLogger.debug(
+                    `folderExists: Sample files: ${JSON.stringify(sampleFiles)}`,
+                );
+            }
+
+            // Check if any file starts with the folder path or equals it exactly
+            for (const file of allFiles) {
+                if (
+                    file === normalizedPath ||
+                    file.startsWith(normalizedPath)
+                ) {
+                    elizaLogger.debug(
+                        `folderExists: Found match for folder '${normalizedPath}': '${file}'`,
+                    );
+                    return true;
                 }
             }
 
-            processedDirs.add(currentDir);
+            // Try direct check with listDirectoryFiles if available
+            try {
+                elizaLogger.debug(
+                    `folderExists: Attempting to list directory '${folderPath}' directly`,
+                );
+                const dirFiles = await this.listDirectoryFiles(folderPath);
+                const exists = dirFiles && dirFiles.length >= 0;
+                elizaLogger.debug(
+                    `folderExists: Directory listing succeeded, folder exists: ${exists}`,
+                );
+                return exists;
+            } catch (error) {
+                // If we get a 404, the folder doesn't exist
+                if (error.message && error.message.includes("404")) {
+                    elizaLogger.debug(
+                        `folderExists: Directory listing returned 404, folder does not exist`,
+                    );
+                    return false;
+                }
+
+                // For other errors, fall back to the previous check result
+                elizaLogger.debug(
+                    `folderExists: Error in direct directory check: ${error.message}`,
+                );
+            }
+
+            elizaLogger.debug(
+                `folderExists: Folder '${normalizedPath}' not found`,
+            );
+            return false;
         } catch (error) {
-            elizaLogger.error(`Error scanning directory ${currentDir}:`, error);
+            elizaLogger.error(
+                `Error in folderExists for '${folderPath}':`,
+                error,
+            );
+            return false;
         }
     }
 
-    return allFiles;
-}
+    /**
+     * Lists files in a specific folder with optional file extension filtering
+     * @param folderPath - Path to the folder
+     * @param extensions - Optional array of file extensions to filter by (e.g. ['.md', '.ttl'])
+     * @returns Promise<string[]> - Array of file paths in the folder matching the extensions
+     */
+    async listFilesInFolder(
+        folderPath: string,
+        extensions?: string[],
+    ): Promise<string[]> {
+        try {
+            if (!this.connected) {
+                await this.connect();
+            }
 
+            // Normalize path
+            const cleanPath = folderPath.replace(/^\/+|\/+$/g, "");
+            const normalizedPath =
+                cleanPath + (cleanPath.endsWith("/") ? "" : "/");
 
-    
+            elizaLogger.debug(
+                `listFilesInFolder: Looking for files in '${normalizedPath}'`,
+            );
 
-  /**
- * Retrieves all markdown and relevant attachment files in the vault.
- * @returns A promise that resolves to an array of file paths.
- */
-async getAllFiles(): Promise<string[]> {
-    if (!this.connected) {
-        await this.connect();
-    }
+            // First check if the folder exists
+            const folderExists = await this.folderExists(folderPath);
+            elizaLogger.debug(
+                `listFilesInFolder: Folder exists: ${folderExists}`,
+            );
 
-    try {
-        elizaLogger.debug("Starting file scanning process");
+            if (!folderExists) {
+                elizaLogger.warn(
+                    `listFilesInFolder: Folder '${folderPath}' does not exist`,
+                );
+                return [];
+            }
 
-        const rootItems = await this.listFiles(); // e.g. ['Welcome.md', 'content/', 'personal/']
-        const allFiles: string[] = [];
+            // Try to use directoryFiles if available
+            let folderFiles: string[] = [];
+            try {
+                elizaLogger.debug(
+                    `listFilesInFolder: Attempting to list directory files for '${folderPath}'`,
+                );
+                folderFiles = await this.listDirectoryFiles(folderPath);
+                elizaLogger.debug(
+                    `listFilesInFolder: Found ${folderFiles.length} files with listDirectoryFiles`,
+                );
+            } catch (error) {
+                elizaLogger.warn(
+                    `listFilesInFolder: Failed to use listDirectoryFiles, falling back to listFiles: ${error.message}`,
+                );
+                // Fall back to filtering from all files
+                const allFiles = await this.listFiles();
+                elizaLogger.debug(
+                    `listFilesInFolder: Got ${allFiles.length} total files from listFiles()`,
+                );
 
-        const rootMdFiles = rootItems.filter(item => item.endsWith('.md'));
-        elizaLogger.debug(`Root-level markdown files: ${JSON.stringify(rootMdFiles)}`);
-        allFiles.push(...rootMdFiles);
+                folderFiles = allFiles.filter((file) => {
+                    const isInFolder =
+                        file.startsWith(normalizedPath) &&
+                        !file.substring(normalizedPath.length).includes("/");
+                    if (isInFolder) {
+                        elizaLogger.debug(
+                            `listFilesInFolder: Found file in folder: ${file}`,
+                        );
+                    }
+                    return isInFolder;
+                });
 
-        const directories = rootItems.filter(item => item.endsWith('/'));
-        for (const dir of directories) {
-            elizaLogger.debug(`Recursively scanning directory: ${dir}`);
-            const dirFiles = await this.scanDirectoryRecursively(dir);
-            allFiles.push(...dirFiles);
+                elizaLogger.debug(
+                    `listFilesInFolder: After filtering, found ${folderFiles.length} files in folder '${folderPath}'`,
+                );
+            }
+
+            // Filter by extensions if specified
+            if (extensions && extensions.length > 0) {
+                elizaLogger.debug(
+                    `listFilesInFolder: Filtering by extensions: ${JSON.stringify(extensions)}`,
+                );
+
+                const filteredFiles = folderFiles.filter((file) => {
+                    const matchesExtension = extensions.some((ext) =>
+                        file.toLowerCase().endsWith(ext.toLowerCase()),
+                    );
+                    if (matchesExtension) {
+                        elizaLogger.debug(
+                            `listFilesInFolder: File matches extension filter: ${file}`,
+                        );
+                    }
+                    return matchesExtension;
+                });
+
+                elizaLogger.debug(
+                    `listFilesInFolder: After extension filtering, found ${filteredFiles.length} files`,
+                );
+                return filteredFiles;
+            }
+
+            return folderFiles;
+        } catch (error) {
+            elizaLogger.error(
+                `Error in listFilesInFolder for path '${folderPath}':`,
+                error,
+            );
+            return [];
         }
-
-        const uniqueFiles = Array.from(new Set(allFiles));
-        elizaLogger.info(`Completed scanning. Found ${uniqueFiles.length} unique files in vault`);
-        elizaLogger.debug("Vault files:", uniqueFiles);
-
-        return uniqueFiles;
-    } catch (error) {
-        elizaLogger.error("Error in getAllFiles:", error);
-        throw error;
     }
-}
 
-    
+    /**
+     * Lists all files in the vault with optional file extension filtering
+     * @param extensions - Optional array of file extensions to filter by (e.g. ['.md', '.ttl'])
+     * @returns Promise<string[]> - Array of file paths matching the extensions
+     */
+    async listAllFiles(extensions?: string[]): Promise<string[]> {
+        try {
+            if (!this.connected) {
+                await this.connect();
+            }
+
+            // Get all files
+            const allFiles = await this.getAllFiles();
+
+            // Filter by extensions if specified
+            if (extensions && extensions.length > 0) {
+                return allFiles.filter((file) =>
+                    extensions.some((ext) =>
+                        file.toLowerCase().endsWith(ext.toLowerCase()),
+                    ),
+                );
+            }
+
+            return allFiles;
+        } catch (error) {
+            elizaLogger.error("Error listing all files", error);
+            return [];
+        }
+    }
 
     /**
      * Creates memories from all files in the vault.
@@ -769,11 +1026,13 @@ async getAllFiles(): Promise<string[]> {
 
             for (const file of allFiles) {
                 try {
-                    if (file.endsWith('.md')) {
+                    if (file.endsWith(".md")) {
                         // Get the file content
                         const content = await this.getNote(file);
                         if (!content) {
-                            elizaLogger.warn(`No content found for file: ${file}`);
+                            elizaLogger.warn(
+                                `No content found for file: ${file}`,
+                            );
                             continue;
                         }
 
@@ -781,43 +1040,39 @@ async getAllFiles(): Promise<string[]> {
                             .update(JSON.stringify(content))
                             .digest("hex");
 
-                        const knowledgeId = stringToUuid(
-                            `obsidian-${file}`
-                        );
+                        const knowledgeId = stringToUuid(`obsidian-${file}`);
 
                         const existingDocument =
-                            await this.runtime.documentsManager.getMemoryById(knowledgeId);
+                            await this.runtime.documentsManager.getMemoryById(
+                                knowledgeId,
+                            );
 
                         if (
                             existingDocument &&
                             existingDocument.content.hash === contentHash
                         ) {
-                            elizaLogger.debug(`Skipping unchanged file: ${file}`);
+                            elizaLogger.debug(
+                                `Skipping unchanged file: ${file}`,
+                            );
                             continue;
                         }
 
                         elizaLogger.info(
-                            `Processing knowledge for ${this.runtime.character.name} - ${file}`
+                            `Processing knowledge for ${this.runtime.character.name} - ${file}`,
                         );
 
-                        await knowledge.set(this.runtime, {
-                            id: knowledgeId,
-                            content: {
-                                text: content.content,
-                                hash: contentHash,
-                                source: "obsidian",
-                                attachments: [],
-                                metadata: {
-                                    path: file,
-                                    tags: content.tags,
-                                    frontmatter: content.frontmatter,
-                                    stats: content.stat
-                                },
-                            },
-                        });
+                        await setStructuredMarkdownKnowledge(
+                            this.runtime,
+                            file,
+                            content.content,
+                            content.frontmatter || {},
+                            "obsidian-",
+                        );
 
                         // delay to avoid throttling
-                        await new Promise(resolve => setTimeout(resolve, 100));
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100),
+                        );
                     }
                 } catch (error) {
                     elizaLogger.error(`Error processing file ${file}:`, error);
@@ -828,7 +1083,6 @@ async getAllFiles(): Promise<string[]> {
             elizaLogger.success("Finished creating memories from vault notes");
 
             return allFiles.length;
-
         } catch (error) {
             elizaLogger.error("Error in createMemoriesFromFiles:", error);
             return 0;
