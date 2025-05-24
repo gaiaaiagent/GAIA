@@ -11,9 +11,9 @@ import { getObsidian, markdownToPlaintext, processUserInput } from "../helper";
 import { isSearchQuery } from "../types";
 import * as rdflib from 'rdflib';
 import { generateSparqlQuery, shouldUseSparql } from "../helper/sparqlGenerator";
-import { getRdfManager } from '../helper/rdfManager';
+import { getRdfManager } from '../helper/RDFmanager';
 import { getTempFileSystem } from '../helper/tempFileSystem';
-import { debugQueryGraph, inspectLoadedData, diagnoseWorkoutQuery } from '../helper/debugUtils';
+import { debugQueryGraph, inspectLoadedData, runFullDiagnostics } from '../helper/debugUtils';
 
 /**
  * Logs debugging information about the runtime object
@@ -129,50 +129,67 @@ const loadOntologyContent = async (obsidian: any): Promise<string> => {
     }
 };
 
-/**
- * Formats SPARQL results for display
- */
+
 const formatSparqlResults = (results: Array<Record<string, any>>): string => {
-    elizaLogger.debug(`[SPARQL] Formatting ${results.length} results`);
-    
+    // If no results, return a message
     if (!results || results.length === 0) {
-        elizaLogger.debug("[SPARQL] No results to format");
-        return "No results found.";
+        return "No matching results found.";
     }
     
-    let formattedResults = "";
+    // Create a more user-friendly output format
+    let output = `### Found ${results.length} Results\n\n`;
     
-    // Get all available keys
-    const keys = new Set<string>();
-    results.forEach(result => {
-        Object.keys(result).forEach(key => keys.add(key));
-    });
-    
-    elizaLogger.debug(`[SPARQL] Result keys: ${Array.from(keys).join(", ")}`);
-    
-    // Create a markdown table header
-    formattedResults += "| " + Array.from(keys).join(" | ") + " |\n";
-    formattedResults += "| " + Array.from(keys).map(() => "---").join(" | ") + " |\n";
-    
-    // Add each result as a row
-    results.forEach(result => {
-        const row = Array.from(keys).map(key => {
-            const value = result[key];
-            // Format the value for display
-            if (value === undefined || value === null) {
-                return "";
-            } else if (typeof value === 'string') {
-                // Truncate long strings
-                return value.length > 50 ? value.substring(0, 47) + "..." : value;
-            } else {
-                return String(value);
-            }
-        }).join(" | ");
+    results.forEach((workout, index) => {
+        // Extract the workout ID from the URI for potential file lookup
+        const workoutUri = workout.workout || "";
+        const workoutId = workoutUri.split('/').pop();
         
-        formattedResults += "| " + row + " |\n";
+        output += `#### Workout ${index + 1}: ${workout.name || "Unnamed Workout"}\n\n`;
+        output += `- **Date**: ${formatDate(workout.startDate)}\n`;
+        output += `- **Duration**: ${formatDuration(workout.duration)}\n`;
+        output += `- **Type**: ${workout.exerciseType || "Not specified"}\n`;
+        
+        // If we have a source file reference, add a link
+        if (workout.sourceFile) {
+            output += `- [View full workout details](${workout.sourceFile})\n`;
+        } else {
+            output += `- ID: \`${workoutId}\`\n`;
+        }
+        
+        output += "\n";
     });
     
-    return formattedResults;
+    return output;
+};
+
+// Helper function to format dates nicely
+const formatDate = (dateStr: string): string => {
+    if (!dateStr) return "Not specified";
+    try {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch (e) {
+        return dateStr;
+    }
+};
+
+// Helper function to format duration nicely
+const formatDuration = (duration: string): string => {
+    if (!duration) return "Not specified";
+    if (duration.startsWith("PT")) {
+        // Parse ISO duration format
+        const hours = duration.match(/(\d+)H/)?.[1] || "0";
+        const minutes = duration.match(/(\d+)M/)?.[1] || "0";
+        return `${hours} hour${hours !== "1" ? "s" : ""} ${minutes} minute${minutes !== "1" ? "s" : ""}`.trim();
+    }
+    return duration;
 };
 
 export const searchAction: Action = {
@@ -242,14 +259,14 @@ export const searchAction: Action = {
             return true;
         }
         
-        // Add this for specific workout debugging
-        if (message.content.text?.toLowerCase().includes("debug workout")) {
-            elizaLogger.info("Running workout query diagnostics...");
-            diagnoseWorkoutQuery(rdfManager);
+        // Add generic RDF debugging
+        if (message.content.text?.toLowerCase().includes("debug rdf")) {
+            elizaLogger.info("Running RDF graph diagnostics...");
+            runFullDiagnostics(rdfManager);
             
             if (callback) {
                 callback({
-                    text: "Workout query diagnostics have been run. Check the logs for details.",
+                    text: "RDF graph diagnostics have been run. Check the logs for details.",
                 });
             }
             return true;
@@ -268,13 +285,17 @@ export const searchAction: Action = {
                 }
             }
             
-            // Check for workout intensity queries specifically
-            const isWorkoutIntensityQuery = 
-                originalQuery.toLowerCase().includes("workout") &&
-                (originalQuery.toLowerCase().includes("intensity") || 
-                 originalQuery.toLowerCase().includes("high"));
+            // Check if query appears to be semantic/structured (contains domain-specific terms)
+            const isSemanticQuery = 
+                originalQuery.toLowerCase().includes("intensity") ||
+                originalQuery.toLowerCase().includes("type") ||
+                originalQuery.toLowerCase().includes("category") ||
+                originalQuery.toLowerCase().includes("find all") ||
+                originalQuery.toLowerCase().includes("show me") ||
+                originalQuery.toLowerCase().includes("with") ||
+                originalQuery.toLowerCase().includes("where");
             
-            elizaLogger.debug(`[SPARQL] Is workout intensity query: ${isWorkoutIntensityQuery}`);
+            elizaLogger.debug(`[SPARQL] Is semantic query: ${isSemanticQuery}`);
             
             // Get available ontologies
             elizaLogger.debug(`[SPARQL] Loading ontology content...`);
@@ -291,14 +312,14 @@ export const searchAction: Action = {
                 elizaLogger.debug(`[SPARQL] Query might benefit from SPARQL: ${mightBenefitFromSparql}`);
             } catch (error) {
                 elizaLogger.error(`[SPARQL] Error determining if query might benefit from SPARQL:`, error);
-                // For debugging purposes, set to true if it's about workouts
-                mightBenefitFromSparql = isWorkoutIntensityQuery;
-                elizaLogger.debug(`[SPARQL] Defaulting to mightBenefitFromSparql=${mightBenefitFromSparql} based on workout detection`);
+                // For debugging purposes, set to true if it appears semantic
+                mightBenefitFromSparql = isSemanticQuery;
+                elizaLogger.debug(`[SPARQL] Defaulting to mightBenefitFromSparql=${mightBenefitFromSparql} based on semantic detection`);
             }
 
             
             // Try SPARQL if it's explicitly requested or might be beneficial
-            if ((isExplicitSparql || mightBenefitFromSparql || isWorkoutIntensityQuery) && isRdfLoaded) {
+            if ((isExplicitSparql || mightBenefitFromSparql || isSemanticQuery) && isRdfLoaded) {
                 elizaLogger.info("[SPARQL] Attempting SPARQL query generation");
                 
                 // Generate a SPARQL query
@@ -317,10 +338,8 @@ export const searchAction: Action = {
                     elizaLogger.info("[SPARQL] Using SPARQL query:", sparqlQuery);
 
 
-                    if (sparqlQuery && isWorkoutIntensityQuery) {
-                        elizaLogger.debug("Running diagnostics before workout query execution");
-                        diagnoseWorkoutQuery(rdfManager);
-                    }
+                    // Diagnostics are disabled for normal queries to reduce noise
+                    // Use "debug rdf" to run diagnostics manually when needed
                     
                     // Execute the SPARQL query
                     elizaLogger.debug(`[SPARQL] Executing SPARQL query...`);
@@ -352,7 +371,7 @@ export const searchAction: Action = {
                             });
                         }
                         return true;
-                    } else if (isExplicitSparql || isWorkoutIntensityQuery) {
+                    } else if (isExplicitSparql || isSemanticQuery) {
                         elizaLogger.debug(`[SPARQL] No results found, but query was explicitly SPARQL or workout related`);
                         if (callback) {
                             callback({
@@ -384,7 +403,7 @@ export const searchAction: Action = {
                     if (isExplicitSparql && !isRdfLoaded) {
                         if (callback) {
                             callback({
-                                text: "RDF data is not loaded. Please run the LOAD_RDF_DATA action first to load ontologies and RDF data from your vault.",
+                                text: "RDF data is not loaded. Please run the LOAD_DATA action first to load ontologies and RDF data from your vault.",
                                 metadata: {
                                     sparql: true,
                                     error: "Graph not loaded"
@@ -431,8 +450,8 @@ export const searchAction: Action = {
             if (results.length > 0) {
                 elizaLogger.info(`Found ${results.length} matching notes`);
 
-                const formattedResults = results.map(result => {
-                    const matches = result.matches?.map(item =>
+                const formattedResults = results.map((result: any) => {
+                    const matches = result.matches?.map((item: any) =>
                         `${markdownToPlaintext(item.context.substring(item.match.start, searchOptions.contextLength || 150)).trim()}...`
                     ).join('\n') || '';
                     return `\n#### ✅ ${result.filename} (**Score:** ${result.score || "-"})\n${matches}`;

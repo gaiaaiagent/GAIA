@@ -1,3 +1,4 @@
+import type { Plugin } from "@elizaos/core";
 import { searchAction } from "./actions/search";
 import { listNotesAction } from "./actions/listNotes";
 import { listAllFilesAction } from "./actions/vault";
@@ -22,7 +23,7 @@ import { loadRdfAction } from "./actions/loadRDF";
 import { viewRdfAction } from "./actions/viewRDFGraph";
 import { generateOntologyAction } from "./actions/generateOntology";
 
-export const obsidianPlugin = {
+export const obsidianPlugin: Plugin = {
     name: "obsidian",
     description: "Integration with Obsidian vault using Omnisearch / Deep traversal search, memoryknowledge base, and Quartz publishing capabilities",
     actions: [

@@ -1,5 +1,5 @@
 import { elizaLogger } from "@elizaos/core";
-import { getRdfManager } from './rdfManager';
+import { getRdfManager } from './RDFmanager';
 import { getObsidian } from '../helper';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -136,22 +136,9 @@ ${ttlContent}
         fs.writeFileSync(mdFilePath, markdownContent, "utf8");
         elizaLogger.info(`Successfully saved ontology markdown to ${mdFilePath}`);
         
-        // Also save a copy to the Obsidian vault for reference if needed
-        try {
-            const obsidian = await getObsidian(runtime);
-            const ontologyFolder = "Ontology";
-            
-            // Check if the folder exists
-            const ontologyFolderExists = await obsidian.folderExists(ontologyFolder);
-            if (ontologyFolderExists) {
-                const vaultFilePath = `${ontologyFolder}/generated-schema.ttl`;
-                await obsidian.saveFile(vaultFilePath, ttlContent, true);
-                elizaLogger.info(`Also saved a copy of the ontology to Obsidian vault at ${vaultFilePath}`);
-            }
-        } catch (error) {
-            elizaLogger.warn(`Could not save ontology to Obsidian vault: ${error.message}`);
-            // Continue anyway since we've already saved to the filesystem
-        }
+        // Note: We do NOT save the generated ontology back to the vault's Ontology folder
+        // to prevent circular dependency where generated schema gets loaded as input.
+        // The ontology is saved to the agent/ directory for debugging purposes only.
         
         return {
             success: true,

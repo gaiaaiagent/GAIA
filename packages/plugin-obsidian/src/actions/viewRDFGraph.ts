@@ -7,7 +7,7 @@ import {
     elizaLogger,
 } from "@elizaos/core";
 import { getObsidian } from "../helper";
-import { getRdfManager } from '../helper/rdfManager';
+import { getRdfManager } from '../helper/RDFmanager';
 import * as path from 'path';
 
 /**
@@ -64,7 +64,7 @@ export const viewRdfAction: Action = {
                 } else {
                     if (callback) {
                         callback({
-                            text: "The RDF graph has not been loaded yet and could not be loaded from persistent storage. Please run the LOAD_RDF_DATA action first.",
+                            text: "The RDF graph has not been loaded yet and could not be loaded from persistent storage. Please run the LOAD_DATA action first.",
                             error: true
                         });
                     }

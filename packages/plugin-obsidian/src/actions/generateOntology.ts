@@ -59,7 +59,7 @@ export const generateOntologyAction: Action = {
             } else {
                 if (callback) {
                     callback({
-                        text: "Failed to generate ontology TTL from your RDF graph. Please ensure the RDF data is loaded and contains schema information. Try running the LOAD_RDF_DATA action first.",
+                        text: "Failed to generate ontology TTL from your RDF graph. Please ensure the RDF data is loaded and contains schema information. Try running the LOAD_DATA action first.",
                         error: true
                     });
                 }

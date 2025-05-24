@@ -53,6 +53,7 @@ export async function generateSparqlQuery(
     try {
         elizaLogger.debug("Generating SPARQL query from prompt:", prompt);
         
+        
         // We should not filter out "_g_L" entries as they are legitimate blank nodes
         // Instead, we'll ensure the LLM understands how to handle them in SPARQL queries
         
@@ -71,11 +72,74 @@ export async function generateSparqlQuery(
         
         // Get a list of registered properties to help the LLM
         const registeredProperties = resolver.getRegisteredProperties();
-        const propertiesSample = registeredProperties.length > 10 
-            ? registeredProperties.slice(0, 10).join(", ") + "..." 
-            : registeredProperties.join(", ");
+        elizaLogger.debug(`Found ${registeredProperties.length} registered properties in resolver`);
         
-        // Create context for the LLM with namespace guidance
+        // Extract key information from the ontology for better context
+        const ontologyClasses = new Set<string>();
+        const ontologyProperties = new Set<string>();
+        const propertyValues = new Map<string, string[]>();
+        
+        // Parse ontology content to extract classes, properties, and value ranges
+        const lines = ontologyContent.split('\n');
+        for (const line of lines) {
+            // Extract classes (lines ending with 'a owl:Class')
+            if (line.includes('a owl:Class')) {
+                const classMatch = line.match(/^(\S+)\s+a\s+owl:Class/);
+                if (classMatch) {
+                    ontologyClasses.add(classMatch[1]);
+                }
+            }
+            
+            // Extract properties (lines with 'a owl:ObjectProperty' or 'a owl:DatatypeProperty')
+            if (line.includes('a owl:ObjectProperty') || line.includes('a owl:DatatypeProperty')) {
+                const propMatch = line.match(/^(\S+)\s+a\s+owl:/);
+                if (propMatch) {
+                    ontologyProperties.add(propMatch[1]);
+                }
+            }
+            
+            // Extract property value information from comments
+            if (line.includes('has observed values:')) {
+                const valueMatch = line.match(/#\s+(\S+)\s+has observed values:\s*(.+)/);
+                if (valueMatch) {
+                    const property = valueMatch[1];
+                    const values = valueMatch[2].split(',').map(v => v.trim().replace(/"/g, ''));
+                    propertyValues.set(property, values);
+                }
+            }
+            
+            // Extract property value information from rdfs:comment
+            if (line.includes('rdfs:comment') && line.includes('enumeration with values:')) {
+                const commentMatch = line.match(/^(\S+)\s+rdfs:comment\s+"[^"]*enumeration with values:\s*([^"]+)"/);
+                if (commentMatch) {
+                    const property = commentMatch[1];
+                    const values = commentMatch[2].split(',').map(v => v.trim().replace(/"/g, ''));
+                    propertyValues.set(property, values);
+                }
+            }
+        }
+        
+        // Create a summary of available classes and their properties
+        let ontologySummary = "\nONTOLOGY SUMMARY:\n";
+        ontologySummary += `Classes: ${Array.from(ontologyClasses).join(', ')}\n`;
+        ontologySummary += `Properties: ${Array.from(ontologyProperties).join(', ')}\n`;
+        
+        if (propertyValues.size > 0) {
+            ontologySummary += "\nProperty Value Ranges:\n";
+            for (const [property, values] of propertyValues) {
+                ontologySummary += `- ${property}: ${values.join(', ')}\n`;
+                
+                // Add synonym mappings for common terms
+                if (property.includes('intensity')) {
+                    ontologySummary += `  * Common synonyms: "medium" → "Moderate", "low" → "Low", "high" → "High"\n`;
+                }
+                if (property.includes('exerciseType')) {
+                    ontologySummary += `  * Common synonyms: "strength training" → "Strength Training", "cardio" → "Cardio"\n`;
+                }
+            }
+        }
+        
+        // Create context for the LLM with comprehensive guidance
         const context = `You are an AI assistant that generates SPARQL queries based on natural language prompts and a provided ontology.
 Your task is to create a SPARQL query that retrieves the relevant information from the knowledge graph to answer the given prompt.
 
@@ -83,20 +147,29 @@ IMPORTANT INFORMATION:
 - Use the following namespace prefixes in your query:
 ${prefixSection}
 
-- In this knowledge graph, properties may have different namespaces. Always use FULL URI paths in angle brackets.
-- Properties should use their full URIs. Registered properties include: ${propertiesSample}
-- Always use the pattern <?subject> <full-uri-for-predicate> ?object .
-- For RDF type, use either <${resolver.expandTerm("rdf:type")}> or the 'a' shorthand
-- When comparing string literals, use FILTER with LCASE for case-insensitive matching
-- Use OPTIONAL clauses for properties that might not exist on all entities
+- When comparing string literals, use FILTER with LCASE(STR(?variable)) for case-insensitive matching
+- Use OPTIONAL clauses for properties that might not exist on all entities  
 - Use DISTINCT in your SELECT to avoid duplicate results
+- For count queries, use (COUNT(DISTINCT ?variable) as ?count)
+- When filtering by property values, use the exact values from the ontology (case matters in FILTER comparisons)
 
-ONTOLOGY:
+SEMANTIC EQUIVALENCE MAPPING:
+When the user uses synonyms or similar terms, map them to the exact values in the ontology:
+- "medium" intensity should map to "Moderate" (from the ontology)
+- "low" intensity should map to "Low" 
+- "high" intensity should map to "High"
+- "strength training" should map to "Strength Training"
+- Always check the Property Value Ranges below and use those exact values
+
+${ontologySummary}
+
+FULL ONTOLOGY:
 ${ontologyContent}
 
 USER PROMPT:
 ${prompt}
 
+Generate a SPARQL query that answers the user's prompt using the classes, properties, and value ranges defined in the ontology.
 ONLY return the generated SPARQL query, with no explanations or additional text.
 If you don't think a SPARQL query is appropriate for this prompt, just return "NOT_APPLICABLE".`;
 

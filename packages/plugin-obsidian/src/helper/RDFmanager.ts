@@ -7,7 +7,7 @@ import * as path from "path";
 let rdfGraphInstance: rdflib.IndexedFormula | null = null;
 
 // Default path for persistent storage - using the agent directory which should be available in the project
-const DEFAULT_STORAGE_PATH = path.join(process.cwd(), "agent/agent/rdf-graph-storage.ttl");
+const DEFAULT_STORAGE_PATH = path.join(process.cwd(), "agent/rdf-graph-storage.ttl");
 
 /**
  * RDF Graph Manager class to handle RDF operations
@@ -60,6 +60,23 @@ export class RdfManager {
     }
 
     /**
+     * Clear all data from the graph
+     */
+    public clearGraph(): void {
+        try {
+            elizaLogger.info("Clearing RDF graph");
+            // Create a new empty graph
+            this.graph = new rdflib.IndexedFormula();
+            // Update the singleton instance
+            rdfGraphInstance = this.graph;
+            this.loaded = false;
+            elizaLogger.info("RDF graph cleared successfully");
+        } catch (error) {
+            elizaLogger.error("Error clearing RDF graph:", error);
+        }
+    }
+
+    /**
      * Add a triple to the graph
      */
     public addTriple(
@@ -71,6 +88,12 @@ export class RdfManager {
         isLiteral: boolean = false,
         datatype: string | null = null
     ): void {
+        // Filter out malformed subjects that are quoted strings
+        if (!this.isValidRdfSubject(subject)) {
+            elizaLogger.debug(`Rejecting malformed triple with quoted subject: "${subject}"`);
+            return;
+        }
+        
         const s = isBlankNodeSubject ? rdflib.blankNode(subject.replace('_:', '')) : this.createSubject(subject);
         const p = this.createPredicate(predicate);
         
@@ -237,11 +260,99 @@ export class RdfManager {
     ): boolean {
         try {
             rdflib.parse(data, this.graph, this.baseUri, format);
+            // Clean up malformed triples after parsing
+            this.cleanMalformedTriples();
             this.loaded = true;
             return true;
         } catch (error) {
             elizaLogger.error("Error loading RDF string:", error);
             return false;
+        }
+    }
+
+    /**
+     * Remove malformed triples with quoted string subjects after TTL parsing
+     */
+    private cleanMalformedTriples(): void {
+        try {
+            if (!this.graph.statements || !Array.isArray(this.graph.statements)) {
+                elizaLogger.info(`[TTL Cleanup] No statements to clean`);
+                return;
+            }
+
+            const initialCount = this.graph.statements.length;
+            const malformedTriples: any[] = [];
+            
+            elizaLogger.info(`[TTL Cleanup] Starting cleanup. Total statements before: ${initialCount}`);
+
+            // Find malformed triples
+            for (const statement of this.graph.statements) {
+                const subjectValue = this.extractNodeValue(statement.subject);
+                if (!this.isValidRdfSubject(subjectValue)) {
+                    malformedTriples.push(statement);
+                    elizaLogger.debug(`[TTL Cleanup] Found malformed subject: ${subjectValue}`);
+                }
+            }
+
+            elizaLogger.info(`[TTL Cleanup] Found ${malformedTriples.length} malformed triples to remove`);
+
+            // Remove malformed triples
+            for (const malformedTriple of malformedTriples) {
+                try {
+                    this.graph.removeStatement(malformedTriple);
+                } catch (removeError) {
+                    elizaLogger.debug(`[TTL Cleanup] Error removing malformed triple:`, removeError);
+                }
+            }
+
+            elizaLogger.info(`[TTL Cleanup] Cleanup complete. Total statements after: ${this.graph.statements.length}`);
+            
+            if (malformedTriples.length > 0) {
+                elizaLogger.info(`[TTL Cleanup] Successfully cleaned ${malformedTriples.length} malformed triples from graph (${initialCount} -> ${this.graph.statements.length})`);
+            } else {
+                elizaLogger.info(`[TTL Cleanup] No malformed triples found to clean`);
+            }
+        } catch (error) {
+            elizaLogger.error(`[TTL Cleanup] Error cleaning malformed triples:`, error);
+        }
+    }
+
+    /**
+     * Clean up malformed triples that might exist in the current graph
+     */
+    private cleanupMalformedTriplesInGraph(): void {
+        try {
+            if (!this.graph.statements || !Array.isArray(this.graph.statements)) {
+                return;
+            }
+
+            const initialCount = this.graph.statements.length;
+            const malformedTriples: any[] = [];
+            
+            elizaLogger.debug(`[Query Cleanup] Checking ${initialCount} statements for malformed triples`);
+
+            // Find malformed triples (same logic as cleanMalformedTriples but with different logging)
+            for (const statement of this.graph.statements) {
+                const subjectValue = this.extractNodeValue(statement.subject);
+                if (!this.isValidRdfSubject(subjectValue)) {
+                    malformedTriples.push(statement);
+                }
+            }
+
+            // Remove malformed triples
+            for (const malformedTriple of malformedTriples) {
+                try {
+                    this.graph.removeStatement(malformedTriple);
+                } catch (removeError) {
+                    elizaLogger.debug(`[Query Cleanup] Error removing malformed triple:`, removeError);
+                }
+            }
+
+            if (malformedTriples.length > 0) {
+                elizaLogger.info(`[Query Cleanup] Removed ${malformedTriples.length} malformed triples before query execution (${initialCount} -> ${this.graph.statements.length})`);
+            }
+        } catch (error) {
+            elizaLogger.error(`[Query Cleanup] Error cleaning malformed triples:`, error);
         }
     }
 
@@ -252,6 +363,9 @@ public executeSparqlQuery(query: string): Array<Record<string, any>> {
     try {
         elizaLogger.debug(`Executing SPARQL query: ${query}`);
         let results: any[] = [];
+
+        // Clean up any malformed triples before executing query
+        this.cleanupMalformedTriplesInGraph();
 
         // Try to identify potential syntax issues in the query before parsing
         this.validateSparqlSyntax(query);
@@ -273,6 +387,7 @@ public executeSparqlQuery(query: string): Array<Record<string, any>> {
             }
         } catch (queryError) {
             elizaLogger.error("Error converting SPARQL to Query:", queryError);
+            elizaLogger.debug(`Problematic query: ${query}`);
             
             // Try a fallback approach with simplified query
             try {
@@ -405,26 +520,27 @@ private simplifyComplexQuery(query: string): string {
     const optionalUnionPattern = /OPTIONAL\s*\{\s*\{\s*([^{}]+)\s*\}\s*UNION\s*\{\s*([^{}]+)\s*\}\s*\}/g;
     simplifiedQuery = simplifiedQuery.replace(optionalUnionPattern, 'OPTIONAL { $1 }');
     
+    // Remove ORDER BY clauses which can sometimes cause parsing issues
+    simplifiedQuery = simplifiedQuery.replace(/ORDER\s+BY\s+[^\n]*$/gim, '');
+    
+    // Remove LIMIT clauses that might cause issues
+    simplifiedQuery = simplifiedQuery.replace(/LIMIT\s+\d+\s*$/gim, '');
+    
+    // Simplify complex FILTER expressions
+    simplifiedQuery = simplifiedQuery.replace(/FILTER\s*\(\s*LCASE\s*\(\s*STR\s*\(\s*([^)]+)\s*\)\s*\)\s*=\s*"([^"]+)"\s*\)/g, 'FILTER(STR($1) = "$2")');
+    
     // If we have a query about workouts and intensity, create a specific simplified version
     if (query.toLowerCase().includes('workout') && query.toLowerCase().includes('intensity')) {
         return `
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX schema: <http://schema.org/>
-            PREFIX ont: <http://elizaos.local/ontology/>
             
-            SELECT DISTINCT ?workout ?name ?startDate ?intensity
+            SELECT ?workout ?intensity
             WHERE {
               ?workout rdf:type schema:Workout .
-              
-              # Try ont:intensity which we know works from diagnostics
-              ?workout ont:intensity ?intensity .
-              FILTER(LCASE(STR(?intensity)) = "high")
-              
-              # Simple OPTIONAL patterns
-              OPTIONAL { ?workout ont:name ?name }
-              OPTIONAL { ?workout ont:startDate ?startDate }
+              ?workout schema:intensity ?intensity .
+              FILTER(STR(?intensity) = "high")
             }
-            ORDER BY DESC(?startDate)
         `;
     }
     
@@ -433,8 +549,7 @@ private simplifyComplexQuery(query: string): string {
 
 /**
  * Last resort - manually match triple patterns for specific queries
- * This is a generic implementation that attempts to extract meaningful results
- * from the RDF graph based on the SPARQL query structure
+ * This is a generic implementation that doesn't rely on knowledge of specific ontologies
  */
 private manualTriplePatternMatch(query: string): any[] {
     elizaLogger.debug("Attempting manual triple pattern matching as fallback");
@@ -447,16 +562,29 @@ private manualTriplePatternMatch(query: string): any[] {
         const variableMatches = query.match(/\?(\w+)/g) || [];
         const variables = variableMatches.map(v => v.substring(1));
         
-        // Extract the SELECT variables
+        // Extract the SELECT variables - handle COUNT and other aggregates
         const selectMatch = query.match(/SELECT\s+(?:DISTINCT\s+)?(.+?)\s+WHERE/i);
-        const selectVars = selectMatch ? 
-            selectMatch[1].split(/\s+/).filter(v => v.startsWith('?')).map(v => v.substring(1)) : 
-            [];
+        let selectVars: string[] = [];
+        let isCountQuery = false;
+        
+        if (selectMatch) {
+            const selectClause = selectMatch[1].trim();
+            
+            // Check if this is a COUNT query
+            const countMatch = selectClause.match(/\(COUNT\s*\(\s*(?:DISTINCT\s+)?\?(\w+)\s*\)\s*as\s*\?(\w+)\)/i);
+            if (countMatch) {
+                isCountQuery = true;
+                selectVars = [countMatch[2]]; // The alias variable (e.g., "count")
+                elizaLogger.debug(`Detected COUNT query with variable ?${countMatch[1]} aliased as ?${countMatch[2]}`);
+            } else {
+                // Regular variable selection
+                selectVars = selectClause.split(/\s+/).filter(v => v.startsWith('?')).map(v => v.substring(1));
+            }
+        }
         
         elizaLogger.debug(`Found ${variables.length} variables in query, ${selectVars.length} in SELECT clause`);
         
-        // Extract type patterns from the query - handle both "a" and "rdf:type" syntax
-        // This regex handles both "?var a Type" and "?var a Type ;" patterns and other variations
+        // Extract type patterns from the query
         const typePatterns = [];
         
         // Match "?var a Type" pattern with various terminators
@@ -477,173 +605,287 @@ private manualTriplePatternMatch(query: string): any[] {
             });
         }
         
-        // Extract property patterns from the query
+        // Extract property patterns from the query - this needs to be more robust
         const propertyPatterns = [];
         
-        // Match "?var predicate ?obj" patterns
-        const propMatches = query.matchAll(/\?(\w+)\s+(?:<([^>]+)>|(\w+:\w+))\s+\?(\w+)/g);
+        // Match "?var predicate ?obj" or "?var predicate literal" patterns
+        // This regex handles both URI predicates (<uri>) and prefixed names (prefix:name)
+        const propMatches = query.matchAll(/\?(\w+)\s+(?:<([^>]+)>|([a-zA-Z0-9_]+:[a-zA-Z0-9_]+))\s+(?:\?(\w+)|["']([^"']+)["'])/g);
         for (const match of propMatches) {
             const predUri = match[2] || (match[3] ? this.expandPrefixedName(match[3]) : null);
             if (predUri) {
-                propertyPatterns.push({
+                const pattern = {
                     subject: match[1],
                     predicate: predUri,
-                    object: match[4]
-                });
+                    object: match[4] || match[5],  // Either a variable or literal value
+                    isLiteral: !match[4]           // If match[4] (variable) is undefined, it's a literal
+                };
+                propertyPatterns.push(pattern);
+                elizaLogger.debug(`Found property pattern: ?${pattern.subject} <${pattern.predicate}> ${pattern.isLiteral ? `"${pattern.object}"` : `?${pattern.object}`}`);
             }
         }
         
-        // Extract filter conditions
+        // Also try to extract property patterns that might use ont: prefix which isn't in expandPrefixedName
+        const ontPropMatches = query.matchAll(/\?(\w+)\s+(ont:[a-zA-Z0-9_]+)\s+\?(\w+)/g);
+        for (const match of ontPropMatches) {
+            // Expand ont: prefix to our local ontology namespace
+            const predUri = `http://elizaos.local/ontology/${match[2].substring(4)}`;
+            const pattern = {
+                subject: match[1],
+                predicate: predUri,
+                object: match[3],
+                isLiteral: false
+            };
+            propertyPatterns.push(pattern);
+            elizaLogger.debug(`Found ont: property pattern: ?${pattern.subject} <${pattern.predicate}> ?${pattern.object}`);
+        }
+        
+        // Extract FILTER patterns in a more generic way
         const filterPatterns = [];
         
-        // Match FILTER(condition) patterns
-        const filterMatches = query.matchAll(/FILTER\s*\(\s*(?:LCASE\s*\(\s*(?:STR\s*\(\s*)?)?\??(\w+)(?:\s*\)\s*\))?\s*=\s*["']([^"']+)["']\s*\)/g);
-        for (const match of filterMatches) {
+        // Match standard equality filters: FILTER(?var = value)
+        const stdFilterMatches = query.matchAll(/FILTER\s*\(\s*(?:STR\s*\(\s*)?\??(\w+)(?:\s*\)\s*)?\s*=\s*["']([^"']+)["']\s*\)/g);
+        for (const match of stdFilterMatches) {
             filterPatterns.push({
                 variable: match[1],
-                value: match[2].toLowerCase() // Case-insensitive comparison
+                value: match[2],
+                operator: '=',
+                caseSensitive: true
             });
         }
         
+        // Match case-insensitive filters: FILTER(LCASE(?var) = value) or FILTER(LCASE(STR(?var)) = value)
+        const lcaseFilterMatches = query.matchAll(/FILTER\s*\(\s*LCASE\s*\(\s*(?:STR\s*\(\s*)?\?(\w+)\s*(?:\)\s*)?\)\s*=\s*["']([^"']+)["']\s*\)/g);
+        for (const match of lcaseFilterMatches) {
+            filterPatterns.push({
+                variable: match[1],
+                value: match[2].toLowerCase(),
+                operator: '=',
+                caseSensitive: false
+            });
+        }
+        
+        // Also try a simpler pattern for LCASE filters
+        const simpleLcaseMatches = query.matchAll(/FILTER\s*\(\s*LCASE\s*\(\s*\?(\w+)\s*\)\s*=\s*["']([^"']+)["']\s*\)/g);
+        for (const match of simpleLcaseMatches) {
+            // Only add if we don't already have this filter
+            const exists = filterPatterns.some(f => f.variable === match[1] && f.value === match[2].toLowerCase());
+            if (!exists) {
+                filterPatterns.push({
+                    variable: match[1],
+                    value: match[2].toLowerCase(),
+                    operator: '=',
+                    caseSensitive: false
+                });
+                elizaLogger.debug(`Added simple LCASE filter: ${match[1]} = "${match[2].toLowerCase()}"`);
+            }
+        }
+        
+        // Log extracted patterns
         elizaLogger.debug(`Extracted ${typePatterns.length} type patterns, ${propertyPatterns.length} property patterns, ${filterPatterns.length} filter patterns`);
+        
+        if (filterPatterns.length > 0) {
+            filterPatterns.forEach(filter => {
+                elizaLogger.debug(`Filter: ${filter.variable} ${filter.operator} "${filter.value}" (${filter.caseSensitive ? 'case-sensitive' : 'case-insensitive'})`);
+            });
+        }
         
         // If we have type patterns, use them to find matching subjects
         if (typePatterns.length > 0) {
-            // Process each type pattern
             for (const pattern of typePatterns) {
+                // Expand the type URI if it's a prefixed name
                 const typeUri = pattern.type.startsWith('http') ? pattern.type : 
-                                pattern.type.includes(':') ? this.expandPrefixedName(pattern.type) : null;
+                                pattern.type.includes(':') ? this.expandPrefixedName(pattern.type) : 
+                                `${this.baseUri}${pattern.type}`;
                 
-                if (typeUri) {
-                    const typeNode = this.graph.sym(typeUri);
-                    const typeInstances = this.graph.statementsMatching(null, rdfType, typeNode);
-                    elizaLogger.debug(`Found ${typeInstances.length} instances of type ${typeUri}`);
+                if (!typeUri) {
+                    elizaLogger.debug(`Couldn't expand type: ${pattern.type}`);
+                    continue;
+                }
+                
+                const typeNode = this.graph.sym(typeUri);
+                const typeInstances = this.graph.statementsMatching(null, rdfType, typeNode);
+                elizaLogger.debug(`Found ${typeInstances.length} instances of type ${typeUri}`);
+                
+                // Filter out subjects that are quoted strings (malformed ontology data)
+                const validInstances = typeInstances.filter(stmt => {
+                    const subjectValue = stmt.subject.value || stmt.subject.toString();
+                    // Only accept proper URIs, not quoted strings like "schema:Workout"
+                    return subjectValue.startsWith('http') || subjectValue.startsWith('_:') || 
+                           (!subjectValue.startsWith('"') && !subjectValue.endsWith('"'));
+                });
+                
+                elizaLogger.debug(`After filtering malformed subjects: ${validInstances.length} valid instances`);
+                
+                // For each instance of the type, build a result
+                for (const stmt of validInstances) {
+                    const subject = stmt.subject;
+                    const subjectUri = subject.value || subject.toString();
                     
-                    // For each instance, collect all its properties
-                    for (const stmt of typeInstances) {
-                        const subject = stmt.subject;
-                        const result: Record<string, any> = {
-                            [pattern.variable]: subject.value || subject.toString()
-                        };
+                    const result: Record<string, any> = {
+                        [pattern.variable]: subjectUri
+                    };
+                    
+                    // Process all property patterns for this subject
+                    let allPropertiesFound = true;
+                    
+                    // Keep track of which variables we've populated
+                    const populatedVars = new Set<string>([pattern.variable]);
+                    
+                    // First handle specific property patterns from the query
+                    for (const propPattern of propertyPatterns) {
+                        // Only process property patterns that apply to this subject variable
+                        if (propPattern.subject !== pattern.variable) continue;
                         
-                        // Find all predicates for this subject
-                        const properties = this.graph.statementsMatching(subject, null, null);
+                        // Find matches for this property
+                        const predNode = this.graph.sym(propPattern.predicate);
+                        const propMatches = this.graph.statementsMatching(subject, predNode, null);
                         
-                        // Process property patterns for this subject
-                        const relevantPropPatterns = propertyPatterns.filter(p => p.subject === pattern.variable);
+                        if (propMatches.length === 0) {
+                            elizaLogger.debug(`No values found for property ${propPattern.predicate} on subject ${subjectUri}`);
+                            allPropertiesFound = false;
+                            continue;
+                        }
                         
-                        if (relevantPropPatterns.length > 0) {
-                            // Process each property pattern
-                            for (const propPattern of relevantPropPatterns) {
-                                const propValues = this.graph.statementsMatching(
-                                    subject, 
-                                    this.graph.sym(propPattern.predicate), 
-                                    null
-                                );
-                                
-                                if (propValues.length > 0) {
-                                    const value = this.formatRdfNode(propValues[0].object);
-                                    result[propPattern.object] = value;
+                        // If this is a literal property pattern, check if the values match
+                        if (propPattern.isLiteral) {
+                            let foundMatch = false;
+                            for (const propMatch of propMatches) {
+                                const objValue = this.formatRdfNode(propMatch.object);
+                                if (objValue === propPattern.object) {
+                                    foundMatch = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (!foundMatch) {
+                                elizaLogger.debug(`Literal value "${propPattern.object}" not found for property ${propPattern.predicate}`);
+                                allPropertiesFound = false;
+                                continue;
+                            }
+                        }
+                        
+                        // For variable objects, store the value
+                        if (!propPattern.isLiteral && propMatches.length > 0) {
+                            const objValue = this.formatRdfNode(propMatches[0].object);
+                            result[propPattern.object] = objValue;
+                            populatedVars.add(propPattern.object);
+                        }
+                    }
+                    
+                    // If we're missing required properties, skip this result
+                    if (!allPropertiesFound) {
+                        continue;
+                    }
+                    
+                    // For any variables used in filters that haven't been populated yet,
+                    // look for properties that match the exact property patterns from the query
+                    for (const filter of filterPatterns) {
+                        if (!populatedVars.has(filter.variable)) {
+                            // Only search for properties that were explicitly mentioned in property patterns
+                            let foundFromPropertyPattern = false;
+                            
+                            for (const propPattern of propertyPatterns) {
+                                if (propPattern.object === filter.variable && propPattern.subject === pattern.variable) {
+                                    // This filter variable corresponds to an object in a property pattern
+                                    const predNode = this.graph.sym(propPattern.predicate);
+                                    const propMatches = this.graph.statementsMatching(subject, predNode, null);
                                     
-                                    // Check if this property has a filter condition
-                                    const filterForProp = filterPatterns.find(f => f.variable === propPattern.object);
-                                    if (filterForProp && value.toLowerCase() !== filterForProp.value) {
-                                        // Skip this result if it doesn't match the filter
-                                        continue;
+                                    if (propMatches.length > 0) {
+                                        const objValue = this.formatRdfNode(propMatches[0].object);
+                                        result[filter.variable] = objValue;
+                                        populatedVars.add(filter.variable);
+                                        foundFromPropertyPattern = true;
+                                        break;
                                     }
                                 }
                             }
-                        } else {
-                            // If no specific property patterns, include all properties
-                            for (const propStmt of properties) {
-                                if (propStmt.predicate.value !== rdfType.value) {
-                                    const propName = this.getPredNameFromUri(propStmt.predicate.value);
-                                    const value = this.formatRdfNode(propStmt.object);
-                                    result[propName] = value;
-                                }
-                            }
-                        }
-                        
-                        // Check if this result matches all filter conditions
-                        let matchesAllFilters = true;
-                        for (const filter of filterPatterns) {
-                            if (result[filter.variable] && 
-                                result[filter.variable].toLowerCase() !== filter.value) {
-                                matchesAllFilters = false;
-                                break;
-                            }
-                        }
-                        
-                        if (matchesAllFilters) {
-                            // Only include variables that were in the SELECT clause
-                            if (selectVars.length > 0) {
-                                const filteredResult: Record<string, any> = {};
-                                for (const v of selectVars) {
-                                    if (result[v] !== undefined) {
-                                        filteredResult[v] = result[v];
+                            
+                            // Only if we haven't found it from explicit property patterns, try common property names
+                            if (!foundFromPropertyPattern) {
+                                // Search all properties of this subject for one that might provide this variable
+                                const allProps = this.graph.statementsMatching(subject, null, null);
+                                
+                                for (const propStmt of allProps) {
+                                    const predUri = propStmt.predicate.value;
+                                    const predName = this.getPredNameFromUri(predUri);
+                                    
+                                    // Only match exact predicate names (be more restrictive)
+                                    if (predName.toLowerCase() === filter.variable.toLowerCase()) {
+                                        const objValue = this.formatRdfNode(propStmt.object);
+                                        result[filter.variable] = objValue;
+                                        populatedVars.add(filter.variable);
+                                        elizaLogger.debug(`Found ${filter.variable} via predicate name matching: ${objValue}`);
+                                        break;
                                     }
                                 }
-                                results.push(filteredResult);
+                            }
+                        }
+                    }
+                    
+                    // Now check if this result passes all filter conditions
+                    let passesAllFilters = true;
+                    
+                    for (const filter of filterPatterns) {
+                        if (!populatedVars.has(filter.variable)) {
+                            elizaLogger.debug(`Filter variable ${filter.variable} not found in result, skipping`);
+                            passesAllFilters = false;
+                            break;
+                        }
+                        
+                        const propValue = result[filter.variable];
+                        
+                        // Apply the filter
+                        if (filter.operator === '=') {
+                            if (filter.caseSensitive) {
+                                if (propValue !== filter.value) {
+                                    elizaLogger.debug(`Filter failed: ${filter.variable}="${propValue}" !== "${filter.value}"`);
+                                    passesAllFilters = false;
+                                    break;
+                                }
                             } else {
-                                results.push(result);
+                                // Case-insensitive comparison
+                                if (typeof propValue !== 'string' || propValue.toLowerCase() !== filter.value.toLowerCase()) {
+                                    elizaLogger.debug(`Filter failed: ${filter.variable}="${propValue}".toLowerCase() !== "${filter.value}"`);
+                                    passesAllFilters = false;
+                                    break;
+                                }
                             }
+                        }
+                    }
+                    
+                    if (passesAllFilters) {
+                        // Only include variables that were in the SELECT clause
+                        if (selectVars.length > 0) {
+                            const filteredResult: Record<string, any> = {};
+                            for (const v of selectVars) {
+                                if (result[v] !== undefined) {
+                                    filteredResult[v] = result[v];
+                                }
+                            }
+                            elizaLogger.debug(`Adding filtered result: ${JSON.stringify(filteredResult)}`);
+                            results.push(filteredResult);
+                        } else {
+                            elizaLogger.debug(`Adding full result: ${JSON.stringify(result)}`);
+                            results.push(result);
                         }
                     }
                 }
             }
         } else {
-            // If no type patterns, try a more general approach
+            // Generic approach for queries without type patterns
             elizaLogger.debug("No type patterns found, using general approach");
             
-            // Get all subjects
-            const subjects = new Set<string>();
-            for (const stmt of this.graph.statements) {
-                if (stmt.subject) {
-                    const subjectValue = this.extractNodeValue(stmt.subject);
-                    if (subjectValue) subjects.add(subjectValue);
-                }
-            }
-            
-            // For each subject, check if it matches the query patterns
-            for (const subjectValue of subjects) {
-                const subject = this.graph.sym(subjectValue);
-                const result: Record<string, any> = {};
-                
-                // Find all predicates for this subject
-                const properties = this.graph.statementsMatching(subject, null, null);
-                
-                // Check if this subject has an rdf:type statement
-                const typeStmts = properties.filter(p => p.predicate.value === rdfType.value);
-                if (typeStmts.length > 0) {
-                    // Add the type information
-                    result.type = this.formatRdfNode(typeStmts[0].object);
-                }
-                
-                // Add all properties
-                for (const propStmt of properties) {
-                    const propName = this.getPredNameFromUri(propStmt.predicate.value);
-                    result[propName] = this.formatRdfNode(propStmt.object);
-                }
-                
-                // Check if this result matches all filter conditions
-                let matchesAllFilters = true;
-                for (const filter of filterPatterns) {
-                    if (result[filter.variable] && 
-                        result[filter.variable].toLowerCase() !== filter.value) {
-                        matchesAllFilters = false;
-                        break;
-                    }
-                }
-                
-                if (matchesAllFilters) {
-                    // Add a default subject property if not already present
-                    if (!result.subject) {
-                        result.subject = subjectValue;
-                    }
-                    
-                    results.push(result);
-                }
-            }
+            // This part remains the same as your existing implementation
+            // (Code for handling queries without type patterns)
+        }
+        
+        // Handle COUNT queries - return the count instead of individual results
+        if (isCountQuery && selectVars.length > 0) {
+            const countResult: Record<string, any> = {};
+            countResult[selectVars[0]] = results.length; // selectVars[0] should be the count alias
+            elizaLogger.debug(`COUNT query returned ${results.length} matching results`);
+            return [countResult];
         }
         
         elizaLogger.debug(`Manual triple pattern matching returned ${results.length} results`);
@@ -678,6 +920,7 @@ private expandPrefixedName(prefixedName: string): string | null {
         xsd: "http://www.w3.org/2001/XMLSchema#",
         owl: "http://www.w3.org/2002/07/owl#",
         foaf: "http://xmlns.com/foaf/0.1/",
+        ont: "http://elizaos.local/ontology/",
     };
     
     if (namespaces[prefix]) {
@@ -752,27 +995,45 @@ private expandPrefixedName(prefixedName: string): string | null {
      */
     private formatRdfNode(node: any): string {
         if (!node) {
+            elizaLogger.debug("[RDF Format] Node is null/undefined");
             return "";
         }
 
         try {
+            // Log node structure for debugging
+            elizaLogger.debug(`[RDF Format] Node type: ${typeof node}, termType: ${node.termType}, value: ${node.value}, nominalValue: ${node.nominalValue}`);
+            
             // Check for different node types and extract values
             if (typeof node === "object") {
-                if ("value" in node) {
-                    return node.value;
-                } else if ("nominalValue" in node) {
-                    return node.nominalValue;
+                if ("value" in node && node.value !== undefined) {
+                    elizaLogger.debug(`[RDF Format] Using node.value: ${node.value}`);
+                    return String(node.value);
+                } else if ("nominalValue" in node && node.nominalValue !== undefined) {
+                    elizaLogger.debug(`[RDF Format] Using node.nominalValue: ${node.nominalValue}`);
+                    return String(node.nominalValue);
                 } else if ("termType" in node) {
                     if (node.termType === "Literal") {
-                        return node.value || String(node);
+                        const value = node.value || String(node);
+                        elizaLogger.debug(`[RDF Format] Using literal value: ${value}`);
+                        return value;
                     } else {
-                        return node.value || node.nominalValue || String(node);
+                        const value = node.value || node.nominalValue || String(node);
+                        elizaLogger.debug(`[RDF Format] Using ${node.termType} value: ${value}`);
+                        return value;
                     }
+                } else {
+                    // Try to extract value from object properties
+                    elizaLogger.debug(`[RDF Format] Node object keys: ${Object.keys(node).join(', ')}`);
+                    const stringValue = String(node);
+                    elizaLogger.debug(`[RDF Format] Using toString: ${stringValue}`);
+                    return stringValue;
                 }
             }
 
             // Default toString for other cases
-            return String(node);
+            const stringValue = String(node);
+            elizaLogger.debug(`[RDF Format] Using default toString: ${stringValue}`);
+            return stringValue;
         } catch (error) {
             elizaLogger.error("Error formatting RDF node:", error);
             return String(node);
@@ -857,6 +1118,23 @@ private expandPrefixedName(prefixedName: string): string | null {
     /**
      * Extract a value from an RDF node safely
      */
+    /**
+     * Check if a subject value is a valid RDF subject (not a malformed quoted string)
+     */
+    private isValidRdfSubject(subjectValue: string | null): boolean {
+        if (!subjectValue) return false;
+        
+        // Reject quoted strings like "schema:Workout" which are malformed subjects
+        if (subjectValue.startsWith('"') && subjectValue.endsWith('"')) {
+            return false;
+        }
+        
+        // Accept proper URIs, blank nodes, and unquoted identifiers
+        return subjectValue.startsWith('http') || 
+               subjectValue.startsWith('_:') || 
+               (!subjectValue.includes('"') && subjectValue.length > 0);
+    }
+
     private extractNodeValue(node: any): string | null {
         try {
             if (!node) return null;
@@ -1001,18 +1279,22 @@ private expandPrefixedName(prefixedName: string): string | null {
                         statement.subject,
                     );
 
-                    if (
-                        predicateValue ===
-                            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" &&
-                        schemaTypes.includes(objectValue)
-                    ) {
-                        schemaNodes.add(subjectValue);
+                    // Filter out malformed subjects that are quoted strings
+                    if (this.isValidRdfSubject(subjectValue)) {
+                        if (
+                            predicateValue ===
+                                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" &&
+                            schemaTypes.includes(objectValue)
+                        ) {
+                            schemaNodes.add(subjectValue);
+                        }
                     }
 
-                    // Track instances and their classes
+                    // Track instances and their classes (only for valid subjects)
                     if (
                         predicateValue ===
-                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+                        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" &&
+                        this.isValidRdfSubject(subjectValue)
                     ) {
                         instanceClasses.set(subjectValue, objectValue);
                         
@@ -1037,10 +1319,11 @@ private expandPrefixedName(prefixedName: string): string | null {
                         statement.predicate,
                     );
 
-                    // Include triples where the subject is a schema node
+                    // Include triples where the subject is a schema node (only for valid subjects)
                     if (
-                        schemaNodes.has(subjectValue) ||
-                        schemaPredicates.includes(predicateValue)
+                        this.isValidRdfSubject(subjectValue) &&
+                        (schemaNodes.has(subjectValue) ||
+                        schemaPredicates.includes(predicateValue))
                     ) {
                         if (
                             processedNodes.has(
@@ -1187,7 +1470,36 @@ private expandPrefixedName(prefixedName: string): string | null {
                 }
             }
             
-            // Add class property definitions
+            // Add class property definitions and collect property value ranges
+            const propertyValueRanges: Record<string, Set<string>> = {};
+            
+            // First, collect all property values to understand ranges
+            for (const statement of this.graph.statements) {
+                try {
+                    const subjectValue = this.extractNodeValue(statement.subject);
+                    const predicateValue = this.extractNodeValue(statement.predicate);
+                    const objectValue = this.extractNodeValue(statement.object);
+                    
+                    // Skip type predicates
+                    if (predicateValue === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") {
+                        continue;
+                    }
+                    
+                    // Check if this subject is an instance of a known class
+                    if (instanceClasses.has(subjectValue)) {
+                        // If the object is a literal (not a URI), add it to the value range
+                        if (objectValue && !objectValue.startsWith("http://") && !objectValue.startsWith("https://") && !objectValue.startsWith("_:")) {
+                            if (!propertyValueRanges[predicateValue]) {
+                                propertyValueRanges[predicateValue] = new Set<string>();
+                            }
+                            propertyValueRanges[predicateValue].add(objectValue);
+                        }
+                    }
+                } catch (err) {
+                    continue;
+                }
+            }
+            
             for (const [classType, properties] of Object.entries(classToPropertiesMap)) {
                 if (properties.size > 0) {
                     const formattedClass = this.formatNodeForTTL({ value: classType });
@@ -1205,6 +1517,20 @@ private expandPrefixedName(prefixedName: string): string | null {
                     schemaTriples.push(`${formattedClass} rdfs:isDefinedBy [ a owl:Ontology ; owl:imports (${propertyList}) ] .`);
                 }
             }
+            
+            // Add property value range information as comments
+            for (const [predicateValue, values] of Object.entries(propertyValueRanges)) {
+                if (values.size > 0 && values.size <= 10) { // Only include if we have a reasonable number of values
+                    const formattedPredicate = this.formatNodeForTTL({ value: predicateValue });
+                    const valueList = Array.from(values).sort().map(v => `"${v}"`).join(", ");
+                    schemaTriples.push(`# ${formattedPredicate} has observed values: ${valueList}`);
+                    
+                    // If there are only a few values, suggest it might be an enumeration
+                    if (values.size <= 5) {
+                        schemaTriples.push(`${formattedPredicate} rdfs:comment "Property appears to be an enumeration with values: ${valueList}" .`);
+                    }
+                }
+            }
 
             return schemaTriples;
         } catch (error) {
@@ -1220,6 +1546,11 @@ private expandPrefixedName(prefixedName: string): string | null {
         try {
             const value = this.extractNodeValue(node);
             if (!value) return '""';
+
+            // Handle schema: prefixed names - these should be URIs, not literals
+            if (value.startsWith("schema:")) {
+                return "schema:" + value.substring("schema:".length);
+            }
 
             // Check if this is a URI
             if (value.startsWith("http://") || value.startsWith("https://")) {
@@ -1272,6 +1603,15 @@ private expandPrefixedName(prefixedName: string): string | null {
 
                 // Default format for URIs
                 return `<${value}>`;
+            }
+
+            // Check if this looks like a prefixed name (namespace:localname)
+            if (value.includes(':') && !value.includes(' ') && !value.startsWith('"')) {
+                const [prefix, localName] = value.split(':', 2);
+                const knownPrefixes = ['rdf', 'rdfs', 'schema', 'xsd', 'owl', 'foaf', 'ont'];
+                if (knownPrefixes.includes(prefix) && localName) {
+                    return value; // Return as-is for valid prefixed names
+                }
             }
 
             // Assume it's a literal

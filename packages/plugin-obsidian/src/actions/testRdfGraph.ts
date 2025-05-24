@@ -24,7 +24,7 @@ async function main() {
       
       // If your manager tracks a 'loaded' flag, you can check it
       if (!rdfManager.isLoaded()) {
-        console.warn("The RDF graph has not been loaded yet. Run LOAD_RDF_DATA first.");
+        console.warn("The RDF graph has not been loaded yet. Run LOAD_DATA first.");
         return;
       }
     }

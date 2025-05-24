@@ -8,7 +8,7 @@ import {
 } from "@elizaos/core";
 import { getObsidian, markdownToPlaintext } from "../helper";
 import * as rdflib from 'rdflib';
-import { getRdfManager } from '../helper/rdfManager';
+import { getRdfManager } from '../helper/RDFmanager';
 import { getTempFileSystem } from '../helper/tempFileSystem';
 import * as path from 'path';
 import { PropertyNamespaceResolver } from '../helper/propertyNamespaceResolver';
@@ -588,13 +588,13 @@ const processComplexValue = (
 
 
 export const loadRdfAction: Action = {
-    name: "LOAD_RDF_DATA",
+    name: "LOAD_DATA",
     similes: [
-        "IMPORT_RDF", "BUILD_GRAPH", "SCAN_VAULT_RDF",
+        "IMPORT_DATA", "BUILD_GRAPH", "SCAN_VAULT",
         "RDF_IMPORT", "LOAD_SEMANTIC_DATA", "BUILD_KNOWLEDGE_GRAPH"
     ],
     description:
-        "Load RDF data from Obsidian vault files with compatible frontmatter and ontology definitions into a semantic graph database",
+        "Load vault data from Obsidian vault files with compatible frontmatter and ontology definitions into a semantic graph database",
     validate: async (runtime: IAgentRuntime) => {
         try {
             elizaLogger.debug("Validating Obsidian connection for RDF loading");
@@ -629,25 +629,15 @@ export const loadRdfAction: Action = {
         elizaLogger.info(`Using persistent storage path: ${persistentStoragePath}`);
         
         try {
-            // Try to load from persistent storage first
-            if (rdfManager.loadGraphFromFile(persistentStoragePath)) {
-                elizaLogger.info("Successfully loaded RDF graph from persistent storage");
-                
-                if (callback) {
-                    callback({
-                        text: "Loaded existing RDF graph from persistent storage. Proceeding to update with any new data...",
-                        partial: true
-                    });
-                }
-            } else {
-                elizaLogger.info("No persistent RDF graph found or failed to load. Starting fresh.");
-                
-                if (callback) {
-                    callback({
-                        text: "No existing RDF graph found. Building a new graph from vault data...",
-                        partial: true
-                    });
-                }
+            // Clear the existing graph to start fresh
+            elizaLogger.info("Clearing existing RDF graph to build fresh data");
+            rdfManager.clearGraph();
+            
+            if (callback) {
+                callback({
+                    text: "Cleared existing RDF graph. Building fresh graph from current vault data...",
+                    partial: true
+                });
             }
             
             // Log standard namespace information
@@ -698,6 +688,12 @@ export const loadRdfAction: Action = {
                 
                 let loadedCount = 0;
                 for (const file of ontologyFiles) {
+                    // Skip generated schema files to prevent circular dependency
+                    if (file.includes('generated-schema')) {
+                        elizaLogger.debug(`Skipping generated schema file to prevent circular dependency: ${file}`);
+                        continue;
+                    }
+                    
                     // Ensure we have the full path including the folder
                     const filePath = file.includes('/') ? file : `${ontologyFolder}/${file}`;
                     elizaLogger.debug(`Reading ontology file: ${filePath}`);
@@ -800,16 +796,43 @@ export const loadRdfAction: Action = {
                 elizaLogger.warn(`Ontology folder '${ontologyFolder}' not found in vault`);
             }
             
-            // Now scan all files for RDF-compatible frontmatter
-            elizaLogger.info("Scanning vault for files with RDF-compatible frontmatter");
+            // MODIFIED SECTION - Only scan the knowledge folder for RDF-compatible frontmatter
+            const knowledgeFolder = "knowledge"; // Define the knowledge folder path
+            elizaLogger.info(`Scanning ${knowledgeFolder} folder for files with RDF-compatible frontmatter`);
+            
+            // Check if knowledge folder exists
+            const knowledgeFolderExists = await obsidian.folderExists(knowledgeFolder);
+            if (!knowledgeFolderExists) {
+                elizaLogger.warn(`Knowledge folder '${knowledgeFolder}' not found in vault`);
+                
+                if (callback) {
+                    callback({
+                        text: `Error: The knowledge folder '${knowledgeFolder}' was not found in your vault.`,
+                        error: true
+                    });
+                }
+                return false;
+            }
+            
+            // Get all files recursively in the vault
             const allFiles = await obsidian.listAllFiles(['.md']);
-            elizaLogger.debug(`Found ${allFiles.length} markdown files in vault`);
+            
+            // Filter to only include files in the knowledge folder or its subfolders
+            const knowledgeFiles = allFiles.filter(filePath => 
+                filePath === knowledgeFolder || 
+                filePath.startsWith(`${knowledgeFolder}/`) ||
+                // Handle the full path case like in the example
+                filePath.includes(`/cognitive-ecosystem-seed/${knowledgeFolder}/`)
+            );
+            
+            elizaLogger.debug(`Found ${knowledgeFiles.length} markdown files in ${knowledgeFolder} folder (out of ${allFiles.length} total files)`);
             
             let processedCount = 0;
             let rdfCount = 0;
             let errorCount = 0;
             
-            for (const filePath of allFiles) {
+            // Now loop through only the knowledge files
+            for (const filePath of knowledgeFiles) {
                 processedCount++;
                 
                 // Skip files in the Ontology folder as they've already been processed
@@ -857,21 +880,21 @@ export const loadRdfAction: Action = {
                 // Provide periodic updates
                 if (processedCount % 50 === 0 && callback) {
                     callback({
-                        text: `Processing files... ${processedCount}/${allFiles.length} files scanned, ${rdfCount} with RDF data loaded, ${errorCount} errors encountered.`,
+                        text: `Processing files... ${processedCount}/${knowledgeFiles.length} files scanned, ${rdfCount} with RDF data loaded, ${errorCount} errors encountered.`,
                         partial: true
                     });
                 }
             }
-
-             // Debug the namespace resolver results
-             const namespaces = propertyResolver.getNamespacePrefixes();
-             const properties = propertyResolver.getRegisteredProperties();
-             elizaLogger.info(`Namespace resolver statistics: ${Object.keys(namespaces).length} namespaces, ${properties.length} properties`);
-             elizaLogger.debug(`Registered namespaces: ${JSON.stringify(namespaces)}`);
-             
-             // Log sample of properties for debugging (not all to avoid log overflow)
-             const sampleSize = Math.min(properties.length, 20);
-             elizaLogger.debug(`Sample of registered properties (${sampleSize}/${properties.length}): ${properties.slice(0, sampleSize).join(', ')}${properties.length > sampleSize ? '...' : ''}`);
+            
+            // Debug the namespace resolver results
+            const namespaces = propertyResolver.getNamespacePrefixes();
+            const properties = propertyResolver.getRegisteredProperties();
+            elizaLogger.info(`Namespace resolver statistics: ${Object.keys(namespaces).length} namespaces, ${properties.length} properties`);
+            elizaLogger.debug(`Registered namespaces: ${JSON.stringify(namespaces)}`);
+            
+            // Log sample of properties for debugging (not all to avoid log overflow)
+            const sampleSize = Math.min(properties.length, 20);
+            elizaLogger.debug(`Sample of registered properties (${sampleSize}/${properties.length}): ${properties.slice(0, sampleSize).join(', ')}${properties.length > sampleSize ? '...' : ''}`);
             
             // Save the graph to a temporary file for debugging
             const serializedGraph = rdfManager.serializeGraph('text/turtle');
@@ -886,7 +909,7 @@ export const loadRdfAction: Action = {
             if (!ontologyResult.success) {
                 elizaLogger.warn("Ontology generation failed or found no schema to extract");
             }
-                        
+            
             // Save the graph to persistent storage
             if (rdfManager.saveGraphToFile(persistentStoragePath)) {
                 elizaLogger.info(`RDF graph saved to persistent storage at ${persistentStoragePath}`);
@@ -896,7 +919,7 @@ export const loadRdfAction: Action = {
             
             // Set the loaded state
             rdfManager.setLoaded(true);
-
+            
             // Run diagnostics on the loaded data
             elizaLogger.info("Running diagnostics on loaded RDF data");
             const diagnostics = inspectLoadedData(rdfManager);
@@ -905,12 +928,12 @@ export const loadRdfAction: Action = {
             elizaLogger.debug(`Diagnostics report: ${JSON.stringify(diagnostics, null, 2)}`);
             
             const graphStats = rdfManager.getStats();
-            elizaLogger.info(`RDF data loading complete. Processed ${processedCount} files, found ${rdfCount} with RDF data, encountered ${errorCount} errors.`);
+            elizaLogger.info(`RDF data loading complete. Processed ${processedCount} files from knowledge folder, found ${rdfCount} with RDF data, encountered ${errorCount} errors.`);
             elizaLogger.debug(`Graph statistics: ${JSON.stringify(graphStats, null, 2)}`);
             
             if (callback) {
                 callback({
-                    text: `Successfully loaded RDF data from your vault!\n\n**Summary:**\n- Processed ${processedCount} files\n- Found ${rdfCount} files with RDF-compatible data\n- Encountered ${errorCount} errors during processing\n- RDF graph now contains ${graphStats.statements} statements\n- ${graphStats.subjects} unique subjects\n- ${graphStats.predicates} unique predicates\n\nThe RDF graph is now ready for SPARQL queries.\n\n**Diagnostics:**\n- Ontology file created at: ${ontologyResult.ttlFilePath}\n- Graph file saved at: ${graphPath}`,
+                    text: `Successfully loaded RDF data from your knowledge folder!\n\n**Summary:**\n- Processed ${processedCount} files from the knowledge folder\n- Found ${rdfCount} files with RDF-compatible data\n- Encountered ${errorCount} errors during processing\n- RDF graph now contains ${graphStats.statements} statements\n- ${graphStats.subjects} unique subjects\n- ${graphStats.predicates} unique predicates\n\nThe RDF graph is now ready for SPARQL queries.\n\n**Diagnostics:**\n- Ontology file created at: ${ontologyResult.ttlFilePath}\n- Graph file saved at: ${graphPath}`,
                     metadata: {
                         processedCount,
                         rdfCount,
@@ -941,14 +964,14 @@ export const loadRdfAction: Action = {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Load all RDF data from my vault",
+                    text: "Load RDF data from my knowledge folder",
                 },
             },
             {
                 user: "{{agentName}}",
                 content: {
                     text: "{{responseData}}",
-                    action: "LOAD_RDF_DATA",
+                    action: "LOAD_DATA",
                 },
             },
         ]
