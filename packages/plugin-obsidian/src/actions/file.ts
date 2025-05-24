@@ -12,6 +12,7 @@ import {
 import { fileSchema, isValidFile } from "../types";
 import { getObsidian }  from "../helper";
 import { fileTemplate } from "../templates/file";
+import { resolveOrExtractPath } from "../helper/resolveOrExtractPath";
 
 export const readFileAction: Action = {
     name: "READ_FILE",
@@ -52,7 +53,6 @@ export const readFileAction: Action = {
         const obsidian = await getObsidian(runtime);
 
         try {
-            let path = "";
             /*const text = message.content.text;
 
             // Extract path from text like "Read FOLDER/file.txt"
@@ -109,8 +109,24 @@ export const readFileAction: Action = {
                 return false;
             }
 
-            // Extract path from note context
-            path = fileContext.object.path;
+            const { path } = await resolveOrExtractPath(
+                runtime,
+                message,
+                state,
+                fileTemplate,
+                fileSchema
+            );
+              
+              if (!path) {
+                elizaLogger.error("Could not resolve file path from user input or memory.");
+                if (callback) {
+                  callback({
+                    text: "I couldn't figure out which file you meant to open.",
+                    error: true,
+                  });
+                }
+                return false;
+              }
 
             elizaLogger.info(`Reading file at path: ${path}`);
             const fileContent: string = await obsidian.readFile(path);

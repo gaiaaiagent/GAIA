@@ -2,7 +2,7 @@
   "name": "Gaia",
   "plugins": [],
   "clients": ["discord", "twitter"],
-  "modelProvider": "anthropic",
+  "modelProvider": "venice",
   "settings": {
     "secrets": {
     },

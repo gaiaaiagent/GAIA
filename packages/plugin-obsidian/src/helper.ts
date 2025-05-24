@@ -30,7 +30,7 @@ interface SearchQuery {
         ignoreCase?: boolean;
     };
     query?: string | Record<string, unknown>;
-    queryFormat?: "plaintext" | "jsonlogic" | "dataview";
+    queryFormat?: "plaintext" | "jsonlogic";
     and?: Array<SearchCondition>;
     or?: Array<SearchCondition>;
 }
@@ -305,8 +305,8 @@ const EXAMPLE_SEARCH_PROMPTS = [
     {
         input: "Select TABLE file.mtime FROM #Projects IN Projects/ AND Archive/Projects",
         output: {
-            query: "TABLE file.mtime FROM #Projects",
-            queryFormat: "dataview",
+            query: "#Projects",
+            queryFormat: "plaintext",
             options: {
                 searchIn: ["Projects/", "Archive/Projects/"]
             }
@@ -334,7 +334,7 @@ Follow these rules:
 5. Always include query.and and query.or as an array (default: "jsonlogic")
 6. Use appropriate glob patterns for file types when appropriate (default: "jsonlogic")
 7. Choose between contains and regexp based on the search requirements (default: "jsonlogic")
-8. The format of the query - queryFormat (string): Must be one of: 'plaintext', 'dataview', or 'jsonlogic'. (default: 'plaintext')
+8. The format of the query - queryFormat (string): Must be one of: 'plaintext' or 'jsonlogic'. Always use 'plaintext' unless complex logic is needed. (default: 'plaintext')
 9. When the prompt have "containing" or "contains", use "in" operator. DO NOT use "contains" operator (this is a strictly requirement) (default: "jsonlogic")
 10. When the prompt have "matching" or "match", use "regexp" operator (default: "jsonlogic")
 11. Maintain contextLength at 150

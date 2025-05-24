@@ -13,6 +13,7 @@ import { type NoteContent, noteSchema, isValidNote } from "../types";
 import { getObsidian }  from "../helper";
 import { noteTemplate } from "../templates/note";
 import { fileTemplate } from "../templates/file";
+import { resolveOrExtractPath } from "../helper/resolveOrExtractPath";
 
 export const getNoteAction: Action = {
     name: "GET_NOTE",
@@ -53,7 +54,6 @@ export const getNoteAction: Action = {
         const obsidian = await getObsidian(runtime);
 
         try {
-            let path = "";
             // Initialize or update state for context generation
             // if (!state) {
             //     state = (await runtime.composeState(message)) as State;
@@ -98,10 +98,17 @@ export const getNoteAction: Action = {
             }
 
             // Extract path from note context
-            path = noteContext.object.path
-
+            const { path, object } = await resolveOrExtractPath(
+                runtime,
+                message,
+                currentState,
+                fileTemplate, // or `noteTemplate` if you prefer
+                noteSchema
+            );
+            
             elizaLogger.info(`Fetching note at path: ${path}`);
-            const noteContent: NoteContent = await obsidian.getNote(path);
+
+            const noteContent = await obsidian.getNote(path);
 
             elizaLogger.info(`Successfully retrieved note: ${path}`);
 

@@ -1,0 +1,22 @@
+@prefix : <#>.
+@prefix schema: <http://schema.org/>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix wor: <workouts/>.
+@prefix pl: <places/>.
+@prefix peo: <people/>.
+
+wor:4b1f0572-6f29-4e9c-b8bd-cece993a2090
+    a schema:Workout;
+    schema:duration "PT1H"^^xsd:duration;
+    schema:endDate "2025-04-10T08:00:00Z"^^xsd:dateTime;
+    schema:exerciseType "Strength Training";
+    schema:intensity "Moderate";
+    schema:location pl:home-gym;
+    schema:name "Workout";
+    schema:performer peo:yourname;
+    schema:sets
+        [ <http://schema.org/"@type"> "schema:ExerciseSet" ],
+        [ <http://schema.org/"@type"> "schema:ExerciseSet" ],
+        [ <http://schema.org/"@type"> "schema:ExerciseSet" ],
+        [ <http://schema.org/"@type"> "schema:ExerciseSet" ];
+    schema:startDate "2025-04-10T07:00:00Z"^^xsd:dateTime.

@@ -1,6 +1,9 @@
 {
     "extends": "../core/tsconfig.json",
     "compilerOptions": {
+        "module": "ESNext",           // ✅ Required for ESM
+        "moduleResolution": "Bundler",// ✅ Ensures ESM-style resolution
+        "target": "ES2020",           // ✅ Compatible with most modern Node setups
         "outDir": "dist",
         "rootDir": "src",
         "typeRoots": [

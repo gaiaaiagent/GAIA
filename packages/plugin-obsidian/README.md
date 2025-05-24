@@ -1,6 +1,6 @@
 # @elizaos/plugin-obsidian
 
-An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian vaults, enabling powerful file and note management capabilities, as well as Quartz website publishing with support for GitHub Pages and Arweave permanent storage.
+An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian vaults, enabling powerful file and note management capabilities, semantic knowledge graph functionality with RDF/SPARQL support, and Quartz website publishing with support for GitHub Pages and Arweave permanent storage.
 
 ## Features
 
@@ -24,7 +24,15 @@ An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian
    - Creating a knowledge base from Naval's vault notes for the agent
    - Naval's character json file is included in the PR for reference (found in the example directory)
 
-5. Quartz Website Management:
+5. Semantic Knowledge Graph with RDF/SPARQL:
+   - Load Markdown files with YAML frontmatter into an RDF knowledge graph
+   - Automatically generate ontologies from your vault structure
+   - SPARQL query capabilities for semantic search and reasoning
+   - Convert natural language queries to SPARQL for advanced search
+   - Support for TTL (Turtle) format for ontology definitions
+   - Debug and inspect RDF graph data structures
+
+6. Quartz Website Management:
    - Initialize a Quartz website from your Obsidian vault for digital garden publishing
    - Sync and publish vault changes to your Quartz website
    - Automatic deployment to GitHub Pages or Arweave permanent storage
@@ -85,11 +93,44 @@ An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian
   - Support for regex patterns
   - Support for context search
   - Support for frontmatter search
+  - Semantic search using RDF/SPARQL queries
 
   ```typescript
   // Search in vault
   const results = await obsidian.search("query");
   // Examples: "Search QUERY" or "find notes with 'YOUR QUERY'" or "search notes named 'FILENAME'"
+  ```
+
+### RDF Knowledge Graph Operations
+
+- **Load RDF Data**
+  - Convert Markdown files with YAML frontmatter to RDF triples
+  - Build semantic knowledge graph from vault content
+  - Support for custom ontologies and namespaces
+
+  ```typescript
+  // Load vault data into RDF graph
+  const rdfData = await obsidian.loadRDF(); // Example: "Load RDF data from vault"
+  ```
+
+- **Generate Ontology**
+  - Automatically create ontologies from vault structure
+  - Export ontologies in TTL (Turtle) format
+  - Analyze properties and relationships in your data
+
+  ```typescript
+  // Generate ontology from vault
+  const ontology = await obsidian.generateOntology(); // Example: "Generate ontology from vault"
+  ```
+
+- **View RDF Graph**
+  - Inspect the loaded RDF graph structure
+  - Debug semantic relationships and properties
+  - Query graph statistics and metadata
+
+  ```typescript
+  // View RDF graph details
+  const graphInfo = await obsidian.viewRDFGraph(); // Example: "View RDF graph structure"
   ```
 
 ### File Operations
@@ -233,6 +274,9 @@ The plugin provides several actions that can be used with ELIZA OS:
 - `QUARTZ_PUBLISH`: Publish changes to a Quartz website (GitHub Pages or Arweave)
 - `QUARTZ_PREVIEW`: Run local preview server
 - `ARWEAVE_SETUP`: Create new Arweave wallet and store in .env
+- `LOAD_RDF`: Convert vault markdown files to RDF knowledge graph
+- `VIEW_RDF_GRAPH`: Inspect and debug RDF graph structure
+- `GENERATE_ONTOLOGY`: Create ontologies from vault data structure
 
 ## Quartz Publishing Workflow
 
@@ -276,6 +320,40 @@ To publish your Obsidian vault as a Quartz website on Arweave for permanent stor
    - Handle 404.html, router.js, and single-page app (SPA) compatibility
 
 Your site will be published to: `https://arweave.net/[transaction-id]`
+
+## RDF Knowledge Graph Workflow
+
+To enable semantic search and reasoning capabilities with your Obsidian vault:
+
+1. **Load RDF Data**:
+   ```
+   Load RDF data from vault
+   ```
+   This will:
+   - Parse all Markdown files with YAML frontmatter in your vault
+   - Convert the structured data into RDF triples
+   - Build a semantic knowledge graph that can be queried
+
+2. **Generate Ontology** (Optional):
+   ```
+   Generate ontology from vault
+   ```
+   This will:
+   - Analyze the loaded RDF data structure
+   - Create ontology definitions in TTL format
+   - Export ontology files for reuse and sharing
+
+3. **View RDF Graph Structure**:
+   ```
+   View RDF graph structure
+   ```
+   This will:
+   - Display statistics about the loaded graph
+   - Show available properties and relationships
+   - Help debug and understand your semantic data
+
+4. **Semantic Search**:
+   Once RDF data is loaded, you can use the enhanced search functionality that automatically converts natural language queries to SPARQL for more precise semantic search results.
 
 ## Error Handling
 

@@ -13,9 +13,9 @@ import { fileSchema, isValidFile } from "../types";
 import { getObsidian } from "../helper";
 import { fileTemplate } from "../templates/file";
 import { getQuartzPath, updateQuartzFile, doesQuartzExist } from "../helper/quartzHelper";
+import { resolvePathFromMemory } from "../helper/resolvePathFromMemory";
+import { resolveOrExtractPath } from "../helper/resolveOrExtractPath";
 
-
-// Add at the top with other imports
 interface UpdateFileOptions {
     path?: string;
     content?: string;
@@ -57,7 +57,6 @@ export const updateFileAction: Action = {
         const obsidian = await getObsidian(runtime);
 
         try {
-            // Initialize or update state for context generation
             let currentState: State;
             if (!state) {
                 currentState = (await runtime.composeState(message)) as State;
@@ -65,9 +64,11 @@ export const updateFileAction: Action = {
                 currentState = await runtime.updateRecentMessageState(state);
             }
 
+            const likelyPath = await resolvePathFromMemory(runtime, message);
+
             const context = composeContext({
                 state: currentState,
-                template: fileTemplate(message.content.text),
+                template: fileTemplate(message.content.text, likelyPath ?? undefined),
             });
 
             const fileContext = await generateObject({
@@ -93,30 +94,29 @@ export const updateFileAction: Action = {
                 return false;
             }
 
-            const { path, content } = fileContext.object;
-
-            if (!content) {
-                elizaLogger.error("File content is required for updating");
-                if (callback) {
-                    callback({
-                        text: "File content is required for updating",
-                        error: true,
-                    });
-                }
-                return false;
-            }
+            const { path, object } = await resolveOrExtractPath(
+                runtime,
+                message,
+                currentState,
+                fileTemplate,
+                fileSchema
+            );
 
             elizaLogger.info(`Updating file at path: ${path}`);
-            // Note: patchFile will only update existing files, it will not create new ones
+            
+            const content = object.content;
+            if (!content) {
+                throw new Error("Missing content for update.");
+            }
+            
             await obsidian.patchFile(path, content);
             elizaLogger.info(`Successfully updated file: ${path}`);
 
-            // Check if Quartz is set up and update the file there as well
             const quartzPath = getQuartzPath();
             if (quartzPath && doesQuartzExist(quartzPath)) {
                 elizaLogger.info(`Quartz detected at ${quartzPath}, updating file there as well`);
                 const quartzUpdateSuccess = updateQuartzFile(path, content, quartzPath);
-                
+
                 if (quartzUpdateSuccess) {
                     elizaLogger.info(`Successfully updated file in Quartz: ${path}`);
                 } else {

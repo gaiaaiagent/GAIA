@@ -15,6 +15,13 @@ import { fileTemplate } from "../templates/file";
 import { getQuartzPath, updateQuartzFile, doesQuartzExist } from "../helper/quartzHelper";
 import * as path from 'path';
 import * as fs from 'fs';
+import { loadSchemasFromVault } from "../helper/schemaHelper";
+import { createFromSchemaTemplate } from "../templates/createFromSchema";
+import matter from 'gray-matter';
+
+function toSlug(str: string) {
+    return str.toLowerCase().replace(/\s+/g, '-');
+  }
 
 export const saveFileAction: Action = {
     name: "SAVE_FILE",
@@ -60,9 +67,12 @@ export const saveFileAction: Action = {
                 currentState = await runtime.updateRecentMessageState(state);
             }
 
+            const vaultPath = await obsidian.getVaultPath?.();
+            const schemas = vaultPath ? loadSchemasFromVault(vaultPath) : [];
+
             const context = composeContext({
                 state: currentState,
-                template: fileTemplate(message.content.text),
+                template: createFromSchemaTemplate(message.content.text, schemas),
             });
 
             const fileContext = await generateObject({
@@ -72,6 +82,17 @@ export const saveFileAction: Action = {
                 schema: fileSchema,
                 stop: ["\n"]
             }) as any;
+
+            const fileContent = fileContext.object?.content || '';
+            let filePath = fileContext.object?.path;
+
+            if (!filePath) {
+                const parsedFrontmatter = matter(fileContent).data;
+                const name = parsedFrontmatter.name || parsedFrontmatter.givenName;
+                const folder = parsedFrontmatter['@type']?.includes("Person") ? "People" : "Notes";
+                const filename = name ? toSlug(name) + ".md" : "untitled.md";
+                filePath = `${folder}/${filename}`;
+            }
 
             if (!isValidFile(fileContext.object)) {
                 elizaLogger.error(
@@ -88,9 +109,7 @@ export const saveFileAction: Action = {
                 return false;
             }
 
-            const { path: filePath, content } = fileContext.object;
-
-            if (!content) {
+            if (!fileContent) {
                 elizaLogger.error("File content is required for saving");
                 if (callback) {
                     callback({
@@ -103,7 +122,7 @@ export const saveFileAction: Action = {
 
             elizaLogger.info(`Saving file at path: ${filePath}`);
             // Note: Obsidian will create a new document at the path you have specified if such a document did not already exist
-            await obsidian.saveFile(filePath, content, true);
+            await obsidian.saveFile(filePath, fileContent, true);
             elizaLogger.info(`Successfully saved file: ${filePath}`);
 
             // Check if Quartz is set up and update the file there as well
@@ -125,7 +144,7 @@ export const saveFileAction: Action = {
                     
                     if (fs.existsSync(contentDir)) {
                         elizaLogger.debug(`Content directory exists, proceeding with update`);
-                        const quartzUpdateSuccess = updateQuartzFile(filePath, content, quartzPath);
+                        const quartzUpdateSuccess = updateQuartzFile(filePath, fileContent, quartzPath);
                         
                         if (quartzUpdateSuccess) {
                             elizaLogger.info(`Successfully updated file in Quartz: ${filePath}`);
