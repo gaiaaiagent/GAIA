@@ -18,11 +18,11 @@ An Obsidian plugin for ELIZA OS that provides seamless integration with Obsidian
    - Building and maintaining a knowledge base from vault notes
    - Implementing efficient data structures for quick retrieval
 
-4. Naval database integration as an example:
-   - Demonstrating how to import and structure obsidian notes in the agent memory
-   - Showcasing integration of Naval's wisdom and quotes
-   - Creating a knowledge base from Naval's vault notes for the agent
-   - Naval's character json file is included in the PR for reference (found in the example directory)
+4. Structured data management with semantic schemas:
+   - Example workout tracking system with schema.org integration
+   - Demonstrates how to structure data with YAML frontmatter for RDF conversion
+   - Shows best practices for ontology definition and semantic data modeling
+   - Includes template system for consistent data entry
 
 5. Semantic Knowledge Graph with RDF/SPARQL:
    - Load Markdown files with YAML frontmatter into an RDF knowledge graph
@@ -354,6 +354,263 @@ To enable semantic search and reasoning capabilities with your Obsidian vault:
 
 4. **Semantic Search**:
    Once RDF data is loaded, you can use the enhanced search functionality that automatically converts natural language queries to SPARQL for more precise semantic search results.
+
+## Setting Up Ontologies and Structured Data
+
+To take full advantage of the semantic capabilities, you need to structure your vault with ontology definitions and consistent YAML frontmatter.
+
+### 1. Create Ontology Folder Structure
+
+Create this folder structure in your Obsidian vault:
+
+```
+Your Vault/
+├── Ontology/           # Schema definitions
+│   └── schema-workout.md
+├── Templates/          # Templater templates (optional but recommended)
+│   └── workout-template.md
+└── knowledge/          # Your structured data files
+    └── workouts/
+        └── 2025-05-22-legs.md
+```
+
+### 2. Define Your Schema (Example: Workout Tracking)
+
+Create `Ontology/schema-workout.md` with your schema definition:
+
+````markdown
+---
+"@id": "http://schema.org/Workout"
+"@type": "http://www.w3.org/2000/01/rdf-schema#Class"
+label: Workout
+description: A structured physical activity or exercise session.
+subClassOf: "http://schema.org/Event"
+createdBy: yourname
+createdOn: 2025-04-09
+version: 1.0
+source: "https://schema.org/Event"
+status: draft
+---
+
+# schema:Workout
+
+A structured physical activity or exercise session, adapted from [schema.org/Event](https://schema.org/Event).
+
+## Turtle (.ttl) Definition
+
+```turtle
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix schema: <http://schema.org/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+schema:Workout a rdfs:Class ;
+  rdfs:label "Workout" ;
+  rdfs:comment "A structured physical activity or exercise session." ;
+  rdfs:subClassOf schema:Event .
+
+schema:name a rdf:Property ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Name of the workout" .
+
+schema:startDate a rdf:Property ;
+  rdfs:range xsd:dateTime ;
+  rdfs:comment "When the workout starts" .
+
+schema:endDate a rdf:Property ;
+  rdfs:range xsd:dateTime ;
+  rdfs:comment "When the workout ends" .
+
+schema:duration a rdf:Property ;
+  rdfs:range xsd:duration ;
+  rdfs:comment "Duration of the workout" .
+
+schema:performer a rdf:Property ;
+  rdfs:range schema:Person ;
+  rdfs:comment "The person performing the workout" .
+
+schema:location a rdf:Property ;
+  rdfs:range schema:Place ;
+  rdfs:comment "Where the workout occurs" .
+
+schema:exerciseType a rdf:Property ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Type of exercise" .
+
+schema:intensity a rdf:Property ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Intensity level" .
+
+schema:sets a rdf:Property ;
+  rdfs:range schema:ExerciseSet ;
+  rdfs:comment "One or more sets performed during the workout" .
+
+schema:ExerciseSet a rdfs:Class ;
+  rdfs:label "ExerciseSet" ;
+  rdfs:comment "A group of repetitions of a specific exercise." ;
+  rdfs:subClassOf schema:Intangible .
+
+schema:reps a rdf:Property ;
+  rdfs:range xsd:integer ;
+  rdfs:comment "Number of repetitions" .
+
+schema:style a rdf:Property ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Style or variation of the exercise" .
+
+schema:weightUsed a rdf:Property ;
+  rdfs:range schema:QuantitativeValue ;
+  rdfs:comment "Weight used for this specific set" .
+```
+````
+
+### 3. Create Structured Data Files
+
+Create workout files in `knowledge/workouts/` with consistent YAML frontmatter:
+
+**Example: `knowledge/workouts/2025-05-22-legs.md`**
+
+```yaml
+---
+"@id": workouts/2025-05-22-legs
+"@type": schema:Workout
+name: Legs Workout - May 22, 2025
+startDate: 2025-05-22T20:30:00Z
+endDate: 2025-05-22T22:40:00Z
+duration: PT2H
+exerciseType: Strength Training
+intensity: Moderate
+performer: people/yourname
+location: places/home-gym
+sets:
+  - exercise: schema:Squat
+    sets:
+      - reps: 10
+        weightUsed:
+          value: 135
+          unitText: lbs
+      - reps: 10
+        weightUsed:
+          value: 155
+          unitText: lbs
+      - reps: 10
+        weightUsed:
+          value: 175
+          unitText: lbs
+  - exercise: schema:FrontSquat
+    sets:
+      - reps: 9 
+        weightUsed:
+          value: 175
+          unitText: lbs
+---
+
+# Legs Workout Session
+
+Today's leg workout focused on progressive loading with squats and front squats.
+
+## Notes
+- Felt strong on regular squats, progressed well through weight increases
+- Front squats were challenging but maintained good form
+- Total workout time: 2 hours including warm-up and cool-down
+```
+
+### 4. Optional: Set Up Templater for Consistent Data Entry
+
+Install the Templater plugin in Obsidian for automated template creation:
+
+1. Install Templater plugin from Community Plugins
+2. Create `Templates/` folder in your vault
+3. Configure Templater to use the Templates folder
+4. Create `Templates/workout-template.md`:
+
+````markdown
+<%*
+// Generate UUID for unique IDs
+function generateUUID() {
+  let dt = new Date().getTime();
+  let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    let r = (dt + Math.random() * 16) % 16 | 0;
+    dt = Math.floor(dt / 16);
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+  return uuid;
+}
+
+const title = tp.file.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+const uuid = generateUUID();
+const id = `workouts/${title || uuid}`;
+const today = new Date().toISOString().split("T")[0];
+
+tR += `---\n`;
+tR += `"@id": ${id}\n`;
+tR += `"@type": schema:Workout\n`;
+tR += `name: ${tp.file.title} Workout\n`;
+tR += `startDate: ${today}T07:00:00Z\n`;
+tR += `endDate: ${today}T08:00:00Z\n`;
+tR += `duration: PT1H\n`;
+tR += `exerciseType: Strength Training\n`;
+tR += `intensity: Moderate\n`;
+tR += `performer: people/yourname\n`;
+tR += `location: places/home-gym\n`;
+tR += `sets:\n`;
+tR += `  - exercise: schema:Deadlift\n`;
+tR += `    sets:\n`;
+tR += `      - reps: 10\n`;
+tR += `        weightUsed:\n`;
+tR += `          value: 135\n`;
+tR += `          unitText: lbs\n`;
+tR += `      - reps: 10\n`;
+tR += `        weightUsed:\n`;
+tR += `          value: 155\n`;
+tR += `          unitText: lbs\n`;
+tR += `  - exercise: schema:PullUp\n`;
+tR += `    style: Wide\n`;
+tR += `    sets:\n`;
+tR += `      - reps: 10\n`;
+tR += `      - reps: 8\n`;
+tR += `---\n`;
+%>
+
+# <% tp.file.title %> Workout
+
+## Exercises
+
+### Exercise 1
+- **Type**: 
+- **Weight**: 
+- **Sets**: 
+- **Reps**: 
+
+### Exercise 2
+- **Type**: 
+- **Weight**: 
+- **Sets**: 
+- **Reps**: 
+
+## Notes
+
+- Overall feeling: 
+- Duration: 
+- Next time: 
+````
+
+### 5. How the Plugin Discovers Your Schema
+
+The plugin automatically:
+
+1. **Scans the `Ontology/` folder** for `.md`, `.ttl`, `.jsonld` files
+2. **Extracts TTL definitions** from code blocks in markdown files
+3. **Registers namespace prefixes** (like `schema:` → `http://schema.org/`)
+4. **Maps properties to namespaces** based on your ontology definitions
+5. **Converts `@type: schema:Workout`** to full URIs during RDF loading
+
+When you use `"@type": "schema:Workout"` in your files, the plugin:
+- Recognizes it's a schema.org type
+- Automatically prefixes properties with `schema:` namespace
+- Converts everything to proper RDF triples for semantic querying
+
+This setup gives you powerful semantic search capabilities while maintaining readable, structured markdown files!
 
 ## Error Handling
 
