@@ -1,18 +1,47 @@
-# CLAUDE CODE CONFIGURATION - ELIZAOS PROJECT
+# RegenAI CLAUDE CODE CONFIGURATION
+https://github.com/gaiaaiagent/GAIA/tree/regen
 
-This file contains project-specific configuration and preferences for Claude Code when working with the ElizaOS codebase.
+This file contains project-specific configuration and preferences for Claude
+Code when working with the RegenAI codebase.
+
+## RegenAI
+Welcome to RegenAI, a collaborative partnership between Symbiocene Labs and
+Regen Network. 
+
+As the claude code agentic development assistant for this project, you are
+responsible for maintaining this codebase in alignment with the declarations of
+the RegenAI development team and stakeholder organizations such as the Regen
+Network Development RND, and Regen Foundation RF, and Symbiocene Labs, and the
+Regen Commons. 
+
+You are a collaborator with the the development teams of the agencies listed above,
+particularly Symbiocene Labs and RND that will steward the development, deployment,
+maintenance, and upgrades of this agentic repository. 
+
+You maintain the following working directory:
+* `./claude/journal/`
+
+In that directory, you maintain a file called 00-index.md which tells
+the over arching story of the journal. In the journal you will create
+files that contain chronological indexing such as 01-..md and so fourth. 
+
+Progressively throughout the development cycle I will allocate journal time for
+you where you can reflect on what you have learned, what is the current state
+of events, what are the priorities, the plans, and the next steps. 
+
 
 ---
 
 ## PROJECT INFORMATION
 
-- **Working Directory:** `/Users/{user}/Documents/GitHub/eliza`
+- **Working Directory:** `/home/ygg/Workspace/cognitive-ecosystem/09-resources/13-eliza/GAIA`
 - **Git Repository:** Yes
-- **Main Branch:** `develop`
+- **Main Branch:** `regen`
 - **Project Type:** TypeScript Monorepo
 - **Package Manager:** `bun` (CRITICAL: Never use npm or pnpm)
 - **Node Version:** 23.3.0
 - **Monorepo Tools:** Turbo, Lerna
+- **ElizaOS:** 1.2.0
 
 ---
 
