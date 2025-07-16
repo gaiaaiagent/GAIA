@@ -1,0 +1,183 @@
+{% extends "admin/base_site.html" %}
+{% load static dict_extras %}
+
+{% block title %}ElizaOS Dashboard{% endblock %}
+
+{% block extrastyle %}
+<style>
+    /* Fix text colors for dark mode compatibility */
+    .dashboard-stats .stat-card {
+        background: #f9f9f9;
+        color: #333;
+    }
+    .dashboard-stats .stat-card h3 {
+        color: #333;
+        margin-top: 0;
+    }
+    .dashboard-stats .stat-card p {
+        color: #333;
+    }
+    .milestones .milestone {
+        background: #f9f9f9;
+        color: #333;
+    }
+    .milestones .milestone h3 {
+        color: #333;
+    }
+    .milestones .milestone strong {
+        color: #333;
+    }
+    table {
+        background: white;
+        color: #333;
+    }
+    table th {
+        background: #f0f0f0;
+        color: #333;
+    }
+    table td {
+        color: #333;
+    }
+    table a {
+        color: #417690;
+    }
+    table a:hover {
+        color: #205683;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        body.theme-auto .dashboard-stats .stat-card,
+        body.theme-dark .dashboard-stats .stat-card {
+            background: #2b2b2b;
+            color: #ddd;
+        }
+        body.theme-auto .dashboard-stats .stat-card h3,
+        body.theme-dark .dashboard-stats .stat-card h3,
+        body.theme-auto .dashboard-stats .stat-card p,
+        body.theme-dark .dashboard-stats .stat-card p {
+            color: #ddd;
+        }
+        body.theme-auto .milestones .milestone,
+        body.theme-dark .milestones .milestone {
+            background: #2b2b2b;
+            color: #ddd;
+        }
+        body.theme-auto .milestones .milestone h3,
+        body.theme-dark .milestones .milestone h3,
+        body.theme-auto .milestones .milestone strong,
+        body.theme-dark .milestones .milestone strong {
+            color: #ddd;
+        }
+        body.theme-auto table,
+        body.theme-dark table {
+            background: #1e1e1e;
+            color: #ddd;
+        }
+        body.theme-auto table th,
+        body.theme-dark table th {
+            background: #2b2b2b;
+            color: #ddd;
+        }
+        body.theme-auto table td,
+        body.theme-dark table td {
+            color: #ddd;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    &rsaquo; <a href="{% url 'reporting:dashboard' %}">Dashboard</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>ElizaOS RegenAI Dashboard</h1>
+
+<div class="dashboard-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px;">
+        <h3>Active Agents</h3>
+        <p style="font-size: 2em; margin: 0;">{{ agent_count }}</p>
+    </div>
+    
+    <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px;">
+        <h3>Total Interactions</h3>
+        <p style="font-size: 2em; margin: 0;">{{ total_memories|add:total_messages }}</p>
+        <p style="font-size: 0.9em; color: #666;">Memories: {{ total_memories }} | Messages: {{ total_messages }}</p>
+    </div>
+    
+    <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px;">
+        <h3>24h Activity</h3>
+        <p style="font-size: 2em; margin: 0;">{{ recent_memories|add:recent_messages }}</p>
+        <p style="font-size: 0.9em; color: #666;">Memories: {{ recent_memories }} | Messages: {{ recent_messages }}</p>
+    </div>
+</div>
+
+<h2>Contract Milestone Progress</h2>
+<div class="milestones" style="margin-bottom: 30px;">
+    {% for milestone_id, milestone in milestone_progress.items %}
+    <div class="milestone" style="background: #f9f9f9; padding: 20px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid {% if milestone.percentage >= 100 %}#28a745{% else %}#ffc107{% endif %};">
+        <h3>Milestone {{ milestone_id }}: {{ milestone.name }}</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+            <div>
+                <strong>Progress:</strong> {{ milestone.current|floatformat:0 }} / {{ milestone.target|floatformat:0 }}
+                <div style="background: #ddd; height: 20px; border-radius: 10px; margin-top: 5px;">
+                    <div style="background: {% if milestone.percentage >= 100 %}#28a745{% else %}#ffc107{% endif %}; height: 100%; width: {{ milestone.percentage }}%; border-radius: 10px;"></div>
+                </div>
+                <p style="margin: 5px 0 0 0;">{{ milestone.percentage|floatformat:1 }}%</p>
+            </div>
+            <div>
+                <strong>Payment:</strong> ${{ milestone.payment|floatformat:0 }}<br>
+                <strong>Deadline:</strong> Day {{ milestone.deadline_days }}
+            </div>
+            <div>
+                <strong>Days Remaining:</strong> {{ milestone.days_remaining }}<br>
+                <strong>Status:</strong> {% if milestone.percentage >= 100 %}<span style="color: #28a745;">✓ Complete</span>{% elif milestone.days_remaining == 0 %}<span style="color: #dc3545;">⚠ Overdue</span>{% else %}<span style="color: #ffc107;">In Progress</span>{% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<h2>Agent Performance</h2>
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background: #f0f0f0;">
+            <th style="padding: 10px; text-align: left;">Agent Name</th>
+            <th style="padding: 10px; text-align: left;">Total Memories</th>
+            <th style="padding: 10px; text-align: left;">24h Activity</th>
+            <th style="padding: 10px; text-align: left;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for agent in agents %}
+        <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ agent.name }}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                {% with agent_interactions|get_item:agent.name as agent_data %}
+                    {{ agent_data.memories|default:0 }}
+                {% endwith %}
+            </td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                {% with agent_interactions|get_item:agent.name as agent_data %}
+                    {{ agent_data.recent|default:0 }}
+                {% endwith %}
+            </td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                <a href="{% url 'reporting:agent_detail' agent.id %}">View Details</a> |
+                <a href="{% url 'admin:elizaos_agent_change' agent.id %}">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'reporting:interactions' %}" class="button" style="padding: 10px 20px; background: #417690; color: white; text-decoration: none; border-radius: 4px;">View Interaction Report</a>
+    <a href="{% url 'admin:index' %}" class="button" style="padding: 10px 20px; background: #666; color: white; text-decoration: none; border-radius: 4px; margin-left: 10px;">Back to Admin</a>
+</div>
+
+{% endblock %}
