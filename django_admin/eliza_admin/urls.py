@@ -13,6 +13,7 @@ urlpatterns = [
     path('', root_redirect),
     path('admin/', admin.site.urls),
     path('contract-compliance/', contract_compliance_view, name='contract_compliance'),
+    path('eliza/', include('reporting.urls')),
 ]
 
 # Customize admin site

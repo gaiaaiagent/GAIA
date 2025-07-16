@@ -22,6 +22,11 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
 INSTALLED_APPS = [
+    'reporting',     # Dashboard views and reporting
+    'elizaos',       # Read-only ElizaOS models
+    'metrics',       # Our tracking tables
+    'knowledge',     # Knowledge indexing progress
+    'eliza_tables',  # Legacy - will be removed
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,7 +34,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'eliza_tables',
 ]
 
 MIDDLEWARE = [
@@ -112,6 +116,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Login URL for authentication
+LOGIN_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = '/admin/'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
