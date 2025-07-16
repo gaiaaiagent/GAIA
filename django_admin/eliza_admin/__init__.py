@@ -1,0 +1,1 @@
+# Django admin interface for ElizaOS database visibility

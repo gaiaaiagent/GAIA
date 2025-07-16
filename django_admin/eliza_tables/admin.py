@@ -1,0 +1,454 @@
+"""
+Django admin interface for ElizaOS database tables.
+Provides browsable interface for agents, conversations, and metrics.
+
+Updated to match actual ElizaOS schema from running facilitator agent.
+"""
+
+from django.contrib import admin
+from django.utils.html import format_html
+from django.db.models import Count, Q
+from django.urls import reverse
+from django.utils.safestring import mark_safe
+from django.http import HttpResponse
+from django.template import Template, Context
+import json
+
+from .models import (
+    Agent, Memory, Room, MessageServer, Entity, CentralMessage, 
+    Log, Task, Participant, Relationship, Component, Cache, ServerAgent,
+    InteractionMetric, DocumentMetric, AgentMetric
+)
+
+@admin.register(Agent)
+class AgentAdmin(admin.ModelAdmin):
+    list_display = ['name', 'username', 'enabled', 'plugin_count', 'created_at']
+    list_filter = ['enabled', 'created_at']
+    search_fields = ['name', 'username', 'system']
+    readonly_fields = ['id', 'created_at', 'updated_at', 'formatted_bio', 'formatted_plugins', 'formatted_settings']
+    ordering = ['-created_at']
+    
+    def plugin_count(self, obj):
+        return len(obj.plugins) if obj.plugins else 0
+    plugin_count.short_description = 'Plugins'
+    
+    def formatted_bio(self, obj):
+        if obj.bio:
+            formatted = json.dumps(obj.bio, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No bio'
+    formatted_bio.short_description = 'Bio (Formatted)'
+    
+    def formatted_plugins(self, obj):
+        if obj.plugins:
+            formatted = json.dumps(obj.plugins, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No plugins'
+    formatted_plugins.short_description = 'Plugins (Formatted)'
+    
+    def formatted_settings(self, obj):
+        if obj.settings:
+            formatted = json.dumps(obj.settings, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No settings'
+    formatted_settings.short_description = 'Settings (Formatted)'
+
+@admin.register(Memory)
+class MemoryAdmin(admin.ModelAdmin):
+    list_display = ['type', 'content_preview', 'agent_display', 'unique', 'created_at']
+    list_filter = ['type', 'unique', 'created_at']
+    search_fields = ['content', 'type']
+    readonly_fields = ['id', 'created_at', 'formatted_content', 'formatted_metadata']
+    ordering = ['-created_at']
+    
+    def content_preview(self, obj):
+        if obj.content and isinstance(obj.content, dict):
+            text = obj.content.get('text', str(obj.content))
+            return text[:100] + ('...' if len(text) > 100 else '')
+        return str(obj.content)[:100]
+    content_preview.short_description = 'Content'
+    
+    def agent_display(self, obj):
+        return str(obj.agent_id)[:8] + '...'
+    agent_display.short_description = 'Agent ID'
+    
+    def formatted_content(self, obj):
+        if obj.content:
+            formatted = json.dumps(obj.content, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No content'
+    formatted_content.short_description = 'Content (Formatted)'
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (Formatted)'
+
+@admin.register(Room)
+class RoomAdmin(admin.ModelAdmin):
+    list_display = ['name', 'type', 'source', 'agent_display', 'created_at']
+    list_filter = ['type', 'source', 'created_at']
+    search_fields = ['name', 'type', 'source']
+    readonly_fields = ['id', 'created_at', 'formatted_metadata']
+    
+    def agent_display(self, obj):
+        return str(obj.agent_id)[:8] + '...' if obj.agent_id else 'None'
+    agent_display.short_description = 'Agent ID'
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (Formatted)'
+
+@admin.register(MessageServer)
+class MessageServerAdmin(admin.ModelAdmin):
+    list_display = ['name', 'source_type', 'source_id', 'created_at']
+    list_filter = ['source_type', 'created_at']
+    search_fields = ['name', 'source_type', 'source_id']
+    readonly_fields = ['id', 'created_at', 'updated_at', 'formatted_metadata']
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (Formatted)'
+
+@admin.register(Entity)
+class EntityAdmin(admin.ModelAdmin):
+    list_display = ['names_display', 'agent_display', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['names']
+    readonly_fields = ['id', 'created_at', 'formatted_metadata']
+    
+    def names_display(self, obj):
+        return ', '.join(obj.names) if obj.names else 'No names'
+    names_display.short_description = 'Names'
+    
+    def agent_display(self, obj):
+        return str(obj.agent_id)[:8] + '...'
+    agent_display.short_description = 'Agent ID'
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (Formatted)'
+
+@admin.register(CentralMessage)
+class CentralMessageAdmin(admin.ModelAdmin):
+    list_display = ['id_display', 'content_preview', 'author_id', 'channel_id', 'created_at']
+    list_filter = ['source_type', 'created_at']
+    search_fields = ['content', 'author_id', 'channel_id']
+    readonly_fields = ['id', 'created_at', 'updated_at', 'formatted_raw_message', 'formatted_metadata']
+    ordering = ['-created_at']
+    
+    def id_display(self, obj):
+        return obj.id[:8] + '...' if len(obj.id) > 8 else obj.id
+    id_display.short_description = 'Message ID'
+    
+    def content_preview(self, obj):
+        return obj.content[:100] + ('...' if len(obj.content) > 100 else '')
+    content_preview.short_description = 'Content'
+    
+    def formatted_raw_message(self, obj):
+        if obj.raw_message:
+            formatted = json.dumps(obj.raw_message, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No raw message'
+    formatted_raw_message.short_description = 'Raw Message (Formatted)'
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (Formatted)'
+
+@admin.register(Log)
+class LogAdmin(admin.ModelAdmin):
+    list_display = ['type', 'body_preview', 'entity_display', 'room_display', 'created_at']
+    list_filter = ['type', 'created_at']
+    search_fields = ['type', 'body']
+    readonly_fields = ['id', 'created_at', 'formatted_body']
+    ordering = ['-created_at']
+    
+    def body_preview(self, obj):
+        body_str = json.dumps(obj.body) if isinstance(obj.body, dict) else str(obj.body)
+        return body_str[:100] + ('...' if len(body_str) > 100 else '')
+    body_preview.short_description = 'Body'
+    
+    def entity_display(self, obj):
+        return str(obj.entity_id)[:8] + '...'
+    entity_display.short_description = 'Entity ID'
+    
+    def room_display(self, obj):
+        return str(obj.room_id)[:8] + '...'
+    room_display.short_description = 'Room ID'
+    
+    def formatted_body(self, obj):
+        if obj.body:
+            formatted = json.dumps(obj.body, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No body'
+    formatted_body.short_description = 'Body (Formatted)'
+
+@admin.register(Task)
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ['name', 'description_preview', 'agent_display', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['name', 'description']
+    readonly_fields = ['id', 'created_at', 'updated_at', 'formatted_tags', 'formatted_metadata']
+    
+    def description_preview(self, obj):
+        if obj.description:
+            return obj.description[:100] + ('...' if len(obj.description) > 100 else '')
+        return 'No description'
+    description_preview.short_description = 'Description'
+    
+    def agent_display(self, obj):
+        return str(obj.agent_id)[:8] + '...'
+    agent_display.short_description = 'Agent ID'
+    
+    def formatted_tags(self, obj):
+        if obj.tags:
+            formatted = json.dumps(obj.tags, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No tags'
+    formatted_tags.short_description = 'Tags (Formatted)'
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (Formatted)'
+
+# Contract-specific admin interfaces
+
+@admin.register(InteractionMetric)
+class InteractionMetricAdmin(admin.ModelAdmin):
+    list_display = ['interaction_type', 'agent_display', 'user_display', 'timestamp', 'has_metadata']
+    list_filter = ['interaction_type', 'timestamp']
+    search_fields = ['interaction_type']
+    readonly_fields = ['id', 'timestamp', 'formatted_metadata']
+    ordering = ['-timestamp']
+    
+    def agent_display(self, obj):
+        return str(obj.agent_id)[:8] + '...'
+    agent_display.short_description = 'Agent ID'
+    
+    def user_display(self, obj):
+        return str(obj.user_id)[:8] + '...' if obj.user_id else 'None'
+    user_display.short_description = 'User ID'
+    
+    def has_metadata(self, obj):
+        return bool(obj.metadata)
+    has_metadata.boolean = True
+    has_metadata.short_description = 'Has Metadata'
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (Formatted)'
+    
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+        
+        try:
+            # Get interaction counts by type
+            interaction_stats = InteractionMetric.objects.values('interaction_type').annotate(count=Count('id')).order_by('-count')
+            
+            # Get recent activity
+            recent_activity = InteractionMetric.objects.order_by('-timestamp')[:10]
+            
+            response.context_data['interaction_stats'] = interaction_stats
+            response.context_data['recent_activity'] = recent_activity
+            response.context_data['total_interactions'] = InteractionMetric.objects.count()
+        except (AttributeError, KeyError):
+            pass
+            
+        return response
+
+@admin.register(DocumentMetric)
+class DocumentMetricAdmin(admin.ModelAdmin):
+    list_display = ['title', 'document_type', 'confidence_level', 'access_count', 'processed_at']
+    list_filter = ['document_type', 'confidence_level', 'processed_at']
+    search_fields = ['title', 'document_id', 'document_path']
+    readonly_fields = ['id', 'processed_at', 'last_accessed', 'formatted_metadata']
+    ordering = ['-processed_at']
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (Formatted)'
+    
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+        
+        try:
+            # Get document type stats
+            doc_type_stats = DocumentMetric.objects.values('document_type').annotate(count=Count('id')).order_by('-count')
+            
+            # Get confidence level stats  
+            confidence_stats = DocumentMetric.objects.values('confidence_level').annotate(count=Count('id')).order_by('-count')
+            
+            response.context_data['doc_type_stats'] = doc_type_stats
+            response.context_data['confidence_stats'] = confidence_stats
+            response.context_data['total_documents'] = DocumentMetric.objects.count()
+        except (AttributeError, KeyError):
+            pass
+            
+        return response
+
+@admin.register(AgentMetric)
+class AgentMetricAdmin(admin.ModelAdmin):
+    list_display = ['agent_name', 'status', 'total_interactions', 'total_documents_processed', 
+                   'avg_response_time_ms', 'last_activity', 'deployment_date']
+    list_filter = ['status', 'deployment_date']
+    search_fields = ['agent_name']
+    readonly_fields = ['id', 'deployment_date', 'last_activity', 'formatted_metadata']
+    ordering = ['-deployment_date']
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (Formatted)'
+
+# Contract Compliance Dashboard - Custom View
+
+def contract_compliance_view(request):
+    """Custom view for contract compliance metrics"""
+    
+    # Calculate contract metrics
+    total_interactions = InteractionMetric.objects.count()
+    total_documents = DocumentMetric.objects.count()
+    active_agents = AgentMetric.objects.filter(status='active').count()
+    
+    # Real ElizaOS agent count
+    eliza_agents = Agent.objects.filter(enabled=True).count()
+    
+    # Daily interaction breakdown
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    now = timezone.now()
+    last_30_days = now - timedelta(days=30)
+    recent_interactions = InteractionMetric.objects.filter(timestamp__gte=last_30_days)
+    
+    context = {
+        'title': 'RegenAI Contract Compliance Dashboard',
+        'total_interactions': total_interactions,
+        'total_documents': total_documents, 
+        'active_agents': active_agents,
+        'eliza_agents': eliza_agents,
+        'recent_interactions_count': recent_interactions.count(),
+        'contract_target_interactions': 100000,  # From contract
+        'contract_target_documents': 15000,      # From contract
+        'contract_target_agents': 5,             # From contract
+    }
+    
+    # Calculate completion percentages
+    context['interaction_progress'] = min(100, (total_interactions / 100000) * 100) if total_interactions else 0
+    context['document_progress'] = min(100, (total_documents / 15000) * 100) if total_documents else 0
+    context['agent_progress'] = min(100, (eliza_agents / 5) * 100) if eliza_agents else 0
+    
+    # Simple HTML template for now
+    template_html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{{ title }}</title>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 40px; background: #f8f9fa; }
+            .header { background: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+            .metric { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .metric h3 { margin: 0 0 15px 0; color: #2c3e50; }
+            .metric-value { font-size: 2em; font-weight: bold; color: #27ae60; margin: 10px 0; }
+            .progress { width: 100%; height: 20px; background: #ecf0f1; border-radius: 10px; overflow: hidden; margin: 15px 0; }
+            .progress-bar { height: 100%; background: linear-gradient(90deg, #3498db, #2ecc71); transition: width 0.3s; }
+            .progress-text { font-size: 0.9em; color: #7f8c8d; }
+            .status-ok { color: #27ae60; } .status-warn { color: #f39c12; } .status-danger { color: #e74c3c; }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>{{ title }}</h1>
+            <p>Real-time tracking of contract deliverables: 100k interactions, 15k documents, 5 agents in 60 days</p>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric">
+                <h3>💬 Interactions</h3>
+                <div class="metric-value">{{ total_interactions|floatformat:0 }}</div>
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ interaction_progress }}%"></div>
+                </div>
+                <div class="progress-text">
+                    {{ interaction_progress|floatformat:1 }}% of 100,000 target
+                    {% if interaction_progress >= 100 %}<span class="status-ok">✓ COMPLETE</span>
+                    {% elif interaction_progress >= 50 %}<span class="status-warn">⚠ IN PROGRESS</span>
+                    {% else %}<span class="status-danger">⚡ NEEDS ATTENTION</span>{% endif %}
+                </div>
+            </div>
+            
+            <div class="metric">
+                <h3>📚 Documents</h3>
+                <div class="metric-value">{{ total_documents|floatformat:0 }}</div>
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ document_progress }}%"></div>
+                </div>
+                <div class="progress-text">
+                    {{ document_progress|floatformat:1 }}% of 15,000 target
+                    {% if document_progress >= 100 %}<span class="status-ok">✓ COMPLETE</span>
+                    {% elif document_progress >= 50 %}<span class="status-warn">⚠ IN PROGRESS</span>
+                    {% else %}<span class="status-danger">⚡ NEEDS ATTENTION</span>{% endif %}
+                </div>
+            </div>
+            
+            <div class="metric">
+                <h3>🤖 Agents</h3>
+                <div class="metric-value">{{ eliza_agents }}</div>
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ agent_progress }}%"></div>
+                </div>
+                <div class="progress-text">
+                    {{ agent_progress|floatformat:1 }}% of 5 target ({{ eliza_agents }} active in ElizaOS)
+                    {% if agent_progress >= 100 %}<span class="status-ok">✓ COMPLETE</span>
+                    {% elif agent_progress >= 50 %}<span class="status-warn">⚠ IN PROGRESS</span>
+                    {% else %}<span class="status-danger">⚡ NEEDS ATTENTION</span>{% endif %}
+                </div>
+            </div>
+            
+            <div class="metric">
+                <h3>📊 Recent Activity</h3>
+                <div class="metric-value">{{ recent_interactions_count }}</div>
+                <div class="progress-text">Interactions in last 30 days</div>
+                <div style="margin-top: 15px;">
+                    <div><strong>Tracked Agents:</strong> {{ active_agents }} in metrics system</div>
+                    <div><strong>Live Agents:</strong> {{ eliza_agents }} in ElizaOS</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center;">
+            <p><a href="/admin/" style="color: #3498db; text-decoration: none;">← Back to Admin Dashboard</a></p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    template = Template(template_html)
+    return HttpResponse(template.render(Context(context)))
