@@ -7,29 +7,35 @@
 <style>
     /* Fix text colors */
     .agent-info table {
-        background: white;
-        color: #333;
+        background: white !important;
+        color: #333 !important;
     }
     .agent-info table td {
-        color: #333;
+        color: #333 !important;
+        background: white !important;
     }
     .agent-info h2, .agent-info h3 {
-        color: #333;
+        color: #333 !important;
     }
     pre {
-        background: #f5f5f5;
-        color: #333;
+        background: #f5f5f5 !important;
+        color: #333 !important;
     }
     table {
-        background: white;
-        color: #333;
+        background: white !important;
+        color: #333 !important;
     }
     table th {
-        background: #f0f0f0;
-        color: #333;
+        background: #f0f0f0 !important;
+        color: #333 !important;
     }
     table td {
-        color: #333;
+        color: #333 !important;
+        background: white !important;
+    }
+    table tr {
+        background: white !important;
+        color: #333 !important;
     }
     
     /* Dark mode support */
@@ -38,30 +44,36 @@
         body.theme-dark .agent-info table,
         body.theme-auto table,
         body.theme-dark table {
-            background: #1e1e1e;
-            color: #ddd;
+            background: #1e1e1e !important;
+            color: #ddd !important;
         }
         body.theme-auto .agent-info table td,
         body.theme-dark .agent-info table td,
         body.theme-auto table td,
         body.theme-dark table td {
-            color: #ddd;
+            color: #ddd !important;
+            background: #1e1e1e !important;
+        }
+        body.theme-auto table tr,
+        body.theme-dark table tr {
+            background: #1e1e1e !important;
+            color: #ddd !important;
         }
         body.theme-auto .agent-info h2,
         body.theme-dark .agent-info h2,
         body.theme-auto .agent-info h3,
         body.theme-dark .agent-info h3 {
-            color: #ddd;
+            color: #ddd !important;
         }
         body.theme-auto pre,
         body.theme-dark pre {
-            background: #2b2b2b;
-            color: #ddd;
+            background: #2b2b2b !important;
+            color: #ddd !important;
         }
         body.theme-auto table th,
         body.theme-dark table th {
-            background: #2b2b2b;
-            color: #ddd;
+            background: #2b2b2b !important;
+            color: #ddd !important;
         }
     }
 </style>

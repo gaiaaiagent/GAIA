@@ -28,21 +28,26 @@
         color: #333;
     }
     table {
-        background: white;
-        color: #333;
+        background: white !important;
+        color: #333 !important;
     }
     table th {
-        background: #f0f0f0;
-        color: #333;
+        background: #f0f0f0 !important;
+        color: #333 !important;
     }
     table td {
-        color: #333;
+        color: #333 !important;
+        background: white !important;
+    }
+    table tr {
+        background: white !important;
+        color: #333 !important;
     }
     table a {
-        color: #417690;
+        color: #417690 !important;
     }
     table a:hover {
-        color: #205683;
+        color: #205683 !important;
     }
     
     /* Dark mode support */
@@ -71,17 +76,23 @@
         }
         body.theme-auto table,
         body.theme-dark table {
-            background: #1e1e1e;
-            color: #ddd;
+            background: #1e1e1e !important;
+            color: #ddd !important;
         }
         body.theme-auto table th,
         body.theme-dark table th {
-            background: #2b2b2b;
-            color: #ddd;
+            background: #2b2b2b !important;
+            color: #ddd !important;
         }
         body.theme-auto table td,
         body.theme-dark table td {
-            color: #ddd;
+            color: #ddd !important;
+            background: #1e1e1e !important;
+        }
+        body.theme-auto table tr,
+        body.theme-dark table tr {
+            background: #1e1e1e !important;
+            color: #ddd !important;
         }
     }
 </style>
