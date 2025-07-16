@@ -1,3 +1,21 @@
+---
+rid: koi:deployment:cross-platform-elizaos-strategies
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium
+verification-status: platform-research-with-implementation-code
+source-type: deployment-strategy-guide
+related:
+  - koi:contract:100k-interaction-requirements
+  - koi:platform:social-media-compliance
+  - koi:technical:bot-detection-avoidance
+accuracy-concerns:
+  - platform-apis-and-policies-change-frequently
+  - bot-detection-algorithms-continuously-evolving
+  - compliance-requirements-platform-specific
+  - engagement-statistics-vary-by-timeframe
+---
+
 # Comprehensive Cross-Platform Deployment Strategies for ElizaOS Ecological AI Agents
 
 ## Platform-specific deployment patterns for maximum impact

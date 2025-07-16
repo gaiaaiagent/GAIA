@@ -1,3 +1,21 @@
+---
+rid: koi:analysis:regen-network-interdisciplinary-examination
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: academic-style-interdisciplinary-analysis
+source-type: comprehensive-academic-analysis
+related:
+  - koi:analysis:regen-network-comprehensive-research
+  - koi:research:token-economics-governance-mapping
+  - koi:history:regenerative-agriculture-blockchain-convergence
+accuracy-concerns:
+  - academic-analysis-represents-interpretation-not-verified-facts
+  - founders-background-and-timeline-may-need-verification
+  - financial-figures-and-funding-rounds-subject-to-change
+  - platform-status-and-trajectory-evolving-rapidly
+---
+
 # Regen Network: An Interdisciplinary Analysis of Blockchain-Based Ecological Markets
 
 The intersection of blockchain technology and environmental sustainability represents one of the most ambitious experiments in 21st-century environmental governance. Regen Network, founded in 2017, emerges as a pioneering case study for examining how distributed ledger technologies might reshape ecological accounting, carbon markets, and regenerative agriculture financing. This analysis employs multiple academic lenses—including anthropology, ecology, systems sciences, finance, artificial intelligence, ecological accounting, and institutional analysis—to comprehensively examine Regen Network's formation, evolution, impacts, and significance. As a sociotechnical system attempting to "imbue the economy with ecological sentience," Regen Network provides rich material for understanding both the promises and perils of market-based environmental solutions in the digital age. This graduate-level examination traces the platform's complete trajectory from its origins in regenerative agriculture consulting to its current status as a struggling but influential player in the regenerative finance (ReFi) movement.

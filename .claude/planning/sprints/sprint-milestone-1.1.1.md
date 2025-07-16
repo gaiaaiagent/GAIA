@@ -1,3 +1,22 @@
+---
+rid: koi:planning:sprint-milestone-1.1.1-core-agent-deployment
+created: 2025-01-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: active-sprint-tracking-document
+source-type: development-sprint-specification
+related:
+  - koi:planning:milestone-1-core-agent-framework
+  - koi:planning:sprint-template
+  - koi:planning:regenai-agent-archetypes
+  - koi:technical:elizaos-ecological-plugin-architecture
+accuracy-concerns:
+  - sprint-progress-updates-in-real-time
+  - technical-requirements-may-evolve-during-implementation
+  - team-availability-could-affect-delivery-timelines
+  - infrastructure-dependencies-subject-to-external-changes
+---
+
 # Sprint: Milestone 1.1.1 Core Agent Framework Deployment
 
 **Team:** @Shawn Anderson @Darren Zal

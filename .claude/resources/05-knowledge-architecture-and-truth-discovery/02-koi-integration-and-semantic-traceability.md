@@ -1,3 +1,21 @@
+---
+rid: koi:integration:blockscience-koi-semantic-traceability
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: technical-research-with-implementation-examples
+source-type: integration-architecture-guide
+related:
+  - koi:architecture:knowledge-organization-infrastructure
+  - koi:technical:vector-embedding-blockchain-integration
+  - koi:validation:ecological-claims-verification
+accuracy-concerns:
+  - koi-framework-actively-under-development
+  - blockchain-registry-integrations-experimental
+  - financial-figures-for-carbon-credits-volatile
+  - implementation-examples-may-need-updates
+---
+
 # KOI Integration and Semantic Traceability for Regenerative Web3
 
 Semantic traceability systems combining BlockScience's Knowledge Organization Infrastructure (KOI) with vector embeddings, blockchain registries, and knowledge graphs are transforming how regenerative economics and Web3 applications verify and trace ecological claims. **This architecture enables every agent assertion about carbon credits, biodiversity impacts, or ecosystem services to be cryptographically traced back to source documents with confidence scoring** (Paragon, 2024), creating unprecedented transparency in environmental finance markets that have already processed over $4 billion in tokenized carbon credits (HTX, 2025).

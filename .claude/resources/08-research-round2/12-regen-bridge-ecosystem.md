@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-bridge-ecosystem-comprehensive
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: multi-bridge-ecosystem-analysis
+source-type: bridge-infrastructure-mapping
+related:
+  - koi:investigation:regen-ethereum-bridge-forensics
+  - koi:analysis:regen-ibc-transfers-cosmos-ecosystem
+  - koi:technical:cross-chain-bridge-architecture
+  - koi:security:bridge-vulnerability-assessment
+accuracy-concerns:
+  - bridge-security-vulnerabilities-may-be-patched
+  - cross-chain-token-distributions-change-with-transfers
+  - fee-structures-subject-to-bridge-governance-changes
+  - transaction-volumes-highly-volatile-in-thin-markets
+---
+
 # REGEN Network Bridge Ecosystem: The Definitive Mapping Reveals Surprising Truths
 
 The investigation into REGEN Network's bridge ecosystem reveals a fundamental misconception: despite references to multiple "bridges," REGEN tokens themselves have minimal cross-chain presence. Instead, the ecosystem primarily bridges carbon credits and USDC for marketplace functionality, with 95% of REGEN liquidity remaining on Osmosis DEX within the Cosmos ecosystem.

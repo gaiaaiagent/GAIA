@@ -1,3 +1,22 @@
+---
+rid: koi:investigation:regen-token-technical-specification
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: comprehensive-technical-analysis
+source-type: blockchain-token-investigation
+related:
+  - koi:investigation:regen-token-comprehensive-report
+  - koi:technical:cosmos-sdk-blockchain-architecture
+  - koi:market:ecological-credits-ecosystem
+  - koi:analysis:regen-network-comprehensive-research
+accuracy-concerns:
+  - smart-contract-addresses-verified-but-may-change-with-upgrades
+  - price-and-volume-data-highly-time-sensitive
+  - bridge-mechanisms-evolving-with-new-integrations
+  - transaction-volumes-require-real-time-verification
+---
+
 # REGEN Token: Comprehensive Investigation Report
 
 REGEN is the native token of Regen Network, a Cosmos SDK-based blockchain launched on April 15, 2021, designed to create a global marketplace for ecological assets including carbon credits, biodiversity credits, and other environmental regeneration instruments. The network has facilitated over 700,000 ecological credit transactions to date, with major buyers including Microsoft, which purchased 124,000 CarbonPlus Grasslands credits.

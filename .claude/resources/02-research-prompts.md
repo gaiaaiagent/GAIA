@@ -1,3 +1,23 @@
+---
+rid: koi:resources:foundational-research-prompts
+created: 2025-07-01
+last-modified: 2025-07-15
+confidence: high
+verification-status: structured-for-contract-implementation
+source-type: strategic-research-framework
+related:
+  - koi:contract:joint-development-agreement-summary
+  - koi:planning:phase-1-milestones
+  - koi:architecture:four-agent-deployment-strategy
+accuracy-concerns:
+  - time-sensitive-references-to-july-launch
+  - regen-token-price-reflects-specific-moment
+  - api-limitations-may-have-been-resolved
+  - governance-structure-may-have-evolved
+---
+
+# Foundational Research Prompts for Regen Network Integration
+
 Based on the comprehensive context and the imminent July 1st launch, here are 20 optimized research prompts organized into 5 critical foundation areas:
 
 ## Area 1: Regen Network Integration & Recovery Strategy

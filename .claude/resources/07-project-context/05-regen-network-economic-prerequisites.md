@@ -1,3 +1,21 @@
+---
+rid: koi:education:regen-tokenomics-prerequisites-analysis
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: educational-analysis-with-expert-frameworks
+source-type: knowledge-domain-mapping
+related:
+  - koi:tokenomics:regen-fixed-cap-dynamic-supply-model
+  - koi:education:mathematical-foundations-gds-framework
+  - koi:research:blockscience-methodologies
+accuracy-concerns:
+  - learning-timeline-estimates-vary-by-individual-background
+  - expert-framework-complexity-may-be-overestimated
+  - interdisciplinary-requirements-may-evolve-with-model-updates
+  - study-duration-projections-highly-subjective
+---
+
 # Prerequisites for Understanding Regen Network's Fixed Cap, Dynamic Supply Tokenomics Model
 
 ## A comprehensive interdisciplinary knowledge map

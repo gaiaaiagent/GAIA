@@ -1,3 +1,22 @@
+---
+rid: koi:research:comprehensive-regen-investigation-framework
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: systematic-investigation-methodology
+source-type: research-methodology-framework
+related:
+  - koi:investigation:regen-token-comprehensive-report
+  - koi:investigation:regen-token-technical-specification
+  - koi:research:token-economics-governance-mapping
+  - koi:analysis:regen-network-comprehensive-research
+accuracy-concerns:
+  - research-prompts-require-real-time-data-execution
+  - blockchain-data-availability-dependent-on-infrastructure
+  - api-endpoints-may-change-or-become-unavailable
+  - methodologies-assume-full-node-access
+---
+
 # 30 Deep Research Prompts for Complete REGEN Token Analysis
 
 ## Token Distribution & Genesis Analysis

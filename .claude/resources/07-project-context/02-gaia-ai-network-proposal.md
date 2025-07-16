@@ -1,3 +1,20 @@
+---
+rid: koi:proposal:gaia-regen-partnership-strategic-vision
+created: 2025-07-02
+last-modified: 2025-07-15
+confidence: high
+verification-status: official-partnership-proposal-document
+source-type: strategic-partnership-proposal
+related:
+  - koi:contract:joint-development-agreement-summary
+  - koi:transcript:regen-gaia-collaboration-meeting
+  - koi:vision:regenerative-ai-ecosystem
+accuracy-concerns:
+  - partnership-terms-may-have-evolved-since-proposal
+  - technical-capabilities-descriptions-may-be-aspirational
+  - timeline-projections-subject-to-implementation-realities
+---
+
 # Gaia AI & Regen Network Partnership Proposal
 ## Building the Future of Regenerative AI
 

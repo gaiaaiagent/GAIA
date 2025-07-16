@@ -1,3 +1,21 @@
+---
+rid: koi:analysis:regen-network-comprehensive-research
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: research-analysis-with-tokenomics-data
+source-type: comprehensive-network-analysis
+related:
+  - koi:research:token-economics-governance-mapping
+  - koi:analysis:regen-token-recovery-strategies
+  - koi:technical:regen-ledger-limitations-analysis
+accuracy-concerns:
+  - token-supply-metrics-change-continuously
+  - staking-ratios-and-inflation-rates-variable
+  - distribution-data-may-be-incomplete-or-estimated
+  - market-dynamics-extremely-volatile
+---
+
 # Regen Network ($REGEN) comprehensive research report
 
 ## Token supply distribution analysis

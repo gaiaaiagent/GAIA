@@ -1,10 +1,29 @@
-## Questions for Regen Network
+---
+rid: koi:analysis:regen-network-structure-questions
+created: 2025-07-02
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: partnership-due-diligence-questions
+source-type: institutional-analysis-framework
+related:
+  - koi:analysis:regen-network-comprehensive-research
+  - koi:research:token-economics-governance-mapping
+  - koi:governance:institutional-structure-analysis
+accuracy-concerns:
+  - token-distribution-data-continuously-changing
+  - governance-structures-may-have-evolved
+  - institutional-relationships-subject-to-modification
+  - supply-metrics-require-real-time-verification
+---
 
+# Questions for Regen Network & Comprehensive Answers
+
+## Partnership Due Diligence Framework
+
+### Core Institutional Questions
 1. What is your current token supply distribution? How much is controlled by the Regen Network? How much in is public circulation?
 2. Do you have an institutional map of regen network?
 3. What is the current governance structures in place around the token economy for $REGEN?
-
-# Questions for Regen Network & Comprehensive Answers
 
 ## 1. Current Token Supply Distribution
 

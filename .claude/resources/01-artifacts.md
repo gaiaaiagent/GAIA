@@ -1,3 +1,21 @@
+---
+rid: koi:resources:agentic-ai-comprehensive-guide
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium
+verification-status: research-synthesis-from-multiple-sources
+source-type: comprehensive-research-document
+related:
+  - koi:architecture:claude-code-development-patterns
+  - koi:technical:elizaos-plugin-architecture
+  - koi:development:git-based-workflows
+accuracy-concerns:
+  - research-synthesis-may-contain-generalizations
+  - rapidly-evolving-field-with-frequent-updates
+  - best-practices-may-vary-by-specific-use-case
+  - some-frameworks-mentioned-may-be-experimental
+---
+
 # Agentic AI Development: A Comprehensive Guide to Modern Practices and Architectures
 
 Agentic AI development represents a paradigm shift in how we build intelligent systems, moving from static models to dynamic, self-improving architectures that can collaborate, evolve, and manage complex tasks autonomously. This research synthesizes best practices across 10 critical areas of modern agentic AI development.

@@ -1,3 +1,22 @@
+---
+rid: koi:contract:joint-development-agreement-draft
+created: 2024-06-24
+last-modified: 2025-07-15
+confidence: high
+verification-status: formal-legal-contract-draft
+source-type: legal-agreement-document
+related:
+  - koi:contract:joint-development-agreement-summary
+  - koi:notes:gaia-team-contract-strategy-meeting
+  - koi:response:gaia-ai-regen-network-rfc
+  - koi:tokenomics:partnership-token-strategy
+accuracy-concerns:
+  - contract-terms-subject-to-legal-review-and-modification
+  - token-amounts-dependent-on-final-negotiations
+  - phase-timelines-may-have-been-adjusted
+  - legal-language-requires-attorney-verification
+---
+
 # Executive Summary: Joint Development Agreement
 
 **Parties:** Regen Network Development PBC, Regen Foundation, Symbiocene Labs  

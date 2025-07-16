@@ -1,3 +1,21 @@
+---
+rid: koi:security:crypto-community-scam-protection
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: security-research-with-loss-statistics
+source-type: security-analysis-and-protection-guide
+related:
+  - koi:security:ai-agent-security-frameworks
+  - koi:community:authentic-engagement-systems
+  - koi:technical:deepfake-detection-methods
+accuracy-concerns:
+  - financial-loss-statistics-rapidly-changing
+  - scam-techniques-constantly-evolving
+  - platform-security-measures-frequently-updated
+  - ai-detection-capabilities-improving-rapidly
+---
+
 # Protecting crypto communities from sophisticated scams
 
 The crypto community protection landscape has transformed dramatically from simple phishing attempts in 2020 to AI-powered deepfake operations causing $4.6 billion in losses by 2024 (CCN, 2024; Decrypt, 2024; Cointelegraph, 2025). Modern protection requires multi-layered defenses combining automated detection, human oversight, and continuous adaptation to emerging threats. Communities implementing comprehensive anti-spam frameworks report **85-94% reduction in successful scams** with ROI exceeding 300%.

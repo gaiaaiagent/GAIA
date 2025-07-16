@@ -1,3 +1,21 @@
+---
+rid: koi:narrative:regenerative-futures-storytelling
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: research-synthesis-with-case-studies
+source-type: narrative-strategy-analysis
+related:
+  - koi:community:regen-archaeology-engagement-framework
+  - koi:marketing:refi-movement-narratives
+  - koi:strategy:consciousness-shift-catalysis
+accuracy-concerns:
+  - refi-movement-rapidly-evolving
+  - trading-volumes-and-market-metrics-volatile
+  - community-narrative-effectiveness-hard-to-measure
+  - case-study-success-metrics-may-be-outdated
+---
+
 # Narrative Mining for Regenerative Futures: How Stories Drive Ecological Transformation
 
 ## Executive Summary

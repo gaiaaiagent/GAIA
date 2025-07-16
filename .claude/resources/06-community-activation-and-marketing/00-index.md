@@ -1,3 +1,21 @@
+---
+rid: koi:community:regen-archaeology-engagement-framework
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: web3-research-with-metrics
+source-type: community-engagement-strategy
+related:
+  - koi:contract:100k-interaction-requirements
+  - koi:community:web3-activation-strategies
+  - koi:marketing:behavioral-segmentation-web3
+accuracy-concerns:
+  - community-metrics-rapidly-changing
+  - web3-engagement-strategies-experimental
+  - stakeholder-numbers-may-be-outdated
+  - apr-rates-and-token-utilities-volatile
+---
+
 # Activating the Regen Community Through Strategic Archaeology: A Web3 Engagement Framework
 
 The Regen Network can dramatically increase community engagement by implementing a comprehensive "community archaeology" strategy that identifies and re-activates dormant high-value contributors through AI-powered personalization, behavioral segmentation, and proven Web3 re-engagement frameworks. This research reveals that successful Web3 community activation requires sophisticated technical infrastructure combined with human-centered approaches, with leading projects achieving 25-400% increases in engagement metrics through strategic campaigns. The following analysis provides actionable frameworks, tools, and strategies specifically tailored to Regen Network's regenerative finance ecosystem.

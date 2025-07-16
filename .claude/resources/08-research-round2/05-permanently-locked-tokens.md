@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-permanently-locked-governance-tokens
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: governance-model-analysis
+source-type: institutional-analysis
+related:
+  - koi:investigation:regen-genesis-forensic-analysis
+  - koi:analysis:regen-network-structure-questions
+  - koi:research:token-economics-governance-mapping
+  - koi:governance:community-staking-dao-framework
+accuracy-concerns:
+  - foundation-delegation-strategies-may-evolve
+  - community-dao-token-distribution-ongoing
+  - governance-voting-patterns-subject-to-change
+  - staking-rewards-dependent-on-inflation-parameters
+---
+
 # Comprehensive Analysis of REGEN Network's 35 Million Permanently Locked Tokens
 
 ## 1. Executive Summary

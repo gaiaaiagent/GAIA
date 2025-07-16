@@ -1,3 +1,21 @@
+---
+rid: koi:claude:workspace-directory-overview
+created: 2025-01-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: workspace-structure-documentation
+source-type: directory-navigation-guide
+related:
+  - koi:planning:directory-overview
+  - koi:journal:session-01
+  - koi:planning:living-documentation-workflow
+  - koi:resources:project-state-overview
+accuracy-concerns:
+  - directory-structure-evolves-with-project-development
+  - workspace-organization-subject-to-methodology-refinement
+  - file-locations-may-change-with-restructuring
+---
+
 # .claude Directory
 
 This directory contains Claude's working materials for the RegenAI project - a living workspace where documentation and development are inseparable.

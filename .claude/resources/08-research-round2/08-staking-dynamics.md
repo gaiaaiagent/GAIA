@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-staking-dynamics-comprehensive
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: comprehensive-staking-analysis
+source-type: blockchain-staking-analysis
+related:
+  - koi:investigation:regen-genesis-forensic-analysis
+  - koi:analysis:regen-permanently-locked-governance-tokens
+  - koi:analysis:regen-whale-movement-forensics
+  - koi:technical:cosmos-sdk-blockchain-architecture
+accuracy-concerns:
+  - staking-rewards-calculations-based-on-inflation-parameters
+  - validator-performance-metrics-require-real-time-monitoring
+  - delegation-distributions-change-with-foundation-strategy
+  - apr-rates-fluctuate-with-network-participation
+---
+
 # REGEN Network Staking Dynamics: A Comprehensive Deep Dive Analysis
 
 ## Executive Overview

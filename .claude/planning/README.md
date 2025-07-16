@@ -1,3 +1,20 @@
+---
+rid: koi:planning:directory-overview
+created: 2025-01-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: directory-structure-documentation
+source-type: project-organization-guide
+related:
+  - koi:planning:planning-structure-analysis
+  - koi:planning:living-documentation-workflow
+  - koi:planning:feature-development-template
+  - koi:planning:sprint-development-template
+accuracy-concerns:
+  - directory-structure-may-evolve-with-project-growth
+  - planning-methodologies-subject-to-team-preferences
+---
+
 # Planning Directory
 
 This directory contains planning documents, roadmaps, and strategic planning materials for the RegenAI project.

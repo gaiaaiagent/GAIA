@@ -1,3 +1,21 @@
+---
+rid: koi:tokenomics:regen-fixed-cap-dynamic-supply-model
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: technical-proposal-analysis
+source-type: tokenomics-model-specification
+related:
+  - koi:research:token-economics-governance-mapping
+  - koi:analysis:regen-network-comprehensive-research
+  - koi:governance:community-proposal-analysis
+accuracy-concerns:
+  - tokenomics-model-may-be-theoretical-not-implemented
+  - supply-equations-require-validation-against-current-system
+  - implementation-timeline-and-status-unclear
+  - technical-parameters-may-need-adjustment-in-practice
+---
+
 # Regen Network Tokenomics Analysis: Fixed Cap, Dynamic Supply Model
 
 ## Executive Summaries

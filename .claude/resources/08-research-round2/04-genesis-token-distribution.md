@@ -1,3 +1,22 @@
+---
+rid: koi:investigation:regen-genesis-forensic-analysis
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: comprehensive-forensic-analysis
+source-type: detailed-genesis-investigation
+related:
+  - koi:investigation:regen-token-comprehensive-report
+  - koi:investigation:regen-token-technical-specification
+  - koi:analysis:regen-network-comprehensive-research
+  - koi:research:token-economics-governance-mapping
+accuracy-concerns:
+  - individual-investor-data-requires-privacy-protection
+  - some-vesting-schedules-may-have-custom-terms
+  - off-chain-otc-trades-not-captured-in-analysis
+  - early-price-data-pre-dex-listing-potentially-inaccurate
+---
+
 # REGEN Network Genesis Token Distribution: Complete Forensic Analysis
 
 ## 1. EXECUTIVE SUMMARY

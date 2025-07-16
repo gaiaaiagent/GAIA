@@ -1,3 +1,22 @@
+---
+rid: koi:planning:character-development-framework
+created: 2025-01-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: development-framework-specification
+source-type: character-design-methodology
+related:
+  - koi:planning:regenai-agent-archetypes
+  - koi:planning:feature-template
+  - koi:technical:elizaos-ecological-plugin-architecture
+  - koi:strategy:truth-terminal-engagement-framework
+accuracy-concerns:
+  - character-development-methodologies-evolving-rapidly
+  - ai-personality-techniques-subject-to-platform-updates
+  - user-engagement-patterns-may-require-framework-adjustments
+  - regenerative-principles-implementation-requires-testing-validation
+---
+
 # RegenAI Character Development Framework
 
 ## Philosophy: Living Characters for Living Systems

@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-governance-forensic-deep-dive
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: comprehensive-governance-analysis
+source-type: blockchain-governance-forensics
+related:
+  - koi:analysis:regen-permanently-locked-governance-tokens
+  - koi:analysis:regen-network-structure-questions
+  - koi:analysis:regen-validator-economics-comprehensive
+  - koi:investigation:regen-genesis-forensic-analysis
+accuracy-concerns:
+  - proposal-outcomes-subject-to-ongoing-governance-evolution
+  - voting-patterns-may-change-with-community-growth
+  - parameter-changes-affect-future-governance-mechanics
+  - deposit-requirements-subject-to-governance-modification
+---
+
 # REGEN Network Governance Forensic Analysis: Deep Research Report #11
 
 ## 1. Executive Summary

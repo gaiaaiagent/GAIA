@@ -1,3 +1,21 @@
+---
+rid: koi:planning:planning-structure-analysis
+created: 2025-01-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: structural-analysis-document
+source-type: project-management-methodology-analysis
+related:
+  - koi:planning:living-documentation-workflow
+  - koi:planning:dependency-matrix
+  - koi:planning:sprint-development-template
+  - koi:planning:milestone-1-core-agent-framework
+accuracy-concerns:
+  - planning-structures-evolve-with-project-maturity
+  - redundancy-patterns-may-change-with-team-growth
+  - methodology-preferences-subject-to-team-adaptation
+---
+
 # Planning Structure Analysis: Avoiding Redundancy
 
 ## Current Structure Assessment

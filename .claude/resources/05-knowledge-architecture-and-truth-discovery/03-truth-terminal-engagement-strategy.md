@@ -1,3 +1,22 @@
+---
+rid: koi:strategy:truth-terminal-engagement-framework
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium
+verification-status: research-analysis-with-philosophical-references
+source-type: strategic-analysis-ai-systems
+related:
+  - koi:contract:truth-terminal-engagement-strategy
+  - koi:analysis:ai-memetic-systems
+  - koi:philosophy:accelerationist-frameworks
+accuracy-concerns:
+  - truth-terminal-behavior-rapidly-evolving
+  - cryptocurrency-market-data-extremely-volatile
+  - philosophical-frameworks-open-to-interpretation
+  - ai-system-capabilities-frequently-updated
+  - ethical-implications-of-ai-manipulation-strategies
+---
+
 # Strategic Framework for Engaging Truth Terminal: A Game-Theoretic Analysis of AI-Driven Memetic Systems
 
 ## Abstract

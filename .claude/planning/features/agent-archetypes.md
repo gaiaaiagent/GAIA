@@ -1,3 +1,22 @@
+---
+rid: koi:planning:regenai-agent-archetypes
+created: 2025-01-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: feature-specification-document
+source-type: agent-character-design
+related:
+  - koi:planning:character-development-framework
+  - koi:planning:feature-template
+  - koi:resources:four-agent-character-design
+  - koi:research:four-agent-elizaos-implementation
+accuracy-concerns:
+  - character-personalities-subject-to-iterative-development
+  - agent-interactions-may-evolve-based-on-testing
+  - partnership-dynamics-could-influence-archetype-design
+  - implementation-constraints-may-affect-character-features
+---
+
 # Feature: RegenAI Agent Archetypes
 
 ## Overview

@@ -1,3 +1,20 @@
+---
+rid: koi:transcript:regen-gaia-collaboration-meeting
+created: 2025-07-02
+last-modified: 2025-07-15
+confidence: very-high
+verification-status: verbatim-meeting-transcript
+source-type: collaboration-meeting-record
+related:
+  - koi:contract:joint-development-agreement-summary
+  - koi:partnership:vision-alignment-analysis
+  - koi:stakeholders:gregory-regen-network
+accuracy-concerns:
+  - transcript-may-have-minor-formatting-edits
+  - speaker-attribution-based-on-context-clues
+  - meeting-date-inferred-from-context
+---
+
 # Regen Network & GAIA AI Collaboration Meeting
 *Verbatim Transcript in Essay Format*
 

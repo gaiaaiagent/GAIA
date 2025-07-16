@@ -1,3 +1,22 @@
+---
+rid: koi:investigation:regen-ethereum-bridge-forensics
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: ethereum-contract-verified-analysis
+source-type: cross-chain-forensic-investigation
+related:
+  - koi:investigation:regen-token-technical-specification
+  - koi:analysis:regen-network-transaction-flow-ecosystem
+  - koi:technical:cosmos-ethereum-bridge-infrastructure
+  - koi:analysis:cross-chain-token-distribution
+accuracy-concerns:
+  - bridge-contract-states-change-with-transactions
+  - holder-counts-fluctuate-with-bridging-activity
+  - defi-integrations-may-emerge-without-notification
+  - gas-costs-affect-bridge-transaction-volumes
+---
+
 # Deep Forensic Investigation: REGEN Tokens on Ethereum
 
 ## 1. Executive Summary

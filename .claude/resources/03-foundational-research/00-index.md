@@ -1,3 +1,21 @@
+---
+rid: koi:research:regen-token-economics-governance-analysis
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: research-synthesis-with-citations
+source-type: governance-analysis-report
+related:
+  - koi:governance:token-economics-working-group
+  - koi:stakeholders:regen-foundation-consortium
+  - koi:economic:network-value-analysis
+accuracy-concerns:
+  - financial-figures-may-be-volatile-snapshots
+  - governance-structures-evolve-frequently
+  - stakeholder-roles-may-have-changed
+  - citation-dates-span-multiple-years
+---
+
 # Mapping Regen Network's Token Economics Governance: Bridging Blockchain and Ecological Regeneration
 
 Regen Network's Token Economics Working Group represents a crucial bridge between blockchain technology and ecological regeneration, operating within a complex multi-stakeholder governance system that manages over **$40 million in network value** across **17,000+ eligible voters** (Regen Network, 2024a). The working group faces a fundamental challenge: while the network has built sophisticated governance infrastructure, actual participation remains concentrated among a small subset of stakeholders, limiting the democratic potential of this ecological finance platform (LinkedIn, 2024).

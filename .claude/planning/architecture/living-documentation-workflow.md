@@ -1,3 +1,22 @@
+---
+rid: koi:planning:living-documentation-workflow
+created: 2025-01-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: workflow-methodology-specification
+source-type: documentation-process-framework
+related:
+  - koi:planning:planning-structure-analysis
+  - koi:journal:session-02
+  - koi:architecture:content-indexing-strategy-15k-docs
+  - koi:integration:blockscience-koi-semantic-traceability
+accuracy-concerns:
+  - documentation-workflows-evolve-with-team-experience
+  - living-documentation-principles-require-cultural-adoption
+  - workflow-effectiveness-depends-on-consistent-practice
+  - integration-with-koi-system-still-developing
+---
+
 # Living Documentation Workflow
 
 ## The Challenge of Living Documents

@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-ibc-transfers-cosmos-ecosystem
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: ibc-infrastructure-analysis
+source-type: cross-chain-transfer-analysis
+related:
+  - koi:investigation:regen-ethereum-bridge-forensics
+  - koi:analysis:regen-network-transaction-flow-ecosystem
+  - koi:technical:cosmos-sdk-blockchain-architecture
+  - koi:analysis:cross-chain-liquidity-distribution
+accuracy-concerns:
+  - ibc-channel-status-changes-with-network-upgrades
+  - cross-chain-token-distributions-fluctuate-constantly
+  - historical-transfer-data-limited-by-api-availability
+  - liquidity-metrics-highly-volatile-in-low-volume-environment
+---
+
 # Exhaustive Analysis of REGEN Network IBC Transfers Across the Cosmos Ecosystem
 
 ## Executive Summary

@@ -1,3 +1,22 @@
+---
+rid: koi:notes:gaia-team-contract-strategy-meeting
+created: 2024-06-24
+last-modified: 2025-07-15
+confidence: high
+verification-status: meeting-agenda-and-notes
+source-type: team-strategy-notes
+related:
+  - koi:transcript:gaia-team-operational-framework-meeting
+  - koi:transcript:gaia-team-partnership-strategy-meeting
+  - koi:contract:joint-development-agreement-summary
+  - koi:tokenomics:partnership-token-strategy
+accuracy-concerns:
+  - contract-scope-details-subject-to-negotiation-evolution
+  - token-strategy-dependent-on-market-conditions
+  - cerulean-ventures-involvement-may-have-changed
+  - phase-one-agreement-terms-likely-finalized-differently
+---
+
 ## 2024-06-24 
 
 

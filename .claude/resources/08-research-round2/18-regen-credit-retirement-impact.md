@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-credit-retirement-token-impact
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: credit-retirement-economic-analysis
+source-type: ecosystem-impact-analysis
+related:
+  - koi:analysis:regen-marketplace-transactions-comprehensive
+  - koi:analysis:regen-credit-issuance-token-economics
+  - koi:market:ecological-credits-ecosystem
+  - koi:analysis:regen-network-transaction-flow-ecosystem
+accuracy-concerns:
+  - retirement-volumes-subject-to-institutional-buying-patterns
+  - token-price-correlation-limited-by-otc-transaction-dominance
+  - market-cap-calculations-affected-by-extreme-illiquidity
+  - institutional-buyer-activity-may-not-reflect-market-sentiment
+---
+
 # REGEN Network Credit Retirement Token Impact: Comprehensive Analysis
 
 ## Executive Summary

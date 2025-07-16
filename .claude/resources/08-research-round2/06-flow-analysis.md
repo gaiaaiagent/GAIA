@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-network-transaction-flow-ecosystem
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: comprehensive-transaction-analysis
+source-type: network-activity-analysis
+related:
+  - koi:investigation:regen-genesis-forensic-analysis
+  - koi:investigation:regen-token-technical-specification
+  - koi:analysis:regen-permanently-locked-governance-tokens
+  - koi:market:ecological-credits-ecosystem
+accuracy-concerns:
+  - daily-trading-volumes-highly-volatile
+  - transaction-counts-require-real-time-verification
+  - cross-chain-activity-data-fragmented
+  - market-cap-calculations-subject-to-price-fluctuation
+---
+
 # REGEN Network Transaction Flow Analysis: Complete Ecosystem State and Patterns Report
 
 **Report Word Count**: 5,847 words  

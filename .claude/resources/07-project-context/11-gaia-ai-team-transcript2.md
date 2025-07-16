@@ -1,3 +1,21 @@
+---
+rid: koi:transcript:gaia-team-partnership-strategy-meeting
+created: 2025-07-02
+last-modified: 2025-07-15
+confidence: very-high
+verification-status: verbatim-team-meeting-transcript
+source-type: internal-strategy-discussion
+related:
+  - koi:transcript:regen-gaia-collaboration-meeting
+  - koi:transcript:gaiaai-team-partnership-response-meeting
+  - koi:response:gaia-ai-regen-network-rfc
+  - koi:proposal:gaia-regen-partnership-strategic-vision
+accuracy-concerns:
+  - internal-strategy-details-may-have-evolved-since-meeting
+  - team-composition-and-roles-subject-to-change
+  - technical-implementation-plans-dependent-on-ongoing-development
+---
+
 # GAIA AI Team Meeting: Regen Network Partnership Response
 *Team discussion on crafting response to Gregory's collaboration proposal*
 

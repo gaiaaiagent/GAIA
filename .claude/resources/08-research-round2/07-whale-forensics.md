@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-whale-movement-forensics
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium
+verification-status: whale-analysis-with-privacy-limitations
+source-type: blockchain-forensic-analysis
+related:
+  - koi:investigation:regen-genesis-forensic-analysis
+  - koi:analysis:regen-permanently-locked-governance-tokens
+  - koi:analysis:regen-network-transaction-flow-ecosystem
+  - koi:market:regen-token-concentration-analysis
+accuracy-concerns:
+  - individual-whale-identities-privacy-protected
+  - exact-current-holdings-require-real-time-verification
+  - private-otc-transactions-not-visible-on-chain
+  - exchange-wallets-difficult-to-identify-definitively
+---
+
 # REGEN Network Whale Movement Forensic Analysis
 
 ## Executive Summary

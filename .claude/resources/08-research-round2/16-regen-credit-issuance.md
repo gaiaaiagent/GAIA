@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-credit-issuance-token-economics
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: credit-system-economic-analysis
+source-type: blockchain-fee-structure-analysis
+related:
+  - koi:analysis:regen-community-pool-flow-comprehensive
+  - koi:market:ecological-credits-ecosystem
+  - koi:analysis:regen-governance-forensic-deep-dive
+  - koi:technical:regen-marketplace-infrastructure
+accuracy-concerns:
+  - fee-structures-subject-to-governance-modification
+  - token-prices-highly-volatile-affecting-usd-valuations
+  - credit-issuance-volumes-fluctuate-with-market-conditions
+  - protocol-upgrades-may-change-fee-mechanisms
+---
+
 # REGEN Network Credit Issuance Token Economics: Deep Research Investigation #13
 
 ## 1. Executive Summary

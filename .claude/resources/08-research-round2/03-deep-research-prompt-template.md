@@ -1,3 +1,20 @@
+---
+rid: koi:methodology:comprehensive-analysis-template
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: very-high
+verification-status: standardized-research-methodology
+source-type: analysis-template-framework
+related:
+  - koi:research:comprehensive-regen-investigation-framework
+  - koi:investigation:regen-token-comprehensive-report
+  - koi:methodology:systematic-knowledge-verification
+accuracy-concerns:
+  - template-requires-adaptation-for-specific-use-cases
+  - data-sources-availability-varies-by-blockchain
+  - quality-requirements-may-exceed-available-time-resources
+---
+
 # Deep Research Prompt Template for REGEN Network Analysis
 
 ## Instructions for AI Assistant

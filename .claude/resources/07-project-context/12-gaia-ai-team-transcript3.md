@@ -1,3 +1,22 @@
+---
+rid: koi:transcript:gaia-team-operational-framework-meeting
+created: 2025-07-02
+last-modified: 2025-07-15
+confidence: very-high
+verification-status: meeting-summary-narrative
+source-type: team-operational-discussion
+related:
+  - koi:transcript:gaia-team-partnership-strategy-meeting
+  - koi:transcript:gaiaai-team-partnership-response-meeting
+  - koi:response:gaia-ai-regen-network-rfc
+  - koi:strategy:operational-framework-development
+accuracy-concerns:
+  - july-1st-launch-target-may-have-shifted
+  - team-composition-details-subject-to-change
+  - operational-frameworks-likely-evolved-since-meeting
+  - communications-team-size-may-have-changed
+---
+
 # Gaia AI Team Meeting - Summary Narrative
 
 ## Overview

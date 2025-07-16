@@ -1,4 +1,25 @@
 
+---
+rid: koi:resources:gaiaai-rfc-response-links-collection
+created: 2025-07-02
+last-modified: 2025-07-15
+confidence: high
+verification-status: project-resource-links-collection
+source-type: project-documentation-references
+related:
+  - koi:transcript:gaiaai-team-partnership-response-meeting
+  - koi:proposal:gaia-regen-partnership-strategic-vision
+  - koi:tokenomics:regen-fixed-cap-dynamic-supply-model
+accuracy-concerns:
+  - notion-links-may-require-authentication-access
+  - google-doc-sharing-permissions-may-have-changed
+  - file-download-links-may-have-expiration-timestamps
+  - ip-license-frameworks-evolving-rapidly
+---
+
+# GAIA AI RFC Response Documentation Links
+
+## Core Partnership Documentation
 https://regennetwork.notion.site/Gaia-AI-RFC-1fa25b77eda18071a92cdc048fd5883d
 https://forum.regen.network/discussion/26631-Fixed%20Cap,%20Dynamic%20Supply
 Transcript for meeting with gregory: https://file.notion.so/f/f/7afd522c-2eb9-4a3a-85fd-37054c3e10e4/220be103-bb8d-487a-b763-46d58cdd9ecb/Darrens_Meeting_Notes_(2).txt?table=block&id=201b9462-fa82-806f-b39f-dcb3804ec781&spaceId=7afd522c-2eb9-4a3a-85fd-37054c3e10e4&expirationTimestamp=1748995200000&signature=s8F3ZPOXvOST-k13rgy_c1ria0ST1Bh29p9WNo6NTkc&downloadName=transcript.txt

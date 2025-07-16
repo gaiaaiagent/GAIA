@@ -1,3 +1,21 @@
+---
+rid: koi:evaluation:ecological-ai-web3-frameworks
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: research-synthesis-with-scientific-standards
+source-type: evaluation-framework-specification
+related:
+  - koi:contract:95-percent-accuracy-requirement
+  - koi:validation:ecological-accuracy-standards
+  - koi:testing:deepeval-framework-integration
+accuracy-concerns:
+  - ai-evaluation-frameworks-rapidly-evolving
+  - ecological-standards-may-have-updates
+  - web3-community-dynamics-highly-variable
+  - accuracy-percentages-depend-on-test-conditions
+---
+
 # Agent evaluation frameworks for ecological AI and Web3 communities
 
 The partnership between GAIA AI and Regen Network represents a unique challenge in AI agent evaluation - combining ecological accuracy requirements with Web3 community engagement at scale. This research reveals a comprehensive framework for validating AI agents that can effectively communicate complex environmental concepts while building trust across diverse audiences from crypto degens to climate activists.

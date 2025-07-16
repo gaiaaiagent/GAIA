@@ -1,3 +1,21 @@
+---
+rid: koi:technical:regen-registry-api-architecture
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium
+verification-status: technical-documentation-synthesis
+source-type: api-integration-guide
+related:
+  - koi:technical:cosmos-sdk-blockchain-integration
+  - koi:contract:gaia-ai-regen-integration
+  - koi:architecture:mcp-implementation-patterns
+accuracy-concerns:
+  - api-endpoints-may-have-version-updates
+  - contract-financial-details-subject-to-change
+  - technical-implementation-rapidly-evolving
+  - library-versions-may-be-superseded
+---
+
 # Regen Registry Technical Architecture for AI Agent Integration: API, Methodologies, and MCP Implementation
 
 Regen Network operates a sophisticated blockchain-based ecological credit registry built on Cosmos SDK, providing comprehensive APIs for carbon credits, biodiversity assets, and environmental data (Regen Network, 2024a). The platform currently supports 40+ credit methodologies and offers multiple integration pathways for AI agents, with GAIA AI already implementing a substantial integration through a $75K + 7.5M REGEN token contract (GAIA AI x REGEN NETWORK Master Doc, 2024).

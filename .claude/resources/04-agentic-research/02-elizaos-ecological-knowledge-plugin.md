@@ -1,3 +1,21 @@
+---
+rid: koi:technical:elizaos-ecological-plugin-architecture
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: technical-specification-with-typescript-code
+source-type: plugin-development-guide
+related:
+  - koi:technical:elizaos-plugin-architecture
+  - koi:architecture:ecological-data-processing
+  - koi:development:typescript-patterns
+accuracy-concerns:
+  - elizaos-api-may-have-changed-since-documentation
+  - typescript-imports-and-interfaces-version-dependent
+  - ecological-data-integration-patterns-experimental
+  - web3-integration-rapidly-evolving
+---
+
 # ElizaOS Ecological Knowledge Plugin Architecture
 
 ## Building production-ready ecological data processing for autonomous AI agents

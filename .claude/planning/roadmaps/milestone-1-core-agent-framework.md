@@ -1,3 +1,22 @@
+---
+rid: koi:planning:milestone-1-core-agent-framework
+created: 2025-01-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: active-milestone-tracking
+source-type: development-roadmap-specification
+related:
+  - koi:planning:sprint-milestone-1.1.1-core-agent-deployment
+  - koi:planning:regenai-agent-archetypes
+  - koi:planning:dependency-matrix
+  - koi:technical:elizaos-ecological-plugin-architecture
+accuracy-concerns:
+  - milestone-progress-updates-in-real-time
+  - task-completion-status-requires-frequent-updates
+  - target-dates-subject-to-development-complexity
+  - team-availability-may-affect-delivery-schedules
+---
+
 # Milestone 1: Core Agent Framework Deployment
 
 ## 1.1.1 Core agent framework deployed on cloud infrastructure

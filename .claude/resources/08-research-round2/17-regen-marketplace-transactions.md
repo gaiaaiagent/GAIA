@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-marketplace-transactions-comprehensive
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: marketplace-transaction-analysis
+source-type: blockchain-marketplace-analysis
+related:
+  - koi:analysis:regen-credit-issuance-token-economics
+  - koi:market:ecological-credits-ecosystem
+  - koi:technical:regen-marketplace-infrastructure
+  - koi:analysis:regen-network-transaction-flow-ecosystem
+accuracy-concerns:
+  - transaction-volumes-subject-to-market-conditions
+  - pricing-data-volatile-with-credit-market-dynamics
+  - institutional-buyer-activity-may-change-over-time
+  - marketplace-metrics-dependent-on-network-activity
+---
+
 # Deep dive into REGEN Network marketplace transactions
 
 ## Executive Summary

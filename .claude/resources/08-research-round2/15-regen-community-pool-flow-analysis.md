@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-community-pool-flow-comprehensive
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: community-treasury-analysis
+source-type: dao-treasury-flow-analysis
+related:
+  - koi:analysis:regen-governance-forensic-deep-dive
+  - koi:analysis:regen-permanently-locked-governance-tokens
+  - koi:analysis:regen-validator-economics-comprehensive
+  - koi:governance:community-funding-mechanisms
+accuracy-concerns:
+  - community-pool-balance-changes-with-block-rewards
+  - proposal-success-rates-subject-to-community-evolution
+  - token-flow-tracking-limited-by-privacy-constraints
+  - usd-valuations-highly-volatile-with-token-price
+---
+
 # REGEN Network Community Pool Flow Analysis: Complete Research Report
 
 ## 1. EXECUTIVE SUMMARY

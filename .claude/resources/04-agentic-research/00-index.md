@@ -1,3 +1,20 @@
+---
+rid: koi:research:four-agent-character-design
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: implementation-ready-research
+source-type: agent-architecture-specification
+related:
+  - koi:character:regenai-development-framework
+  - koi:architecture:elizaos-plugin-architecture
+  - koi:contract:agent-deployment-requirements
+accuracy-concerns:
+  - character-file-json-structure-may-need-testing
+  - elizaos-framework-features-rapidly-evolving
+  - platform-specific-behaviors-require-validation
+---
+
 # Complete Character File Design for Four Regen Network AI Agents in ElizaOS
 
 ## Executive Summary

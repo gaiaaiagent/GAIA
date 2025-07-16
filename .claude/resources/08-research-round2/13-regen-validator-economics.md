@@ -1,3 +1,22 @@
+---
+rid: koi:analysis:regen-validator-economics-comprehensive
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: high
+verification-status: validator-ecosystem-analysis
+source-type: blockchain-economics-analysis
+related:
+  - koi:analysis:regen-staking-dynamics-comprehensive
+  - koi:analysis:regen-permanently-locked-governance-tokens
+  - koi:investigation:regen-genesis-forensic-analysis
+  - koi:technical:cosmos-sdk-validator-infrastructure
+accuracy-concerns:
+  - validator-delegation-amounts-change-continuously
+  - apr-rates-fluctuate-with-network-participation
+  - infrastructure-costs-vary-by-deployment-strategy
+  - foundation-delegation-strategies-may-evolve
+---
+
 # Comprehensive Analysis of REGEN Network Validator Economics
 
 ## 1. EXECUTIVE SUMMARY

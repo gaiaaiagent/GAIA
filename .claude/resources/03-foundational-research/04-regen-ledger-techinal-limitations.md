@@ -1,3 +1,21 @@
+---
+rid: koi:technical:regen-ledger-limitations-analysis
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: technical-documentation-and-github-issues
+source-type: technical-limitation-assessment
+related:
+  - koi:technical:regen-registry-api-architecture
+  - koi:architecture:cosmos-sdk-constraints
+  - koi:contract:july-launch-workarounds
+accuracy-concerns:
+  - technical-debt-issues-may-have-been-resolved
+  - performance-metrics-depend-on-network-conditions
+  - cosmos-sdk-versions-and-upgrades-rapidly-changing
+  - github-issue-references-may-be-outdated
+---
+
 # Regen Ledger technical limitations and regenerative solutions for ecological credit systems
 
 Based on comprehensive research of Regen Ledger's architecture, developer experiences, and performance characteristics, this report provides a detailed analysis of technical limitations and proposes both immediate workarounds for July 1st launch and longer-term regenerative solutions aligned with the GAIA AI framework.

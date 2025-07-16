@@ -1,3 +1,21 @@
+---
+rid: koi:ethics:traditional-ecological-knowledge-integration
+created: 2025-07-15
+last-modified: 2025-07-15
+confidence: medium-high
+verification-status: academic-research-with-ethical-frameworks
+source-type: ethics-and-methodology-guide
+related:
+  - koi:ethics:indigenous-research-methodologies
+  - koi:knowledge:traditional-ecological-systems
+  - koi:governance:free-prior-informed-consent
+accuracy-concerns:
+  - indigenous-sovereignty-recognition-varies-by-jurisdiction
+  - ethical-frameworks-still-evolving-in-many-institutions
+  - cultural-appropriation-risks-require-ongoing-vigilance
+  - legal-frameworks-for-traditional-knowledge-changing
+---
+
 # Bridging Worlds: Protocols for Integrating Traditional Ecological Knowledge
 
 The integration of traditional ecological knowledge (TEK) into modern systems requires a fundamental paradigm shift from extractive research toward relationship-centered partnerships that honor indigenous sovereignty, implement robust consent mechanisms, and ensure equitable benefit-sharing. **Contemporary frameworks demonstrate that successful integration depends on indigenous leadership, long-term commitment, and institutional transformation** that respects both traditional knowledge systems and modern scientific approaches while protecting against biopiracy and cultural appropriation (Native Tribe Info, 2024; Ecology and Society, 2020).

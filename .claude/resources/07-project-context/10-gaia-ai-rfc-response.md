@@ -1,3 +1,20 @@
+---
+rid: koi:response:gaia-ai-regen-network-rfc
+created: 2025-07-02
+last-modified: 2025-07-15
+confidence: high
+verification-status: official-partnership-response-document
+source-type: formal-partnership-response
+related:
+  - koi:proposal:gaia-regen-partnership-strategic-vision
+  - koi:transcript:regen-gaia-collaboration-meeting
+  - koi:contract:joint-development-agreement-summary
+accuracy-concerns:
+  - team-capacity-and-availability-may-have-changed
+  - technical-capabilities-descriptions-reflect-proposal-stage
+  - partnership-terms-may-have-evolved-during-negotiations
+---
+
 # Gaia AI Response to Regen Network RFC
 
 ## Executive Summary
