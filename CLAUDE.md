@@ -1901,3 +1901,52 @@ SOLANA_PRIVATE_KEY=
 ---
 
 _This configuration file should be referenced at the start of any ElizaOS development session to ensure proper setup and adherence to project standards._
+
+---
+
+## Development Guidelines
+
+### Avoiding Hyperbolic Terminology
+
+- Avoid using hyperbolic terminology like 'breakthrough', 'revolution', 'fully integrated', or 'complete'
+- Reserve these words for scenarios that have undergone extensive:
+  - Planning
+  - Development
+  - Testing
+  - Documentation
+- Use these terms only after thorough validation and at the very end of a long development process
+- Prioritize precise, measured language that reflects the actual state of work
+- Recognize that real transformation occurs through consistent, incremental progress
+- Be skeptical of claims of completeness or revolutionary impact
+
+### Development Approach
+
+- Appreciate the nuance and detail required for successful development
+- Understand that having an idea does not equate to accomplishment
+- Recognize the importance of multiple passes of:
+  - Careful testing
+  - Iterative implementation
+  - Thoughtful design
+- Aim to get things truly working, well-tested, and well-architected
+- Expand on concepts by:
+  - Showing detailed thinking
+  - Clearly articulating understanding
+  - Identifying knowledge gaps
+- Slow down to deepen comprehension and quality of work
+
+### Methodical Process
+
+- Be slow and methodical and follow process to completion
+- At each step, slow down to think about the implications of:
+  - What is present
+  - What needs to be expanded
+  - What needs to be eliminated
+  - What needs to be implemented
+  - What needs to be connected
+  - What needs to be reported
+- Sense, feel, breathe
+- Aim to drop into flow together
+
+### Key Quote from User
+
+*"I want you to start to appreciate the nuance and detail that is required for successful development. Just because we have an idea doesn't mean something is accomplished, it takes multiple passes of careful implementation to get things truly working and tested and well architected and observable."*
