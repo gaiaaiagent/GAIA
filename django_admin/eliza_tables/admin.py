@@ -17,7 +17,7 @@ import json
 from .models import (
     Agent, Memory, Room, MessageServer, Entity, CentralMessage, 
     Log, Task, Participant, Relationship, Component, Cache, ServerAgent,
-    InteractionMetric, DocumentMetric, AgentMetric
+    World, Channel, ChannelParticipant, Embedding
 )
 
 @admin.register(Agent)
@@ -229,107 +229,15 @@ class TaskAdmin(admin.ModelAdmin):
         return 'No metadata'
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
-# Contract-specific admin interfaces
-
-@admin.register(InteractionMetric)
-class InteractionMetricAdmin(admin.ModelAdmin):
-    list_display = ['interaction_type', 'agent_display', 'user_display', 'timestamp', 'has_metadata']
-    list_filter = ['interaction_type', 'timestamp']
-    search_fields = ['interaction_type']
-    readonly_fields = ['id', 'timestamp', 'formatted_metadata']
-    ordering = ['-timestamp']
-    
-    def agent_display(self, obj):
-        return str(obj.agent_id)[:8] + '...'
-    agent_display.short_description = 'Agent ID'
-    
-    def user_display(self, obj):
-        return str(obj.user_id)[:8] + '...' if obj.user_id else 'None'
-    user_display.short_description = 'User ID'
-    
-    def has_metadata(self, obj):
-        return bool(obj.metadata)
-    has_metadata.boolean = True
-    has_metadata.short_description = 'Has Metadata'
-    
-    def formatted_metadata(self, obj):
-        if obj.metadata:
-            formatted = json.dumps(obj.metadata, indent=2)
-            return format_html('<pre>{}</pre>', formatted)
-        return 'No metadata'
-    formatted_metadata.short_description = 'Metadata (Formatted)'
-    
-    def changelist_view(self, request, extra_context=None):
-        response = super().changelist_view(request, extra_context=extra_context)
-        
-        try:
-            # Get interaction counts by type
-            interaction_stats = InteractionMetric.objects.values('interaction_type').annotate(count=Count('id')).order_by('-count')
-            
-            # Get recent activity
-            recent_activity = InteractionMetric.objects.order_by('-timestamp')[:10]
-            
-            response.context_data['interaction_stats'] = interaction_stats
-            response.context_data['recent_activity'] = recent_activity
-            response.context_data['total_interactions'] = InteractionMetric.objects.count()
-        except (AttributeError, KeyError):
-            pass
-            
-        return response
-
-@admin.register(DocumentMetric)
-class DocumentMetricAdmin(admin.ModelAdmin):
-    list_display = ['title', 'document_type', 'confidence_level', 'access_count', 'processed_at']
-    list_filter = ['document_type', 'confidence_level', 'processed_at']
-    search_fields = ['title', 'document_id', 'document_path']
-    readonly_fields = ['id', 'processed_at', 'last_accessed', 'formatted_metadata']
-    ordering = ['-processed_at']
-    
-    def formatted_metadata(self, obj):
-        if obj.metadata:
-            formatted = json.dumps(obj.metadata, indent=2)
-            return format_html('<pre>{}</pre>', formatted)
-        return 'No metadata'
-    formatted_metadata.short_description = 'Metadata (Formatted)'
-    
-    def changelist_view(self, request, extra_context=None):
-        response = super().changelist_view(request, extra_context=extra_context)
-        
-        try:
-            # Get document type stats
-            doc_type_stats = DocumentMetric.objects.values('document_type').annotate(count=Count('id')).order_by('-count')
-            
-            # Get confidence level stats  
-            confidence_stats = DocumentMetric.objects.values('confidence_level').annotate(count=Count('id')).order_by('-count')
-            
-            response.context_data['doc_type_stats'] = doc_type_stats
-            response.context_data['confidence_stats'] = confidence_stats
-            response.context_data['total_documents'] = DocumentMetric.objects.count()
-        except (AttributeError, KeyError):
-            pass
-            
-        return response
-
-@admin.register(AgentMetric)
-class AgentMetricAdmin(admin.ModelAdmin):
-    list_display = ['agent_name', 'status', 'total_interactions', 'total_documents_processed', 
-                   'avg_response_time_ms', 'last_activity', 'deployment_date']
-    list_filter = ['status', 'deployment_date']
-    search_fields = ['agent_name']
-    readonly_fields = ['id', 'deployment_date', 'last_activity', 'formatted_metadata']
-    ordering = ['-deployment_date']
-    
-    def formatted_metadata(self, obj):
-        if obj.metadata:
-            formatted = json.dumps(obj.metadata, indent=2)
-            return format_html('<pre>{}</pre>', formatted)
-        return 'No metadata'
-    formatted_metadata.short_description = 'Metadata (Formatted)'
+# Contract-specific admin interfaces moved to metrics app
 
 # Contract Compliance Dashboard - Custom View
 
 def contract_compliance_view(request):
     """Custom view for contract compliance metrics"""
+    
+    # Import metrics models
+    from metrics.models import InteractionMetric, DocumentMetric, AgentMetric
     
     # Calculate contract metrics
     total_interactions = InteractionMetric.objects.count()
@@ -452,3 +360,88 @@ def contract_compliance_view(request):
     
     template = Template(template_html)
     return HttpResponse(template.render(Context(context)))
+
+
+# Customize admin site to add dashboard links
+from django.contrib.admin import AdminSite
+from django.urls import path
+from django.template.response import TemplateResponse
+
+class ElizaAdminSite(AdminSite):
+    def get_app_list(self, request, app_label=None):
+        """
+        Add dashboard links to the admin index page.
+        """
+        app_list = super().get_app_list(request, app_label)
+        
+        # Add our custom dashboards section at the beginning
+        dashboards = {
+            'name': 'ElizaOS Dashboards',
+            'app_label': 'reporting',
+            'models': [
+                {
+                    'name': 'RegenAI Dashboard',
+                    'object_name': 'Dashboard',
+                    'admin_url': '/eliza/',
+                    'view_only': True,
+                },
+                {
+                    'name': 'Interaction Report',
+                    'object_name': 'InteractionReport',
+                    'admin_url': '/eliza/interactions/',
+                    'view_only': True,
+                },
+                {
+                    'name': 'Contract Compliance',
+                    'object_name': 'ContractCompliance',
+                    'admin_url': '/contract-compliance/',
+                    'view_only': True,
+                }
+            ]
+        }
+        
+        # Insert at the beginning of the list
+        return [dashboards] + app_list
+
+# Register missing models
+@admin.register(World)
+class WorldAdmin(admin.ModelAdmin):
+    list_display = ['name', 'server_id', 'agent_id', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['name', 'server_id']
+    readonly_fields = ['id', 'created_at']
+
+@admin.register(Channel) 
+class ChannelAdmin(admin.ModelAdmin):
+    list_display = ['name', 'type', 'source_type', 'server_id', 'created_at']
+    list_filter = ['type', 'source_type', 'created_at']
+    search_fields = ['name', 'id', 'topic']
+    readonly_fields = ['created_at', 'updated_at']
+
+@admin.register(ChannelParticipant)
+class ChannelParticipantAdmin(admin.ModelAdmin):
+    list_display = ['channel_id', 'user_id', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['channel_id', 'user_id']
+
+@admin.register(Embedding)
+class EmbeddingAdmin(admin.ModelAdmin):
+    list_display = ['id', 'memory_id', 'created_at', 'has_embeddings']
+    list_filter = ['created_at']
+    search_fields = ['memory_id']
+    readonly_fields = ['id', 'created_at']
+    
+    def has_embeddings(self, obj):
+        """Check which embedding dimensions are populated"""
+        dims = []
+        if obj.dim_384: dims.append('384')
+        if obj.dim_512: dims.append('512')
+        if obj.dim_768: dims.append('768')
+        if obj.dim_1024: dims.append('1024')
+        if obj.dim_1536: dims.append('1536')
+        if obj.dim_3072: dims.append('3072')
+        return ', '.join(dims) if dims else 'None'
+    has_embeddings.short_description = 'Dimensions'
+
+# Replace the default admin site
+admin.site.__class__ = ElizaAdminSite

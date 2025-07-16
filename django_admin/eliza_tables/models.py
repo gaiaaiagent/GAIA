@@ -7,6 +7,7 @@ Schema inspected from running ElizaOS instance with facilitator agent.
 """
 
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 import uuid
 from django.utils import timezone
 
@@ -14,8 +15,8 @@ class Agent(models.Model):
     """Agent instances running in ElizaOS - matches actual schema"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     enabled = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_column='created_at')
+    updated_at = models.DateTimeField(auto_now=True, db_column='updated_at')
     name = models.TextField()
     username = models.TextField(null=True, blank=True)
     system = models.TextField(null=True, blank=True)
@@ -99,7 +100,7 @@ class Entity(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     agent_id = models.UUIDField()
     created_at = models.DateTimeField(auto_now_add=True)
-    names = models.JSONField(default=list)  # Stored as ARRAY in PostgreSQL
+    names = ArrayField(models.TextField(), default=list)  # PostgreSQL ARRAY type
     metadata = models.JSONField(default=dict)
     
     class Meta:
@@ -157,7 +158,7 @@ class Task(models.Model):
     world_id = models.UUIDField(null=True, blank=True, db_column='worldId')
     entity_id = models.UUIDField(null=True, blank=True, db_column='entityId')
     agent_id = models.UUIDField()
-    tags = models.JSONField(default=list)  # Stored as ARRAY in PostgreSQL
+    tags = ArrayField(models.TextField(), default=list, blank=True, null=True)  # PostgreSQL ARRAY type
     metadata = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -189,7 +190,7 @@ class Relationship(models.Model):
     source_entity_id = models.UUIDField(db_column='sourceEntityId')
     target_entity_id = models.UUIDField(db_column='targetEntityId')
     agent_id = models.UUIDField()
-    tags = models.JSONField(null=True, blank=True)  # Stored as ARRAY in PostgreSQL
+    tags = ArrayField(models.TextField(), default=list, blank=True, null=True)  # PostgreSQL ARRAY type
     metadata = models.JSONField(null=True, blank=True)
     
     class Meta:
@@ -233,63 +234,71 @@ class ServerAgent(models.Model):
         managed = False
         db_table = 'server_agents'
 
-# Contract-specific models for RegenAI project tracking
+# Missing ElizaOS tables discovered later
 
-class InteractionMetric(models.Model):
-    """Track interactions for contract compliance (100k target)"""
+class World(models.Model):
+    """Worlds - higher level grouping of servers/rooms"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    agent_id = models.UUIDField()  # Reference to agent without FK to avoid conflicts
-    user_id = models.UUIDField(blank=True, null=True)
-    room_id = models.UUIDField(blank=True, null=True)
-    interaction_type = models.CharField(max_length=50)  # message, action, query, etc
-    timestamp = models.DateTimeField(default=timezone.now)
-    metadata = models.JSONField(blank=True, null=True)
+    agent_id = models.UUIDField(db_column='agentId')
+    name = models.TextField()
+    metadata = models.JSONField(null=True, blank=True)
+    server_id = models.TextField(null=True, blank=True, db_column='serverId')
+    created_at = models.DateTimeField(auto_now_add=True, db_column='createdAt')
     
     class Meta:
-        db_table = 'interaction_metrics'  # This table we manage
-        ordering = ['-timestamp']
+        managed = False
+        db_table = 'worlds'
         
     def __str__(self):
-        return f"Agent {str(self.agent_id)[:8]} - {self.interaction_type} at {self.timestamp}"
+        return self.name
 
-class DocumentMetric(models.Model):
-    """Track document processing for contract compliance (15k target)"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    agent_id = models.UUIDField(blank=True, null=True)
-    document_id = models.CharField(max_length=255)  # KOI RID
-    document_path = models.TextField()
-    document_type = models.CharField(max_length=100)
-    title = models.CharField(max_length=500)
-    confidence_level = models.CharField(max_length=50, blank=True)
-    processed_at = models.DateTimeField(default=timezone.now)
-    processing_time_ms = models.IntegerField(null=True, blank=True)
-    last_accessed = models.DateTimeField(blank=True, null=True)
-    access_count = models.IntegerField(default=0)
-    metadata = models.JSONField(default=dict, blank=True)
+class Channel(models.Model):
+    """Communication channels - platform specific"""
+    id = models.TextField(primary_key=True)
+    server_id = models.UUIDField(null=True, blank=True)
+    name = models.TextField()
+    type = models.TextField()
+    source_type = models.TextField(null=True, blank=True)
+    source_id = models.TextField(null=True, blank=True)
+    topic = models.TextField(null=True, blank=True)
+    metadata = models.JSONField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        db_table = 'document_metrics'  # This table we manage
-        ordering = ['-processed_at']
+        managed = False
+        db_table = 'channels'
         
     def __str__(self):
-        return f"{self.title} ({self.document_id})"
+        return f"{self.name} ({self.type})"
 
-class AgentMetric(models.Model):
-    """Track agent performance for contract compliance (5 agents target)"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    agent_id = models.UUIDField(unique=True)
-    agent_name = models.CharField(max_length=255)
-    deployment_date = models.DateTimeField(default=timezone.now)
-    total_interactions = models.IntegerField(default=0)
-    total_documents_processed = models.IntegerField(default=0)
-    avg_response_time_ms = models.FloatField(null=True, blank=True)
-    last_activity = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(max_length=50, default='active')  # active, inactive, error
-    metadata = models.JSONField(default=dict, blank=True)
+class ChannelParticipant(models.Model):
+    """Links participants to channels"""
+    channel_id = models.TextField()
+    user_id = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        db_table = 'agent_metrics'  # This table we manage
-        ordering = ['-deployment_date']
+        managed = False
+        db_table = 'channel_participants'
+        unique_together = ['channel_id', 'user_id']
+
+class Embedding(models.Model):
+    """Vector embeddings for semantic search - stores different dimensions"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    memory_id = models.UUIDField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    # Vector fields are custom types, we'll treat as binary for display
+    dim_384 = models.BinaryField(null=True, blank=True)
+    dim_512 = models.BinaryField(null=True, blank=True)
+    dim_768 = models.BinaryField(null=True, blank=True)
+    dim_1024 = models.BinaryField(null=True, blank=True)
+    dim_1536 = models.BinaryField(null=True, blank=True)
+    dim_3072 = models.BinaryField(null=True, blank=True)
+    
+    class Meta:
+        managed = False
+        db_table = 'embeddings'
         
     def __str__(self):
-        return f"{self.agent_name} - {self.total_interactions} interactions"
+        return f"Embedding for memory {str(self.memory_id)[:8]}..."

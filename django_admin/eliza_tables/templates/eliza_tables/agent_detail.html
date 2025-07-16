@@ -1,0 +1,201 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Agent: {{ agent.name }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+    /* Fix text colors */
+    .agent-info table {
+        background: white;
+        color: #333;
+    }
+    .agent-info table td {
+        color: #333;
+    }
+    .agent-info h2, .agent-info h3 {
+        color: #333;
+    }
+    pre {
+        background: #f5f5f5;
+        color: #333;
+    }
+    table {
+        background: white;
+        color: #333;
+    }
+    table th {
+        background: #f0f0f0;
+        color: #333;
+    }
+    table td {
+        color: #333;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        body.theme-auto .agent-info table,
+        body.theme-dark .agent-info table,
+        body.theme-auto table,
+        body.theme-dark table {
+            background: #1e1e1e;
+            color: #ddd;
+        }
+        body.theme-auto .agent-info table td,
+        body.theme-dark .agent-info table td,
+        body.theme-auto table td,
+        body.theme-dark table td {
+            color: #ddd;
+        }
+        body.theme-auto .agent-info h2,
+        body.theme-dark .agent-info h2,
+        body.theme-auto .agent-info h3,
+        body.theme-dark .agent-info h3 {
+            color: #ddd;
+        }
+        body.theme-auto pre,
+        body.theme-dark pre {
+            background: #2b2b2b;
+            color: #ddd;
+        }
+        body.theme-auto table th,
+        body.theme-dark table th {
+            background: #2b2b2b;
+            color: #ddd;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    &rsaquo; <a href="{% url 'eliza_tables:dashboard' %}">Dashboard</a>
+    &rsaquo; Agent: {{ agent.name }}
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Agent: {{ agent.name }}</h1>
+
+<div class="agent-info" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+    <div>
+        <h2>Basic Information</h2>
+        <table style="width: 100%;">
+            <tr>
+                <td style="padding: 5px;"><strong>ID:</strong></td>
+                <td style="padding: 5px;">{{ agent.id }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><strong>Name:</strong></td>
+                <td style="padding: 5px;">{{ agent.name }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><strong>Username:</strong></td>
+                <td style="padding: 5px;">{{ agent.username|default:"Not set" }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><strong>Status:</strong></td>
+                <td style="padding: 5px;">{% if agent.enabled %}<span style="color: #28a745;">✓ Enabled</span>{% else %}<span style="color: #dc3545;">✗ Disabled</span>{% endif %}</td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><strong>Created:</strong></td>
+                <td style="padding: 5px;">{{ agent.created_at|date:"Y-m-d H:i:s" }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 5px;"><strong>Updated:</strong></td>
+                <td style="padding: 5px;">{{ agent.updated_at|date:"Y-m-d H:i:s" }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div>
+        <h2>Statistics</h2>
+        <table style="width: 100%;">
+            <tr>
+                <td style="padding: 5px;"><strong>Total Memories:</strong></td>
+                <td style="padding: 5px;">{{ total_memories }}</td>
+            </tr>
+        </table>
+        
+        <h3>Memory Types</h3>
+        {% if memory_types %}
+        <table style="width: 100%;">
+            {% for type in memory_types %}
+            <tr>
+                <td style="padding: 5px;">{{ type.type }}:</td>
+                <td style="padding: 5px;">{{ type.count }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No memories recorded yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if bio %}
+<div style="margin-bottom: 30px;">
+    <h2>Bio</h2>
+    <ul>
+    {% for item in bio %}
+        <li>{{ item }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if topics %}
+<div style="margin-bottom: 30px;">
+    <h2>Topics</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+    {% for topic in topics %}
+        <span style="background: #e0e0e0; padding: 5px 10px; border-radius: 15px;">{{ topic }}</span>
+    {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if style %}
+<div style="margin-bottom: 30px;">
+    <h2>Style Configuration</h2>
+    <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto;">{{ style|pprint }}</pre>
+</div>
+{% endif %}
+
+<h2>Recent Memories</h2>
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background: #f0f0f0;">
+            <th style="padding: 10px; text-align: left;">Time</th>
+            <th style="padding: 10px; text-align: left;">Type</th>
+            <th style="padding: 10px; text-align: left;">Content</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for memory in recent_memories %}
+        <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ memory.created_at|date:"Y-m-d H:i:s" }}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ memory.type }}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                {% if memory.content.text %}
+                    {{ memory.content.text|truncatewords:30 }}
+                {% else %}
+                    {{ memory.content|truncatewords:30 }}
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3" style="padding: 20px; text-align: center;">No memories found for this agent.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'admin:eliza_tables_agent_change' agent.id %}" class="button" style="padding: 10px 20px; background: #417690; color: white; text-decoration: none; border-radius: 4px;">Edit Agent</a>
+    <a href="{% url 'eliza_tables:dashboard' %}" class="button" style="padding: 10px 20px; background: #666; color: white; text-decoration: none; border-radius: 4px; margin-left: 10px;">Back to Dashboard</a>
+</div>
+
+{% endblock %}
