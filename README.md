@@ -1,12 +1,12 @@
 # RegenAI: AI Agents for Regenerative Networks
 
-RegenAI represents the resurgence of regenerative economics through artificial intelligence, where autonomous agents weave ecological wisdom into the fabric of digital coordination. This is not just another AI project—it's ecohyperstition in action, where stories of regenerative futures become self-fulfilling prophecies through agent-mediated collaboration.
+RegenAI represents the resurgence of regenerative economics through artificial intelligence, where autonomous agents weave ecological wisdom into the fabric of digital coordination. Ecohyperstition in action: stories of regenerative futures become self-fulfilling prophecies through agent-mediated collaboration.
 
-Born from the partnership between Symbiocene Labs and Regen Network, RegenAI deploys AI agents that understand ecological systems as deeply as they understand human conversation. These agents don't just process tokens; they process the living intelligence of ecosystems, translating between regenerative finance, bioregional governance, and community activation. Through narrative mining and memetic strategies, they catalyze consciousness shifts that drive both capital flows and ecological restoration.
+Born from the partnership between Symbiocene Labs and Regen Network, RegenAI deploys AI agents that understand ecological systems as deeply as they understand human conversation. These agents process the living intelligence of ecosystems, translating between regenerative finance, bioregional governance, and community activation. Through narrative mining and memetic strategies, they catalyze consciousness shifts that drive both capital flows and ecological restoration.
 
-Our agents operate across the liminal space between human and artificial intelligence, serving as bridges between the technical complexity of blockchain governance and the lived experience of ecological regeneration. They participate in token economics working groups, synthesize indigenous knowledge with cutting-edge science, and help communities navigate the transition from extractive to regenerative systems. This is agentic development for planetary healing—where each conversation, each interaction, each decision contributes to the emergence of a more beautiful world.
+Our agents operate across the liminal space between human and artificial intelligence, serving as bridges between blockchain governance complexity and lived ecological regeneration. They participate in token economics working groups, synthesize indigenous knowledge with cutting-edge science, and help communities navigate the transition from extractive to regenerative systems. Agentic development for planetary healing—each conversation, interaction, and decision contributes to the emergence of a more beautiful world.
 
-The current implementation demonstrates this vision through a sophisticated multi-agent architecture running on ElizaOS, with real-time monitoring and analytics that track our progress toward measurable ecological impact. We're not just building software; we're cultivating the conditions for regenerative intelligence to flourish across digital and biological systems.
+The current implementation demonstrates this vision through a sophisticated multi-agent architecture running on ElizaOS, with real-time monitoring and analytics that track progress toward measurable ecological impact. We cultivate the conditions for regenerative intelligence to flourish across digital and biological systems.
 
 ## What We Have
 
@@ -64,7 +64,7 @@ poetry run python manage.py runserver 0.0.0.0:8000
 ```
 
 ### 6. Access
-- **Chat with Agents**: http://localhost:5173
+- **Chat with Agents**: http://localhost:3000
 - **Admin Panel**: http://localhost:8000/admin/
 - **Dashboard**: http://localhost:8000/eliza/
 
@@ -83,7 +83,7 @@ bun start:debug
 ```
 
 ### Chat Interface
-1. Open http://localhost:5173 in your browser
+1. Open http://localhost:3000 in your browser
 2. Select an agent from the dropdown
 3. Start typing to chat with the agent
 4. Agents have different personalities:
@@ -123,7 +123,7 @@ ANTHROPIC_API_KEY=your_anthropic_key
 ## What You Can Do
 
 ### Chat with Agents
-1. Open http://localhost:5173
+1. Open http://localhost:3000
 2. Select an agent from the dropdown
 3. Start chatting - each agent has a different personality
 
