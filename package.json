@@ -79,6 +79,7 @@
   "dependencies": {
     "@elizaos/plugin-knowledge": "1.2.0",
     "@elizaos/plugin-openai": "1.0.7",
+    "chalk": "^5.4.1",
     "helmet": "^8.1.0"
   }
 }
