@@ -1,3 +1,32 @@
+# RegenAI: AI Agents for Regenerative Networks
+
+RegenAI represents the resurgence of regenerative economics through artificial intelligence, where autonomous agents weave ecological wisdom into the fabric of digital coordination. Ecohyperstition in action: stories of regenerative futures become self-fulfilling prophecies through agent-mediated collaboration.
+
+Born from the partnership between Symbiocene Labs and Regen Network, RegenAI deploys AI agents that understand ecological systems as deeply as they understand human conversation. These agents process the living intelligence of ecosystems, translating between regenerative finance, bioregional governance, and community activation. Through narrative mining and memetic strategies, they catalyze consciousness shifts that drive both capital flows and ecological restoration.
+
+Our agents operate across the liminal space between human and artificial intelligence, serving as bridges between blockchain governance complexity and lived ecological regeneration. They participate in token economics working groups, synthesize indigenous knowledge with cutting-edge science, and help communities navigate the transition from extractive to regenerative systems. Agentic development for planetary healing—each conversation, interaction, and decision contributes to the emergence of a more beautiful world.
+
+The current implementation demonstrates this vision through a sophisticated multi-agent architecture running on ElizaOS, with real-time monitoring and analytics that track progress toward measurable ecological impact. We cultivate the conditions for regenerative intelligence to flourish across digital and biological systems.
+
+## What We Have
+
+- **Two AI Agents**: Facilitator and Narrative agents trained on regenerative systems thinking
+- **Web Interface**: Real-time conversations with agents that understand ecological context
+- **Admin Panel**: Monitor agent learning and regenerative impact metrics
+- **Dashboard**: Track interactions, community engagement, and system evolution
+
+## How It Works
+
+```
+ElizaOS Agents  ←→  Django Admin  ←→  Monitoring Dashboard
+```
+
+- **ElizaOS**: Runs the AI agents with their personalities
+- **Django Admin**: Provides web interface to monitor agent activity
+- **PostgreSQL**: Stores all conversations and agent data
+
+---
+
 # Eliza
 
 A framework for multi-agent development and deployment
@@ -241,6 +270,78 @@ Once Eliza is running, access the modern web interface at http://localhost:3000.
 - Plugin management.
 - Comprehensive memory and conversation history.
 - Responsive design for an optimal experience on various screen sizes.
+
+---
+
+## RegenAI Quick Start
+
+### Running RegenAI Agents
+
+The RegenAI project includes pre-configured agents for regenerative economics:
+
+```bash
+# Clone the RegenAI repository
+git clone https://github.com/gaiaaiagent/GAIA.git
+cd GAIA
+
+# Install dependencies
+bun install
+bun run build
+
+# Start with default Facilitator agent
+bun start
+
+# Or start with specific agent
+bun start --character characters/facilitator.character.json
+bun start --character characters/narrative.character.json
+```
+
+### RegenAI Chat Interface
+1. Open http://localhost:3000 in your browser
+2. Select an agent from the dropdown
+3. Start typing to chat with the agent
+4. Agents have different personalities:
+   - **Facilitator**: Helps with meeting structure and process
+   - **Narrative**: Creative storytelling and vision communication
+
+### RegenAI Admin Panel
+
+The RegenAI implementation includes a Django-based admin panel for monitoring:
+
+1. **Setup Django Admin** (from `django_admin/` directory):
+```bash
+cd django_admin
+poetry install
+poetry run python manage.py migrate
+poetry run python manage.py createsuperuser
+poetry run python manage.py runserver 8000
+```
+
+2. **Access the Admin**:
+   - Go to http://localhost:8000/admin/
+   - Login with your admin credentials
+   - Monitor agent conversations and system health
+
+3. **View Dashboard**:
+   - Go to http://localhost:8000/eliza/
+   - See system overview and agent statistics
+   - Monitor interaction counts and trends
+
+### Environment Setup for RegenAI
+
+Create a `.env` file with:
+```bash
+# Database
+POSTGRES_URL=postgresql://user:password@localhost:5432/eliza
+
+# AI Model (choose one)
+OPENAI_API_KEY=your_openai_key
+# OR
+ANTHROPIC_API_KEY=your_anthropic_key
+
+# Optional: For regenerative data
+REGEN_NETWORK_API=your_regen_api_key
+```
 
 ## Citation
 
