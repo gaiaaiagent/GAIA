@@ -20,7 +20,8 @@ from .models import (
     World, Channel, ChannelParticipant, Embedding
 )
 
-@admin.register(Agent)
+# DISABLED: Model registered in elizaos app
+# @admin.register(Agent)
 class AgentAdmin(admin.ModelAdmin):
     list_display = ['name', 'username', 'enabled', 'plugin_count', 'created_at']
     list_filter = ['enabled', 'created_at']
@@ -53,7 +54,8 @@ class AgentAdmin(admin.ModelAdmin):
         return 'No settings'
     formatted_settings.short_description = 'Settings (Formatted)'
 
-@admin.register(Memory)
+# DISABLED: Model registered in elizaos app
+# @admin.register(Memory)
 class MemoryAdmin(admin.ModelAdmin):
     list_display = ['type', 'content_preview', 'agent_display', 'unique', 'created_at']
     list_filter = ['type', 'unique', 'created_at']
@@ -86,7 +88,8 @@ class MemoryAdmin(admin.ModelAdmin):
         return 'No metadata'
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
-@admin.register(Room)
+# DISABLED: Model registered in elizaos app
+# @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
     list_display = ['name', 'type', 'source', 'agent_display', 'created_at']
     list_filter = ['type', 'source', 'created_at']
@@ -104,7 +107,8 @@ class RoomAdmin(admin.ModelAdmin):
         return 'No metadata'
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
-@admin.register(MessageServer)
+# DISABLED: Model registered in elizaos app
+# @admin.register(MessageServer)
 class MessageServerAdmin(admin.ModelAdmin):
     list_display = ['name', 'source_type', 'source_id', 'created_at']
     list_filter = ['source_type', 'created_at']
@@ -118,7 +122,8 @@ class MessageServerAdmin(admin.ModelAdmin):
         return 'No metadata'
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
-@admin.register(Entity)
+# DISABLED: Model registered in elizaos app
+# @admin.register(Entity)
 class EntityAdmin(admin.ModelAdmin):
     list_display = ['names_display', 'agent_display', 'created_at']
     list_filter = ['created_at']
@@ -140,7 +145,8 @@ class EntityAdmin(admin.ModelAdmin):
         return 'No metadata'
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
-@admin.register(CentralMessage)
+# DISABLED: Model registered in elizaos app
+# @admin.register(CentralMessage)
 class CentralMessageAdmin(admin.ModelAdmin):
     list_display = ['id_display', 'content_preview', 'author_id', 'channel_id', 'created_at']
     list_filter = ['source_type', 'created_at']
@@ -170,7 +176,8 @@ class CentralMessageAdmin(admin.ModelAdmin):
         return 'No metadata'
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
-@admin.register(Log)
+# DISABLED: Model registered in elizaos app
+# @admin.register(Log)
 class LogAdmin(admin.ModelAdmin):
     list_display = ['type', 'body_preview', 'entity_display', 'room_display', 'created_at']
     list_filter = ['type', 'created_at']
@@ -198,7 +205,8 @@ class LogAdmin(admin.ModelAdmin):
         return 'No body'
     formatted_body.short_description = 'Body (Formatted)'
 
-@admin.register(Task)
+# DISABLED: Model registered in elizaos app
+# @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     list_display = ['name', 'description_preview', 'agent_display', 'created_at']
     list_filter = ['created_at']
@@ -382,13 +390,13 @@ class ElizaAdminSite(AdminSite):
                 {
                     'name': 'RegenAI Dashboard',
                     'object_name': 'Dashboard',
-                    'admin_url': '/eliza/',
+                    'admin_url': '/regenai/',
                     'view_only': True,
                 },
                 {
                     'name': 'Interaction Report',
                     'object_name': 'InteractionReport',
-                    'admin_url': '/eliza/interactions/',
+                    'admin_url': '/regenai/interactions/',
                     'view_only': True,
                 },
                 {
@@ -404,27 +412,31 @@ class ElizaAdminSite(AdminSite):
         return [dashboards] + app_list
 
 # Register missing models
-@admin.register(World)
+# DISABLED: Model registered in elizaos app
+# @admin.register(World)
 class WorldAdmin(admin.ModelAdmin):
     list_display = ['name', 'server_id', 'agent_id', 'created_at']
     list_filter = ['created_at']
     search_fields = ['name', 'server_id']
     readonly_fields = ['id', 'created_at']
 
-@admin.register(Channel) 
+# DISABLED: Model registered in elizaos app
+# @admin.register(Channel) 
 class ChannelAdmin(admin.ModelAdmin):
     list_display = ['name', 'type', 'source_type', 'server_id', 'created_at']
     list_filter = ['type', 'source_type', 'created_at']
     search_fields = ['name', 'id', 'topic']
     readonly_fields = ['created_at', 'updated_at']
 
-@admin.register(ChannelParticipant)
+# DISABLED: Model registered in elizaos app
+# @admin.register(ChannelParticipant)
 class ChannelParticipantAdmin(admin.ModelAdmin):
     list_display = ['channel_id', 'user_id', 'created_at']
     list_filter = ['created_at']
     search_fields = ['channel_id', 'user_id']
 
-@admin.register(Embedding)
+# DISABLED: Model registered in elizaos app
+# @admin.register(Embedding)
 class EmbeddingAdmin(admin.ModelAdmin):
     list_display = ['id', 'memory_id', 'created_at', 'has_embeddings']
     list_filter = ['created_at']
@@ -444,4 +456,5 @@ class EmbeddingAdmin(admin.ModelAdmin):
     has_embeddings.short_description = 'Dimensions'
 
 # Replace the default admin site
-admin.site.__class__ = ElizaAdminSite
+# DISABLED: admin site override moved to reporting app
+# admin.site.__class__ = ElizaAdminSite
