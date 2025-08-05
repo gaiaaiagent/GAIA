@@ -295,3 +295,6 @@ dmypy.json
 django_admin/staticfiles/
 django_admin/media/
 django_admin/db.sqlite3
+
+# Kiro
+/.kiro

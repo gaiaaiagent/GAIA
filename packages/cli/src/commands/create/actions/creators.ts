@@ -176,7 +176,11 @@ export async function createPlugin(
     console.info(`  bun run build   # Build the plugin`);
     console.info(`\n  Common commands:`);
     console.info(`  elizaos dev    # Start development mode with hot reloading`);
-    console.info(`  elizaos start  # Start in production mode\n`);
+    console.info(`  elizaos start  # Start in production mode`);
+    console.info(`\n${colors.yellow('⚠️')}  Security reminder:`);
+    console.info(`  - Check .gitignore is present before committing`);
+    console.info(`  - Never commit .env files or API keys`);
+    console.info(`  - Add sensitive files to .gitignore if needed\n`);
   });
 }
 
@@ -247,6 +251,9 @@ export async function createTEEProject(
   embeddingModel?: string,
   isNonInteractive = false
 ): Promise<void> {
+  // Clear any inherited PGLITE_DATA_DIR to prevent child projects from inheriting parent's database
+  delete process.env.PGLITE_DATA_DIR;
+
   const teeTargetDir = join(targetDir, projectName);
 
   // Validate target directory
@@ -307,6 +314,9 @@ export async function createProject(
   embeddingModel?: string,
   isNonInteractive = false
 ): Promise<void> {
+  // Clear any inherited PGLITE_DATA_DIR to prevent child projects from inheriting parent's database
+  delete process.env.PGLITE_DATA_DIR;
+
   // Handle current directory case
   const projectTargetDir = projectName === '.' ? targetDir : join(targetDir, projectName);
 

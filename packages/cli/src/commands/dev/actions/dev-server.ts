@@ -3,6 +3,7 @@ import { createDevContext, performInitialBuild, performRebuild } from '../utils/
 import { watchDirectory } from '../utils/file-watcher';
 import { getServerManager } from '../utils/server-manager';
 import { findNextAvailablePort } from '@/src/utils';
+import { ensureElizaOSCli } from '@/src/utils/dependency-manager';
 import { logger } from '@elizaos/core';
 
 /**
@@ -12,6 +13,10 @@ import { logger } from '@elizaos/core';
  */
 export async function startDevMode(options: DevOptions): Promise<void> {
   const cwd = process.cwd();
+
+  // Auto-install @elizaos/cli as dev dependency using bun (for non-monorepo projects)
+  await ensureElizaOSCli(cwd);
+
   const context = createDevContext(cwd);
   const serverManager = getServerManager();
 
@@ -112,6 +117,9 @@ export async function startDevMode(options: DevOptions): Promise<void> {
   }
 
   // Start the server initially
+  if (process.env.ELIZA_TEST_MODE === 'true') {
+    console.info(`[DEV] Starting server with args: ${cliArgs.join(' ')}`);
+  }
   await serverManager.start(cliArgs);
 
   // Set up file watching if we're in a project, plugin, or monorepo directory
