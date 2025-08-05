@@ -1,0 +1,19 @@
+{
+  "name": "@claude/matrix-generator",
+  "version": "0.1.0",
+  "description": "Taxonomy matrix generation tools for ElizaOS project analysis",
+  "type": "module",
+  "scripts": {
+    "scan": "bun run 01-file-scanner.ts",
+    "analyze": "bun run 02-relationship-analyzer.ts",
+    "generate": "bun run 03-content-generator.ts",
+    "clean": "rm -rf data/*.json output/*.md"
+  },
+  "dependencies": {
+    "@typescript-eslint/parser": "^6.0.0",
+    "chalk": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

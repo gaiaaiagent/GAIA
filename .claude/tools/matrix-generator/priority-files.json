@@ -1,0 +1,68 @@
+{
+  "description": "Priority files for the initial taxonomy matrix",
+  "categories": {
+    "root": [
+      "CLAUDE.md",
+      ".env",
+      "package.json",
+      "README.md",
+      "llms.txt",
+      "tsconfig.json",
+      "turbo.json",
+      "docker-compose.yaml",
+      "CHANGELOG.md",
+      "eliza.postman.json"
+    ],
+    "claude_journal": [
+      ".claude/journal/00-index.md",
+      ".claude/journal/19-day2-elizaos-analysis.md",
+      ".claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
+      ".claude/journal/21-taxonomy-matrix-vision-and-meta-review.md",
+      ".claude/journal/18-database-integration-breakthrough.md"
+    ],
+    "claude_planning": [
+      ".claude/planning/current-priorities.md",
+      ".claude/planning/architecture/elizaos-knowledge-architecture.md",
+      ".claude/planning/features/character-development-framework.md",
+      ".claude/planning/roadmaps/milestone-1-core-agent-framework.md"
+    ],
+    "claude_diagnostics": [
+      ".claude/diagnostics/01-investigate-group-chat.js",
+      ".claude/diagnostics/README.md"
+    ],
+    "core_typescript": [
+      "packages/core/src/runtime.ts",
+      "packages/core/src/types/index.ts",
+      "packages/core/src/database.ts",
+      "packages/core/src/index.ts",
+      "packages/core/src/actions.ts",
+      "packages/core/src/services.ts",
+      "packages/core/src/prompts.ts"
+    ],
+    "server_typescript": [
+      "packages/server/src/index.ts",
+      "packages/server/src/socketio/index.ts",
+      "packages/server/src/services/message.ts",
+      "packages/server/src/api/index.ts",
+      "packages/server/src/bus.ts"
+    ],
+    "django": [
+      "django_admin/elizaos/models.py",
+      "django_admin/elizaos/admin.py",
+      "django_admin/eliza_admin/settings.py",
+      "django_admin/manage.py",
+      "django_admin/README.md"
+    ],
+    "characters": [
+      "characters/facilitator.character.json",
+      "characters/narrative.character.json",
+      "characters/regenai.character.json"
+    ],
+    "client": [
+      "packages/client/src/components/chat.tsx",
+      "packages/client/src/hooks/use-socket-chat.ts",
+      "packages/client/src/App.tsx"
+    ]
+  },
+  "total": 50
+}

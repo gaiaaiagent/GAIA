@@ -1,0 +1,97 @@
+{
+  "version": "2.0",
+  "timestamp": "2025-07-22T17:42:29.251Z",
+  "metrics": {
+    "contentDepth": 77,
+    "technicalAccuracy": 69,
+    "completeness": 89,
+    "uniqueness": 88,
+    "actionability": 89,
+    "overall": 81
+  },
+  "interpretation": {
+    "summary": "Good",
+    "strengths": [
+      "contentDepth",
+      "completeness",
+      "uniqueness",
+      "actionability"
+    ],
+    "weaknesses": [
+      "technicalAccuracy"
+    ]
+  },
+  "topPerformers": [
+    {
+      "relationship": "packages/server/src/socketio/index.ts|packages/server/src/index.ts",
+      "score": 140
+    },
+    {
+      "relationship": "packages/server/src/services/message.ts|packages/core/src/index.ts",
+      "score": 140
+    },
+    {
+      "relationship": "packages/server/src/api/index.ts|packages/server/src/index.ts",
+      "score": 140
+    },
+    {
+      "relationship": "packages/server/src/index.ts|packages/core/src/index.ts",
+      "score": 130
+    },
+    {
+      "relationship": "packages/core/src/runtime.ts|packages/core/src/index.ts",
+      "score": 120
+    }
+  ],
+  "needsImprovement": [
+    {
+      "relationship": "packages/client/src/App.tsx|django_admin/elizaos/models.py",
+      "issues": [
+        "No code examples",
+        "Too generic"
+      ]
+    },
+    {
+      "relationship": "llms.txt|.claude/journal/00-index.md",
+      "issues": [
+        "No code examples",
+        "Too generic"
+      ]
+    },
+    {
+      "relationship": "llms.txt|.claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
+      "issues": [
+        "No code examples",
+        "Too generic"
+      ]
+    },
+    {
+      "relationship": "llms.txt|.claude/planning/architecture/elizaos-knowledge-architecture.md",
+      "issues": [
+        "No code examples",
+        "Too generic"
+      ]
+    },
+    {
+      "relationship": "packages/core/src/types/index.ts|.claude/journal/00-index.md",
+      "issues": [
+        "No code examples",
+        "Too generic"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "High",
+      "action": "Add code examples to all technological patterns",
+      "reason": "Concrete examples make documentation actionable",
+      "expectedImprovement": "+15-20% technical accuracy"
+    },
+    {
+      "priority": "Ongoing",
+      "action": "Add new relationships as codebase evolves",
+      "reason": "Living documentation stays valuable",
+      "expectedImprovement": "Maintain relevance"
+    }
+  ]
+}

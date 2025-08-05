@@ -1,0 +1,3206 @@
+{
+  "timestamp": "2025-07-21T23:42:38.091Z",
+  "metrics": {
+    "contentQuality": 0,
+    "completeness": 70.8,
+    "consistency": 80,
+    "accuracy": 90,
+    "overall": 60
+  },
+  "summary": {
+    "totalIssues": 453,
+    "errors": 0,
+    "warnings": 42,
+    "suggestions": 411
+  },
+  "items": [
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/core/src/types/index.ts → packages/core/src/index.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/server/src/index.ts → packages/server/src/socketio/index.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/core/src/types/index.ts → packages/server/src/index.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/core/src/types/index.ts → packages/server/src/socketio/index.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/core/src/types/index.ts → packages/server/src/api/index.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/core/src/types/index.ts → packages/core/src/database.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/core/src/types/index.ts → packages/core/src/actions.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/core/src/types/index.ts → packages/core/src/services.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/core/src/types/index.ts → packages/core/src/prompts.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/server/src/index.ts → packages/server/src/services/message.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/server/src/socketio/index.ts → packages/server/src/bus.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/server/src/api/index.ts → packages/server/src/bus.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/client/src/components/chat.tsx → packages/client/src/App.tsx (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/client/src/hooks/use-socket-chat.ts → packages/client/src/App.tsx (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "README.md → django_admin/README.md (psychological)",
+      "message": "Psychological paragraph too short (29 words)",
+      "suggestion": "Expand with more developer psychology and trust patterns"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/client/src/components/chat.tsx → django_admin/elizaos/models.py (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/client/src/App.tsx → django_admin/elizaos/models.py (psychological)",
+      "message": "Psychological paragraph too short (29 words)",
+      "suggestion": "Expand with more developer psychology and trust patterns"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/client/src/App.tsx → django_admin/elizaos/models.py (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "CLAUDE.md → .claude/journal/19-day2-elizaos-analysis.md (psychological)",
+      "message": "Psychological paragraph too short (29 words)",
+      "suggestion": "Expand with more developer psychology and trust patterns"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/journal/00-index.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/journal/19-day2-elizaos-analysis.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/journal/20-group-chat-investigation-and-diagnostic-tools.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/journal/21-taxonomy-matrix-vision-and-meta-review.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/journal/18-database-integration-breakthrough.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/planning/current-priorities.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/planning/architecture/elizaos-knowledge-architecture.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/planning/features/character-development-framework.md (psychological)",
+      "message": "Psychological paragraph too short (29 words)",
+      "suggestion": "Expand with more developer psychology and trust patterns"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/planning/features/character-development-framework.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/planning/roadmaps/milestone-1-core-agent-framework.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "llms.txt → .claude/diagnostics/README.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/server/src/socketio/index.ts → packages/server/src/services/message.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/client/src/components/chat.tsx → packages/client/src/hooks/use-socket-chat.ts (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md → packages/core/src/runtime.ts (psychological)",
+      "message": "Psychological paragraph too short (29 words)",
+      "suggestion": "Expand with more developer psychology and trust patterns"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md → packages/core/src/database.ts (psychological)",
+      "message": "Psychological paragraph too short (29 words)",
+      "suggestion": "Expand with more developer psychology and trust patterns"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md → packages/core/src/prompts.ts (psychological)",
+      "message": "Psychological paragraph too short (29 words)",
+      "suggestion": "Expand with more developer psychology and trust patterns"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "packages/core/src/types/index.ts → .claude/journal/00-index.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "django_admin/elizaos/models.py → django_admin/manage.py (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "django_admin/elizaos/models.py → django_admin/README.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "django_admin/elizaos/admin.py → django_admin/manage.py (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "django_admin/elizaos/admin.py → django_admin/README.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "django_admin/eliza_admin/settings.py → django_admin/manage.py (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "warning",
+      "location": "django_admin/eliza_admin/settings.py → django_admin/README.md (technological)",
+      "message": "Technological pattern lacks concrete code examples",
+      "suggestion": "Add specific imports, function calls, or system references"
+    },
+    {
+      "type": "content",
+      "severity": "suggestion",
+      "location": "README.md → package.json",
+      "message": "Word \"readme\" appears 6 times",
+      "suggestion": "Consider using synonyms for variety"
+    },
+    {
+      "type": "content",
+      "severity": "suggestion",
+      "location": "README.md → package.json",
+      "message": "Word \"package.json\" appears 6 times",
+      "suggestion": "Consider using synonyms for variety"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Document-wide",
+      "message": "Inconsistent term: \"TypeScript\" should be \"typescript\"",
+      "suggestion": "Standardize terminology throughout the document"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Document-wide",
+      "message": "Inconsistent term: \"Django\" should be \"django\"",
+      "suggestion": "Standardize terminology throughout the document"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 87",
+      "message": "Very long line (310 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 114",
+      "message": "Very long line (307 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 141",
+      "message": "Very long line (308 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 168",
+      "message": "Very long line (310 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 195",
+      "message": "Very long line (307 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 222",
+      "message": "Very long line (314 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 249",
+      "message": "Very long line (308 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 276",
+      "message": "Very long line (321 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 303",
+      "message": "Very long line (310 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 330",
+      "message": "Very long line (308 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 359",
+      "message": "Very long line (326 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 386",
+      "message": "Very long line (320 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 413",
+      "message": "Very long line (320 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 440",
+      "message": "Very long line (320 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 467",
+      "message": "Very long line (320 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 496",
+      "message": "Very long line (321 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 523",
+      "message": "Very long line (321 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 550",
+      "message": "Very long line (321 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 577",
+      "message": "Very long line (321 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 606",
+      "message": "Very long line (327 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 633",
+      "message": "Very long line (324 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 662",
+      "message": "Very long line (321 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 690",
+      "message": "Very long line (321 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 717",
+      "message": "Very long line (308 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 744",
+      "message": "Very long line (315 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 771",
+      "message": "Very long line (342 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 799",
+      "message": "Very long line (347 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 827",
+      "message": "Very long line (347 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 857",
+      "message": "Very long line (372 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 886",
+      "message": "Very long line (345 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 914",
+      "message": "Very long line (386 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 943",
+      "message": "Very long line (378 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 972",
+      "message": "Very long line (324 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1001",
+      "message": "Very long line (312 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1029",
+      "message": "Very long line (322 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1057",
+      "message": "Very long line (305 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1084",
+      "message": "Very long line (305 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1111",
+      "message": "Very long line (323 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1140",
+      "message": "Very long line (298 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1167",
+      "message": "Very long line (298 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1194",
+      "message": "Very long line (298 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1223",
+      "message": "Very long line (382 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1252",
+      "message": "Very long line (307 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1280",
+      "message": "Very long line (286 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1319",
+      "message": "Very long line (456 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1322",
+      "message": "Very long line (345 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1325",
+      "message": "Very long line (252 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1334",
+      "message": "Very long line (400 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1337",
+      "message": "Very long line (354 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1340",
+      "message": "Very long line (242 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1349",
+      "message": "Very long line (460 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1352",
+      "message": "Very long line (281 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1355",
+      "message": "Very long line (256 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1364",
+      "message": "Very long line (459 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1367",
+      "message": "Very long line (297 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1370",
+      "message": "Very long line (252 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1379",
+      "message": "Very long line (398 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1382",
+      "message": "Very long line (281 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1385",
+      "message": "Very long line (256 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1394",
+      "message": "Very long line (462 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1397",
+      "message": "Very long line (290 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1400",
+      "message": "Very long line (242 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1409",
+      "message": "Very long line (418 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1412",
+      "message": "Very long line (307 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1415",
+      "message": "Very long line (256 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1424",
+      "message": "Very long line (465 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1427",
+      "message": "Very long line (426 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1430",
+      "message": "Very long line (242 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1439",
+      "message": "Very long line (418 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1442",
+      "message": "Very long line (362 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1445",
+      "message": "Very long line (242 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1454",
+      "message": "Very long line (411 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1457",
+      "message": "Very long line (358 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1460",
+      "message": "Very long line (258 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1469",
+      "message": "Very long line (422 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1472",
+      "message": "Very long line (302 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1475",
+      "message": "Very long line (258 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1484",
+      "message": "Very long line (460 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1487",
+      "message": "Very long line (360 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1490",
+      "message": "Very long line (242 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1499",
+      "message": "Very long line (416 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1502",
+      "message": "Very long line (360 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1505",
+      "message": "Very long line (242 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1514",
+      "message": "Very long line (397 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1517",
+      "message": "Very long line (293 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1520",
+      "message": "Very long line (242 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1529",
+      "message": "Very long line (467 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1532",
+      "message": "Very long line (298 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1535",
+      "message": "Very long line (261 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1544",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1550",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1559",
+      "message": "Very long line (278 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1562",
+      "message": "Very long line (237 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1565",
+      "message": "Very long line (243 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1574",
+      "message": "Very long line (270 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1577",
+      "message": "Very long line (242 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1580",
+      "message": "Very long line (243 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1589",
+      "message": "Very long line (270 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1592",
+      "message": "Very long line (246 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1595",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1604",
+      "message": "Very long line (272 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1607",
+      "message": "Very long line (442 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1610",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1619",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1622",
+      "message": "Very long line (420 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1625",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1634",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1637",
+      "message": "Very long line (325 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1640",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1649",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1652",
+      "message": "Very long line (331 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1655",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1664",
+      "message": "Very long line (272 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1667",
+      "message": "Very long line (331 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1670",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1679",
+      "message": "Very long line (285 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1682",
+      "message": "Very long line (343 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1685",
+      "message": "Very long line (258 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1694",
+      "message": "Very long line (274 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1697",
+      "message": "Very long line (423 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1700",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1709",
+      "message": "Very long line (268 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1712",
+      "message": "Very long line (334 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1715",
+      "message": "Very long line (243 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1724",
+      "message": "Very long line (276 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1727",
+      "message": "Very long line (334 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1730",
+      "message": "Very long line (243 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1739",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1742",
+      "message": "Very long line (334 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1745",
+      "message": "Very long line (243 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1754",
+      "message": "Very long line (278 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1757",
+      "message": "Very long line (236 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1760",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1769",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1772",
+      "message": "Very long line (240 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1775",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1784",
+      "message": "Very long line (276 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1787",
+      "message": "Very long line (217 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1790",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1799",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1802",
+      "message": "Very long line (306 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1805",
+      "message": "Very long line (243 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1814",
+      "message": "Very long line (273 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1817",
+      "message": "Very long line (312 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1820",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1829",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1832",
+      "message": "Very long line (312 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1835",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1844",
+      "message": "Very long line (272 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1847",
+      "message": "Very long line (223 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1850",
+      "message": "Very long line (243 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1859",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1862",
+      "message": "Very long line (217 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1865",
+      "message": "Very long line (243 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1874",
+      "message": "Very long line (270 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1877",
+      "message": "Very long line (223 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1880",
+      "message": "Very long line (243 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1889",
+      "message": "Very long line (271 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1892",
+      "message": "Very long line (277 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1895",
+      "message": "Very long line (253 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1904",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1907",
+      "message": "Very long line (301 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1910",
+      "message": "Very long line (253 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1919",
+      "message": "Very long line (272 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1922",
+      "message": "Very long line (288 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1925",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1934",
+      "message": "Very long line (272 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1937",
+      "message": "Very long line (283 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1940",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1949",
+      "message": "Very long line (272 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1952",
+      "message": "Very long line (295 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1955",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1964",
+      "message": "Very long line (278 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1967",
+      "message": "Very long line (294 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1970",
+      "message": "Very long line (253 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1979",
+      "message": "Very long line (278 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1982",
+      "message": "Very long line (289 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1985",
+      "message": "Very long line (253 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1994",
+      "message": "Very long line (274 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 1997",
+      "message": "Very long line (288 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2000",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2009",
+      "message": "Very long line (268 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2012",
+      "message": "Very long line (289 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2015",
+      "message": "Very long line (253 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2024",
+      "message": "Very long line (273 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2027",
+      "message": "Very long line (283 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2030",
+      "message": "Very long line (253 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2039",
+      "message": "Very long line (278 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2042",
+      "message": "Very long line (258 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2045",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2054",
+      "message": "Very long line (271 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2057",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2060",
+      "message": "Very long line (254 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2069",
+      "message": "Very long line (272 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2072",
+      "message": "Very long line (258 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2075",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2084",
+      "message": "Very long line (270 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2087",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2090",
+      "message": "Very long line (254 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2099",
+      "message": "Very long line (271 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2102",
+      "message": "Very long line (240 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2105",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2114",
+      "message": "Very long line (271 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2117",
+      "message": "Very long line (234 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2120",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2129",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2132",
+      "message": "Very long line (234 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2135",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2144",
+      "message": "Very long line (270 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2147",
+      "message": "Very long line (232 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2150",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2159",
+      "message": "Very long line (272 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2162",
+      "message": "Very long line (240 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2165",
+      "message": "Very long line (254 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2174",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2177",
+      "message": "Very long line (232 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2180",
+      "message": "Very long line (254 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2189",
+      "message": "Very long line (271 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2192",
+      "message": "Very long line (240 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2195",
+      "message": "Very long line (262 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2204",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2207",
+      "message": "Very long line (240 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2210",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2219",
+      "message": "Very long line (271 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2222",
+      "message": "Very long line (232 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2225",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2234",
+      "message": "Very long line (268 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2237",
+      "message": "Very long line (240 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2240",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2249",
+      "message": "Very long line (273 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2252",
+      "message": "Very long line (201 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2255",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2264",
+      "message": "Very long line (276 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2267",
+      "message": "Very long line (261 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2270",
+      "message": "Very long line (256 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2279",
+      "message": "Very long line (268 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2282",
+      "message": "Very long line (264 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2285",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2294",
+      "message": "Very long line (282 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2297",
+      "message": "Very long line (246 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2300",
+      "message": "Very long line (258 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2309",
+      "message": "Very long line (278 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2312",
+      "message": "Very long line (227 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2315",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2324",
+      "message": "Very long line (278 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2327",
+      "message": "Very long line (227 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2330",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2339",
+      "message": "Very long line (272 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2342",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2345",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2354",
+      "message": "Very long line (287 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2360",
+      "message": "Very long line (245 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2369",
+      "message": "Very long line (288 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2375",
+      "message": "Very long line (242 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2384",
+      "message": "Very long line (289 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2390",
+      "message": "Very long line (242 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2399",
+      "message": "Very long line (278 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2405",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2414",
+      "message": "Very long line (276 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2420",
+      "message": "Very long line (254 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2429",
+      "message": "Very long line (271 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2435",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2444",
+      "message": "Very long line (271 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2450",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2459",
+      "message": "Very long line (246 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2462",
+      "message": "Very long line (232 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2465",
+      "message": "Very long line (240 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2474",
+      "message": "Very long line (246 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2477",
+      "message": "Very long line (257 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2480",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2489",
+      "message": "Very long line (251 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2492",
+      "message": "Very long line (267 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2495",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2504",
+      "message": "Very long line (561 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2507",
+      "message": "Very long line (546 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2510",
+      "message": "Very long line (547 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2523",
+      "message": "Very long line (260 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2526",
+      "message": "Very long line (213 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2529",
+      "message": "Very long line (236 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2538",
+      "message": "Very long line (264 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2541",
+      "message": "Very long line (228 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2544",
+      "message": "Very long line (227 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2553",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2556",
+      "message": "Very long line (228 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2559",
+      "message": "Very long line (236 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2568",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2571",
+      "message": "Very long line (219 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2574",
+      "message": "Very long line (236 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2583",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2586",
+      "message": "Very long line (228 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2589",
+      "message": "Very long line (227 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2598",
+      "message": "Very long line (261 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2601",
+      "message": "Very long line (246 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2604",
+      "message": "Very long line (234 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2613",
+      "message": "Very long line (263 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2616",
+      "message": "Very long line (306 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2619",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2628",
+      "message": "Very long line (265 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2631",
+      "message": "Very long line (313 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2634",
+      "message": "Very long line (236 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2643",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2646",
+      "message": "Very long line (312 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2649",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2658",
+      "message": "Very long line (265 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2661",
+      "message": "Very long line (334 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2664",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2673",
+      "message": "Very long line (265 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2676",
+      "message": "Very long line (321 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2679",
+      "message": "Very long line (227 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2688",
+      "message": "Very long line (261 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2691",
+      "message": "Very long line (228 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2694",
+      "message": "Very long line (234 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2703",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2706",
+      "message": "Very long line (225 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2709",
+      "message": "Very long line (227 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2718",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2721",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2724",
+      "message": "Very long line (236 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2733",
+      "message": "Very long line (265 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2736",
+      "message": "Very long line (246 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2739",
+      "message": "Very long line (236 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2748",
+      "message": "Very long line (264 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2751",
+      "message": "Very long line (306 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2754",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2763",
+      "message": "Very long line (260 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2769",
+      "message": "Very long line (227 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2778",
+      "message": "Very long line (264 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2784",
+      "message": "Very long line (234 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2793",
+      "message": "Very long line (264 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2796",
+      "message": "Very long line (217 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2799",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2808",
+      "message": "Very long line (264 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2811",
+      "message": "Very long line (293 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2814",
+      "message": "Very long line (236 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2823",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2829",
+      "message": "Very long line (236 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2838",
+      "message": "Very long line (260 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2841",
+      "message": "Very long line (205 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2844",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2853",
+      "message": "Very long line (258 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2856",
+      "message": "Very long line (234 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2859",
+      "message": "Very long line (227 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2868",
+      "message": "Very long line (249 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2871",
+      "message": "Very long line (269 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2874",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2883",
+      "message": "Very long line (252 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2886",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2889",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2898",
+      "message": "Very long line (251 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2901",
+      "message": "Very long line (267 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2904",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2913",
+      "message": "Very long line (258 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2916",
+      "message": "Very long line (224 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2919",
+      "message": "Very long line (250 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2928",
+      "message": "Very long line (254 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2934",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2943",
+      "message": "Very long line (251 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2949",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2958",
+      "message": "Very long line (259 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2964",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2973",
+      "message": "Very long line (265 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2976",
+      "message": "Very long line (212 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2979",
+      "message": "Very long line (238 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2988",
+      "message": "Very long line (249 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 2994",
+      "message": "Very long line (244 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3003",
+      "message": "Very long line (255 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3009",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3018",
+      "message": "Very long line (235 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3021",
+      "message": "Very long line (228 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3024",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3033",
+      "message": "Very long line (252 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3036",
+      "message": "Very long line (234 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3039",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3048",
+      "message": "Very long line (250 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3054",
+      "message": "Very long line (234 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3063",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3069",
+      "message": "Very long line (240 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3082",
+      "message": "Very long line (254 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3085",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3088",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3097",
+      "message": "Very long line (249 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3100",
+      "message": "Very long line (255 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3103",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3112",
+      "message": "Very long line (253 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3115",
+      "message": "Very long line (279 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3118",
+      "message": "Very long line (222 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3127",
+      "message": "Very long line (257 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3130",
+      "message": "Very long line (272 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3133",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3142",
+      "message": "Very long line (255 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3145",
+      "message": "Very long line (267 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3148",
+      "message": "Very long line (222 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3157",
+      "message": "Very long line (255 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3160",
+      "message": "Very long line (250 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3163",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3172",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3175",
+      "message": "Very long line (275 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3178",
+      "message": "Very long line (247 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3187",
+      "message": "Very long line (248 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3190",
+      "message": "Very long line (266 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3193",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3202",
+      "message": "Very long line (252 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3205",
+      "message": "Very long line (273 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3208",
+      "message": "Very long line (233 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3217",
+      "message": "Very long line (254 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3220",
+      "message": "Very long line (235 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    },
+    {
+      "type": "quality",
+      "severity": "suggestion",
+      "location": "Line 3223",
+      "message": "Very long line (222 characters)",
+      "suggestion": "Consider breaking into multiple sentences"
+    }
+  ],
+  "recommendations": [
+    {
+      "action": "Document missing relationships",
+      "items": 0,
+      "priority": "high"
+    },
+    {
+      "action": "Fix content quality issues",
+      "items": 44,
+      "priority": "medium"
+    },
+    {
+      "action": "Address consistency problems",
+      "items": 409,
+      "priority": "low"
+    }
+  ]
+}

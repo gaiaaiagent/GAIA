@@ -1,0 +1,53 @@
+{
+  "timestamp": "2025-07-22T17:42:16.853Z",
+  "passes": [
+    {
+      "passName": "Concrete Example Injection",
+      "itemsProcessed": 177,
+      "itemsImproved": 0,
+      "metricImprovement": 0,
+      "duration": 5
+    },
+    {
+      "passName": "Insight Depth Enhancement",
+      "itemsProcessed": 177,
+      "itemsImproved": 177,
+      "metricImprovement": 4,
+      "duration": 6
+    },
+    {
+      "passName": "Cross-Reference Addition",
+      "itemsProcessed": 177,
+      "itemsImproved": 0,
+      "metricImprovement": 0,
+      "duration": 29
+    },
+    {
+      "passName": "Context Expansion",
+      "itemsProcessed": 177,
+      "itemsImproved": 0,
+      "metricImprovement": 0,
+      "duration": 4
+    },
+    {
+      "passName": "Pattern Variation",
+      "itemsProcessed": 177,
+      "itemsImproved": 12,
+      "metricImprovement": 0,
+      "duration": 3
+    }
+  ],
+  "beforeMetrics": {
+    "technicalAccuracy": 52,
+    "avgWordCount": 144,
+    "contentDepth": 82,
+    "relationshipCount": 177
+  },
+  "afterMetrics": {
+    "technicalAccuracy": 52,
+    "avgWordCount": 155,
+    "contentDepth": 86,
+    "relationshipCount": 177
+  },
+  "totalImprovement": 1.7
+}
