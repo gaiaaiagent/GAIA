@@ -1,5 +1,22 @@
-version: '3'
+version: '3.8'
+
 services:
+  # Nginx Reverse Proxy (new!)
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - '80:80'  # Main web access
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - eliza
+      - django
+    restart: always
+    networks:
+      - eliza-network
+
+  # PostgreSQL Database with pgvector
   postgres:
     image: ankane/pgvector:latest
     environment:
@@ -10,7 +27,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data:rw
     ports:
-      - '127.0.0.1:5432:5432'
+      - '127.0.0.1:5433:5432'  # Using 5433 to avoid conflict with local postgres
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
       interval: 5s
@@ -19,23 +36,34 @@ services:
     restart: always
     networks:
       - eliza-network
+
+  # ElizaOS Application
   eliza:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: elizav2
-    command: bun run start
+    container_name: eliza
+    command: sh -c "cd packages/cli && bun dist/index.js start --character /app/characters/regenai.character.json --character /app/characters/advocate.character.json --character /app/characters/governor.character.json --character /app/characters/narrative.character.json --character /app/characters/voiceofnature.character.json"
     volumes:
-      - /var/run/tappd.sock:/var/run/tappd.sock
+      - ./characters:/app/characters:ro
+      - ./.env:/app/.env:ro
     environment:
+      # Force development mode for WebUI
+      - NODE_ENV=development
+      - ELIZA_UI_ENABLE=true
+      # API Keys from .env
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - SERVER_PORT=${SERVER_PORT}
-      - POSTGRES_URL=${POSTGRES_URL}
-      - EVM_CHAINS=${EVM_CHAINS}
-      - BIRDEYE_API_KEY=${BIRDEYE_API_KEY}
-      - DISCORD_APPLICATION_ID=${DISCORD_APPLICATION_ID}
-      - DISCORD_API_TOKEN=${DISCORD_API_TOKEN}
+      # Server configuration
+      - SERVER_PORT=3000
+      - SERVER_HOST=0.0.0.0
+      # Database connection to container postgres
+      - POSTGRES_URL=postgresql://postgres:postgres@postgres:5432/eliza
+      # Optional services (can be empty)
+      - EVM_CHAINS=${EVM_CHAINS:-}
+      - BIRDEYE_API_KEY=${BIRDEYE_API_KEY:-}
+      - DISCORD_APPLICATION_ID=${DISCORD_APPLICATION_ID:-}
+      - DISCORD_API_TOKEN=${DISCORD_API_TOKEN:-}
     ports:
       - '3000:3000'
       - '50000-50100:50000-50100/udp'
@@ -46,9 +74,48 @@ services:
     networks:
       - eliza-network
 
+  # Django Admin Application
+  django:
+    build:
+      context: ./django_admin
+      dockerfile: Dockerfile
+    container_name: django-admin
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=django-insecure-dev-key-change-in-production
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/eliza
+      - POSTGRES_DB=eliza
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+    volumes:
+      - ./django_admin/eliza_admin:/app/eliza_admin:ro
+      - ./django_admin/elizaos:/app/elizaos:ro
+      - ./django_admin/eliza_tables:/app/eliza_tables:ro
+      - ./django_admin/metrics:/app/metrics:ro
+      - ./django_admin/reporting:/app/reporting:ro
+      - ./django_admin/knowledge:/app/knowledge:ro
+      - ./django_admin/manage.py:/app/manage.py:ro
+      - ./django_admin/docker-entrypoint.sh:/app/docker-entrypoint.sh:ro
+      - django-static:/app/static
+      - django-media:/app/media
+    ports:
+      - '8000:8000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh /app/docker-entrypoint.sh
+    restart: always
+    networks:
+      - eliza-network
+
 networks:
   eliza-network:
     driver: bridge
 
 volumes:
   postgres-data:
+  django-static:
+  django-media:
