@@ -15,6 +15,12 @@ class RegenAIAdminSite(AdminSite):
             'app_label': 'reporting',
             'models': [
                 {
+                    'name': '🤖 AI Agents Interface',
+                    'object_name': 'AgentsInterface',
+                    'admin_url': 'http://agents.localhost/',
+                    'view_only': True,
+                },
+                {
                     'name': 'RegenAI Dashboard',
                     'object_name': 'Dashboard',
                     'admin_url': '/regenai/',
