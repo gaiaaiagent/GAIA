@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  # Nginx Reverse Proxy (new!)
+  # Nginx Reverse Proxy with Basic Auth
   nginx:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
     container_name: nginx
     ports:
       - '80:80'  # Main web access
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - eliza
       - django

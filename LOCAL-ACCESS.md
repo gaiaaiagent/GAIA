@@ -6,10 +6,11 @@
 
 **ElizaOS WebUI - All 5 Agents:**
 - http://agents.localhost
+- **Basic Auth**: regenai / regen2025
 
 **Django Admin Dashboard:**
 - http://admin.localhost
-- Login: admin / admin123
+- **Django Login**: admin / admin123
 
 ### Direct Port Access (backup if subdomains don't work)
 
