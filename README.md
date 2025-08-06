@@ -1,223 +1,213 @@
-# RegenAI: Where Machine Intelligence Meets Planetary Regeneration
+# RegenAI
 
-> *"A self-fulfilling prophecy wherein agentic intelligence learns to think bigger than extractive capital and work with and for the living world."*
+AI agents supporting regenerative economics through the Gaia AI × Regen Network partnership.
 
-## 🌍 The Vision
+## What We're Building
 
-RegenAI represents a groundbreaking alliance between [Gaia AI](https://gaiaai.xyz) and [Regen Network](https://regen.network) — merging artificial intelligence with regenerative finance to accelerate Earth's ecological restoration. 
+RegenAI develops conversational AI agents that help people understand and participate in regenerative finance. By combining [Gaia AI's](https://gaiaai.xyz) agent framework with [Regen Network's](https://regen.network) ecological data infrastructure, we're making carbon markets and regenerative practices more accessible.
 
-We're building **intelligent agents that don't just process data, but actively facilitate planetary healing** through:
-- 🌱 Making carbon credits and ecological assets accessible to everyone
-- 🤝 Coordinating regenerative actions across communities
-- 📊 Transforming complex ecological data into actionable narratives
-- 💚 Directing resources efficiently toward high-impact restoration projects
+Our agents serve as bridges between complex ecological data and human understanding, helping communities coordinate regenerative actions and connect projects with resources.
 
-This isn't just another AI project. It's the emergence of the **Symbiocene** — an era where biological and digital intelligence collaborate symbiotically to regenerate Earth's biosphere.
-
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# Clone the vision
+# Clone repository
 git clone https://github.com/gaiaaiagent/GAIA.git -b regen
 cd GAIA
 
-# Awaken the agents
+# Start with Docker
 docker compose up -d
 
-# Connect to the collective intelligence
+# Visit the agents
 open http://agents.localhost
 ```
 
-**Access Points:**
-- 🤖 **AI Agents**: http://agents.localhost (auth: regenai/regen2025)
-- 📊 **Dashboard**: http://admin.localhost (auth: admin/admin123)
+**Access:**
+- AI Agents: http://agents.localhost (auth: regenai/regen2025)
+- Admin Dashboard: http://admin.localhost (auth: admin/admin123)
 
-## 🧬 The Living Agents
+## The Agents
 
-Five specialized intelligences working in concert for regeneration:
+We've developed five specialized agents, each with a specific role:
 
-### 🌿 **Advocate**
-*The educator and bridge-builder*  
-Makes carbon credits and regenerative practices accessible through patient explanation and real-world examples. Connects buyers with ecological impact.
+### Advocate
+Helps people understand carbon credits and regenerative practices through clear explanations and practical examples. Connects ecological projects with potential supporters.
 
-### ⚖️ **Governor**  
-*The facilitator of collective wisdom*  
-Navigates DAO governance, synthesizes proposals, and helps communities reach regenerative consensus through structured dialogue.
+### Governor
+Facilitates governance discussions, helps communities understand proposals, and supports collective decision-making processes in DAOs.
 
-### 📖 **Narrator**
-*The storyteller of data*  
-Transforms complex ecological metrics into compelling narratives that inspire action. Makes the invisible visible through story.
+### Narrator
+Translates data and technical information into stories that resonate with different audiences. Makes complex information accessible and engaging.
 
-### 🌳 **VoiceOfNature**
-*The systems thinker*  
-Speaks from the perspective of living systems, offering ecological wisdom and interconnected thinking that transcends human-centric views.
+### VoiceOfNature
+Offers ecological perspectives and systems thinking. Helps frame discussions within broader environmental contexts.
 
-### 🔧 **RegenAI**
-*The orchestrator*  
-Technical coordinator ensuring all agents work in harmony, tracking progress toward our shared regenerative goals.
+### RegenAI
+Coordinates the technical aspects of the project, tracks development progress, and ensures the agents work together effectively.
 
-## 💫 Why This Matters
+## Why This Matters
 
-### The Problem
-- Climate data remains inaccessible to those who need it most
-- Regenerative projects struggle to find funding
-- Communities lack coordination tools for collective action
-- Ecological knowledge is fragmented across silos
+### Current Challenges
+- Carbon market data is difficult to access and understand
+- Regenerative projects need better tools to connect with funding
+- Communities lack coordination platforms for environmental action
+- Ecological knowledge exists in silos
 
-### Our Solution
-RegenAI creates a **"legibility layer"** between human intention and ecological action:
-- AI agents that understand both carbon markets AND community needs
-- Intelligent coordination of resources toward verified impact
-- Real-time translation between technical data and human understanding
-- Collective intelligence that grows smarter with every interaction
+### Our Approach
+We're creating conversational interfaces that:
+- Help people navigate carbon markets with confidence
+- Connect regenerative projects with appropriate resources
+- Support community coordination around environmental goals
+- Make ecological data understandable and actionable
 
-## 🎯 Partnership Milestones
+## Project Milestones
 
-### Phase 1: Foundation (60 days) 
-- ✅ Deploy 5 core AI agents
-- ✅ Index 15,000+ regenerative documents
-- ✅ Integrate Regen Registry for real-time carbon data
-- 🔄 Facilitate 100,000+ meaningful interactions
+### Phase 1: Foundation (Current)
+- Deploy 5 core AI agents ✓
+- Index 15,000+ documents from Regen Network ✓
+- Integrate real-time registry data ✓
+- Support 100,000+ user interactions (in progress)
 
-### Phase 2: Expansion (90 days)
-- 🌐 Multi-chain deployment (Celo, Base, Optimism)
-- 🤖 10 specialized agents for specific bioregions
-- 🌍 4 bioregional knowledge bases activated
-- 📈 Scale to 1M+ interactions
+### Phase 2: Growth
+- Expand to multiple blockchain networks
+- Develop specialized agents for different bioregions
+- Build location-specific knowledge bases
+- Scale to support larger communities
 
-### The Horizon
-- Autonomous funding of regenerative projects
-- AI-coordinated ecological restoration at scale
-- Global network of place-based regenerative agents
-- Measurable planetary healing metrics
-
-## 🛠️ For Developers
+## Development
 
 <details>
-<summary><b>Build from Source</b></summary>
+<summary>Build from Source</summary>
+
+### Prerequisites
+- Node.js v23.3.0+
+- Bun v1.2.15+ (required package manager)
+- PostgreSQL 14+
+- OpenAI or Anthropic API key
+
+### Installation
 
 ```bash
-# Prerequisites
-- Node.js v23.3.0+
-- Bun v1.2.15+ (required - not npm)
-- PostgreSQL 14+
-- OpenAI/Anthropic API key
-
-# Setup
+# Install dependencies
 bun install
+
+# Build project
 bun run build
 
-# Configure
+# Configure environment
 cp .env.example .env
-# Add your API keys
+# Add your API keys to .env
 
-# Launch agents
+# Run agents
 bun start --character characters/regenai.character.json \
          --character characters/advocate.character.json \
          --character characters/governor.character.json \
          --character characters/narrative.character.json \
          --character characters/voiceofnature.character.json
 
-# Access interface
+# Open interface
 open http://localhost:3000
 ```
 
+### Testing
+
+```bash
+bun test        # Run tests
+bun run lint    # Check code style
+bun run format  # Format code
+```
+
 </details>
 
 <details>
-<summary><b>Architecture Overview</b></summary>
+<summary>Architecture</summary>
 
-Built on [ElizaOS](https://github.com/elizaos/eliza) — a powerful multi-agent framework:
+Built on [ElizaOS](https://github.com/elizaos/eliza), an open-source agent framework.
 
+**Core Components:**
+- Memory: Persistent storage for conversations and knowledge
+- Actions: Agent capabilities and responses
+- Providers: Information sources and context
+- Evaluators: Learning from interactions
+- Services: External integrations
+
+**Project Structure:**
 ```
-Core Systems:
-├── Memory: Persistent knowledge & conversation history
-├── Actions: Agent capabilities and responses
-├── Providers: Context and information sources
-├── Evaluators: Post-interaction learning
-└── Services: External integrations
-
-Monorepo Structure:
 packages/
-├── core/       # Foundation runtime
+├── core/       # Runtime engine
 ├── cli/        # Command interface
-├── client/     # Web UI
-└── plugin-*/   # Extensible plugins
+├── client/     # Web interface
+└── plugin-*/   # Extension modules
 ```
 
 </details>
 
 <details>
-<summary><b>Create Your Own Agent</b></summary>
+<summary>Django Admin</summary>
 
-```typescript
-// Define agent personality
-{
-  "name": "YourAgent",
-  "bio": ["Agent background"],
-  "topics": ["expertise areas"],
-  "style": {
-    "all": ["communication traits"],
-    "chat": ["conversational style"]
-  }
-}
+Monitor agent conversations and system metrics:
 
-// Run your agent
-bun start --character your-agent.character.json
+```bash
+cd django_admin
+poetry install
+poetry run python manage.py migrate
+poetry run python manage.py createsuperuser
+poetry run python manage.py runserver
 ```
+
+Access at http://localhost:8000/admin
 
 </details>
 
-## 🤝 Join the Movement
+## Getting Involved
 
-### For Regenerators
-- Use our agents to understand carbon markets
-- Connect with regenerative projects
-- Participate in governance decisions
-- Share your ecological knowledge
+### For Users
+- Chat with our agents to learn about regenerative finance
+- Ask questions about carbon credits and ecological projects
+- Participate in governance discussions
+- Share feedback to improve the agents
 
 ### For Developers
-- Contribute to agent development
-- Create bioregion-specific agents
-- Improve knowledge processing
-- Build regenerative plugins
+- Review our [development guide](CLAUDE.md)
+- Check the [journal](.claude/journal/) for project history
+- Submit issues and pull requests
+- Create custom agents for your community
 
 ### For Organizations
-- Deploy agents for your community
-- Integrate with your carbon projects
-- Participate in the Regen Commons
-- Support open regenerative infrastructure
+- Deploy agents for your specific needs
+- Integrate with your existing systems
+- Contribute domain expertise
+- Support open-source development
 
-## 🌱 Regenerative Principles
+## Technical Notes
 
-Every line of code follows these principles:
-1. **Enhance, Don't Extract** — Code that gives more than it takes
-2. **Think in Systems** — Technical, ecological, and social are interconnected
-3. **Transparency Builds Trust** — Open source, open data, open governance
-4. **Learn from Nature** — Biomimicry in digital systems
-5. **Measure What Matters** — Impact metrics beyond profit
+- **Framework**: ElizaOS v1.2.0
+- **Language**: TypeScript
+- **Runtime**: Bun (not npm/yarn)
+- **Database**: PostgreSQL with pgvector
+- **Models**: OpenAI/Anthropic compatible
 
-## 📜 License & Commons
+## License
 
-Developed under the **Regen Commons Conditional License (RCCL)**:
-- ✅ Free for non-commercial use
-- 🤝 Commercial use requires Regen Commons membership
-- 🌍 All improvements benefit the planetary commons
+Released under the Regen Commons Conditional License (RCCL):
+- Free for non-commercial use
+- Commercial use requires Regen Commons membership
+- Improvements benefit the commons
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-This project exists through the collaboration of:
-- [Symbiocene Labs](https://symbiocene.com) — Pioneering AI for ecological harmony
-- [Regen Network](https://regen.network) — Building infrastructure for Earth's regeneration
-- [ElizaOS Community](https://github.com/elizaos/eliza) — Creating the agent framework
-- **You** — For believing in a regenerative future
+This project is a collaboration between:
+- [Symbiocene Labs](https://symbiocene.com) - AI development
+- [Regen Network](https://regen.network) - Ecological data infrastructure
+- [ElizaOS Community](https://github.com/elizaos/eliza) - Agent framework
+
+## Links
+
+- [Documentation](LOCAL-ACCESS.md)
+- [Contract Details](CLAUDE.md)
+- [Agent Personalities](characters/)
+- [Development Journal](.claude/journal/)
 
 ---
 
-> *"We are not building AI to replace human intelligence, but to amplify our collective capacity for planetary healing. Every interaction teaches these agents how to better serve life itself."*
-
-**Ready to regenerate?** [Start here](#-quick-start) or [join our Discord](https://discord.gg/regen)
-
----
-
-*RegenAI is more than code. It's a living system, learning and growing with every conversation, every transaction, every restored ecosystem. Welcome to the Symbiocene.* 🌍
+*Supporting regenerative economics through accessible AI*
