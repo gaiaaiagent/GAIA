@@ -21,13 +21,9 @@ from .models import (
     Log, Task, Participant, Relationship, Component, Cache, ServerAgent,
     World, Channel, ChannelParticipant, Embedding
 )
-from .admin_security import SecureModelAdmin, ReadOnlyAdmin, AuditLogAdmin
-
-# Register the audit log viewer
-admin.site.register(LogEntry, AuditLogAdmin)
 
 @admin.register(Agent)
-class AgentAdmin(SecureModelAdmin):
+class AgentAdmin(admin.ModelAdmin):
     list_display = ['name', 'username', 'enabled', 'plugin_count', 'created_at']
     list_filter = ['enabled', 'created_at']
     search_fields = ['name', 'username', 'system']
@@ -60,7 +56,7 @@ class AgentAdmin(SecureModelAdmin):
     formatted_settings.short_description = 'Settings (Formatted)'
 
 @admin.register(Memory)
-class MemoryAdmin(SecureModelAdmin):
+class MemoryAdmin(admin.ModelAdmin):
     list_display = ['type', 'content_preview', 'agent_display', 'unique', 'created_at']
     list_filter = ['type', 'unique', 'created_at']
     search_fields = ['content', 'type']
@@ -93,7 +89,7 @@ class MemoryAdmin(SecureModelAdmin):
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
 @admin.register(Room)
-class RoomAdmin(SecureModelAdmin):
+class RoomAdmin(admin.ModelAdmin):
     list_display = ['name', 'type', 'source', 'agent_display', 'created_at']
     list_filter = ['type', 'source', 'created_at']
     search_fields = ['name', 'type', 'source']
@@ -111,7 +107,7 @@ class RoomAdmin(SecureModelAdmin):
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
 @admin.register(MessageServer)
-class MessageServerAdmin(SecureModelAdmin):
+class MessageServerAdmin(admin.ModelAdmin):
     list_display = ['name', 'source_type', 'source_id', 'created_at']
     list_filter = ['source_type', 'created_at']
     search_fields = ['name', 'source_type', 'source_id']
@@ -125,7 +121,7 @@ class MessageServerAdmin(SecureModelAdmin):
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
 @admin.register(Entity)
-class EntityAdmin(SecureModelAdmin):
+class EntityAdmin(admin.ModelAdmin):
     list_display = ['names_display', 'agent_display', 'created_at']
     list_filter = ['created_at']
     search_fields = ['names']
@@ -147,7 +143,7 @@ class EntityAdmin(SecureModelAdmin):
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
 @admin.register(CentralMessage)
-class CentralMessageAdmin(SecureModelAdmin):
+class CentralMessageAdmin(admin.ModelAdmin):
     list_display = ['id_display', 'content_preview', 'author_id', 'channel_id', 'created_at']
     list_filter = ['source_type', 'created_at']
     search_fields = ['content', 'author_id', 'channel_id']
@@ -177,7 +173,7 @@ class CentralMessageAdmin(SecureModelAdmin):
     formatted_metadata.short_description = 'Metadata (Formatted)'
 
 @admin.register(Log)
-class LogAdmin(SecureModelAdmin):
+class LogAdmin(admin.ModelAdmin):
     list_display = ['type', 'body_preview', 'entity_display', 'room_display', 'created_at']
     list_filter = ['type', 'created_at']
     search_fields = ['type', 'body']
@@ -205,7 +201,7 @@ class LogAdmin(SecureModelAdmin):
     formatted_body.short_description = 'Body (Formatted)'
 
 @admin.register(Task)
-class TaskAdmin(SecureModelAdmin):
+class TaskAdmin(admin.ModelAdmin):
     list_display = ['name', 'description_preview', 'agent_display', 'created_at']
     list_filter = ['created_at']
     search_fields = ['name', 'description']
@@ -237,27 +233,27 @@ class TaskAdmin(SecureModelAdmin):
 
 # Register missing models
 @admin.register(World)
-class WorldAdmin(SecureModelAdmin):
+class WorldAdmin(admin.ModelAdmin):
     list_display = ['name', 'server_id', 'agent_id', 'created_at']
     list_filter = ['created_at']
     search_fields = ['name', 'server_id']
     readonly_fields = ['id', 'created_at']
 
 @admin.register(Channel) 
-class ChannelAdmin(SecureModelAdmin):
+class ChannelAdmin(admin.ModelAdmin):
     list_display = ['name', 'type', 'source_type', 'server_id', 'created_at']
     list_filter = ['type', 'source_type', 'created_at']
     search_fields = ['name', 'id', 'topic']
     readonly_fields = ['created_at', 'updated_at']
 
 @admin.register(ChannelParticipant)
-class ChannelParticipantAdmin(SecureModelAdmin):
+class ChannelParticipantAdmin(admin.ModelAdmin):
     list_display = ['channel_id', 'user_id', 'created_at']
     list_filter = ['created_at']
     search_fields = ['channel_id', 'user_id']
 
 @admin.register(Embedding)
-class EmbeddingAdmin(SecureModelAdmin):
+class EmbeddingAdmin(admin.ModelAdmin):
     list_display = ['id', 'memory_id', 'created_at', 'has_embeddings']
     list_filter = ['created_at']
     search_fields = ['memory_id']
@@ -277,31 +273,31 @@ class EmbeddingAdmin(SecureModelAdmin):
 
 # Register the remaining models without custom admin
 @admin.register(Participant)
-class ParticipantAdmin(SecureModelAdmin):
+class ParticipantAdmin(admin.ModelAdmin):
     list_display = ['id', 'entity_id', 'room_id', 'agent_id', 'created_at']
     list_filter = ['created_at']
     readonly_fields = ['id', 'created_at']
 
 @admin.register(Relationship)
-class RelationshipAdmin(SecureModelAdmin):
+class RelationshipAdmin(admin.ModelAdmin):
     list_display = ['id', 'source_entity_id', 'target_entity_id', 'agent_id', 'created_at']
     list_filter = ['created_at']
     readonly_fields = ['id', 'created_at']
 
 @admin.register(Component)
-class ComponentAdmin(SecureModelAdmin):
+class ComponentAdmin(admin.ModelAdmin):
     list_display = ['type', 'entity_id', 'agent_id', 'room_id', 'created_at']
     list_filter = ['type', 'created_at']
     readonly_fields = ['id', 'created_at']
 
 @admin.register(Cache)
-class CacheAdmin(SecureModelAdmin):
+class CacheAdmin(admin.ModelAdmin):
     list_display = ['key', 'agent_id', 'created_at', 'expires_at']
     list_filter = ['created_at', 'expires_at']
     search_fields = ['key']
     readonly_fields = ['created_at']
 
 @admin.register(ServerAgent)
-class ServerAgentAdmin(SecureModelAdmin):
+class ServerAgentAdmin(admin.ModelAdmin):
     list_display = ['server_id', 'agent_id']
     readonly_fields = ['server_id', 'agent_id']
