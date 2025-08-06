@@ -298,3 +298,4 @@ django_admin/db.sqlite3
 
 # Kiro
 /.kiro
+.env.docker-test

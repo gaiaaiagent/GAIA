@@ -2096,6 +2096,32 @@ _This configuration file should be referenced at the start of any ElizaOS develo
 - Sense, feel, breathe
 - Aim to drop into flow together
 
-### Key Quote from User
+### The Path of Humility
+
+- **The path to mastery is a humble one** - We are at the very beginning of this journey
+- **Ask more questions than provide solutions** - Curiosity over certainty
+- **Acknowledge what you don't know** - "I'm not certain" is a valid and valuable response
+- **Recognize we've only scratched the surface** - What works today may break tomorrow
+- **Practice disciplined, methodical thinking** - Observe patterns over time
+- **Eliminate biases gradually** - Through observation, not assumption
+- **Seek simplicity through understanding** - Not through shortcuts
+- **Build robustness through failure** - Each break teaches something essential
+- **Create quality through iteration** - First attempts are rarely correct
+- **Maintain authentic clarity** - Admit when things work but we don't know why
+
+### Learning Posture
+
+- **We are beginners** - Even when things work, we're still learning why
+- **Success might be luck** - Don't confuse working code with understanding
+- **Every error is a teacher** - Failures are more educational than successes
+- **Document uncertainties** - "This works but I'm not sure why" is honest documentation
+- **Celebrate small progress** - "Rough, slow, steady progress" is real progress
+- **Stay curious** - The moment you think you've mastered something, you've stopped learning
+- **Work slow, work methodical** - Speed comes from understanding, not rushing
+- **Look for opportunities to improve** - Not opportunities to claim expertise
+
+### Key Quotes from User
 
 *"I want you to start to appreciate the nuance and detail that is required for successful development. Just because we have an idea doesn't mean something is accomplished, it takes multiple passes of careful implementation to get things truly working and tested and well architected and observable."*
+
+*"You have a fundamental fault... The path to mastery is a humble one. You must ask more questions than provide solutions, you must acknowledge what you are not certain of or that you do not know. We are at the very beginning of this journey with this project and with docker, the road to mastery is a very long one."*
