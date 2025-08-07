@@ -10,6 +10,19 @@ Our agents serve as bridges between complex ecological data and human understand
 
 ## Quick Start
 
+### 🌐 Live Production Access
+
+**Try RegenAI now - no installation required!**
+
+- **AI Agents**: https://agents.regen.gaiaai.xyz
+  - Basic Auth: `regenai` / `regen2025`
+  - Chat with 5 specialized AI agents about regenerative finance
+  
+- **Admin Dashboard**: https://admin.regen.gaiaai.xyz/admin/
+  - View interaction metrics and system status
+
+### Local Development
+
 ```bash
 # Clone repository
 git clone https://github.com/gaiaaiagent/GAIA.git -b regen
@@ -18,13 +31,9 @@ cd GAIA
 # Start with Docker
 docker compose up -d
 
-# Visit the agents
+# Visit locally
 open http://agents.localhost
 ```
-
-**Access:**
-- AI Agents: http://agents.localhost (auth: regenai/regen2025)
-- Admin Dashboard: http://admin.localhost (auth: admin/admin123)
 
 ## The Agents
 
