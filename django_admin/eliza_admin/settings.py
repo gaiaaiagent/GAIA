@@ -122,17 +122,31 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 LOGIN_URL = '/admin/login/'
 LOGIN_REDIRECT_URL = '/admin/'
 
-# Session cookie settings for subdomain sharing
-SESSION_COOKIE_DOMAIN = '.localhost'  # Allow cookies across *.localhost
+# Session cookie settings
+SESSION_COOKIE_DOMAIN = os.getenv('SESSION_COOKIE_DOMAIN', None)  # Set via env var if needed
 SESSION_COOKIE_NAME = 'regenai_sessionid'
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 86400  # 24 hours
 
-# CSRF cookie settings for subdomain sharing  
-CSRF_COOKIE_DOMAIN = '.localhost'
+# CSRF cookie settings  
+CSRF_COOKIE_DOMAIN = os.getenv('CSRF_COOKIE_DOMAIN', None)  # Set via env var if needed
 CSRF_COOKIE_NAME = 'regenai_csrftoken'
 CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Trust proxy headers from nginx
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# CSRF trusted origins for local development
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost',
+    'http://admin.localhost',
+    'http://agents.localhost',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+]
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
