@@ -5,7 +5,7 @@ Development settings for ElizaOS admin interface.
 from .base import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 # Allowed hosts - be permissive in development
 ALLOWED_HOSTS = ['*']
@@ -35,29 +35,41 @@ else:
 # Session cookie settings for development
 SESSION_COOKIE_DOMAIN = None  # Let Django handle it
 SESSION_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SECURE = False  # HTTP is fine for local dev
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
 
 # CSRF cookie settings for development
 CSRF_COOKIE_DOMAIN = None  # Let Django handle it
 CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SECURE = False  # HTTP is fine for local dev
+CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
 CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript access in dev
 
-# CSRF trusted origins for local development
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost',
-    'http://localhost:8000',
-    'http://localhost:3000',
-    'http://127.0.0.1:8000',
-    'http://admin.localhost',
-    'http://agents.localhost',
-    'http://0.0.0.0:8000',
-]
+# CSRF trusted origins - parse from environment or use defaults
+csrf_origins_env = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+if csrf_origins_env:
+    # Parse comma-separated origins from environment
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins_env.split(',') if origin.strip()]
+else:
+    # Default origins for local development
+    CSRF_TRUSTED_ORIGINS = [
+        'http://localhost',
+        'http://localhost:8000',
+        'http://localhost:3000',
+        'http://127.0.0.1:8000',
+        'http://admin.localhost',
+        'http://agents.localhost',
+        'http://0.0.0.0:8000',
+    ]
 
 # Trust proxy headers from nginx in Docker
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
-SECURE_PROXY_SSL_HEADER = None  # Don't check in development
+# Parse SECURE_PROXY_SSL_HEADER from environment
+proxy_header = os.environ.get('SECURE_PROXY_SSL_HEADER', '')
+if proxy_header and ',' in proxy_header:
+    header_parts = proxy_header.split(',', 1)
+    SECURE_PROXY_SSL_HEADER = (header_parts[0].strip(), header_parts[1].strip())
+else:
+    SECURE_PROXY_SSL_HEADER = None  # Don't check in development
 
 # Django Debug Toolbar (optional - for development)
 if DEBUG:
