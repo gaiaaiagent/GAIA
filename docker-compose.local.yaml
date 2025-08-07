@@ -3,7 +3,9 @@ version: '3.8'
 services:
   # Nginx Reverse Proxy with Basic Auth
   nginx:
-    image: ghcr.io/gaiaaiagent/gaia/nginx:regen-latest
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
     container_name: nginx
     ports:
       - '80:80'  # Main web access
@@ -12,11 +14,12 @@ services:
       - django
     restart: always
     networks:
-      - eliza-network
+      - regenai-network
 
   # PostgreSQL Database with pgvector
   postgres:
     image: ankane/pgvector:latest
+    container_name: postgres
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -25,7 +28,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data:rw
     ports:
-      - '127.0.0.1:5433:5432'  # Using 5433 to avoid conflict with local postgres
+      - '127.0.0.1:5433:5432'  # Using 5433 to avoid conflict
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
       interval: 5s
@@ -33,11 +36,11 @@ services:
       retries: 5
     restart: always
     networks:
-      - eliza-network
+      - regenai-network
 
-  # RegenAI Application - Using GitHub Container Registry
+  # RegenAI Agents Application
   regenai:
-    image: ghcr.io/gaiaaiagent/gaia/regenai:latest
+    image: gaia-regenai:latest  # Use local image
     container_name: regenai
     command: sh -c "cd packages/cli && bun dist/index.js start --character /app/characters/regenai.character.json --character /app/characters/advocate.character.json --character /app/characters/governor.character.json --character /app/characters/narrative.character.json --character /app/characters/voiceofnature.character.json"
     volumes:
@@ -53,9 +56,9 @@ services:
       # Server configuration
       - SERVER_PORT=3000
       - SERVER_HOST=0.0.0.0
-      # Database connection to container postgres
+      # Database connection
       - POSTGRES_URL=postgresql://postgres:postgres@postgres:5432/eliza
-      # Optional services (can be empty)
+      # Optional services
       - EVM_CHAINS=${EVM_CHAINS:-}
       - BIRDEYE_API_KEY=${BIRDEYE_API_KEY:-}
       - DISCORD_APPLICATION_ID=${DISCORD_APPLICATION_ID:-}
@@ -68,16 +71,18 @@ services:
         condition: service_healthy
     restart: always
     networks:
-      - eliza-network
+      - regenai-network
 
-  # Django Admin Application - Using GitHub Container Registry
+  # Django Admin Application
   django:
-    image: ghcr.io/gaiaaiagent/gaia/django-admin:regen-latest
-    container_name: django-admin
+    build:
+      context: ./django_admin
+      dockerfile: Dockerfile
+    container_name: django
     environment:
-      - DEBUG=False  # Set to False for production
-      - DJANGO_ENV=production
-      - SECRET_KEY=${DJANGO_SECRET_KEY:-django-insecure-change-this-in-production}
+      - DEBUG=${DEBUG:-False}
+      - DJANGO_ENV=${DJANGO_ENV:-production}
+      - SECRET_KEY=${DJANGO_SECRET_KEY:-django-insecure-change-in-production}
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/eliza
       - POSTGRES_DB=eliza
       - POSTGRES_USER=postgres
@@ -87,8 +92,8 @@ services:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1,admin.localhost,agents.localhost}
       - SESSION_COOKIE_DOMAIN=${SESSION_COOKIE_DOMAIN:-}
       - CSRF_COOKIE_DOMAIN=${CSRF_COOKIE_DOMAIN:-}
-      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-http://localhost,http://admin.localhost,http://agents.localhost}
     volumes:
+      - ./django_admin:/app:ro
       - django-static:/app/staticfiles
       - django-media:/app/media
     ports:
@@ -98,10 +103,10 @@ services:
         condition: service_healthy
     restart: always
     networks:
-      - eliza-network
+      - regenai-network
 
 networks:
-  eliza-network:
+  regenai-network:
     driver: bridge
 
 volumes:
