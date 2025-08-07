@@ -25,7 +25,7 @@ jobs:
       matrix:
         include:
           - dockerfile: ./Dockerfile
-            image: ghcr.io/gaiaaiagent/gaia/eliza
+            image: ghcr.io/gaiaaiagent/gaia/regen
             context: .
           - dockerfile: ./django_admin/Dockerfile
             image: ghcr.io/gaiaaiagent/gaia/django-admin

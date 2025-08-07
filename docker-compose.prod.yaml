@@ -8,7 +8,7 @@ services:
     ports:
       - '80:80'  # Main web access
     depends_on:
-      - eliza
+      - regen
       - django
     restart: always
     networks:
@@ -35,10 +35,10 @@ services:
     networks:
       - eliza-network
 
-  # ElizaOS Application - Using GitHub Container Registry
-  eliza:
-    image: ghcr.io/gaiaaiagent/gaia/eliza:regen-latest
-    container_name: eliza
+  # RegenAI Application - Using GitHub Container Registry
+  regen:
+    image: ghcr.io/gaiaaiagent/gaia/regen:working
+    container_name: regen
     command: sh -c "cd packages/cli && bun dist/index.js start --character /app/characters/regenai.character.json --character /app/characters/advocate.character.json --character /app/characters/governor.character.json --character /app/characters/narrative.character.json --character /app/characters/voiceofnature.character.json"
     volumes:
       - ./characters:/app/characters:ro
