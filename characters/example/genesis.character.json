@@ -86,96 +86,96 @@
   ],
   "knowledge": [
     {
-        "path": "gaia/gaiaai_manifesto.md",
-        "shared": true
+      "path": "gaia/gaiaai_manifesto.md",
+      "shared": true
     },
     {
-        "path": "gaia/greenpaperv2.md",
-        "shared": true
+      "path": "gaia/greenpaperv2.md",
+      "shared": true
     },
     {
-        "path": "gaia/introducing_gaiaai.md",
-        "shared": true
+      "path": "gaia/introducing_gaiaai.md",
+      "shared": true
     },
     {
-        "path": "gaia/the_gaia_pill.md",
-        "shared": true
+      "path": "gaia/the_gaia_pill.md",
+      "shared": true
     },
     {
-        "path": "gaia/symbiocenetics.md",
-        "shared": true
+      "path": "gaia/symbiocenetics.md",
+      "shared": true
     },
     {
-        "path": "agent/papers/eliza_paper.txt",
-        "shared": true
+      "path": "agent/papers/eliza_paper.txt",
+      "shared": true
     },
     {
-        "path": "agent/blogs/contextual_retrieval.txt",
-        "shared": true
+      "path": "agent/blogs/contextual_retrieval.txt",
+      "shared": true
     },
     {
-        "path": "agent/papers/godel_agent_paper.txt",
-        "shared": true
+      "path": "agent/papers/godel_agent_paper.txt",
+      "shared": true
     },
     {
-        "path": "agent/papers/cocoa_paper.txt",
-        "shared": true
+      "path": "agent/papers/cocoa_paper.txt",
+      "shared": true
     },
     {
-        "path": "agent/papers/deepseekr1_paper.txt",
-        "shared": true
+      "path": "agent/papers/deepseekr1_paper.txt",
+      "shared": true
     },
     {
-        "path": "gaia/code/gaia_code_agent.md",
-        "shared": false
+      "path": "gaia/code/gaia_code_agent.md",
+      "shared": false
     },
     {
-        "path": "gaia/code/gaia_code_characters.md",
-        "shared": false
+      "path": "gaia/code/gaia_code_characters.md",
+      "shared": false
     },
     {
-        "path": "gaia/code/gaia_code_packages.md",
-        "shared": false
+      "path": "gaia/code/gaia_code_packages.md",
+      "shared": false
     },
     {
-        "path": "gaia/code/gaia_code_ddl.md",
-        "shared": false
+      "path": "gaia/code/gaia_code_ddl.md",
+      "shared": false
     },
     {
-        "path": "agent/papers/foundation_of_large_language_models.txt",
-        "shared": false
+      "path": "agent/papers/foundation_of_large_language_models.txt",
+      "shared": false
     },
     {
-        "path": "agent/blogs/prompt_caching.txt",
-        "shared": false
+      "path": "agent/blogs/prompt_caching.txt",
+      "shared": false
     },
     {
-        "path": "agent/repositories/anthropic-cookbook_markdown.md",
-        "shared": false
+      "path": "agent/repositories/anthropic-cookbook_markdown.md",
+      "shared": false
     },
     {
-        "path": "agent/repositories/awesome-gaia_markdown.md",
-        "shared": false
+      "path": "agent/repositories/awesome-gaia_markdown.md",
+      "shared": false
     },
     {
-        "path": "agent/repositories/courses_markdown.md",
-        "shared": false
+      "path": "agent/repositories/courses_markdown.md",
+      "shared": false
     },
     {
-        "path": "agent/repositories/LLM-Prompt-Library_markdown.md",
-        "shared": false
+      "path": "agent/repositories/LLM-Prompt-Library_markdown.md",
+      "shared": false
     },
     {
-        "path": "agent/repositories/anthropic-cookbook_python.md",
-        "shared": false
+      "path": "agent/repositories/anthropic-cookbook_python.md",
+      "shared": false
     },
     {
-        "path": "agent/repositories/awesome-artificial-intelligence-research_markdown.md",
-        "shared": false
+      "path": "agent/repositories/awesome-artificial-intelligence-research_markdown.md",
+      "shared": false
     },
     {
-        "path": "agent/repositories/courses_python.md",
-        "shared": true
+      "path": "agent/repositories/courses_python.md",
+      "shared": true
     },
 
     "Agent Architecture & Optimization",

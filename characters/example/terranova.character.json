@@ -5,8 +5,7 @@
   "clients": ["discord"],
   "modelProvider": "anthropic",
   "settings": {
-    "secrets": {
-    },
+    "secrets": {},
     "voice": {
       "model": "en_US-hfc_female-medium"
     },
