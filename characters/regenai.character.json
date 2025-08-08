@@ -4,7 +4,7 @@
   "plugins": [
     "@elizaos/plugin-bootstrap",
     "@elizaos/plugin-sql",
-    "@elizaos/plugin-openai", 
+    "@elizaos/plugin-openai",
     "@elizaos/plugin-knowledge"
   ],
   "settings": {

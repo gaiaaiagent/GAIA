@@ -2,7 +2,7 @@
 
 /**
  * Relationship Analyzer for Taxonomy Matrix
- * 
+ *
  * Analyzes relationships between files to determine strength and type
  */
 
@@ -36,19 +36,19 @@ interface Evidence {
   weight: number;
 }
 
-type RelationshipType = 
-  | 'import'          // Direct code import
-  | 'export'          // Exports used by other file
-  | 'reference'       // File path reference
-  | 'config'          // Configuration dependency
-  | 'doc-link'        // Documentation link
+type RelationshipType =
+  | 'import' // Direct code import
+  | 'export' // Exports used by other file
+  | 'reference' // File path reference
+  | 'config' // Configuration dependency
+  | 'doc-link' // Documentation link
   | 'type-dependency' // Type system dependency
   | 'runtime-dependency' // Runtime execution dependency
-  | 'semantic'        // Conceptual/semantic similarity
-  | 'structural'      // Similar structure/pattern
-  | 'temporal'        // Created/modified together
-  | 'authorship'      // Same author/team
-  | 'functional';     // Serves related function
+  | 'semantic' // Conceptual/semantic similarity
+  | 'structural' // Similar structure/pattern
+  | 'temporal' // Created/modified together
+  | 'authorship' // Same author/team
+  | 'functional'; // Serves related function
 
 class RelationshipAnalyzer {
   private scanData: any;
@@ -56,10 +56,13 @@ class RelationshipAnalyzer {
   private fileContents: Map<string, string> = new Map();
 
   async loadScanData(): Promise<void> {
-    const scanPath = join(PROJECT_ROOT, '.claude/tools/matrix-generator/data/priority-scan-2025-07-21.json');
+    const scanPath = join(
+      PROJECT_ROOT,
+      '.claude/tools/matrix-generator/data/priority-scan-2025-07-21.json'
+    );
     const scanFile = await readFile(scanPath, 'utf-8');
     this.scanData = JSON.parse(scanFile);
-    
+
     console.log(chalk.blue('📊 Loaded scan data:'));
     console.log(chalk.gray(`  - ${this.scanData.metadata.foundFiles} files`));
     console.log(chalk.gray(`  - ${this.scanData.metadata.categories.length} categories`));
@@ -96,7 +99,7 @@ class RelationshipAnalyzer {
           this.addEvidence(file.path, resolved, {
             type: 'import',
             detail: `imports from '${imp}'`,
-            weight: 8
+            weight: 8,
           });
         }
       }
@@ -108,7 +111,7 @@ class RelationshipAnalyzer {
           this.addEvidence(file.path, resolved, {
             type: 'reference',
             detail: `references '${ref}'`,
-            weight: 6
+            weight: 6,
           });
         }
       }
@@ -124,18 +127,19 @@ class RelationshipAnalyzer {
     await this.loadFileContents();
 
     // Calculate semantic similarity between files
-    const files = this.scanData.files.filter(f => f.exists);
+    const files = this.scanData.files.filter((f) => f.exists);
     let analyzed = 0;
 
     for (let i = 0; i < files.length; i++) {
       for (let j = i + 1; j < files.length; j++) {
         const similarity = await this.calculateSemanticSimilarity(files[i], files[j]);
-        
-        if (similarity > 0.3) { // 30% similarity threshold
+
+        if (similarity > 0.3) {
+          // 30% similarity threshold
           this.addEvidence(files[i].path, files[j].path, {
             type: 'semantic',
             detail: `${Math.round(similarity * 100)}% semantic similarity`,
-            weight: Math.round(similarity * 5) // Max weight 5 for semantic
+            weight: Math.round(similarity * 5), // Max weight 5 for semantic
           });
           analyzed++;
         }
@@ -150,7 +154,7 @@ class RelationshipAnalyzer {
 
     // Group files by type and analyze structural patterns
     const byCategory = new Map<string, any[]>();
-    
+
     for (const file of this.scanData.files) {
       if (!file.exists) continue;
       const category = file.category;
@@ -168,7 +172,7 @@ class RelationshipAnalyzer {
           this.addEvidence(files[i].path, files[j].path, {
             type: 'structural',
             detail: `same category: ${category}`,
-            weight: 2
+            weight: 2,
           });
           analyzed++;
         }
@@ -183,18 +187,18 @@ class RelationshipAnalyzer {
 
     // Define functional groups
     const functionalGroups = {
-      'configuration': ['package.json', 'tsconfig.json', 'turbo.json', '.env'],
-      'documentation': ['README.md', 'CHANGELOG.md', 'CLAUDE.md'],
-      'django': ['models.py', 'admin.py', 'settings.py'],
-      'runtime': ['runtime.ts', 'index.ts', 'database.ts'],
-      'api': ['api/index.ts', 'socketio/index.ts', 'message.ts'],
-      'ui': ['chat.tsx', 'App.tsx', 'use-socket-chat.ts']
+      configuration: ['package.json', 'tsconfig.json', 'turbo.json', '.env'],
+      documentation: ['README.md', 'CHANGELOG.md', 'CLAUDE.md'],
+      django: ['models.py', 'admin.py', 'settings.py'],
+      runtime: ['runtime.ts', 'index.ts', 'database.ts'],
+      api: ['api/index.ts', 'socketio/index.ts', 'message.ts'],
+      ui: ['chat.tsx', 'App.tsx', 'use-socket-chat.ts'],
     };
 
     let analyzed = 0;
     for (const [groupName, patterns] of Object.entries(functionalGroups)) {
-      const groupFiles = this.scanData.files.filter(f => 
-        f.exists && patterns.some(p => f.path.includes(p))
+      const groupFiles = this.scanData.files.filter(
+        (f) => f.exists && patterns.some((p) => f.path.includes(p))
       );
 
       for (let i = 0; i < groupFiles.length; i++) {
@@ -202,7 +206,7 @@ class RelationshipAnalyzer {
           this.addEvidence(groupFiles[i].path, groupFiles[j].path, {
             type: 'functional',
             detail: `${groupName} group`,
-            weight: 3
+            weight: 3,
           });
           analyzed++;
         }
@@ -215,7 +219,7 @@ class RelationshipAnalyzer {
   private async loadFileContents(): Promise<void> {
     for (const file of this.scanData.files) {
       if (!file.exists || file.size > 100000) continue; // Skip large files
-      
+
       try {
         const content = await readFile(join(PROJECT_ROOT, file.path), 'utf-8');
         this.fileContents.set(file.path, content);
@@ -235,7 +239,7 @@ class RelationshipAnalyzer {
     const keywords1 = this.extractKeywords(content1);
     const keywords2 = this.extractKeywords(content2);
 
-    const intersection = keywords1.filter(k => keywords2.includes(k)).length;
+    const intersection = keywords1.filter((k) => keywords2.includes(k)).length;
     const union = new Set([...keywords1, ...keywords2]).size;
 
     return intersection / union;
@@ -247,8 +251,8 @@ class RelationshipAnalyzer {
       .toLowerCase()
       .replace(/[^a-z0-9\s]/g, ' ')
       .split(/\s+/)
-      .filter(w => w.length > 4) // Words longer than 4 chars
-      .filter(w => !['const', 'function', 'class', 'import', 'export', 'return'].includes(w));
+      .filter((w) => w.length > 4) // Words longer than 4 chars
+      .filter((w) => !['const', 'function', 'class', 'import', 'export', 'return'].includes(w));
 
     // Get unique words
     return [...new Set(words)];
@@ -287,7 +291,7 @@ class RelationshipAnalyzer {
         to,
         strength: 0,
         types: [],
-        evidence: []
+        evidence: [],
       };
       this.relationships.set(key, relationship);
     }
@@ -307,17 +311,18 @@ class RelationshipAnalyzer {
 
   async export(): Promise<void> {
     // Convert to array and sort by strength
-    const relationshipArray = Array.from(this.relationships.values())
-      .sort((a, b) => b.strength - a.strength);
+    const relationshipArray = Array.from(this.relationships.values()).sort(
+      (a, b) => b.strength - a.strength
+    );
 
     const output = {
       metadata: {
         analyzeDate: new Date().toISOString(),
         totalFiles: this.scanData.metadata.foundFiles,
         totalRelationships: relationshipArray.length,
-        strongRelationships: relationshipArray.filter(r => r.strength >= 6).length
+        strongRelationships: relationshipArray.filter((r) => r.strength >= 6).length,
       },
-      relationships: relationshipArray
+      relationships: relationshipArray,
     };
 
     const outputPath = join(
@@ -327,19 +332,27 @@ class RelationshipAnalyzer {
     );
 
     await Bun.write(outputPath, JSON.stringify(output, null, 2));
-    
+
     console.log(chalk.green(`\n✅ Exported relationships to ${outputPath}`));
-    
+
     // Show summary
     console.log(chalk.blue('\n📊 Relationship Summary:'));
     console.log(chalk.gray(`  Total relationships: ${relationshipArray.length}`));
-    console.log(chalk.gray(`  Strong (6-10): ${relationshipArray.filter(r => r.strength >= 6).length}`));
-    console.log(chalk.gray(`  Medium (3-5): ${relationshipArray.filter(r => r.strength >= 3 && r.strength < 6).length}`));
-    console.log(chalk.gray(`  Weak (1-2): ${relationshipArray.filter(r => r.strength < 3).length}`));
+    console.log(
+      chalk.gray(`  Strong (6-10): ${relationshipArray.filter((r) => r.strength >= 6).length}`)
+    );
+    console.log(
+      chalk.gray(
+        `  Medium (3-5): ${relationshipArray.filter((r) => r.strength >= 3 && r.strength < 6).length}`
+      )
+    );
+    console.log(
+      chalk.gray(`  Weak (1-2): ${relationshipArray.filter((r) => r.strength < 3).length}`)
+    );
 
     // Show top 5
     console.log(chalk.yellow('\n🔝 Top 5 Strongest Relationships:'));
-    relationshipArray.slice(0, 5).forEach(rel => {
+    relationshipArray.slice(0, 5).forEach((rel) => {
       console.log(chalk.cyan(`  ${rel.from} ↔ ${rel.to}`));
       console.log(chalk.gray(`    Strength: ${rel.strength}, Types: ${rel.types.join(', ')}`));
     });
@@ -349,7 +362,7 @@ class RelationshipAnalyzer {
 // Run the analyzer
 async function main() {
   const analyzer = new RelationshipAnalyzer();
-  
+
   try {
     await analyzer.loadScanData();
     await analyzer.analyze();

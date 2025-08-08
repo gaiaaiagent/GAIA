@@ -8,7 +8,7 @@ services:
       dockerfile: nginx.Dockerfile
     container_name: nginx
     ports:
-      - '80:80'  # Main web access
+      - '80:80' # Main web access
     depends_on:
       - regenai
       - django
@@ -28,7 +28,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data:rw
     ports:
-      - '127.0.0.1:5433:5432'  # Using 5433 to avoid conflict
+      - '127.0.0.1:5433:5432' # Using 5433 to avoid conflict
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
       interval: 5s
@@ -40,7 +40,7 @@ services:
 
   # RegenAI Agents Application
   regenai:
-    image: gaia-regenai:latest  # Use local image
+    image: gaia-regenai:latest # Use local image
     container_name: regenai
     command: sh -c "cd packages/cli && bun dist/index.js start --character /app/characters/regenai.character.json --character /app/characters/advocate.character.json --character /app/characters/governor.character.json --character /app/characters/narrative.character.json --character /app/characters/voiceofnature.character.json"
     volumes:

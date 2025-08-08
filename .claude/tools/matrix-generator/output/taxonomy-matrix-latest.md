@@ -1,9 +1,9 @@
 # ElizaOS/RegenAI Taxonomy Matrix
 
-*Generated: 2025-07-22T17:42:24.941Z*  
-*Version: 1.0.0*  
-*Files: 44*  
-*Relationships: 177*
+_Generated: 2025-07-22T17:42:24.941Z_  
+_Version: 1.0.0_  
+_Files: 44_  
+_Relationships: 177_
 
 ---
 
@@ -59,22 +59,22 @@ The following files are most central to the system:
 
 ### Matrix Statistics
 
-| Metric | Value |
-|--------|-------|
-| Matrix Size | 44 × 44 |
-| Total Possible Cells | 1936 |
-| Documented Relationships | 177 |
-| Matrix Density | 9.1% |
-| Average Connections per File | 8.0 |
+| Metric                       | Value   |
+| ---------------------------- | ------- |
+| Matrix Size                  | 44 × 44 |
+| Total Possible Cells         | 1936    |
+| Documented Relationships     | 177     |
+| Matrix Density               | 9.1%    |
+| Average Connections per File | 8.0     |
 
 ### Relationship Distribution
 
-| Strength | Count | Description |
-|----------|-------|-------------|
-| 9-10 | 76 | Critical dependencies |
-| 7-8 | 37 | Strong relationships |
-| 5-6 | 57 | Important connections |
-| 3-4 | 7 | Moderate relationships |
+| Strength | Count | Description            |
+| -------- | ----- | ---------------------- |
+| 9-10     | 76    | Critical dependencies  |
+| 7-8      | 37    | Strong relationships   |
+| 5-6      | 57    | Important connections  |
+| 3-4      | 7     | Moderate relationships |
 
 ## File Summaries
 
@@ -1302,7 +1302,6 @@ koi:
 
 </details>
 
-
 ## Relationship Analysis
 
 This section details the relationships between files, organized by strength.
@@ -2264,7 +2263,7 @@ This relationship demonstrates the pattern of functional cohesion. This relation
 Developers experience anxiety about breaking changes. Team expertise often spans both files due to domain similarity. When rolling out API v2, this creates high-stakes coordination where changes require careful communication. Teams working on these components share domain expertise and communication channels. Expertise transfers through structural similarity Developers often struggle with undocumented endpoints, making this connection crucial for maintaining sanity.
 
 **Technological Pattern**  
-They share common dependencies on Express.js middleware. The server-side coordination pattern governs initialization order Performance characteristics are tightly coupled, requiring joint optimization. Server mounts API routes via `app.use("/api", apiRouter)`.` Concretely, this involves Both files reside in `packages/server/src/` directory structure, Uses `setupSocketIO` from target file, Uses `createPluginRouteHandler` from target file, Uses `createApiRouter` from target file. Performance considerations often drive this relationship, optimizing for minimal overhead.
+They share common dependencies on Express.js middleware. The server-side coordination pattern governs initialization order Performance characteristics are tightly coupled, requiring joint optimization. Server mounts API routes via `app.use("/api", apiRouter)`.`Concretely, this involves Both files reside in`packages/server/src/`directory structure, Uses`setupSocketIO`from target file, Uses`createPluginRouteHandler`from target file, Uses`createApiRouter` from target file. Performance considerations often drive this relationship, optimizing for minimal overhead.
 
 **Thematic Pattern**  
 Together they tell the story of cohesive server_typescript implementation. This relationship is foundational to the system's architectural identity. As the system evolves, this relationship guides architectural decisions and maintains conceptual integrity. Similar patterns can be observed in the packages/core/src/runtime.ts → packages/core/src/index.ts relationship. The relationship embodies the project's commitment to maintainability over premature optimization.
@@ -2489,7 +2488,7 @@ Their partnership reflects the principle of tight integration. This relationship
 Developers experience anxiety about breaking changes. When rolling out API v2, this functional overlap creates shared ownership patterns. Moderate trust boundaries allow for some independent evolution. Teams working on these components share domain expertise and communication channels. Expertise transfers through structural similarity Developers often struggle with undocumented endpoints, making this connection crucial for maintaining sanity.
 
 **Technological Pattern**  
-Runtime behavior shows correlated performance characteristics. The server-side coordination pattern governs initialization order Performance characteristics are tightly coupled, requiring joint optimization. Server mounts API routes via `app.use("/api", apiRouter)`.` Concretely, this involves Both files reside in `packages/server/src/` directory structure. The technical implementation leverages TypeScript's type inference to reduce boilerplate.
+Runtime behavior shows correlated performance characteristics. The server-side coordination pattern governs initialization order Performance characteristics are tightly coupled, requiring joint optimization. Server mounts API routes via `app.use("/api", apiRouter)`.`Concretely, this involves Both files reside in`packages/server/src/` directory structure. The technical implementation leverages TypeScript's type inference to reduce boilerplate.
 
 **Thematic Pattern**  
 This relationship demonstrates the pattern of functional cohesion. This relationship is foundational to the system's architectural identity. As the system evolves, this relationship guides architectural decisions and maintains conceptual integrity. Similar patterns can be observed in the packages/core/src/runtime.ts → packages/core/src/index.ts relationship. This connection demonstrates how local decisions aggregate into system-wide architectural patterns.
@@ -3224,8 +3223,7 @@ Together they tell the story of cross-cutting concerns. The connection enriches 
 
 ---
 
-
-*... and 43 more notable relationships*
+_... and 43 more notable relationships_
 
 ## Navigation Guide
 
@@ -3301,10 +3299,10 @@ The following categories organize the analyzed files:
 
 ### Appendix D: Strength Scale
 
-| Strength | Meaning | Example |
-|----------|---------|---------|
-| 10 | Critical dependency | Core imports, direct references |
-| 8-9 | Strong relationship | Important shared functionality |
-| 6-7 | Important connection | Related features, same subsystem |
-| 4-5 | Moderate relationship | Indirect connections |
-| 1-3 | Weak relationship | Distant architectural connections |
+| Strength | Meaning               | Example                           |
+| -------- | --------------------- | --------------------------------- |
+| 10       | Critical dependency   | Core imports, direct references   |
+| 8-9      | Strong relationship   | Important shared functionality    |
+| 6-7      | Important connection  | Related features, same subsystem  |
+| 4-5      | Moderate relationship | Indirect connections              |
+| 1-3      | Weak relationship     | Distant architectural connections |

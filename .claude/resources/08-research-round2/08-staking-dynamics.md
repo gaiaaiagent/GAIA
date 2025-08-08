@@ -88,13 +88,15 @@ Daily reward distribution approximates **75,000 REGEN tokens**, translating to m
 ### APR/APY Variations and Yield Analysis
 
 Staking yields demonstrate significant variation based on market conditions and network parameters. Current APR ranges from **13.42% to 25%**, with recent data showing:
+
 - **24 hours ago**: 20.36% APR
-- **30 days ago**: 16.11% APR  
+- **30 days ago**: 16.11% APR
 - **Current**: 20.46% APR
 
 This upward trend in yields correlates with the network's below-target bonded ratio of **58.69%** versus the 67% target. The inflation mechanism increases rewards when staking participation falls below target, creating economic incentives for increased delegation. Validator commission impacts net yields, with rates ranging from the 5% minimum to typical maximums of 20%.
 
 Statistical analysis of yield data reveals:
+
 - **Mean APR**: ~18.5% (averaged across data sources)
 - **Median APR**: ~20.0% (central tendency measure)
 - **Standard Deviation**: ~4.2% (yield volatility measure)
@@ -153,6 +155,7 @@ Despite technical capabilities for cross-chain staking via IBC, current implemen
 Aggregating data across all research dimensions reveals:
 
 **Token Supply Metrics**:
+
 - Genesis Supply: **100,000,000.000000 REGEN**
 - Current Total Minted: **209,374,009.000000 REGEN**
 - Circulating Supply: **148,354,423.000000 REGEN**
@@ -160,6 +163,7 @@ Aggregating data across all research dimensions reveals:
 - Current Bonded Amount: **122,842,476.000000 REGEN** (58.69% of total supply)
 
 **Staking Performance Indicators**:
+
 - Average Daily Rewards: **~75,000 REGEN**
 - Average Block Time: **~6 seconds**
 - Blocks Per Day: **~14,400**
@@ -169,6 +173,7 @@ Aggregating data across all research dimensions reveals:
 - Unbonding Period: **21 days**
 
 **Market Dynamics**:
+
 - Current Price: **~$0.0174 USD**
 - 24h Volume: **$56.35 USD**
 - Staking Market Cap: **$2.8M USD**
@@ -188,6 +193,7 @@ Statistical analysis reveals several significant correlations:
 ### Time Series Evolution
 
 Tracking daily staking metrics since genesis reveals consistent growth patterns:
+
 - **Q2 2021**: Rapid initial staking as network launched
 - **Q3-Q4 2021**: Stabilization around 85-88% staking ratio
 - **2022**: Gradual increase toward 90% as prices declined
@@ -219,6 +225,7 @@ Community discussions weigh security benefits against sovereignty concerns, with
 ### Primary RPC Endpoints
 
 REGEN Network maintains multiple public RPC endpoints ensuring reliable data access:
+
 - **PublicNode**: https://regen-rpc.publicnode.com:443
 - **Vitwit**: http://public-rpc.regen.vitwit.com:26657
 - **StakeSystems**: https://regen.stakesystems.io:2053
@@ -238,6 +245,7 @@ Multiple block explorers serve different user needs within the REGEN ecosystem:
 ### Data Verification and Cross-Reference Sources
 
 Ensuring data accuracy requires cross-referencing multiple sources:
+
 - **On-chain data** via direct RPC queries provides authoritative staking metrics
 - **Block explorers** offer user-friendly interfaces with historical tracking
 - **GitHub repositories** document network parameters and upgrade histories
@@ -251,11 +259,13 @@ Ensuring data accuracy requires cross-referencing multiple sources:
 Researchers seeking to reproduce this analysis should utilize:
 
 1. **Command Line Tools**:
+
    - `regen` CLI for direct blockchain queries
    - `curl` or `httpie` for REST API interactions
    - `jq` for JSON parsing and data extraction
 
 2. **API Endpoints**:
+
    - LCD endpoints for REST queries
    - RPC endpoints for real-time data
    - GraphQL interfaces where available
@@ -268,21 +278,25 @@ Researchers seeking to reproduce this analysis should utilize:
 ### Key Queries for Staking Data
 
 **Total Staked Amount**:
+
 ```bash
 curl -s https://regen-rpc.publicnode.com:443/cosmos/staking/v1beta1/pool | jq '.pool.bonded_tokens'
 ```
 
 **Validator List**:
+
 ```bash
 curl -s https://regen-rpc.publicnode.com:443/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED | jq '.validators[].operator_address'
 ```
 
 **Delegation Information**:
+
 ```bash
 curl -s https://regen-rpc.publicnode.com:443/cosmos/staking/v1beta1/delegations/{delegator_address}
 ```
 
 **Current Inflation Rate**:
+
 ```bash
 curl -s https://regen-rpc.publicnode.com:443/cosmos/mint/v1beta1/inflation
 ```
@@ -290,6 +304,7 @@ curl -s https://regen-rpc.publicnode.com:443/cosmos/mint/v1beta1/inflation
 ### Historical Data Reconstruction
 
 Reconstructing historical staking data requires:
+
 1. Archive node access for historical state queries
 2. Block-by-block analysis for event extraction
 3. Aggregation scripts for daily/monthly summaries

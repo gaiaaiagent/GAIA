@@ -25,6 +25,7 @@ REGEN is the native token of Regen Network, a Cosmos SDK-based blockchain launch
 The REGEN token exists across multiple chains through various bridge mechanisms, enabling cross-chain liquidity and accessibility for environmental credit trading.
 
 ### Native Regen Network (Cosmos)
+
 - **Chain ID**: regen-1
 - **Native Denomination**: uregen (1 REGEN = 1,000,000 uregen)
 - **Bech32 Prefix**: regen
@@ -33,6 +34,7 @@ The REGEN token exists across multiple chains through various bridge mechanisms,
 - **Genesis Date**: April 15, 2021 at 15:00 UTC
 
 ### Ethereum Wrapped Version
+
 - **Contract Address**: 0xeee10b3736d5978924f392ed67497cfae795128b
 - **Network**: Ethereum Mainnet
 - **Standard**: ERC-20 (18 decimals)
@@ -40,11 +42,13 @@ The REGEN token exists across multiple chains through various bridge mechanisms,
 - **Verification Status**: Verified on Etherscan
 
 ### IBC Denominations
+
 - **Osmosis**: ibc/0EF15DF2F02480ADE0BB6E85D9EBB5DAEA2836D3860E9F97F9AADE4F57A31AA0
 - **Channel Configuration**: channel-1 (Regen to Osmosis), channel-8 (Osmosis to Regen)
 - **Other Cosmos Chains**: Standard IBC transfers supported across all IBC-enabled chains
 
 ### Bridge Infrastructure
+
 - **bridge.eco**: Primary Ethereum ↔ Regen Network bridge
 - **Polygon Bridge**: Two-way bridge with Toucan Protocol for NCT (Nature Carbon Tonne) tokens
 - **Axelar Network**: Multi-chain bridge supporting various cross-chain assets
@@ -53,6 +57,7 @@ The REGEN token exists across multiple chains through various bridge mechanisms,
 ## Block Explorer Links and Resources
 
 ### Primary Blockchain Explorers
+
 - **Mintscan Main**: https://www.mintscan.io/regen
 - **Mintscan Assets**: https://www.mintscan.io/regen/assets
 - **Mintscan Validators**: https://www.mintscan.io/regen/validators
@@ -61,6 +66,7 @@ The REGEN token exists across multiple chains through various bridge mechanisms,
 - **Etherscan (Wrapped)**: https://etherscan.io/token/0xeee10b3736d5978924f392ed67497cfae795128b
 
 ### IBC and Cross-Chain Explorers
+
 - **Map of Zones**: https://mapofzones.com/
 - **IOBScan IBC Explorer**: https://ibc.iobscan.io/home
 - **Range IBC Explorer**: https://ibc.range.org/
@@ -68,17 +74,20 @@ The REGEN token exists across multiple chains through various bridge mechanisms,
 ## Official Documentation
 
 ### Core Documentation
+
 - **Main Documentation**: https://docs.regen.network/
 - **Ledger Documentation**: https://docs.regen.network/ledger/
 - **Guidebook**: https://guides.regen.network/
 - **Registry Program Guide**: https://registry-program-guide.regen.network/
 
 ### Technical Papers
+
 - **Whitepaper**: https://regen-network.gitlab.io/whitepaper/WhitePaper.pdf
 - **Economics Paper**: https://regen-network.gitlab.io/whitepaper/Economics.pdf
 - **Tokenomics**: https://www.regen.network/token
 
 ### GitHub Repositories
+
 - **Organization**: https://github.com/regen-network
 - **Regen Ledger**: https://github.com/regen-network/regen-ledger
 - **Regen Web/Marketplace**: https://github.com/regen-network/regen-web
@@ -87,11 +96,13 @@ The REGEN token exists across multiple chains through various bridge mechanisms,
 ## Historical Data Analysis
 
 ### Token Minting History
+
 The REGEN token launched with a genesis supply of 100 million tokens on April 15, 2021. The initial distribution allocated 35% (35 million tokens) to the Regen Foundation and Community Staking DAOs as permanently locked, non-tradeable governance tokens. The remaining 65 million tokens entered circulation through various mechanisms.
 
 Private sale rounds occurred between 2018-2021 with pricing ranging from $0.10 (friends & family) to $0.63 (final round). The network raised $10.5 million through these sales, with tokens subject to 1-year or 3-year vesting schedules. Since genesis, the only new token creation has occurred through the proof-of-stake inflation mechanism, which has increased total supply to approximately 148-209 million REGEN as of July 2025.
 
 ### Supply Changes Over Time
+
 - **Genesis Supply**: 100 million REGEN
 - **Current Total Supply**: ~148-209 million REGEN (varying by source)
 - **Circulating Supply**: ~148-150 million REGEN
@@ -99,7 +110,9 @@ Private sale rounds occurred between 2018-2021 with pricing ranging from $0.10 (
 - **Permanently Locked**: 35 million REGEN (governance-only tokens)
 
 ### Transaction and Price History
+
 The network has processed transactions for over 17,000 stakeholders since launch. Transaction volumes remain relatively low at $8,370 daily as of July 2025, primarily concentrated on Osmosis DEX. Price performance shows significant volatility:
+
 - **All-Time High**: $2.60 (November 5, 2021)
 - **Current Price**: ~$0.019-$0.022
 - **Market Cap**: ~$2.9 million
@@ -108,14 +121,18 @@ The network has processed transactions for over 17,000 stakeholders since launch
 ## Liquidity Analysis
 
 ### DEX Liquidity
+
 Osmosis serves as the primary trading venue with two main pools:
+
 - **REGEN/ATOM Pool (#22)**: 50:50 weighted pool with governance-approved incentives
 - **REGEN/OSMO Pool (#45)**: Most active pair with $5,718.89 in 24h volume
 
 Limited presence exists on Ethereum DEXs through the wrapped version, accessible via Uniswap. Total daily trading volume across all venues typically ranges from $8,000-$34,000, indicating limited liquidity depth.
 
 ### CEX Listings
+
 Centralized exchange presence remains minimal:
+
 - **Bitget**: Primary CEX with REGEN/USDT pair
 - **Total Markets**: Only 5 active trading pairs across all exchanges
 - **Geographic Restrictions**: Various regional limitations apply
@@ -125,16 +142,20 @@ The absence of major exchanges like Binance and Coinbase significantly limits li
 ## On-chain Ecosystem Analysis
 
 ### Token Economics
+
 The network operates an inflationary model with no maximum supply cap. Current inflation supports staking rewards of 13.42%-25% APR, distributed to the 75 active validators and their delegators. The staking ratio fluctuates between 52%-90% of total supply, indicating strong network security participation.
 
 Fee structure requires REGEN for all network operations:
+
 - Transaction fees for transfers
 - Gas fees for smart contract interactions
 - Ecocredit creation fees
 - Marketplace trading fees
 
 ### Governance Mechanics
+
 On-chain governance demonstrates exceptional participation rates with proposals typically achieving 90-99% approval. Key parameters include:
+
 - **Proposal Deposit**: 200 REGEN
 - **Voting Period**: 7 days (reduced from 14 via Proposal #10)
 - **Validator Set**: Expanded from 50 to 75 through governance
@@ -143,16 +164,20 @@ On-chain governance demonstrates exceptional participation rates with proposals 
 The community pool receives 2% of block rewards and has funded various ecosystem initiatives including 400,000 REGEN for Climate Wiki development.
 
 ### DeFi Integrations
+
 REGEN participates in several DeFi protocols:
+
 - **Osmosis**: Primary liquidity pools with incentivized rewards
 - **Superfluid Staking**: Simultaneous staking and liquidity provision
 - **Lending Protocols**: Available through Coinbase DeFi yield
 - **Cross-chain Bridges**: Multiple bridge integrations for broader DeFi access
 
 ### Environmental Credit Applications
+
 The network's core innovation lies in its ecological credit infrastructure:
 
 **Credit Types Supported**:
+
 - Carbon credits (primary focus on nature-based solutions)
 - Biodiversity credits (ecosystem and species protection)
 - Soil health credits (regenerative agriculture)
@@ -160,6 +185,7 @@ The network's core innovation lies in its ecological credit infrastructure:
 - Environmental stewardship credits
 
 **Volume Statistics**:
+
 - Total credits sold: Over 700,000
 - Credits retired: 180,000 for carbon neutrality
 - Biodiversity credit sales: $129,000 USD
@@ -170,6 +196,7 @@ The eco-credit module enables batch issuance with specific project associations.
 
 **Real-World Integration**:
 Projects span multiple continents including:
+
 - Harvey Manning Park (15.14-acre urban forest protection)
 - Colombian Cloud Forest biodiversity preservation
 - Ecuadorian Amazon jaguar habitat (10,000 hectares)
@@ -196,118 +223,149 @@ The REGEN token represents a pioneering effort in blockchain-based environmental
 ## Token Distribution & Genesis Analysis
 
 ### 1. Genesis Token Distribution Forensics
+
 "Analyze the complete REGEN genesis file from April 15, 2021. Extract all initial account balances, identify the exact distribution to each address, categorize recipients (team, investors, foundation, community pool), and trace the current status of each genesis allocation. Include vesting schedules and unlock dates. Map which addresses still hold their allocations versus those that have moved tokens."
 
 ### 2. Private Sale Token Tracking
+
 "Investigate all REGEN private sale rounds from 2018-2021. Identify investor addresses, purchase amounts at each price tier ($0.10, $0.25, $0.50, $0.63), vesting terms (1-year vs 3-year), and current holdings. Track token movements from these addresses post-vesting. Calculate realized vs unrealized gains/losses for each investor cohort."
 
 ### 3. Foundation & DAO Treasury Analysis
+
 "Map the complete flow of the 35 million permanently locked REGEN tokens allocated to Regen Foundation and Community Staking DAOs. Analyze all governance proposals that utilized these tokens, voting patterns, and delegation changes. Track any staking rewards accumulated on these locked tokens and their redistribution."
 
 ## On-Chain Transaction Analysis
 
 ### 4. Comprehensive Transaction Flow Mapping
+
 "Download and analyze every REGEN transaction from genesis to present using Mintscan API or direct node queries. Create a complete flow diagram showing token movements between addresses, categorizing transactions by type (transfers, staking, governance, credit operations). Identify the top 1000 addresses by transaction volume and frequency."
 
 ### 5. Whale Movement Tracking
+
 "Identify all REGEN addresses holding more than 100,000 tokens throughout history. Track their accumulation patterns, sources of tokens, staking behavior, governance participation, and any large transfers. Create profiles for the top 50 whales including their ecosystem roles (validators, market makers, institutions)."
 
 ### 6. Staking Dynamics Deep Dive
+
 "Analyze complete staking history including all delegation/undelegation events, redelegations, and reward claims. Calculate the total REGEN earned through staking rewards since genesis. Map validator commission earnings and track where these tokens flow. Identify patterns in staking ratio changes and their correlation with price movements."
 
 ## Cross-Chain & Bridge Analysis
 
 ### 7. Ethereum Bridge Forensics
+
 "Investigate all REGEN tokens bridged to Ethereum (0xeee10b3736d5978924f392ed67497cfae795128b). Track each bridging event, identify users, analyze their subsequent activities on Ethereum (DEX trades, DeFi deposits). Monitor the bridge reserves and any discrepancies. Calculate total fees paid for bridging."
 
 ### 8. IBC Transfer Complete Analysis
+
 "Map every IBC transfer of REGEN tokens across all connected chains. Track volumes to/from each chain, identify arbitrage patterns, and analyze the flow of tokens through Osmosis, Cosmos Hub, and other IBC-enabled chains. Calculate total REGEN held on each chain at any given time."
 
 ### 9. Bridge Ecosystem Mapping
+
 "Analyze all bridge integrations (bridge.eco, Axelar, Gravity Bridge, Polygon bridge). Track transaction volumes, user addresses, fees collected, and token flows through each bridge. Identify any bridge exploits, stuck transactions, or lost tokens. Map cross-chain liquidity pools containing REGEN."
 
 ## Validator & Governance Analysis
 
 ### 10. Validator Economics Deep Dive
+
 "Analyze all 75 validators including their self-delegation amounts, total delegation, commission rates, uptime, slashing events, and total rewards earned. Track validator address token flows, identifying which validators sell rewards vs compound. Map validator infrastructure costs vs earnings."
 
 ### 11. Governance Participation Forensics
+
 "Analyze every governance proposal including proposer addresses, deposit sources, voter participation, token weight of yes/no votes, and implementation status. Track the 200 REGEN deposits and their return/burn status. Identify addresses that consistently participate in governance and their voting patterns."
 
 ### 12. Community Pool Flow Analysis
+
 "Track every allocation from the community pool since genesis. Analyze approved funding proposals, recipient addresses, milestone completion, and subsequent token usage. Calculate the pool's growth from the 2% block reward allocation and map all outflows by category."
 
 ## Environmental Credit Operations
 
 ### 13. Credit Issuance Token Economics
+
 "Analyze all REGEN token fees paid for credit issuance, including batch creation, methodology fees, and registry operations. Map which addresses have paid these fees, total fees collected, and where fee tokens flow. Calculate the token velocity within credit operations."
 
 ### 14. Marketplace Transaction Analysis
+
 "Extract all marketplace transactions including credit sales, REGEN token payments, escrow mechanics, and settlement flows. Identify top buyers/sellers by volume, average transaction sizes, and token flow patterns. Track any failed transactions and refunds."
 
 ### 15. Credit Retirement Token Impact
+
 "Analyze the correlation between credit retirements and REGEN token movements. Track addresses that retire credits, their token holdings, and any market impact. Map institutional buyers' token acquisition patterns for credit purchases."
 
 ## Registry Data Extraction
 
 ### 16. Complete Registry Database Analysis
+
 "Extract all data from registry.regen.network including every project, credit batch, methodology, and issuer. Map relationships between issuers and their token holdings. Analyze credit pricing in REGEN tokens vs USD over time. Track registry fee collection and distribution."
 
 ### 17. Project Token Allocation Tracking
+
 "Identify all ecological projects and their associated REGEN token allocations or holdings. Track any direct token grants to projects, revenue sharing agreements, or staking arrangements. Map the flow of tokens from credit sales back to project developers."
 
 ### 18. Issuer Network Analysis
+
 "Map all approved credit issuers, their REGEN token bonds/stakes, earned fees, and credit issuance patterns. Track issuer onboarding costs in tokens and ongoing operational token requirements. Analyze issuer retention and churn rates."
 
 ## DeFi & Market Analysis
 
 ### 19. DEX Liquidity Provider Analysis
+
 "Identify all liquidity providers in REGEN pools across all DEXs. Track LP token minting/burning, impermanent loss, fee earnings, and liquidity mining rewards. Map large liquidity additions/removals and their market impact. Calculate total value locked over time."
 
 ### 20. Trading Pattern Forensics
+
 "Analyze all DEX trades involving REGEN, identifying arbitrage bots, market makers, and retail patterns. Track sandwich attacks, MEV extraction, and unusual trading activity. Map correlations between large trades and governance/credit events."
 
 ### 21. Lending Protocol Integration
+
 "Track all REGEN tokens deposited in lending protocols, borrowed against, or used as collateral. Analyze liquidation events, interest earned/paid in REGEN, and protocol treasury accumulation. Map the flow of borrowed REGEN and its ultimate use."
 
 ## Ecosystem Partnership Analysis
 
 ### 22. Institutional Holdings Tracking
+
 "Identify and track all institutional holders including Microsoft, Solana Foundation, and others. Analyze their acquisition methods, holding patterns, staking behavior, and any sales. Map institutional governance participation and credit purchasing patterns."
 
 ### 23. Integration Partner Token Flows
+
 "Analyze token flows related to key integrations like Toucan Protocol, Cosmos SDK modules, and enterprise partnerships. Track any token swaps, liquidity provisions, or operational holdings required for integrations."
 
 ### 24. Developer Ecosystem Funding
+
 "Map all developer grants, hackathon prizes, and ecosystem development funds distributed in REGEN. Track recipient addresses, milestone-based releases, and the ultimate use of granted tokens. Analyze developer retention and project success rates."
 
 ## Advanced Analytics
 
 ### 25. Network Effect Analysis
+
 "Analyze the growth of unique addresses holding REGEN, transaction frequency patterns, and user retention metrics. Map social graph connections between addresses through transaction patterns. Identify network growth catalysts and user acquisition costs in tokens."
 
 ### 26. Token Velocity Deep Dive
+
 "Calculate detailed token velocity metrics including hold times, turnover rates, and velocity by address category. Analyze how velocity differs between validators, traders, credit buyers, and long-term holders. Map velocity changes during major events."
 
 ### 27. Supply Distribution Evolution
+
 "Create a complete time series of REGEN supply distribution showing how token concentration has evolved. Track Gini coefficient changes, wealth distribution curves, and accumulation/distribution phases. Identify addresses that have consistently accumulated vs distributed."
 
 ## Compliance & Regulatory Tracking
 
 ### 28. Regulated Entity Analysis
+
 "Identify all regulated entities interacting with REGEN (exchanges, institutional buyers, registered broker-dealers). Track their compliance-related token movements, custody arrangements, and reporting patterns. Map any frozen or restricted addresses."
 
 ### 29. Tax Event Tracking
+
 "Analyze patterns that indicate tax-loss harvesting, year-end selling, or other tax-motivated token movements. Track addresses that consistently realize losses/gains at specific times. Map jurisdiction-specific patterns based on known entity locations."
 
 ## Future State Modeling
 
 ### 30. Predictive Token Flow Modeling
+
 "Using all historical data, create predictive models for future token flows including inflation impact, likely unlock events, seasonal credit buying patterns, and governance participation trends. Identify addresses likely to become major actors based on accumulation patterns. Model scenarios for token distribution at various network growth rates."
 
 ## Implementation Notes
 
 Each prompt should be executed using:
+
 - Direct RPC node queries for real-time data
 - Mintscan and other explorer APIs for historical data
 - Graph indexing protocols for complex queries
@@ -316,6 +374,7 @@ Each prompt should be executed using:
 - Visualization tools for flow mapping
 
 Data sources to integrate:
+
 - Regen Network full node
 - Block explorers (Mintscan, Ping.pub, Big Dipper)
 - IBC relayer data
@@ -334,6 +393,7 @@ When executing any research prompt about REGEN Network, produce a comprehensive 
 ### Report Structure Requirements
 
 ## 1. EXECUTIVE SUMMARY
+
 - **Quantitative Overview**: Start with 10-15 key metrics discovered
 - **Magnitude Assessment**: Total values, volumes, counts with exact numbers
 - **Temporal Scope**: Precise date ranges analyzed
@@ -343,6 +403,7 @@ When executing any research prompt about REGEN Network, produce a comprehensive 
 ## 2. QUANTITATIVE ANALYSIS
 
 ### 2.1 Core Metrics
+
 - **Exact Token Quantities**: List every relevant amount to 6 decimal places
 - **Transaction Counts**: Total, daily average, peak periods
 - **Address Analysis**: Unique addresses, active addresses, dormant addresses
@@ -351,12 +412,14 @@ When executing any research prompt about REGEN Network, produce a comprehensive 
 - **Growth Rates**: Calculate MoM, QoQ, YoY changes
 
 ### 2.2 Comparative Metrics
+
 - **Before/After Analysis**: For any significant events
 - **Cohort Comparisons**: Different user groups, time periods, or categories
 - **Benchmark Ratios**: Compare to ecosystem averages or similar protocols
 - **Correlation Coefficients**: Between different metrics
 
 ### 2.3 Financial Calculations
+
 - **USD Values**: At time of transaction and current
 - **Percentage Distributions**: Of total supply, volume, activity
 - **ROI Calculations**: For relevant holding periods
@@ -365,7 +428,9 @@ When executing any research prompt about REGEN Network, produce a comprehensive 
 ## 3. RESOURCES & DATA SOURCES
 
 ### 3.1 Primary Data Sources Used
+
 List each source with:
+
 - **API Endpoints**: Exact URLs and parameters
 - **Query Examples**: Actual queries that retrieved the data
 - **Rate Limits**: Encountered limitations
@@ -373,12 +438,14 @@ List each source with:
 - **Update Frequency**: How often data refreshes
 
 ### 3.2 Tools & Infrastructure
+
 - **Analysis Tools**: Scripts, frameworks, libraries used
 - **Visualization Tools**: For charts, graphs, network diagrams
 - **Data Storage**: Where analyzed data is cached/stored
 - **Computational Requirements**: For replicating analysis
 
 ### 3.3 Alternative Sources
+
 - **Backup Sources**: For verification or missing data
 - **Cross-Reference Points**: For data validation
 - **Community Resources**: Forums, Discord channels, documentation
@@ -386,6 +453,7 @@ List each source with:
 ## 4. SYSTEMS ARCHITECTURE
 
 ### 4.1 Technical Infrastructure
+
 - **Protocol Mechanics**: How the system technically functions
 - **Smart Contract/Module Design**: Specific functions, parameters
 - **Data Flow Diagrams**: How information moves through the system
@@ -393,6 +461,7 @@ List each source with:
 - **Dependencies**: Other systems relied upon
 
 ### 4.2 Operational Workflows
+
 - **User Journeys**: Step-by-step processes
 - **System State Changes**: What triggers transitions
 - **Edge Cases**: Unusual scenarios handled
@@ -401,12 +470,14 @@ List each source with:
 ## 5. KNOWLEDGE BASE
 
 ### 5.1 Technical Specifications
+
 - **Protocol Parameters**: All configurable values
 - **Algorithmic Details**: Formulas, calculations, logic
 - **Security Measures**: Validation, verification, safety mechanisms
 - **Performance Characteristics**: Speed, throughput, latency
 
 ### 5.2 Domain Expertise
+
 - **Ecosystem Context**: How this fits into broader Regen Network
 - **Industry Standards**: Relevant benchmarks or best practices
 - **Regulatory Considerations**: Compliance requirements
@@ -415,12 +486,14 @@ List each source with:
 ## 6. LORE & NARRATIVE
 
 ### 6.1 Historical Context
+
 - **Origin Stories**: How and why systems were created
 - **Evolution Timeline**: Major changes, upgrades, pivots
 - **Key Decisions**: Governance proposals, community debates
 - **Milestone Events**: Launches, partnerships, achievements
 
 ### 6.2 Community Narratives
+
 - **Cultural Elements**: Memes, traditions, values
 - **Notable Personalities**: Key contributors, thought leaders
 - **Legendary Transactions**: Famous or significant events
@@ -429,7 +502,9 @@ List each source with:
 ## 7. TERMINOLOGY GLOSSARY
 
 ### 7.1 Technical Terms
+
 Provide for each term:
+
 - **Term**: Bold formatting
 - **Definition**: Clear, concise explanation
 - **Context**: When/how it's used
@@ -437,6 +512,7 @@ Provide for each term:
 - **Related Terms**: Cross-references
 
 ### 7.2 Regen-Specific Nomenclature
+
 - **Unique Concepts**: Specific to Regen Network
 - **Abbreviations**: What they stand for
 - **Community Slang**: Informal terms used
@@ -444,6 +520,7 @@ Provide for each term:
 ## 8. CONCRETE EXAMPLES
 
 ### 8.1 Transaction Examples
+
 - **Transaction Hash**: Exact identifier
 - **Block Height**: When it occurred
 - **Participants**: Addresses involved (with labels if known)
@@ -452,6 +529,7 @@ Provide for each term:
 - **Outcome**: What resulted
 
 ### 8.2 Use Case Demonstrations
+
 - **Scenario Description**: Real-world application
 - **Step-by-Step Process**: What actually happens
 - **Participants Involved**: All parties and their roles
@@ -459,6 +537,7 @@ Provide for each term:
 - **Impact Measurement**: Quantifiable results
 
 ### 8.3 Code Samples
+
 - **Query Examples**: Actual code to retrieve data
 - **Analysis Scripts**: For processing information
 - **Integration Examples**: How to connect to systems
@@ -466,7 +545,9 @@ Provide for each term:
 ## 9. CITATIONS & REFERENCES
 
 ### 9.1 Primary Sources
+
 Each citation must include:
+
 - **Title**: Of document, article, or resource
 - **Author/Organization**: Who created it
 - **Date**: When published or last updated
@@ -475,6 +556,7 @@ Each citation must include:
 - **Relevance**: Why this source matters
 
 ### 9.2 Data Verification
+
 - **Cross-Referenced Sources**: Multiple confirmations
 - **Confidence Level**: High/Medium/Low with justification
 - **Discrepancies Noted**: Where sources disagree
@@ -483,18 +565,21 @@ Each citation must include:
 ## 10. RESOURCE LINKS
 
 ### 10.1 Direct Data Access
+
 - **API Documentation**: With authentication if needed
 - **Explorer Links**: Direct URLs to relevant pages
 - **Query Interfaces**: GraphQL playgrounds, SQL interfaces
 - **Download Links**: For raw data exports
 
 ### 10.2 Analysis Tools
+
 - **GitHub Repositories**: For scripts, tools, analysis
 - **Colab Notebooks**: For reproducible analysis
 - **Dashboard Links**: For real-time monitoring
 - **Visualization Tools**: For creating charts/graphs
 
 ### 10.3 Community Resources
+
 - **Official Channels**: Discord, Telegram, forums
 - **Documentation Hubs**: Wikis, guides, tutorials
 - **Video Resources**: Explanatory content
@@ -503,16 +588,19 @@ Each citation must include:
 ## 11. COMPREHENSIVE APPENDICES
 
 ### 11.1 Raw Data Samples
+
 - **CSV Exports**: Sample rows with headers
 - **JSON Responses**: Pretty-printed examples
 - **Log Excerpts**: Relevant system outputs
 
 ### 11.2 Calculation Methodologies
+
 - **Formulas Used**: With variable definitions
 - **Assumptions Made**: Clearly stated
 - **Margin of Error**: Calculated where applicable
 
 ### 11.3 Extended Analysis
+
 - **Additional Patterns**: Not covered in main text
 - **Outlier Investigation**: Unusual data points explained
 - **Future Research Questions**: What remains unknown
@@ -520,18 +608,21 @@ Each citation must include:
 ## 12. RESEARCH METADATA
 
 ### 12.1 Analysis Information
+
 - **Research Date**: When analysis was performed
 - **Data Freshness**: How current is the information
 - **Time Required**: Hours spent on analysis
 - **Computational Resources**: Used for processing
 
 ### 12.2 Limitations & Caveats
+
 - **Data Gaps**: What couldn't be accessed
 - **Assumptions**: What was estimated or inferred
 - **Potential Errors**: Where inaccuracies might exist
 - **Update Requirements**: When to refresh analysis
 
 ### 12.3 Reproducibility Guide
+
 - **Step-by-Step Instructions**: To replicate findings
 - **Required Access**: Credentials, permissions needed
 - **Estimated Time**: To reproduce analysis
@@ -563,6 +654,7 @@ Each citation must include:
 ## FINAL CHECKLIST
 
 Before completing the report, verify:
+
 - [ ] All sections are comprehensively addressed
 - [ ] Every number is precise and sourced
 - [ ] All technical terms are defined
@@ -581,6 +673,7 @@ Remember: The goal is to create a definitive, authoritative resource that could 
 ## 1. EXECUTIVE SUMMARY
 
 ### Quantitative Overview
+
 - **Total Genesis Supply**: 100,000,000 REGEN tokens (exact)
 - **Genesis Accounts**: 500 unique addresses
 - **Private Sale Total**: 42,000,000 REGEN (42.0%)
@@ -593,6 +686,7 @@ Remember: The goal is to create a definitive, authoritative resource that could 
 - **Total Unique Holders**: 20,000+ addresses
 
 ### Magnitude Assessment
+
 - **Total Value at Genesis**: $63,000,000 (at $0.63 Phase 3 price)
 - **Current Market Cap**: $2,520,235 USD
 - **Total Value Lost**: $60,479,765 (-96%)
@@ -600,12 +694,14 @@ Remember: The goal is to create a definitive, authoritative resource that could 
 - **Staking Participation Rate**: ~70% of circulating supply
 
 ### Temporal Scope
+
 - **Analysis Period**: April 15, 2021 - December 2024
 - **Data Collection Date**: December 2024
 - **Genesis Block**: April 15, 2021 at 15:00:00 UTC
 - **Final Vesting Date**: April 15, 2025
 
 ### Data Completeness
+
 - **Genesis Data Retrieved**: 100% (full genesis.json analyzed)
 - **On-chain Transaction Data**: 85% (limited by explorer APIs)
 - **Vesting Schedule Data**: 95% (some individual accounts unclear)
@@ -613,6 +709,7 @@ Remember: The goal is to create a definitive, authoritative resource that could 
 - **Market Data**: 90% (gaps in early trading history)
 
 ### Critical Findings (Ranked by Importance)
+
 1. **99% Price Collapse**: Despite real utility and Microsoft partnership
 2. **35% Permanent Lock**: Largest allocation never enters circulation
 3. **Vesting Cliff Impact**: April 2022 unlock triggered sustained decline
@@ -624,6 +721,7 @@ Remember: The goal is to create a definitive, authoritative resource that could 
 ### 2.1 Core Metrics
 
 #### Token Quantities (6 decimal precision)
+
 ```
 Genesis Supply Breakdown:
 - Total Supply: 100,000,000.000000 REGEN
@@ -641,6 +739,7 @@ Genesis Supply Breakdown:
 ```
 
 #### Transaction Counts
+
 - **Genesis Transactions**: 500 initial allocations
 - **Daily Average Transactions**: ~250-500 (2024 data)
 - **Peak Daily Transactions**: 2,847 (during April 2022 unlock)
@@ -648,6 +747,7 @@ Genesis Supply Breakdown:
 - **Governance Transactions**: 22 successful proposals
 
 #### Address Analysis
+
 - **Genesis Addresses**: 500 unique
 - **Currently Active Addresses**: 20,000+
 - **Addresses with >100k REGEN**: 47 (whales)
@@ -656,6 +756,7 @@ Genesis Supply Breakdown:
 - **Dormant Genesis Addresses**: ~150 (30% of genesis)
 
 #### Time Series Data
+
 ```
 Monthly Active Addresses:
 - April 2021: 500 (genesis)
@@ -674,6 +775,7 @@ Daily Price Data (USD):
 ```
 
 #### Statistical Measures
+
 - **Mean Token Balance**: 7,417.72 REGEN
 - **Median Token Balance**: 125.50 REGEN
 - **Mode Token Balance**: 0 REGEN (many empty addresses)
@@ -682,6 +784,7 @@ Daily Price Data (USD):
 - **Gini Coefficient**: 0.94 (extremely high concentration)
 
 #### Growth Rates
+
 - **Supply Growth Rate**: 5% annually (inflation)
 - **Address Growth MoM**: 8.3% average
 - **Address Growth QoQ**: 25.8% average
@@ -692,6 +795,7 @@ Daily Price Data (USD):
 ### 2.2 Comparative Metrics
 
 #### Before/After April 2022 Unlock
+
 ```
 Pre-Unlock (April 2021 - March 2022):
 - Average Daily Volume: $125,000
@@ -707,6 +811,7 @@ Post-Unlock (April 2022 - December 2024):
 ```
 
 #### Cohort Analysis
+
 ```
 Private Sale Cohorts ROI:
 - Friends & Family ($0.10): -83% (in USD)
@@ -720,6 +825,7 @@ Vesting Choice Impact:
 ```
 
 #### Ecosystem Benchmarks
+
 ```
 vs. Other Cosmos Chains (Market Cap Rank):
 - ATOM: #20 (~$3B market cap)
@@ -729,6 +835,7 @@ vs. Other Cosmos Chains (Market Cap Rank):
 ```
 
 #### Correlation Analysis
+
 - **REGEN/BTC Correlation**: 0.45 (moderate)
 - **REGEN/ATOM Correlation**: 0.72 (strong)
 - **REGEN/Carbon Credit Prices**: 0.15 (weak)
@@ -737,6 +844,7 @@ vs. Other Cosmos Chains (Market Cap Rank):
 ### 2.3 Financial Calculations
 
 #### USD Values Analysis
+
 ```
 Token Sale Proceeds:
 - Friends & Family: $688,257 raised
@@ -752,6 +860,7 @@ Current USD Values:
 ```
 
 #### Percentage Distributions
+
 ```
 Current Supply Distribution:
 - Staked: 70.2% (104,144,805 REGEN)
@@ -766,6 +875,7 @@ Validator Distribution:
 ```
 
 #### ROI Calculations
+
 ```
 Investment Returns by Entry:
 - Genesis ($0.63): -97.3% USD / +135% REGEN (staking)
@@ -780,6 +890,7 @@ Staking Returns:
 ```
 
 #### Fee Analysis
+
 ```
 Transaction Fees Collected:
 - Total Fees: ~125,000 REGEN
@@ -798,6 +909,7 @@ Credit Issuance Fees:
 ### 3.1 Primary Data Sources Used
 
 #### Genesis File Access
+
 ```
 API Endpoint: https://raw.githubusercontent.com/regen-network/mainnet/main/regen-1/genesis.json
 Query Method: Direct HTTP GET
@@ -810,6 +922,7 @@ curl -s https://raw.githubusercontent.com/regen-network/mainnet/main/regen-1/gen
 ```
 
 #### Block Explorer APIs
+
 ```
 Mintscan API:
 - Base URL: https://api.mintscan.io/v1/regen
@@ -825,6 +938,7 @@ curl "https://api.mintscan.io/v1/regen/account/regen1234567890abcdef"
 ```
 
 #### RPC Node Access
+
 ```
 Public RPC Endpoints:
 - https://rpc-regen.ecostake.com:443
@@ -840,6 +954,7 @@ curl -s https://rpc-regen.ecostake.com/cosmos/auth/v1beta1/accounts/{address}
 ```
 
 #### Market Data APIs
+
 ```
 CoinGecko API:
 - Endpoint: https://api.coingecko.com/api/v3/coins/regen
@@ -855,6 +970,7 @@ CoinMarketCap API:
 ### 3.2 Tools & Infrastructure
 
 #### Analysis Tools
+
 ```python
 # Python script for genesis analysis
 import json
@@ -880,12 +996,14 @@ df = pd.DataFrame(vesting_accounts)
 ```
 
 #### Visualization Tools
+
 - **Grafana Dashboards**: https://stats.regen.network
 - **Dune Analytics**: Custom REGEN queries
 - **Python Libraries**: matplotlib, seaborn, plotly
 - **Network Graphs**: Gephi for address relationship mapping
 
 #### Data Storage
+
 ```
 PostgreSQL Database Schema:
 - Table: genesis_accounts (address, amount, type, vesting_end)
@@ -899,6 +1017,7 @@ Redis Cache:
 ```
 
 #### Computational Requirements
+
 - **Storage**: 50GB for full node
 - **RAM**: 8GB minimum for analysis
 - **Processing**: 4 CPU cores recommended
@@ -907,6 +1026,7 @@ Redis Cache:
 ### 3.3 Alternative Sources
 
 #### Backup Data Sources
+
 ```
 Alternative Block Explorers:
 - ATOMScan: https://atomscan.com/regen-network
@@ -919,6 +1039,7 @@ Alternative RPC Nodes:
 ```
 
 #### Cross-Reference Points
+
 ```
 IBC Data:
 - Mintscan IBC tracker
@@ -930,6 +1051,7 @@ Governance Data:
 ```
 
 #### Community Resources
+
 - **Discord API Bot**: Real-time price and stats
 - **Telegram Analytics Bot**: @regen_stats_bot
 - **Community Dashboards**: https://regencommunity.earth/stats
@@ -939,6 +1061,7 @@ Governance Data:
 ### 4.1 Technical Infrastructure
 
 #### Protocol Mechanics
+
 ```
 Consensus: Tendermint BFT
 Block Time: ~6 seconds
@@ -955,6 +1078,7 @@ Transaction Types:
 ```
 
 #### Module Architecture
+
 ```go
 // Key Cosmos SDK Modules
 x/auth      // Account management and vesting
@@ -969,6 +1093,7 @@ x/ecocredit/marketplace // Credit trading
 ```
 
 #### Data Flow Architecture
+
 ```mermaid
 graph LR
     A[User Transaction] --> B[Mempool]
@@ -982,6 +1107,7 @@ graph LR
 ```
 
 #### Integration Architecture
+
 ```
 External Connections:
 ├── IBC Protocol
@@ -1000,6 +1126,7 @@ External Connections:
 ### 4.2 Operational Workflows
 
 #### Genesis Account Creation Flow
+
 ```
 1. SAFT Agreement Signed
 2. KYC/AML Verification
@@ -1012,6 +1139,7 @@ External Connections:
 ```
 
 #### Vesting Unlock Process
+
 ```
 1. Vesting Cliff Reached
 2. Automatic Calculation of Vested Amount
@@ -1022,6 +1150,7 @@ External Connections:
 ```
 
 #### Credit Issuance Flow
+
 ```
 1. Project Application
 2. Methodology Approval
@@ -1034,6 +1163,7 @@ External Connections:
 ```
 
 #### Governance Workflow
+
 ```
 1. 200 REGEN Deposit
 2. Proposal Submission
@@ -1049,6 +1179,7 @@ External Connections:
 ### 5.1 Technical Specifications
 
 #### Protocol Parameters
+
 ```yaml
 Chain ID: regen-1
 Bech32 Prefix: regen
@@ -1078,6 +1209,7 @@ Governance Parameters:
 ```
 
 #### Vesting Mathematics
+
 ```python
 def calculate_vested_amount(original_vesting, start_time, end_time, current_time):
     """Calculate vested tokens for continuous vesting account"""
@@ -1095,17 +1227,18 @@ def calculate_vesting_schedule(total_amount, cliff_months, total_months):
     schedule = []
     cliff_amount = 0
     monthly_amount = total_amount / (total_months - cliff_months)
-    
+
     for month in range(total_months):
         if month < cliff_months:
             schedule.append(0)
         else:
             schedule.append(monthly_amount)
-    
+
     return schedule
 ```
 
 #### Security Measures
+
 ```
 Double-Sign Protection:
 - 5% slash of stake
@@ -1125,6 +1258,7 @@ Vesting Security:
 ### 5.2 Domain Expertise
 
 #### Carbon Credit Standards
+
 ```
 Supported Methodologies:
 - CarbonPlus Grasslands (VM0032)
@@ -1142,6 +1276,7 @@ Credit Attributes:
 ```
 
 #### Blockchain Carbon Market Context
+
 ```
 Market Size:
 - Traditional Carbon Markets: $1 billion (2023)
@@ -1156,6 +1291,7 @@ Competitors:
 ```
 
 #### Regulatory Framework
+
 ```
 Compliance Requirements:
 - SEC: Utility token classification
@@ -1174,11 +1310,13 @@ Tax Implications:
 ### 6.1 Historical Context
 
 #### Origin Story
+
 Regen Network emerged from the intersection of blockchain technology and regenerative agriculture. Founded in 2017 by Gregory Landua (former Chief Strategy Officer at Terra Genesis International) and team members with backgrounds in ecological monitoring and blockchain development, the project aimed to create a planetary ledger for ecological health.
 
 The founding vision: "What if we could create a blockchain that rewards regeneration rather than extraction?"
 
 #### Evolution Timeline
+
 ```
 2017 Q4: Concept development begins
 2018 Q1: Whitepaper v1 published
@@ -1201,6 +1339,7 @@ The founding vision: "What if we could create a blockchain that rewards regenera
 
 **1. Cosmos SDK Choice (2019)**
 The team chose Cosmos SDK over Ethereum or custom blockchain for:
+
 - Sovereignty over gas fees
 - Custom module development
 - IBC interoperability vision
@@ -1208,6 +1347,7 @@ The team chose Cosmos SDK over Ethereum or custom blockchain for:
 
 **2. No Public Sale Decision (2020)**
 Originally planned public sale was cancelled due to:
+
 - Regulatory uncertainty
 - COVID-19 market conditions
 - Preference for mission-aligned investors
@@ -1215,6 +1355,7 @@ Originally planned public sale was cancelled due to:
 
 **3. 35% Permanent Lock (2021)**
 Largest ever permanent token lock in Cosmos ecosystem:
+
 - Ensures long-term governance stability
 - Prevents hostile takeover
 - Aligns with regenerative principles
@@ -1223,12 +1364,14 @@ Largest ever permanent token lock in Cosmos ecosystem:
 ### 6.2 Community Narratives
 
 #### Cultural Elements
+
 - **"Regeneration not Speculation"**: Core community mantra
 - **Earth Day Launch**: Symbolic importance of April 15 date
 - **"HODLing for the Planet"**: Long-term holder identity
 - **Validator Names**: Often ecological themes (TreeStake, GaiaNodes)
 
 #### Notable Personalities
+
 - **Gregory Landua**: Co-founder, regenerative agriculture expert
 - **Sarah**: Lead developer, ex-Tendermint engineer
 - **Will Szal**: Former CTO, data module architect
@@ -1253,16 +1396,19 @@ First validator jailed for downtime became community rallying point for decentra
 #### Lessons Learned
 
 **1. Timing Market Unlocks**
+
 - Massive unlocks during bear markets devastate price
 - Vesting schedules should consider market cycles
 - Community communication critical during unlocks
 
 **2. Liquidity Matters**
+
 - DEX-only strategy limits price discovery
 - Low liquidity amplifies volatility
 - CEX listings needed for institutional adoption
 
 **3. Utility vs Speculation Balance**
+
 - Pure utility focus can limit growth
 - Some speculation necessary for liquidity
 - Real-world adoption takes years not months
@@ -1272,42 +1418,49 @@ First validator jailed for downtime became community rallying point for decentra
 ### 7.1 Technical Terms
 
 **BaseVestingAccount**
+
 - Definition: Cosmos SDK account type that locks tokens until certain conditions
 - Context: Used for all REGEN vesting implementations
 - Example: "The team tokens use BaseVestingAccount with 3-year terms"
 - Related: ContinuousVestingAccount, DelayedVestingAccount
 
 **ContinuousVestingAccount**
+
 - Definition: Vesting account that releases tokens linearly over time
 - Context: Used for 3-year lockup private sale tokens after cliff
 - Example: "After 12-month cliff, ContinuousVestingAccount releases monthly"
 - Related: Linear vesting, vesting schedule
 
 **DelayedVestingAccount**
+
 - Definition: All tokens vest at once after specific time period
 - Context: Used for 1-year lockup private sale tokens
 - Example: "1-year investors used DelayedVestingAccount for simplicity"
 - Related: Cliff vesting, lockup period
 
 **uregen**
+
 - Definition: Micro-REGEN, smallest unit (1 REGEN = 1,000,000 uregen)
 - Context: Used in all on-chain calculations
 - Example: "Transaction fee is 10000 uregen (0.01 REGEN)"
 - Related: Token denomination, base unit
 
 **GenTx**
+
 - Definition: Genesis transaction to become initial validator
 - Context: Process for selecting 50 genesis validators
 - Example: "Validators submitted GenTx with 1M REGEN self-delegation"
 - Related: Genesis ceremony, validator set
 
 **IBC (Inter-Blockchain Communication)**
+
 - Definition: Protocol for communication between Cosmos chains
 - Context: Enables REGEN transfers to Osmosis, Cosmos Hub
 - Example: "IBC channel-1 connects REGEN to Osmosis DEX"
 - Related: Cross-chain, interoperability
 
 **Tombstone**
+
 - Definition: Permanent ban from validation for double-signing
 - Context: Severe penalty for consensus attacks
 - Example: "Validator was tombstoned for signing conflicting blocks"
@@ -1316,36 +1469,42 @@ First validator jailed for downtime became community rallying point for decentra
 ### 7.2 Regen-Specific Nomenclature
 
 **Credit Class**
+
 - Definition: Category of ecological credits with specific methodology
 - Context: Core unit of Regen's credit system
 - Example: "CarbonPlus Grasslands is a credit class for soil carbon"
 - Related: Methodology, credit batch
 
 **Credit Batch**
+
 - Definition: Specific issuance of credits from a project
 - Context: Represents verified ecological outcomes
 - Example: "Batch C02-001-20210415 contains 10,000 carbon credits"
 - Related: Issuance, retirement
 
 **Ecological State**
+
 - Definition: Verified condition of ecosystem at point in time
 - Context: Stored on-chain as proof of impact
 - Example: "Ecological state data shows 15% increase in soil carbon"
 - Related: Attestation, monitoring
 
 **Community Staking DAOs**
+
 - Definition: Sub-DAOs holding permanently locked REGEN tokens
 - Context: Unique Regen governance structure
 - Example: "30M REGEN distributed to Community Staking DAOs"
 - Related: enDAOment, governance
 
 **enDAOment**
+
 - Definition: Process of granting locked tokens to community DAOs
 - Context: Regen's approach to decentralized governance
 - Example: "Indigenous communities received enDAOment grants"
 - Related: Community pool, governance
 
 **Regenerative**
+
 - Definition: Actions that restore and enhance ecological health
 - Context: Core philosophy of Regen Network
 - Example: "Regenerative agriculture sequesters carbon while improving soil"
@@ -1356,6 +1515,7 @@ First validator jailed for downtime became community rallying point for decentra
 ### 8.1 Transaction Examples
 
 #### Genesis Allocation Transaction
+
 ```json
 Transaction Hash: GENESIS_INIT_000001
 Block Height: 1
@@ -1389,6 +1549,7 @@ Vesting: Linear from April 2022 to April 2025
 ```
 
 #### First Major Unlock Event
+
 ```
 Transaction Hash: 7B4F892EA1D6C3F92AE5D8B1C4F7A3E6D9B2C5FA
 Block Height: 4,234,567
@@ -1404,6 +1565,7 @@ Market Impact: -15% price drop within 24 hours
 ```
 
 #### Microsoft Carbon Credit Purchase
+
 ```
 Transaction Hash: 4B8F9B2A1D6E3C7F9A2E5D8B1C4F7A3E6D9B2C5F
 Block Height: 9,876,543
@@ -1419,6 +1581,7 @@ Significance: Largest single carbon credit retirement on Regen
 ```
 
 #### Validator Slashing Event
+
 ```
 Transaction Hash: 9A8E7D6C5B4A3F2E1D0C9B8A7F6E5D4C3B2A1F0E
 Block Height: 5,432,100
@@ -1436,6 +1599,7 @@ Community Response: Increased monitoring tools developed
 ### 8.2 Use Case Demonstrations
 
 #### Carbon Credit Issuance Flow
+
 ```
 Project: Wilmot Ranch Grasslands
 Location: Colorado, USA
@@ -1475,6 +1639,7 @@ Economic Impact:
 ```
 
 #### Staking and Governance Participation
+
 ```
 Actor: Environmental NGO
 Address: regen1_ngo_multisig_example
@@ -1516,6 +1681,7 @@ Impact Summary:
 ### 8.3 Code Samples
 
 #### Query Vesting Account Status
+
 ```python
 import requests
 import json
@@ -1529,25 +1695,25 @@ def check_vesting_status(address, rpc_endpoint):
     url = f"{rpc_endpoint}/cosmos/auth/v1beta1/accounts/{address}"
     response = requests.get(url)
     account_data = response.json()
-    
+
     if 'account' not in account_data:
         return "Account not found"
-    
+
     account = account_data['account']
-    
+
     # Check if vesting account
     if 'vesting' not in account['@type']:
         return "Not a vesting account"
-    
+
     # Extract vesting details
     original_vesting = int(account['base_vesting_account']['original_vesting'][0]['amount'])
     end_time = int(account['base_vesting_account']['end_time'])
-    
+
     # For continuous vesting accounts
     if 'ContinuousVesting' in account['@type']:
         start_time = int(account['start_time'])
         current_time = int(datetime.now().timestamp())
-        
+
         if current_time >= end_time:
             vested = original_vesting
             vesting = 0
@@ -1558,7 +1724,7 @@ def check_vesting_status(address, rpc_endpoint):
             progress = (current_time - start_time) / (end_time - start_time)
             vested = int(original_vesting * progress)
             vesting = original_vesting - vested
-    
+
     return {
         'address': address,
         'type': account['@type'].split('.')[-1],
@@ -1578,62 +1744,64 @@ print(json.dumps(status, indent=2))
 ```
 
 #### Calculate Supply Distribution
+
 ```javascript
 // JavaScript/Node.js script to analyze supply distribution
 
 const axios = require('axios');
 
 async function analyzeSupplyDistribution() {
-    const rpc = 'https://rpc-regen.ecostake.com';
-    
-    // Get total supply
-    const supplyResponse = await axios.get(`${rpc}/cosmos/bank/v1beta1/supply/uregen`);
-    const totalSupply = BigInt(supplyResponse.data.amount.amount);
-    
-    // Get staking pool
-    const stakingResponse = await axios.get(`${rpc}/cosmos/staking/v1beta1/pool`);
-    const bondedTokens = BigInt(stakingResponse.data.pool.bonded_tokens);
-    const unbondingTokens = BigInt(stakingResponse.data.pool.not_bonded_tokens);
-    
-    // Get community pool
-    const communityResponse = await axios.get(`${rpc}/cosmos/distribution/v1beta1/community_pool`);
-    const communityPool = BigInt(parseFloat(communityResponse.data.pool[0].amount));
-    
-    // Calculate distributions
-    const stakingRatio = (bondedTokens * 10000n / totalSupply) / 100n;
-    const liquidSupply = totalSupply - bondedTokens - unbondingTokens - communityPool;
-    const liquidRatio = (liquidSupply * 10000n / totalSupply) / 100n;
-    
-    // Format results
-    return {
-        total_supply: {
-            uregen: totalSupply.toString(),
-            regen: Number(totalSupply / 1000000n)
-        },
-        staked: {
-            uregen: bondedTokens.toString(),
-            regen: Number(bondedTokens / 1000000n),
-            percentage: Number(stakingRatio)
-        },
-        liquid: {
-            uregen: liquidSupply.toString(),
-            regen: Number(liquidSupply / 1000000n),
-            percentage: Number(liquidRatio)
-        },
-        community_pool: {
-            uregen: communityPool.toString(),
-            regen: Number(communityPool / 1000000n)
-        }
-    };
+  const rpc = 'https://rpc-regen.ecostake.com';
+
+  // Get total supply
+  const supplyResponse = await axios.get(`${rpc}/cosmos/bank/v1beta1/supply/uregen`);
+  const totalSupply = BigInt(supplyResponse.data.amount.amount);
+
+  // Get staking pool
+  const stakingResponse = await axios.get(`${rpc}/cosmos/staking/v1beta1/pool`);
+  const bondedTokens = BigInt(stakingResponse.data.pool.bonded_tokens);
+  const unbondingTokens = BigInt(stakingResponse.data.pool.not_bonded_tokens);
+
+  // Get community pool
+  const communityResponse = await axios.get(`${rpc}/cosmos/distribution/v1beta1/community_pool`);
+  const communityPool = BigInt(parseFloat(communityResponse.data.pool[0].amount));
+
+  // Calculate distributions
+  const stakingRatio = (bondedTokens * 10000n) / totalSupply / 100n;
+  const liquidSupply = totalSupply - bondedTokens - unbondingTokens - communityPool;
+  const liquidRatio = (liquidSupply * 10000n) / totalSupply / 100n;
+
+  // Format results
+  return {
+    total_supply: {
+      uregen: totalSupply.toString(),
+      regen: Number(totalSupply / 1000000n),
+    },
+    staked: {
+      uregen: bondedTokens.toString(),
+      regen: Number(bondedTokens / 1000000n),
+      percentage: Number(stakingRatio),
+    },
+    liquid: {
+      uregen: liquidSupply.toString(),
+      regen: Number(liquidSupply / 1000000n),
+      percentage: Number(liquidRatio),
+    },
+    community_pool: {
+      uregen: communityPool.toString(),
+      regen: Number(communityPool / 1000000n),
+    },
+  };
 }
 
 // Run analysis
 analyzeSupplyDistribution()
-    .then(result => console.log(JSON.stringify(result, null, 2)))
-    .catch(err => console.error(err));
+  .then((result) => console.log(JSON.stringify(result, null, 2)))
+  .catch((err) => console.error(err));
 ```
 
 #### Genesis File Parser
+
 ```go
 package main
 
@@ -1672,32 +1840,32 @@ func parseGenesisFile(filename string) {
     if err != nil {
         log.Fatal(err)
     }
-    
+
     // Parse JSON structure
     var genesis map[string]interface{}
     err = json.Unmarshal(data, &genesis)
     if err != nil {
         log.Fatal(err)
     }
-    
+
     // Extract accounts
     appState := genesis["app_state"].(map[string]interface{})
     auth := appState["auth"].(map[string]interface{})
     accounts := auth["accounts"].([]interface{})
-    
+
     // Analyze vesting accounts
     vestingStats := make(map[string]int)
     totalVesting := 0
-    
+
     for _, acc := range accounts {
         accBytes, _ := json.Marshal(acc)
         var account GenesisAccount
         json.Unmarshal(accBytes, &account)
-        
+
         if account.BaseVestingAccount != nil {
             vestingType := account.Type
             vestingStats[vestingType]++
-            
+
             // Calculate vesting amount
             for _, coin := range account.BaseVestingAccount.OriginalVesting {
                 if coin.Denom == "uregen" {
@@ -1708,7 +1876,7 @@ func parseGenesisFile(filename string) {
             }
         }
     }
-    
+
     // Print statistics
     fmt.Printf("Genesis Vesting Analysis\n")
     fmt.Printf("========================\n")
@@ -1730,6 +1898,7 @@ func main() {
 ### 9.1 Primary Sources
 
 **Regen Network Official Documentation**
+
 - Title: "Regen Network Documentation"
 - Organization: Regen Network Development Inc.
 - Date: Continuously updated
@@ -1738,6 +1907,7 @@ func main() {
 - Relevance: Primary technical documentation for protocol
 
 **Genesis File**
+
 - Title: "Regen-1 Genesis File"
 - Organization: Regen Network
 - Date: April 15, 2021
@@ -1746,6 +1916,7 @@ func main() {
 - Relevance: Authoritative source for genesis distribution
 
 **Token Economics Paper**
+
 - Title: "Regen Network Economics"
 - Author: Gregory Landua, Will Szal
 - Date: March 2021
@@ -1754,6 +1925,7 @@ func main() {
 - Relevance: Official tokenomics design document
 
 **Private Sale Announcement**
+
 - Title: "Regen Network Closes Private Token Sale Round; Raises $10.5 Million"
 - Author: Christian Shearer
 - Date: February 24, 2021
@@ -1764,23 +1936,27 @@ func main() {
 ### 9.2 Data Verification
 
 **Cross-Referenced Sources**
+
 1. Mintscan Explorer data confirmed with Ping.pub
 2. Price data verified across CoinGecko, CoinMarketCap, Osmosis
 3. Supply data confirmed via direct RPC queries
 4. Vesting schedules verified through account queries
 
 **Confidence Levels**
+
 - Genesis allocations: HIGH (primary source available)
 - Current holdings: MEDIUM (privacy limitations)
 - Price history: HIGH (multiple sources agree)
 - Individual vesting status: LOW (requires private keys)
 
 **Discrepancies Noted**
+
 1. ATOM airdrop allocation unclear in documentation
 2. Some Phase 3 investor counts vary by ±5
 3. Early price data before DEX listing inconsistent
 
 **Resolution Methods**
+
 - Used most conservative numbers when conflicts exist
 - Prioritized on-chain data over documentation
 - Noted uncertainties in relevant sections
@@ -1790,59 +1966,70 @@ func main() {
 ### 10.1 Direct Data Access
 
 **API Documentation**
+
 - Cosmos SDK REST API: https://docs.cosmos.network/api
 - Regen Specific APIs: https://docs.regen.network/api
 - IBC Query APIs: https://github.com/cosmos/ibc-go/tree/main/docs
 
 **Explorer Direct Links**
+
 - All Vesting Accounts: https://www.mintscan.io/regen/accounts?type=vesting
 - Validator List: https://www.mintscan.io/regen/validators
 - Governance Proposals: https://www.mintscan.io/regen/proposals
 - Rich List: https://www.mintscan.io/regen/accounts
 
 **Query Interfaces**
+
 - GraphQL Playground: https://graphql.regen.network/playground
 - REST API Base: https://rest-regen.ecostake.com
 - RPC Interface: https://rpc-regen.ecostake.com
 
 **Data Exports**
+
 - Historical Prices: https://www.coingecko.com/en/coins/regen/historical_data
 - IBC Flow Data: https://mapofzones.com/zones/regen-1/graph
 
 ### 10.2 Analysis Tools
 
 **GitHub Repositories**
+
 - Official Regen SDK: https://github.com/regen-network/regen-ledger
 - Community Tools: https://github.com/regen-network/awesome-regen
 - Data Analysis Scripts: https://github.com/cosmosanalysis/regen-forensics
 
 **Interactive Dashboards**
+
 - Staking Calculator: https://www.stakingrewards.com/earn/regen-network
 - Network Statistics: https://stats.regen.network
 - Validator Performance: https://regen.bigdipper.live/validators
 
 **Visualization Tools**
+
 - Token Flow Visualizer: https://regen-flow.web.app
 - Vesting Schedule Chart: https://dune.xyz/regen/vesting
 
 ### 10.3 Community Resources
 
 **Official Channels**
+
 - Discord: https://discord.gg/regen-network
 - Telegram: https://t.me/regennetwork_community
 - Forum: https://forum.regen.network
 
 **Documentation Hubs**
+
 - User Guides: https://guides.regen.network
 - Developer Docs: https://docs.regen.network
 - Validator Guide: https://docs.regen.network/validators
 
 **Educational Resources**
+
 - YouTube Channel: https://youtube.com/@regennetwork
 - Podcast Series: https://regen.network/podcast
 - Webinar Archive: https://regen.network/education
 
 **Social Media**
+
 - Twitter/X: https://twitter.com/regen_network
 - LinkedIn: https://linkedin.com/company/regen-network
 - Medium Blog: https://medium.com/regen-network
@@ -1852,6 +2039,7 @@ func main() {
 ### 11.1 Raw Data Samples
 
 #### Genesis Account Entry Sample
+
 ```json
 {
   "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
@@ -1877,6 +2065,7 @@ func main() {
 ```
 
 #### Governance Proposal Sample
+
 ```json
 {
   "proposal_id": "22",
@@ -1915,6 +2104,7 @@ func main() {
 ### 11.2 Calculation Methodologies
 
 #### Vesting Amount Calculation
+
 ```
 For Continuous Vesting:
 vested_amount = original_vesting × (current_time - start_time) / (end_time - start_time)
@@ -1929,6 +2119,7 @@ vested_amount = current_time >= end_time ? original_vesting : 0
 ```
 
 #### Staking APR Calculation
+
 ```
 APR = (annual_provisions × (1 - community_tax)) / bonded_tokens × 100
 
@@ -1939,18 +2130,20 @@ Where:
 ```
 
 #### Supply Growth Projection
+
 ```
 future_supply = current_supply × (1 + inflation_rate)^years
 
 With inflation schedule:
 - Year 1-2: 8% max, 5% min
-- Year 3-4: 7% max, 4% min  
+- Year 3-4: 7% max, 4% min
 - Year 5+: 5% max, 2% min
 ```
 
 ### 11.3 Extended Analysis
 
 #### Validator Centralization Metrics
+
 ```
 Nakamoto Coefficient: 8
 (Minimum validators to control 33.4% of stake)
@@ -1963,6 +2156,7 @@ Geographic Distribution: 23 countries
 ```
 
 #### Token Velocity Analysis
+
 ```
 Average Hold Time: 247 days
 Median Transaction Size: 125 REGEN
@@ -1971,6 +2165,7 @@ Velocity Score: 0.15 (very low)
 ```
 
 #### Network Growth Patterns
+
 ```
 User Acquisition Cost: ~1,200 REGEN per active user
 Monthly Active Address Growth: 8.3%
@@ -1981,6 +2176,7 @@ Power User Threshold: >10 transactions/month (3% of users)
 ## 12. RESEARCH METADATA
 
 ### 12.1 Analysis Information
+
 - **Research Date**: December 20-22, 2024
 - **Data Freshness**: Current as of December 22, 2024
 - **Time Required**: 48 hours of analysis
@@ -1989,24 +2185,28 @@ Power User Threshold: >10 transactions/month (3% of users)
 ### 12.2 Limitations & Caveats
 
 **Data Gaps**
+
 - Individual investor identities (privacy protected)
 - Exact vesting status for all accounts (requires private keys)
 - Off-chain OTC trades not captured
 - Early testnet distribution data incomplete
 
 **Assumptions Made**
+
 - Linear vesting calculations assume no edge cases
 - Staking rewards compounded monthly
 - No major protocol changes to vesting rules
 - Exchange wallets identified by pattern analysis
 
 **Potential Errors**
+
 - ±5% margin on holder counts due to dust accounts
 - Price data pre-DEX listing may be inaccurate
 - Some vesting accounts may have custom terms
 - IBC transfers may double-count in volume
 
 **Update Requirements**
+
 - Refresh analysis after April 2025 final vesting
 - Monitor for governance changes to parameters
 - Track new exchange listings impact
@@ -2015,6 +2215,7 @@ Power User Threshold: >10 transactions/month (3% of users)
 ### 12.3 Reproducibility Guide
 
 **Step-by-Step Instructions**
+
 1. Clone analysis repository: `git clone https://github.com/cosmosanalysis/regen-forensics`
 2. Install dependencies: `npm install && pip install -r requirements.txt`
 3. Download genesis file: `wget https://github.com/regen-network/mainnet/raw/main/regen-1/genesis.json`
@@ -2024,11 +2225,13 @@ Power User Threshold: >10 transactions/month (3% of users)
 7. Compile report: `./generate_report.sh`
 
 **Required Access**
+
 - No special credentials needed (all public data)
 - Stable internet connection for RPC queries
 - 100GB free disk space for full analysis
 
 **Estimated Time**
+
 - Initial setup: 2 hours
 - Data collection: 6 hours
 - Analysis execution: 4 hours
@@ -2036,6 +2239,7 @@ Power User Threshold: >10 transactions/month (3% of users)
 - Total: ~14 hours automated time
 
 **Skill Requirements**
+
 - Basic command line proficiency
 - Understanding of JSON data structures
 - Familiarity with blockchain concepts
@@ -2045,6 +2249,7 @@ Power User Threshold: >10 transactions/month (3% of users)
 ## FINAL QUALITY VERIFICATION
 
 ### Checklist Completion
+
 - ✅ All 12 sections comprehensively addressed
 - ✅ 150+ specific numerical data points cited
 - ✅ 50+ unique sources referenced
@@ -2091,7 +2296,9 @@ The 35 million permanently locked REGEN tokens represent a revolutionary governa
 The 35 million locked tokens are permanently non-transferable but maintain full governance and staking rights:
 
 **Exact Distribution:**
+
 - **Regen Foundation Endowment**: 5,000,000 REGEN
+
   - Purpose: Direct governance participation aligned with charitable mission
   - Voting Policy: Active participation in network decisions
   - Delegation: Across validators 6-75 using bell curve distribution
@@ -2106,22 +2313,26 @@ The 35 million locked tokens are permanently non-transferable but maintain full 
 **Complete Voting Record Analysis (33 Proposals):**
 
 **Technical Infrastructure (12 proposals):**
+
 - Average approval rate: 98.7%
 - Participation rate: Consistently meets 40% quorum
 - Foundation support: 100% for security upgrades
 
 **Governance Parameters (4 proposals):**
+
 - Validator expansion (50→75): 95.29% approval
 - Minimum commission (5%): 88.01% approval
 - Voting period reduction: 90.94% approval
 - Deposit increase: 98.80% approval
 
 **Marketplace Management (7 proposals):**
+
 - Average approval: 91.3%
 - One failure: Proposal #16 (technical error)
 - Lowest approval: EEUR removal at 62.16%
 
 **Community Spend (9 proposals):**
+
 - Total allocated: >750,000 REGEN
 - Climate Wiki funding: 400,000 REGEN (99.71% approval)
 - Carbon offset initiatives: 246,085 REGEN total
@@ -2130,6 +2341,7 @@ The 35 million locked tokens are permanently non-transferable but maintain full 
 ### Staking Rewards Accumulation
 
 **Current Network Statistics:**
+
 - **Total Supply**: 209,374,009 REGEN
 - **Circulating Supply**: 148,400,000 REGEN
 - **Staked Amount**: 134,200,000 REGEN
@@ -2137,6 +2349,7 @@ The 35 million locked tokens are permanently non-transferable but maintain full 
 - **Annual Inflation**: Variable based on staking participation
 
 **Reward Calculations:**
+
 - **Base APR**: 20.46% (Coinbase rate)
 - **Daily Rewards**: ~0.056% (20.46% / 365)
 - **Monthly Rewards**: ~1.705%
@@ -2145,6 +2358,7 @@ The 35 million locked tokens are permanently non-transferable but maintain full 
 ### Delegation Statistics
 
 **Foundation Delegation Strategy:**
+
 - **Total Delegated**: ~15 million REGEN
 - **Validators Covered**: 46 of 50 (pre-expansion), now 69 of 75
 - **Monthly Redistribution**: 5 million REGEN
@@ -2152,6 +2366,7 @@ The 35 million locked tokens are permanently non-transferable but maintain full 
 - **Commission Equalization**: Down to 3% minimum
 
 **Delegation Impact Metrics:**
+
 - Doubled commission revenues for bottom 75% validators
 - Improved Nakamoto coefficient for stake distribution
 - Enhanced network decentralization metrics
@@ -2160,6 +2375,7 @@ The 35 million locked tokens are permanently non-transferable but maintain full 
 ### Voting Participation Analysis
 
 **Participation Patterns:**
+
 - **Quorum Achievement**: 100% of proposals met 40% threshold
 - **Average Participation**: ~65% of staked tokens
 - **Foundation Influence**: Up to 35% potential voting power
@@ -2167,6 +2383,7 @@ The 35 million locked tokens are permanently non-transferable but maintain full 
 - **Highest Participation**: 99.99% on critical upgrades
 
 **Statistical Voting Patterns:**
+
 - **Standard Deviation**: 8.2% across all proposals
 - **Median Approval**: 96.84%
 - **Mode Approval Range**: 95-99%
@@ -2177,7 +2394,9 @@ The 35 million locked tokens are permanently non-transferable but maintain full 
 ### Blockchain Explorers
 
 **Primary Explorers:**
+
 - **Mintscan**: https://www.mintscan.io/regen
+
   - Real-time governance tracking
   - Validator performance metrics
   - Transaction history for all proposals
@@ -2191,6 +2410,7 @@ The 35 million locked tokens are permanently non-transferable but maintain full 
 ### API Endpoints & Infrastructure
 
 **RPC Endpoints:**
+
 ```
 Primary: http://mainnet.regen.network:26657/
 VitWit: http://regen.rpc.vitwit.com:26657/
@@ -2201,6 +2421,7 @@ Forbole: http://rpc.regen.forbole.com:80
 ```
 
 **API Documentation:**
+
 - Swagger UI: http://public-rpc.regen.vitwit.com:1317/swagger/
 - Regen-JS SDK: https://github.com/regen-network/regen-js
 - NPM Package: @regen-network/api
@@ -2208,7 +2429,9 @@ Forbole: http://rpc.regen.forbole.com:80
 ### Governance Platforms
 
 **Official Platforms:**
+
 - **Commonwealth**: https://commonwealth.im/regen
+
   - All proposal discussions
   - Voting interface
   - Historical archives
@@ -2221,11 +2444,13 @@ Forbole: http://rpc.regen.forbole.com:80
 ### Analysis Tools
 
 **Staking Calculators:**
+
 - Staking Rewards: https://www.stakingrewards.com/asset/regen
 - Chorus One: https://chorus.one/crypto-staking-networks/regen
 - Figment: https://figment.io/staking/rewards-calculator/
 
 **Network Analytics:**
+
 - CompareNodes: https://www.comparenodes.com/protocols/regen/
 - CoinMarketCap: https://coinmarketcap.com/currencies/regen-network/
 
@@ -2253,6 +2478,7 @@ func (plva PermanentLockedAccount) GetVestingCoins(_ time.Time) sdk.Coins {
 ### Governance Mechanism Flow
 
 **Voting Power Architecture:**
+
 ```
 PermanentLockedAccount → Staking Module → Validator Delegation → Governance Voting Power
                       ↓                                      ↓
@@ -2261,6 +2487,7 @@ PermanentLockedAccount → Staking Module → Validator Delegation → Governanc
 ```
 
 **Key Features:**
+
 1. **Non-transferability**: Enforced at account level through vesting module
 2. **Full Governance Rights**: Standard Cosmos SDK governance participation
 3. **Staking Capability**: Normal delegation to validators
@@ -2269,12 +2496,15 @@ PermanentLockedAccount → Staking Module → Validator Delegation → Governanc
 ### Delegation and Voting Flow
 
 **Technical Process:**
-1. **Account Creation**: 
+
+1. **Account Creation**:
+
    ```bash
    regen tx vesting create-permanent-locked-account [to_address] [amount]
    ```
 
 2. **Delegation Command**:
+
    ```bash
    regen tx staking delegate [validator-addr] [amount]
    ```
@@ -2287,12 +2517,14 @@ PermanentLockedAccount → Staking Module → Validator Delegation → Governanc
 ### Staking Reward Mechanics
 
 **Dual-Token System:**
+
 - **Principal**: 35M locked tokens (never liquid)
 - **Rewards**: Accumulate as transferable REGEN
 - **Compounding**: Liquid rewards can be re-staked
 - **Distribution**: Real-time accumulation, manual claiming
 
 **Technical Parameters:**
+
 - Unbonding Period: 21 days
 - Slashing Conditions: Standard Cosmos SDK rules apply
 - Commission Range: 3% minimum (governance enforced)
@@ -2303,12 +2535,14 @@ PermanentLockedAccount → Staking Module → Validator Delegation → Governanc
 ### Technical Specifications
 
 **Lock Mechanism Details:**
+
 - Module: `x/auth/vesting` (Cosmos SDK)
 - Account Type: `PermanentLockedAccount`
 - Genesis Implementation: April 15, 2021
 - Smart Contract: No additional contracts (native SDK feature)
 
 **Governance Specifications:**
+
 - Proposal Types: Text, Parameter Change, Software Upgrade, Community Spend
 - Deposit Requirement: 2,000 REGEN (increased from 200)
 - Voting Period: 7 days (reduced from 14)
@@ -2319,6 +2553,7 @@ PermanentLockedAccount → Staking Module → Validator Delegation → Governanc
 ### Delegation Rules
 
 **Foundation Delegation Criteria:**
+
 1. **Ranking**: Validators 6-75 (excludes top 5)
 2. **Performance Metrics**:
    - Uptime: >99% required
@@ -2331,6 +2566,7 @@ PermanentLockedAccount → Staking Module → Validator Delegation → Governanc
 ### Staking Parameters
 
 **Network-Wide Settings:**
+
 - Maximum Validators: 75 (increased from 50)
 - Minimum Self-Delegation: 1 REGEN
 - Minimum Commission: 5% (governance enforced)
@@ -2345,28 +2581,34 @@ PermanentLockedAccount → Staking Module → Validator Delegation → Governanc
 The concept originated from co-founder Gregory Landua's recognition that traditional proof-of-stake governance would exclude the very communities Regen Network aimed to serve - farmers, indigenous peoples, and ecological stewards who might lack financial resources to purchase tokens.
 
 **Key Quote from Landua (2019):**
+
 > "By allocating 35% of the initial token supply as permanently locked tokens to governance DAOs, we ensure that ecological stakeholders have a permanent voice in network governance, regardless of token price or market conditions."
 
 ### Historical Milestones
 
 **2019**: Community Stake Governance Model published
+
 - Revolutionary concept of non-liquid governance tokens
 - Designed to prevent plutocracy in ecological governance
 
 **2020**: Regen Foundation established
+
 - 501(c)(3) status achieved
 - Revathi Kollegala appointed Executive Director
 
 **April 15, 2021**: Mainnet Launch
+
 - 35 million tokens permanently locked at genesis
 - Foundation begins stewardship role
 
 **2021-2022**: Delegation Evolution
+
 - Initial delegation to validators 6-50
 - Community debate on expansion strategy
 - Consensus reached for 6-75 delegation range
 
 **2022-2023**: enDAOment Program Launch
+
 - Cohort 1: 7 organizations
 - Cohort 2: 6 international organizations
 - Total: 13+ recipient organizations
@@ -2374,15 +2616,18 @@ The concept originated from co-founder Gregory Landua's recognition that traditi
 ### Key Governance Decisions
 
 **Proposal #3**: Validator Expansion (50→75)
+
 - Enabled greater network decentralization
 - 95.29% approval demonstrated community alignment
 
 **Proposal #11**: Lost Wallet Recovery
+
 - 400K REGEN community assistance
 - Lowest passing rate at 80.90%
 - Demonstrated foundation's humanitarian approach
 
 **Proposal #16**: The Failed Proposal
+
 - Technical typo in Axelar USDC addition
 - Only failed proposal in network history
 - Quickly corrected with Proposal #17
@@ -2430,12 +2675,14 @@ Foundation established precedent of abstaining from technical decisions where ec
 ### Governance Proposal Examples
 
 **Example 1: Proposal #3 - Validator Expansion**
+
 - **Proposal ID**: 3
 - **Title**: Increase Active Validator Set Size to 75
 - **Voting Result**: Yes: 95.29%, No: 0.03%, Abstain: 4.67%
 - **Impact**: Enabled 25 additional validators to participate
 
 **Example 2: Proposal #12 - Climate Wiki Funding**
+
 - **Proposal ID**: 12
 - **Amount**: 400,000 REGEN
 - **Recipient**: dClimate for Climate Data Wiki
@@ -2443,18 +2690,21 @@ Foundation established precedent of abstaining from technical decisions where ec
 - **Transaction Hash**: Available on Mintscan
 
 **Example 3: Proposal #16 - Failed USDC Addition**
+
 - **Proposal ID**: 16
 - **Issue**: Technical typo in implementation
 - **Voting Result**: No: 71.88% (Failed)
 - **Resolution**: Corrected in Proposal #17
 
 **Example 4: Proposal #23 - Carbon Offset**
+
 - **Proposal ID**: 23
 - **Amount**: 86,085 REGEN
 - **Purpose**: Offset network carbon footprint
 - **Voting Result**: Yes: 88.5%
 
 **Example 5: Proposal #27 - Deposit Increase**
+
 - **Proposal ID**: 27
 - **Change**: 200 → 2,000 REGEN deposit
 - **Voting Result**: Yes: 98.80%
@@ -2463,6 +2713,7 @@ Foundation established precedent of abstaining from technical decisions where ec
 ### Delegation Transaction Examples
 
 **Monthly Delegation Cycle:**
+
 ```
 Month 1: 5M REGEN distributed across validators 6-75
 Month 2: Rebalance based on performance metrics
@@ -2471,6 +2722,7 @@ Month 3: Adjust for commission changes
 ```
 
 **Validator Distribution Pattern:**
+
 - Validator #6: ~150,000 REGEN
 - Validator #25: ~300,000 REGEN (bell curve peak)
 - Validator #50: ~100,000 REGEN
@@ -2479,6 +2731,7 @@ Month 3: Adjust for commission changes
 ### Staking Reward Calculations
 
 **Annual Reward Example (5M Foundation Tokens):**
+
 - Base Stake: 5,000,000 REGEN
 - APR: 20.46%
 - Annual Rewards: 1,023,000 REGEN
@@ -2486,6 +2739,7 @@ Month 3: Adjust for commission changes
 - Daily: ~2,803 REGEN
 
 **Community DAO Reward Example:**
+
 - DAO Allocation: 1,000,000 REGEN
 - Annual Rewards: 204,600 REGEN
 - Available for: Operational costs, further staking, community projects
@@ -2493,6 +2747,7 @@ Month 3: Adjust for commission changes
 ### Voting Power Demonstration
 
 **Scenario: Major Network Upgrade**
+
 - Total Staked: 134.2M REGEN
 - Quorum Needed: 53.68M REGEN (40%)
 - Foundation Maximum: 35M REGEN
@@ -2501,41 +2756,49 @@ Month 3: Adjust for commission changes
 ## 9. Citations
 
 ### Governance Proposals
+
 1. Proposal #1-33: https://www.mintscan.io/regen/proposals/
 2. Commonwealth Discussions: https://commonwealth.im/regen/discussions
 3. Forum Archives: https://forum.regen.network/
 
 ### Technical Documentation
+
 4. Cosmos SDK Vesting Module: https://docs.cosmos.network/v0.45/modules/auth/05_vesting.html
 5. Regen Ledger Documentation: https://docs.regen.network/
 6. API Documentation: https://docs.regen.network/ledger/interfaces
 
 ### Foundation Resources
+
 7. Regen Foundation Website: https://regen.foundation/
 8. enDAOment Program: https://regen.foundation/endaoment/
 9. Delegation Strategy: https://regen.foundation/three-month-update-community-staking-dao-delegations/
 
 ### Historical Documents
+
 10. Community Stake Governance Model (2019): Medium/Regen Network
 11. Mainnet Launch Announcement (2021): https://medium.com/regen-network
 12. Foundation Policy Repository: https://github.com/regen-foundation/policies
 
 ### Community Resources
+
 13. Regen Network Guidebook: https://guides.regen.network/
 14. Governance Guidelines: https://github.com/regen-network/governance
 15. Registry Platform: https://registry.regen.network/
 
 ### Market Data
+
 16. Staking Rewards: https://www.stakingrewards.com/asset/regen
 17. CoinMarketCap: https://coinmarketcap.com/currencies/regen-network/
 18. Coinbase: https://www.coinbase.com/price/regen-network
 
 ### Technical Resources
+
 19. GitHub Repository: https://github.com/regen-network/regen-ledger
 20. NPM Package: https://www.npmjs.com/package/@regen-network/api
 21. RPC Endpoints: http://mainnet.regen.network:26657/
 
 ### Analytics Platforms
+
 22. Mintscan Analytics: https://www.mintscan.io/regen/assets
 23. ATOMScan Parameters: https://atomscan.com/regen-network/parameters
 24. CompareNodes: https://www.comparenodes.com/protocols/regen/
@@ -2543,51 +2806,60 @@ Month 3: Adjust for commission changes
 ## 10. Resource Links
 
 ### Essential Governance Links
+
 - **Live Proposals**: https://www.mintscan.io/regen/proposals
 - **Commonwealth Forum**: https://commonwealth.im/regen
 - **Governance Discussions**: https://forum.regen.network/
 - **Voting Guide**: https://guides.regen.network/guides/network-governance/how-to-use-commonwealth/voting
 
 ### Block Explorers
+
 - **Mintscan (Primary)**: https://www.mintscan.io/regen
 - **ATOMScan**: https://atomscan.com/regen-network
 - **Assets Overview**: https://www.mintscan.io/regen/assets
 
 ### API Access Points
+
 - **Main RPC**: http://mainnet.regen.network:26657/
 - **Public RPC**: http://public-rpc.regen.vitwit.com:26657
 - **Archive Node**: http://archive.regen.network:26657/
 - **API Swagger**: http://public-rpc.regen.vitwit.com:1317/swagger/
 
 ### Foundation Resources
+
 - **Regen Foundation**: https://regen.foundation/
 - **enDAOment Program**: https://regen.foundation/endaoment/
 - **Policy Repository**: https://github.com/regen-foundation/policies
 - **Community Updates**: https://regen.foundation/blog/
 
 ### Developer Tools
+
 - **Regen-JS SDK**: https://github.com/regen-network/regen-js
 - **Mainnet Config**: https://github.com/regen-network/mainnet
 - **Documentation**: https://docs.regen.network/
 - **NPM Package**: @regen-network/api
 
 ### Staking & Rewards
+
 - **Staking Calculator**: https://www.stakingrewards.com/asset/regen/calculator
 - **Chorus One Guide**: https://chorus.one/crypto-staking-networks/regen
 - **Network Stats**: https://www.mintscan.io/regen/validators
 
 ### Community Platforms
+
 - **Official Website**: https://www.regen.network/
 - **Registry**: https://registry.regen.network/
 - **Medium Blog**: https://medium.com/regen-network
 - **LinkedIn**: https://www.linkedin.com/company/regen-network
 
 ### Market Information
+
 - **CoinMarketCap**: https://coinmarketcap.com/currencies/regen-network/
 - **Price Tracking**: https://www.coinbase.com/price/regen-network
 - **Trading View**: Multiple exchange listings
 
 ### Query Commands Reference
+
 ```bash
 # Query account details
 regen query auth account [address]
@@ -2607,6 +2879,7 @@ regen query gov vote [proposal-id] [voter]
 ### 11.1 Raw Data Samples
 
 **Genesis Account Sample (Locked Tokens):**
+
 ```json
 {
   "@type": "/cosmos.vesting.v1beta1.PermanentLockedAccount",
@@ -2631,6 +2904,7 @@ regen query gov vote [proposal-id] [voter]
 ```
 
 **Governance Vote Distribution Sample:**
+
 ```csv
 Proposal_ID,Yes_Percentage,No_Percentage,Abstain_Percentage,NoWithVeto_Percentage,Total_Votes
 3,95.29,0.03,4.67,0.01,89234567
@@ -2643,6 +2917,7 @@ Proposal_ID,Yes_Percentage,No_Percentage,Abstain_Percentage,NoWithVeto_Percentag
 ### 11.2 Calculation Methodologies
 
 **Staking Reward Formula:**
+
 ```
 Annual Rewards = Principal × APR
 Monthly Rewards = Annual Rewards / 12
@@ -2654,6 +2929,7 @@ Where:
 ```
 
 **Voting Power Calculation:**
+
 ```
 Voting Power = Direct Stake + Inherited Delegations - Abstained Tokens
 
@@ -2664,6 +2940,7 @@ Where:
 ```
 
 **Bell Curve Distribution Formula:**
+
 ```
 Delegation(rank) = Base × e^(-(rank-μ)²/(2σ²))
 
@@ -2677,18 +2954,21 @@ Where:
 ### 11.3 Extended Analysis
 
 **Voting Pattern Correlations:**
+
 - Technical proposals: Higher approval (98.7% avg)
 - Spending proposals: More varied (80.9% - 99.7%)
 - Parameter changes: Moderate approval (88% - 98.8%)
 - Failed proposals: Only 1 of 33 (3.03% failure rate)
 
 **Delegation Impact Analysis:**
+
 - Bottom 50% validators: Revenue increased 2.1x
 - Network Nakamoto Coefficient: Improved from 7 to 12
 - Geographic distribution: 23 countries represented
 - Carbon-neutral validators: 31% of delegation recipients
 
 **Future Research Questions:**
+
 1. How will locked tokens affect governance as network scales?
 2. What is optimal distribution strategy for remaining Community DAO tokens?
 3. How can delegation algorithms better support network health?
@@ -2709,30 +2989,35 @@ Where:
 ### 12.2 Limitations & Caveats
 
 **Data Limitations:**
+
 - Some early 2021 delegation data incomplete
 - Exact timing of monthly delegations not always recorded
 - Individual Community DAO voting patterns not tracked
 - Real-time staking rewards fluctuate with network conditions
 
 **Technical Limitations:**
+
 - Cannot access private foundation communications
 - Some validator commission history incomplete
 - IBC transaction tracking for rewards complex
 - Historical APR data before 2022 limited
 
 **Assumptions Made:**
+
 - Current staking ratio remains relatively stable
 - Foundation continues existing delegation strategy
 - No major tokenomics changes planned
 - Community DAO recipients maintain delegations
 
 **Potential Errors:**
+
 - ±0.5% margin on staking ratio calculations
 - ±2% variance on historical APR estimates
 - Exact reward calculations depend on block timing
 - Validator count may change with future proposals
 
 **Update Requirements:**
+
 - Governance proposals: Check weekly
 - Staking metrics: Update monthly
 - Delegation patterns: Review quarterly
@@ -2741,6 +3026,7 @@ Where:
 ### 12.3 Reproducibility Guide
 
 **Step 1: Access Primary Data Sources**
+
 ```
 1. Navigate to https://www.mintscan.io/regen/proposals
 2. Export all proposal data via API or manual collection
@@ -2748,6 +3034,7 @@ Where:
 ```
 
 **Step 2: Query Blockchain Data**
+
 ```bash
 # Install Regen CLI
 curl -LO https://github.com/regen-network/regen-ledger/releases/latest
@@ -2763,6 +3050,7 @@ regen query staking params
 ```
 
 **Step 3: Calculate Metrics**
+
 ```python
 # Python script for analysis
 import requests
@@ -2778,12 +3066,14 @@ average_approval = approval_rates.mean()
 ```
 
 **Required Access:**
+
 - Public RPC endpoints (no authentication needed)
 - Block explorer APIs (free tier sufficient)
 - Basic programming knowledge (Python/JavaScript)
 - ~4-6 hours for complete replication
 
 **Technical Skills Needed:**
+
 - Command line interface usage
 - Basic API interaction
 - Data analysis (spreadsheet or programming)
@@ -2792,6 +3082,7 @@ average_approval = approval_rates.mean()
 ## 13. Visual Data Representations
 
 ### Network Token Distribution
+
 ```
 Total Supply Distribution (209.37M REGEN)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -2803,21 +3094,23 @@ Circulating      : █████░░░░░░░░░░░░░░░ 
 ```
 
 ### Governance Participation Trends
+
 ```
 Participation Rate by Proposal Type (%)
-100 ┤ 
+100 ┤
  95 ┤ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■   Technical
  90 ┤ □ □ □ □ □ ■ □ □ □     Governance
  85 ┤     ○   ○ ○ ○         Community Spend
- 80 ┤       ○               
- 75 ┤ ○                     
- 70 ┤                       
+ 80 ┤       ○
+ 75 ┤ ○
+ 70 ┤
     └─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─
      Q2 Q3 Q4 Q1 Q2 Q3 Q4 Q1 Q2 Q3
      2021   2022   2023   2024
 ```
 
 ### Validator Delegation Distribution
+
 ```
 Foundation Delegation Bell Curve (15M REGEN Total)
 Delegation Amount (REGEN)
@@ -2833,6 +3126,7 @@ Delegation Amount (REGEN)
 ```
 
 ### Staking Ratio Evolution
+
 ```
 Network Staking Ratio (%)
 95 ┤                    ╱─────
@@ -2845,6 +3139,7 @@ Network Staking Ratio (%)
 ```
 
 ### Proposal Approval Distribution
+
 ```
 Approval Rate Distribution (33 Proposals)
 Number of Proposals
@@ -2862,6 +3157,7 @@ Number of Proposals
 ## 14. Archive Links
 
 **Key Documents (Archived via Wayback Machine):**
+
 1. Community Stake Governance Model: https://web.archive.org/web/20191215/medium.com/regen-network/community-stake-governance-model
 2. Mainnet Launch Announcement: https://web.archive.org/web/20210415/medium.com/regen-network/mainnet-launch
 3. Foundation Delegation Strategy: https://web.archive.org/web/20211201/regen.foundation/delegation-strategy
@@ -2870,21 +3166,25 @@ Number of Proposals
 ## 15. Frequently Updated Metrics
 
 **Daily Updates Required:**
+
 - Current REGEN Price: Check CoinMarketCap
 - Staking APR: Varies with network participation
 - Active Proposals: Monitor Mintscan
 
 **Weekly Updates:**
+
 - New Governance Proposals
 - Validator Performance Metrics
 - Network Upgrade Announcements
 
 **Monthly Updates:**
+
 - Foundation Delegation Rebalancing
 - Staking Ratio Changes
 - Community Pool Balance
 
 **Quarterly Updates:**
+
 - enDAOment Program Progress
 - Validator Set Changes
 - Major Governance Decisions
@@ -2892,18 +3192,21 @@ Number of Proposals
 ## 16. Future Implications
 
 ### Short-Term (2025-2026)
+
 - Completion of Community DAO token distribution
 - Potential governance parameter adjustments
 - Enhanced delegation algorithms implementation
 - Cross-chain governance participation via IBC
 
 ### Medium-Term (2026-2028)
+
 - Evolution of locked token governance models
 - Integration with real-world asset governance
 - Potential sub-DAO creation for specific ecosystems
 - Advanced voting mechanisms (quadratic voting consideration)
 
 ### Long-Term (2028+)
+
 - Model replication across Cosmos ecosystem
 - Academic research on permanent stake governance
 - Potential UN/governmental recognition
@@ -2940,6 +3243,7 @@ This comprehensive analysis, based on 33 governance proposals, multiple blockcha
 ## 1. Executive Summary
 
 **Key Metrics and Findings:**
+
 1. **Network Age**: 3.8 years (Genesis: April 15, 2021)
 2. **Current Activity Level**: Extremely low - $56-57 daily trading volume
 3. **Total Supply**: 148.35M REGEN circulating, 209.37M total minted
@@ -2961,6 +3265,7 @@ This comprehensive analysis, based on 33 governance proposals, multiple blockcha
 ### Precise Network Statistics (as of July 15, 2025):
 
 **Core Metrics:**
+
 - **Current Block Height**: 20,432,156 (Source: Mintscan)
 - **Average Block Time**: 5.79 seconds (Source: Staking-explorer)
 - **Total Supply**: 209,371,283.849999 REGEN (Source: CoinMarketCap)
@@ -2974,6 +3279,7 @@ This comprehensive analysis, based on 33 governance proposals, multiple blockcha
 - **Average Unbonding**: 36,149.805556 REGEN
 
 **Transaction Volume Estimates:**
+
 - **Daily Transactions**: 50-100 (based on block analysis)
 - **Annual Transaction Estimate**: 18,250-36,500
 - **Gas Price**: 0.025 uregen/gas (network parameter)
@@ -2981,6 +3287,7 @@ This comprehensive analysis, based on 33 governance proposals, multiple blockcha
 - **Daily Fee Volume**: ~0.1-0.4 REGEN
 
 **Staking Economics:**
+
 - **Inflation Rate**: 7-20% (dynamic based on staking ratio)
 - **Current APR**: 13.42% (Source: Staking Rewards)
 - **Unbonding Period**: 1,814,400 seconds (21 days)
@@ -2988,6 +3295,7 @@ This comprehensive analysis, based on 33 governance proposals, multiple blockcha
 - **Minimum Self-Delegation**: 1 REGEN
 
 **Credit Market Metrics:**
+
 - **Total Credits Issued**: >1,000,000 (across all classes)
 - **Credits Sold**: 700,000+ confirmed
 - **Credits Retired**: 180,000+ confirmed
@@ -2995,12 +3303,14 @@ This comprehensive analysis, based on 33 governance proposals, multiple blockcha
 - **Average Credit Price**: $5-50 USD (methodology dependent)
 
 **Bridge Statistics:**
+
 - **Ethereum Bridge**: 10,936.000000 REGEN (9 holders)
 - **Polygon Bridge**: 10,751.000000 REGEN (97 holders)
 - **BSC Bridge**: Active but no current stats
 - **Total Bridged**: ~21,687 REGEN (0.015% of circulating)
 
 **Validator Distribution:**
+
 - **Top Validator Stake**: 11,457,287 REGEN (0base.vc)
 - **Median Validator Stake**: ~800,000 REGEN
 - **Smallest Active Validator**: ~50,000 REGEN
@@ -3010,12 +3320,14 @@ This comprehensive analysis, based on 33 governance proposals, multiple blockcha
 ## 3. Resources & Data Sources
 
 ### Primary Blockchain Explorers:
+
 - **Mintscan**: https://www.mintscan.io/regen (Cosmostation)
 - **Big Dipper**: https://bigdipper.live/regen (Forbole)
 - **Regenscan**: https://regenscan.com/ (Ecological data focus)
 - **ATOMScan**: https://atomscan.com/regen-network
 
 ### API Infrastructure:
+
 - **Public RPC Endpoints**:
   - http://mainnet.regen.network:26657
   - https://regen-rpc.publicnode.com:443
@@ -3025,6 +3337,7 @@ This comprehensive analysis, based on 33 governance proposals, multiple blockcha
 - **Archive Node**: http://archive.regen.network:26657
 
 ### SDK and Libraries:
+
 - @regen-network/api (npm package)
 - regen-js TypeScript library
 - Cosmos SDK standard tools
@@ -3034,22 +3347,27 @@ This comprehensive analysis, based on 33 governance proposals, multiple blockcha
 ### Transaction Flow Mechanics:
 
 **Core Transaction Categories:**
+
 1. **Token Transfers** (cosmos.bank.v1beta1.MsgSend)
+
    - Simple peer-to-peer REGEN transfers
    - Fee payments and gas costs
 
-2. **Staking Operations** (cosmos.staking.v1beta1.*)
+2. **Staking Operations** (cosmos.staking.v1beta1.\*)
+
    - Delegate: Lock tokens with validators
    - Undelegate: 21-day unbonding period
    - Redelegate: Move between validators
    - Claim Rewards: Collect staking returns
 
-3. **Governance** (cosmos.gov.v1beta1.*)
+3. **Governance** (cosmos.gov.v1beta1.\*)
+
    - Submit Proposal: Requires deposit
    - Deposit: Add to proposal pool
    - Vote: Yes/No/Abstain/NoWithVeto
 
-4. **Ecological Credits** (regen.ecocredit.v1.*)
+4. **Ecological Credits** (regen.ecocredit.v1.\*)
+
    - CreateClass: Register new credit methodology
    - CreateBatch: Issue credits with vintage dates
    - Send: Transfer credits between addresses
@@ -3057,14 +3375,16 @@ This comprehensive analysis, based on 33 governance proposals, multiple blockcha
    - Bridge: Cross-chain to Polygon/Ethereum
 
 5. **IBC Transfers** (ibc.applications.transfer.v1.MsgTransfer)
+
    - Cross-chain token movements
    - Channel-based routing
 
-6. **Data Anchoring** (regen.data.v1.*)
+6. **Data Anchoring** (regen.data.v1.\*)
    - Anchor: Store ecological data hashes
    - Attest: Verify data authenticity
 
 ### Flow Patterns:
+
 ```
 User Wallet → Staking Module → Validator
            ↓
@@ -3078,18 +3398,21 @@ User Wallet → Staking Module → Validator
 ### Transaction Type Details:
 
 **Credit Lifecycle:**
+
 1. **Class Creation**: Project developer creates credit class with methodology
 2. **Batch Issuance**: Credits minted with specific vintage periods
 3. **Trading**: Credits sold on marketplace or transferred P2P
 4. **Retirement**: Final use for carbon offset claims, permanently removed
 
 **Staking Flow:**
+
 1. **Delegation**: REGEN locked with chosen validator
 2. **Rewards**: Auto-compound or manual claim (~20% APR)
 3. **Unbonding**: 21-day waiting period for withdrawal
 4. **Slashing**: Penalties for validator misbehavior
 
 **Cross-chain Flow:**
+
 1. **Lock**: REGEN/credits locked on native chain
 2. **Mint**: Wrapped token created on destination
 3. **Burn**: Destroy wrapped token when bridging back
@@ -3100,27 +3423,32 @@ User Wallet → Staking Module → Validator
 ### Significant Transaction Events:
 
 **Genesis Distribution (April 15, 2021)**
+
 - 100M REGEN initial distribution
 - 30M allocated to Community Staking Pool
 - 2M to Community Pool for governance
 - 50 validators at launch
 
 **Microsoft Carbon Purchase (2020)**
+
 - 124,000 CarbonPlus Grasslands credits
 - Largest soil carbon deal in Australia
 - Set precedent for corporate buyers
 
 **King County Forest Deal (2024)**
+
 - $1M purchase for 46-acre forest credits
 - Largest US urban forest carbon sale
 - Demonstrates government participation
 
 **Network Upgrades:**
+
 - v3.0 (March 2022): Added basket functionality for credit aggregation
 - v4.1.2 (October 2022): Emergency validator synchronization fix
 - v5.0+: Enhanced credit features and marketplace improvements
 
 ### Transaction Patterns:
+
 - Low daily volume indicates quality over quantity approach
 - Staking dominates regular network activity
 - Credit transactions cluster around project milestones
@@ -3130,6 +3458,7 @@ User Wallet → Staking Module → Validator
 ## 7. Terminology Glossary
 
 ### Core Protocol Terms:
+
 - **uregen**: Micro-REGEN, smallest unit (1 REGEN = 1,000,000 uregen). Used in all transaction calculations and gas fees.
 - **Batch Denom**: Unique identifier for credit batches following pattern: [CLASS]-[ISSUER]-[START]-[END]-[SEQUENCE] (e.g., C01-001-20200101-20210101-001)
 - **Credit Class**: Methodology framework for generating ecological credits (e.g., C01 for soil carbon, C02 for forestry)
@@ -3171,6 +3500,7 @@ User Wallet → Staking Module → Validator
 ### Verified Transaction Examples:
 
 **Actual Staking Delegation (Block 10,532,421):**
+
 ```json
 {
   "transaction_hash": "B4E5C8A9F1D2E7B3C6A9F8E2D1C4B7A9E2F5D8C1A3B6E9F2C5D8A1B4E7F0C3",
@@ -3179,12 +3509,14 @@ User Wallet → Staking Module → Validator
   "@type": "/cosmos.staking.v1beta1.MsgDelegate",
   "delegator_address": "regen1depk54cuajgkzea6zpgkq36tnjwdzv4ak663u6",
   "validator_address": "regenvaloper1depk54cuajgkzea6zpgkq36tnjwdzv4ak663u6",
-  "amount": {"denom": "uregen", "amount": "1000000"}
+  "amount": { "denom": "uregen", "amount": "1000000" }
 }
 ```
+
 [View on Mintscan](https://www.mintscan.io/regen/txs/B4E5C8A9F1D2E7B3C6A9F8E2D1C4B7A9E2F5D8C1A3B6E9F2C5D8A1B4E7F0C3)
 
 **Microsoft Credit Purchase (Historical):**
+
 ```json
 {
   "transaction_hash": "A7F2D9C4E1B8A5C3F6D9A2E5B8C1D4F7A0C3E6B9F2C5D8A1B4E7F0C3D6A9B2",
@@ -3192,15 +3524,18 @@ User Wallet → Staking Module → Validator
   "@type": "/regen.ecocredit.v1.MsgSend",
   "sender": "regen1ctwg8s6l8z8t5hqd4zxvxvzfyst2h89yqgafaz",
   "recipient": "regen1ql3ql0yxhcynm2tcnhyzej9jxz3auzl93pv0xw",
-  "credits": [{
-    "batch_denom": "C01-001-20200101-20210101-001",
-    "tradable_amount": "124000",
-    "retired_amount": "0"
-  }]
+  "credits": [
+    {
+      "batch_denom": "C01-001-20200101-20210101-001",
+      "tradable_amount": "124000",
+      "retired_amount": "0"
+    }
+  ]
 }
 ```
 
 **King County Forest Deal (2024):**
+
 ```json
 {
   "transaction_hash": "C8E3F9A5D2B7E4C1F7A3D6B9E2C5F8A1D4B7E0C3A6F9D2C5B8E1A4F7B0C3D6",
@@ -3209,11 +3544,12 @@ User Wallet → Staking Module → Validator
   "buyer": "regen1wkc8yt9fwknqlgnqvp65h0qtn9xnmn7hl3dzy9",
   "sell_order_id": "1234",
   "quantity": "1000",
-  "bid_price": {"denom": "uusd", "amount": "1000000"}
+  "bid_price": { "denom": "uusd", "amount": "1000000" }
 }
 ```
 
 **IBC Transfer to Osmosis (Recent):**
+
 ```json
 {
   "transaction_hash": "D9F4A6B2E3C8F5A1D7B4E0C6A3F9D6C2B8E5A1F7D4B0E6C3A9F6D2C8B5E1A7",
@@ -3221,14 +3557,15 @@ User Wallet → Staking Module → Validator
   "@type": "/ibc.applications.transfer.v1.MsgTransfer",
   "source_port": "transfer",
   "source_channel": "channel-1",
-  "token": {"denom": "uregen", "amount": "5000000"},
+  "token": { "denom": "uregen", "amount": "5000000" },
   "sender": "regen1s5zxhmy7663l9pensqwjgwhvqg0k7czfns59qh",
   "receiver": "osmo1s5zxhmy7663l9pensqwjgwhvqg0k7czfgxqc4z",
-  "timeout_height": {"revision_number": "1", "revision_height": "21000000"}
+  "timeout_height": { "revision_number": "1", "revision_height": "21000000" }
 }
 ```
 
 **Notable Verified Addresses:**
+
 - **Regen Foundation**: regen14tpnqc2mvauxa8nfxk20svv8jmg0rentcpt237 (30,000,000 REGEN)
 - **Community Pool**: regen1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3fhevav (2,000,000+ REGEN)
 - **Top Validator (0base.vc)**: regenvaloper1c06aced3sn5n88aw4y5yjq8axscf47kur3n6gc (11,457,287 REGEN)
@@ -3237,6 +3574,7 @@ User Wallet → Staking Module → Validator
 - **Polygon Bridge Contract**: 0xEc482De9569a5EA3Dd9779039b79e53F15791fDE
 
 **Credit Class Examples:**
+
 - **C01**: CarbonPlus Grasslands (Australian soil carbon)
 - **C02**: Verified Carbon Standard (VCS) credits
 - **C03**: City Forest Credits (urban forestry)
@@ -3245,7 +3583,8 @@ User Wallet → Staking Module → Validator
 ## 9. Citations & References
 
 ### Primary Sources:
-- Regen Network Official Documentation (https://docs.regen.network) 
+
+- Regen Network Official Documentation (https://docs.regen.network)
   - [Archive](https://web.archive.org/web/20250715/https://docs.regen.network)
 - Cosmos SDK Documentation v0.45+ (https://docs.cosmos.network)
   - [Archive](https://web.archive.org/web/20250715/https://docs.cosmos.network)
@@ -3263,12 +3602,14 @@ User Wallet → Staking Module → Validator
   - [Archive](https://web.archive.org/web/20250715/https://github.com/regen-network/regen-ledger)
 
 ### Academic & Industry References:
+
 - "Blockchain for Climate Action" - Climate Chain Coalition (2023)
 - "Tokenized Carbon Credits" - World Bank Report (2022)
 - "Cosmos Ecosystem Analysis" - Messari Research (2024)
 - "Regenerative Finance Thesis" - ReFi DAO Documentation (2023)
 
 ### Data Verification Sources:
+
 - Cross-referenced between Mintscan, Big Dipper, and ATOMScan
 - Verified staking data across 3 platforms
 - Confirmed bridge holdings via Etherscan and PolygonScan
@@ -3277,23 +3618,27 @@ User Wallet → Staking Module → Validator
 ## 10. Resource Links
 
 ### Explorers:
+
 - https://www.mintscan.io/regen
 - https://regenscan.com/
 - https://atomscan.com/regen-network
 - https://bigdipper.live/regen
 
 ### Development Resources:
+
 - https://github.com/regen-network/regen-ledger
 - https://buf.build/regen/regen-ledger
 - https://docs.regen.network
 - https://www.npmjs.com/package/@regen-network/api
 
 ### Market Data:
+
 - https://coinmarketcap.com/currencies/regen/
 - https://www.coingecko.com/en/coins/regen
 - https://staking-explorer.com/explorer/regen
 
 ### Community:
+
 - Commonwealth Forum (commonwealth.im/regen)
 - Discord Community
 - Telegram Groups
@@ -3304,6 +3649,7 @@ User Wallet → Staking Module → Validator
 ### Sample Data Structures:
 
 **Transaction Structure:**
+
 ```
 Transaction Hash: 64-character hex (SHA256)
 Block Height: Integer (1 to ~20,400,000)
@@ -3318,39 +3664,43 @@ Success: Boolean
 ### API Query Examples:
 
 **Get Network Status:**
+
 ```bash
 curl http://mainnet.regen.network:26657/status
 ```
 
 **Query Transactions by Type:**
+
 ```bash
 curl "http://mainnet.regen.network:1317/cosmos/tx/v1beta1/txs?events=message.module='ecocredit'&pagination.limit=10"
 ```
 
 **Get Account Balance:**
+
 ```bash
 curl "http://mainnet.regen.network:1317/cosmos/bank/v1beta1/balances/{address}"
 ```
 
 ### Data Collection Script Template:
+
 ```python
 import requests
 import json
 
 def collect_regen_data():
     base_url = "http://mainnet.regen.network:1317"
-    
+
     # Get latest block
     status = requests.get(f"{base_url.replace('1317','26657')}/status").json()
     latest_height = status['result']['sync_info']['latest_block_height']
-    
+
     # Query transactions
     tx_url = f"{base_url}/cosmos/tx/v1beta1/txs"
     params = {
         'events': 'tx.height>1',
         'pagination.limit': 100
     }
-    
+
     response = requests.get(tx_url, params=params)
     return response.json()
 ```
@@ -3358,6 +3708,7 @@ def collect_regen_data():
 ## 12. Research Metadata
 
 ### Limitations:
+
 1. **Data Access**: No comprehensive transaction database publicly available
 2. **Analytics Gap**: No Dune Analytics, Flipside, or similar platforms support REGEN
 3. **Low Activity**: $56-57 daily trading volume severely limits pattern analysis
@@ -3366,6 +3717,7 @@ def collect_regen_data():
 6. **Address Profiling**: Cannot identify top 1000 addresses without full data access
 
 ### Methodology:
+
 - Deployed 7 specialized research agents for parallel investigation
 - Cross-referenced multiple data sources for verification
 - Attempted direct RPC endpoint access (limited success)
@@ -3376,6 +3728,7 @@ def collect_regen_data():
 ### Reproducibility Guide:
 
 **Step 1: Environment Setup**
+
 ```bash
 # Install required tools
 npm install -g @cosmjs/cli
@@ -3387,6 +3740,7 @@ cd regen-ledger
 ```
 
 **Step 2: Data Collection**
+
 ```python
 # Complete data collection script
 import requests
@@ -3398,15 +3752,15 @@ class RegenAnalyzer:
     def __init__(self):
         self.rpc_url = "http://mainnet.regen.network:26657"
         self.api_url = "http://mainnet.regen.network:1317"
-        
+
     def get_latest_block(self):
         response = requests.get(f"{self.rpc_url}/status")
         return response.json()['result']['sync_info']['latest_block_height']
-    
+
     def get_transactions(self, height):
         response = requests.get(f"{self.api_url}/cosmos/tx/v1beta1/txs?events=tx.height={height}")
         return response.json()
-    
+
     def analyze_tx_types(self, start_height, end_height):
         tx_types = {}
         for height in range(start_height, end_height):
@@ -3425,6 +3779,7 @@ print(f"Latest block: {latest}")
 ```
 
 **Step 3: Required Access**
+
 - RPC endpoint access (public available)
 - Archive node for historical data (contact Regen Foundation)
 - Mintscan API key for detailed queries (apply at cosmostation.io)
@@ -3437,6 +3792,7 @@ print(f"Latest block: {latest}")
 ### Community Context:
 
 **Ecosystem Participants:**
+
 - **Validators**: 75 active operators from 25+ countries
 - **Developers**: 42 teams building on Regen Ledger
 - **Credit Issuers**: 15+ approved methodologies
@@ -3445,6 +3801,7 @@ print(f"Latest block: {latest}")
 - **Community Members**: 5,000+ Discord members, 10,000+ Twitter followers
 
 **Governance Culture:**
+
 - High participation rate (90%+ on major proposals)
 - Active debate on Commonwealth forum
 - Weekly community calls
@@ -3452,6 +3809,7 @@ print(f"Latest block: {latest}")
 - Strong environmental mission alignment
 
 **Developer Ecosystem:**
+
 - Regen Ledger (core protocol)
 - Regen Registry (dApp interface)
 - Groups Module (DAO tooling)
@@ -3461,6 +3819,7 @@ print(f"Latest block: {latest}")
 ### Future Implications:
 
 **Technical Roadmap (2025-2027):**
+
 1. **CosmWasm Integration**: Enable smart contracts for complex credit logic
 2. **Enhanced IBC**: Multi-hop credit transfers and cross-chain retirement
 3. **Zero-Knowledge Proofs**: Privacy-preserving credit transactions
@@ -3468,6 +3827,7 @@ print(f"Latest block: {latest}")
 5. **Decentralized Storage**: IPFS/Arweave integration for data permanence
 
 **Market Evolution Predictions:**
+
 - Transaction volume expected to 100x as carbon markets mature
 - Bridge activity will increase with institutional adoption
 - Credit tokenization will expand to biodiversity and water credits
@@ -3475,6 +3835,7 @@ print(f"Latest block: {latest}")
 - Integration with traditional carbon registries
 
 **Scaling Considerations:**
+
 - Current capacity: 1,000+ TPS (theoretical)
 - Actual usage: <100 daily transactions
 - Growth potential: 10,000x before hitting limits
@@ -3482,6 +3843,7 @@ print(f"Latest block: {latest}")
 - Interchain Security for specialized credit chains
 
 **Regulatory Adaptation:**
+
 - Compliance modules for different jurisdictions
 - KYC/AML integration for institutional participants
 - Automated tax reporting for credit transactions
@@ -3489,12 +3851,14 @@ print(f"Latest block: {latest}")
 - Standards alignment with CORSIA/VCMI
 
 ### Data Quality Assessment:
+
 - **High Confidence**: Transaction types, network architecture, staking metrics
 - **Medium Confidence**: Credit volumes, major partnerships, governance data
 - **Low Confidence**: Complete transaction counts, detailed flow patterns
 - **Not Available**: Top 1000 addresses, comprehensive flow diagrams, time series
 
 ### Research Timeline:
+
 - Research conducted: July 15, 2025
 - Network age at research: 3 years, 3 months
 - Data sources accessed: 8 explorers, 4 RPC endpoints, 15+ documentation sources
@@ -3513,6 +3877,7 @@ This analysis represents the maximum achievable with publicly available data. Th
 - Future roadmap and scaling implications
 
 For comprehensive transaction flow analysis including the top 1000 addresses and detailed visualizations, the following would be required:
+
 1. Direct archive node operation
 2. Custom indexing infrastructure
 3. Mintscan API premium access
@@ -3528,6 +3893,7 @@ The REGEN Network represents a unique intersection of blockchain technology and 
 This comprehensive forensic analysis reveals that REGEN Network exhibits unique whale behavior patterns characterized by high concentration among institutional holders, minimal trading activity, and strong governance participation. Despite launching with 100M tokens at genesis on April 15, 2021, the network shows limited public whale address transparency, with 35% of tokens permanently locked in Foundation holdings and approximately 60-70% of supply controlled by the top 10 addresses. The token has experienced a catastrophic 99.99% decline from its all-time high of $226.40 to current levels around $0.017, creating extreme vulnerability to manipulation despite no evidence of active whale trading. With 90.48% of tokens staked and daily trading volumes under $2,000, REGEN represents a highly illiquid market dominated by long-term holders rather than active traders.
 
 ### Key Metrics
+
 - **Total Genesis Supply**: 100,000,000 REGEN
 - **Current Supply**: ~148.35M REGEN
 - **Whale Threshold**: >100,000 tokens
@@ -3543,6 +3909,7 @@ This comprehensive forensic analysis reveals that REGEN Network exhibits unique 
 ### Token Distribution Structure
 
 **Genesis Allocation (April 15, 2021)**:
+
 1. **Foundation & Community DAOs**: 35M tokens (35%) - permanently locked
 2. **Private Sale Investors**: 36M tokens (36%) - various lock-ups
 3. **Team & Advisors**: 15M tokens (15%) - 3-year vesting
@@ -3552,12 +3919,14 @@ This comprehensive forensic analysis reveals that REGEN Network exhibits unique 
 7. **Network Bootstrapping**: 5M tokens (5%)
 
 ### Concentration Analysis
+
 - **Top 1 Address**: ~30% (Regen Foundation)
 - **Top 10 Addresses**: 60-70% of total supply
 - **Top 25 Addresses**: 80-85% of total supply
 - **Top 50 Addresses**: 90-95% of total supply
 
 ### Accumulation Patterns
+
 - **Private Sale Rounds**:
   - Friends & Family: $0.10/token (6.88M tokens)
   - Phase 1: $0.21-$0.49/token (5.78M tokens)
@@ -3567,6 +3936,7 @@ This comprehensive forensic analysis reveals that REGEN Network exhibits unique 
 - **Lead Investor**: One Small Planet Capital
 
 ### Staking Behavior Metrics
+
 - **Total Staked**: 134.2M REGEN (90.48%)
 - **APR Range**: 13.42% - 25%
 - **Validator Count**: 75 active validators
@@ -3577,23 +3947,27 @@ This comprehensive forensic analysis reveals that REGEN Network exhibits unique 
 ## Resources & Data Sources Used
 
 ### Primary Blockchain Explorers
+
 - **Mintscan**: mintscan.io/regen - Transaction history, validator data
 - **Ping.pub**: ping.pub/regen - Alternative explorer
 - **BigDipper**: Limited REGEN support
 - **Regenscan**: Custom REGEN explorer (limited functionality)
 
 ### Analytics Platforms
+
 - **Map of Zones**: IBC transfer tracking
 - **StakingRewards.com**: Staking metrics and APR data
 - **DEXScreener**: Osmosis trading data
 - **CoinGecko/CoinMarketCap**: Price and volume tracking
 
 ### Governance Resources
+
 - **Commonwealth**: commonwealth.im/regen - Proposal discussions
 - **GitHub**: github.com/regen-network/governance - Long-form proposals
 - **Regen Guidebook**: Complete proposal history
 
 ### Data Limitations
+
 - No comprehensive rich list available
 - Limited address labeling
 - Restricted API access for balance queries
@@ -3602,13 +3976,16 @@ This comprehensive forensic analysis reveals that REGEN Network exhibits unique 
 ## Systems Architecture of Tracking Methodology
 
 ### Blockchain Infrastructure
+
 - **Consensus**: Tendermint-based Proof-of-Stake
 - **SDK**: Cosmos SDK sovereign blockchain
 - **IBC**: Full Inter-Blockchain Communication support
 - **Bridges**: Polygon bridge for ecological credits
 
 ### Tracking Mechanisms
+
 1. **On-chain Analysis**:
+
    - Genesis file examination
    - Validator delegation tracking
    - IBC transfer monitoring
@@ -3621,6 +3998,7 @@ This comprehensive forensic analysis reveals that REGEN Network exhibits unique 
    - Community engagement metrics
 
 ### Data Collection Approach
+
 - Multi-source verification
 - Cross-referencing public announcements
 - Analyzing governance proposals
@@ -3631,23 +4009,27 @@ This comprehensive forensic analysis reveals that REGEN Network exhibits unique 
 ### Whale Categories Identified
 
 **1. Institutional Whales**
+
 - Microsoft Corporation (strategic investor)
 - One Small Planet Capital (lead investor)
 - Interchain Foundation (early supporter)
 - Professional validators (Chorus One, COSMOSTATION)
 
 **2. Foundation Whales**
+
 - Regen Foundation (30M+ tokens)
 - Community Staking DAOs (5M tokens)
 - Permanently locked, governance-only participation
 
 **3. Team/Insider Whales**
+
 - Gregory Landua (CEO/Founder)
 - Christian Shearer (Co-founder/CIO)
 - Aaron Craelius (CTO)
 - 3-year vesting with 1-year cliff
 
 **4. Validator Whales**
+
 - Self-delegated stakes
 - Commission earnings accumulation
 - Governance power concentration
@@ -3655,16 +4037,19 @@ This comprehensive forensic analysis reveals that REGEN Network exhibits unique 
 ### Behavioral Patterns
 
 **Holding Patterns**:
+
 - 90.48% staking ratio indicates long-term orientation
 - Minimal trading activity (<$2,000 daily volume)
 - No evidence of active accumulation at current prices
 
 **Governance Behavior**:
+
 - High proposal participation (97% pass rate)
 - Foundation actively delegates to smaller validators
 - No evidence of governance manipulation
 
 **Trading Behavior**:
+
 - Extremely limited DEX activity
 - Primary venue: Osmosis REGEN/OSMO pool
 - No wash trading or pump schemes detected
@@ -3672,18 +4057,23 @@ This comprehensive forensic analysis reveals that REGEN Network exhibits unique 
 ## Lore & Narrative of Notable Whale Activities
 
 ### Genesis Launch Drama
+
 The April 15, 2021 launch ceremony marked a pivotal moment, with 100M tokens distributed among carefully vetted participants. The Foundation's decision to permanently lock 35% of supply demonstrated unprecedented commitment to decentralization.
 
 ### The Microsoft Partnership
+
 Before mainnet launch, Microsoft's strategic investment validated REGEN's ecological credit vision, purchasing 43,338 metric tons of soil carbon credits in one of Australia's largest deals.
 
 ### Liquidity Bootstrapping Innovation
+
 REGEN pioneered Osmosis's first Liquidity Bootstrapping Pool (June 23-28, 2021), using a reverse Dutch auction to ensure fair price discovery and prevent whale manipulation.
 
 ### The Great Price Collapse
+
 From December 2021's euphoric $226.40 peak to today's $0.017, REGEN experienced one of crypto's most dramatic declines, transforming from speculative darling to mission-focused project.
 
 ### FreshREGEN Tombstoning Incident
+
 On May 7, 2021, the FreshREGEN validator's double-signing resulted in a 5% slashing event, leading to community reimbursement and permanent validator removal - the network's only major slashing incident.
 
 ## Terminology Glossary
@@ -3702,13 +4092,16 @@ On May 7, 2021, the FreshREGEN validator's double-signing resulted in a 5% slash
 ### Specific Whale Transactions
 
 **Genesis Distribution (Block 0, April 15, 2021)**:
+
 - Team allocation: 5,325,948 REGEN to individual wallets
 - Foundation allocation: 35,000,000 REGEN (non-transferable)
 - Validator rewards: 1,760,535 REGEN distributed
 - Transaction Hash: Genesis block (no hash - initial state)
 
 **Notable Whale Movements**:
+
 1. **Osmosis Bridge Transfer** (Block 1,234,567):
+
    - Amount: 500,000 REGEN
    - From: regen1abc...xyz (unlabeled whale)
    - To: Osmosis liquidity pool
@@ -3721,6 +4114,7 @@ On May 7, 2021, the FreshREGEN validator's double-signing resulted in a 5% slash
    - Commission earnings: ~134,200 REGEN/year
 
 **LBP Parameters (June 23-28, 2021)**:
+
 - Pool ID: Osmosis Pool #42
 - Initial: 611,880.7 REGEN / 37,571.62 ATOM
 - Weight shift: 90:10 → 10:90 (linear)
@@ -3730,11 +4124,13 @@ On May 7, 2021, the FreshREGEN validator's double-signing resulted in a 5% slash
 - Total volume: 2.3M REGEN traded
 
 **Governance Milestones**:
+
 - Proposal #3: Validator set expansion (50→75) - Block 543,210
 - Proposal #6: 5% minimum commission - Block 876,543
 - Proposal #27: 2,000 REGEN deposit increase - Block 3,456,789
 
 ### Market Impact Events
+
 - ATH: $226.40 (December 3, 2021, 09:43 UTC)
 - Current: $0.017 (99.99% decline)
 - Daily volume range: $57-$1,781
@@ -3762,29 +4158,32 @@ Token Distribution Pyramid (ASCII)
 
 ### Staking Distribution Table
 
-| Holder Category | Tokens Staked | % of Total | APR Earned |
-|----------------|---------------|------------|------------|
-| Foundation     | 35,000,000    | 26.1%      | 4,697,000  |
-| Top 10 Whales  | 45,000,000    | 33.5%      | 6,039,000  |
-| Validators     | 25,000,000    | 18.6%      | 3,355,000  |
-| Retail (<100k) | 29,200,000    | 21.8%      | 3,918,640  |
-| **Total**      | **134,200,000**| **100%**  | **18,009,640**|
+| Holder Category | Tokens Staked   | % of Total | APR Earned     |
+| --------------- | --------------- | ---------- | -------------- |
+| Foundation      | 35,000,000      | 26.1%      | 4,697,000      |
+| Top 10 Whales   | 45,000,000      | 33.5%      | 6,039,000      |
+| Validators      | 25,000,000      | 18.6%      | 3,355,000      |
+| Retail (<100k)  | 29,200,000      | 21.8%      | 3,918,640      |
+| **Total**       | **134,200,000** | **100%**   | **18,009,640** |
 
 ## Resource Links for Verification
 
 ### Official Resources
+
 - Network Website: https://www.regen.network
 - Documentation: https://docs.regen.network
 - GitHub: https://github.com/regen-network
 - Medium Blog: https://medium.com/regen-network
 
 ### Explorers & Analytics
+
 - Mintscan: https://www.mintscan.io/regen
 - Commonwealth: https://commonwealth.im/regen
 - Map of Zones: https://mapofzones.com
 - StakingRewards: https://www.stakingrewards.com/asset/regen
 
 ### Market Data
+
 - CoinGecko: https://www.coingecko.com/en/coins/regen
 - Osmosis Info: https://info.osmosis.zone
 - DEXScreener: https://dexscreener.com
@@ -3792,19 +4191,23 @@ Token Distribution Pyramid (ASCII)
 ## Comprehensive Appendices
 
 ### Appendix A: Private Sale Timeline
+
 - April 2018 - May 2019: Friends & Family ($0.10)
 - May 2019 - December 2019: Phase 1 ($0.21-$0.49)
 - March 2020 - September 2020: Phase 2 ($0.35-$0.56)
 - Q4 2020 - Q1 2021: Phase 3 ($0.46-$0.63)
 
 ### Appendix B: Vesting Schedule Details
+
 - 1-year lockup: Full unlock after 12 months
 - 3-year lockup: 12-month cliff, then 24-month linear
 - Team vesting: 3-year with 1-year cliff from mainnet
 - Foundation tokens: Permanently locked
 
 ### Appendix C: Governance Proposal Summary
+
 Total Proposals: 33
+
 - Network Upgrades: 8
 - Parameter Changes: 7
 - Currency Additions: 6
@@ -3812,6 +4215,7 @@ Total Proposals: 33
 - Emergency Patches: 3
 
 ### Appendix D: Risk Assessment Matrix
+
 - **Liquidity Risk**: CRITICAL - Daily volume <$2,000
 - **Manipulation Risk**: HIGH - Minimal capital needed for impact
 - **Governance Risk**: MEDIUM - Foundation controls 30%
@@ -3820,26 +4224,31 @@ Total Proposals: 33
 ## Actionable Intelligence Summary
 
 ### Market Influence Concerns
+
 1. **Extreme Illiquidity**: Any whale movement would cause severe price impact
 2. **Manipulation Vulnerability**: <$50K could significantly move markets
 3. **Limited Price Discovery**: Insufficient volume for accurate valuation
 
 ### Governance Centralization Analysis
+
 1. **Foundation Dominance**: 30% voting power in permanent holdings
 2. **Validator Concentration**: Top validators control significant stake
 3. **Mitigation Measures**: Active delegation to smaller validators
 
 ### Holding Pattern Insights
+
 1. **Diamond Hands Prevail**: 90.48% staking shows long-term commitment
 2. **Limited Speculation**: Minimal trading suggests mission-aligned holders
 3. **Vesting Compliance**: No evidence of early unlock violations
 
 ### Institutional Adoption Indicators
+
 1. **Microsoft Partnership**: Early enterprise validation
 2. **Professional Validators**: Major infrastructure providers participating
 3. **Carbon Credit Integration**: Real-world utility driving adoption
 
 ### Team/Investor Token Impact
+
 1. **Ongoing Vesting**: Monthly unlocks through 2024
 2. **Limited Sell Pressure**: Low volume suggests holders retain tokens
 3. **Governance Participation**: Active team involvement in proposals
@@ -3847,13 +4256,15 @@ Total Proposals: 33
 ## Research Metadata
 
 ### Analysis Information
+
 - **Research Date**: January 27, 2025
 - **Data Freshness**: Current as of January 27, 2025
 - **Time Required**: 8 hours comprehensive analysis
 - **Computational Resources**: Standard web browser, API queries
 
 ### Limitations & Caveats
-- **Data Gaps**: 
+
+- **Data Gaps**:
   - No comprehensive rich list API
   - Limited historical balance snapshots
   - Private wallet labeling unavailable
@@ -3862,12 +4273,13 @@ Total Proposals: 33
   - Foundation tokens remain locked
   - Vesting schedules followed as announced
   - Staking ratios calculated from on-chain data
-- **Potential Errors**: 
+- **Potential Errors**:
   - ±5% margin on concentration estimates
   - Whale threshold arbitrary at 100K tokens
   - Some addresses may be exchange wallets
 
 ### Reproducibility Guide
+
 1. **Access Mintscan Explorer**: https://www.mintscan.io/regen
 2. **Query Validator Set**: Check delegations for each validator
 3. **Calculate Concentrations**: Sum top addresses manually
@@ -3880,6 +4292,7 @@ Total Proposals: 33
 ## Calculation Methodologies
 
 ### Whale Threshold Determination
+
 ```
 Whale Definition = Total Supply / 1,000
 148,350,000 / 1,000 = 148,350 tokens
@@ -3887,12 +4300,14 @@ Rounded to: 100,000 tokens for cleaner analysis
 ```
 
 ### Staking Ratio Calculation
+
 ```
 Staking Ratio = Total Staked / Circulating Supply
 134,200,000 / 148,350,000 = 0.9048 = 90.48%
 ```
 
 ### Concentration Metrics
+
 ```
 Gini Coefficient Estimation:
 - Top 1%: ~60% of supply
@@ -3902,6 +4317,7 @@ Gini ≈ 0.85 (extremely concentrated)
 ```
 
 ### APR Calculations
+
 ```
 Annual Rewards = Staked Amount × APR
 Example: 1,000,000 REGEN × 13.42% = 134,200 REGEN/year
@@ -3914,6 +4330,7 @@ Daily: 368 REGEN
 ### Data Visualization Summary
 
 **Whale Category Distribution**
+
 ```
  Institutional Whales (25%) ████████████▌
     Foundation (35%) █████████████████▌
@@ -3923,6 +4340,7 @@ Daily: 368 REGEN
 ```
 
 **Price History Chart (Log Scale)**
+
 ```
 $1000 |
 $100  |     ╱╲
@@ -3934,6 +4352,7 @@ $0.01 |_╱____________________╲
 ```
 
 **Staking Participation Over Time**
+
 ```
 100% |                    ______
 90%  |              _____/
@@ -3945,15 +4364,16 @@ $0.01 |_╱____________________╲
 
 ### Cross-Verification Matrix
 
-| Data Point | Source 1 | Source 2 | Source 3 | Confidence |
-|------------|----------|----------|----------|------------|
-| Total Supply | Mintscan | CoinGecko | Staking Rewards | HIGH |
-| Staking Ratio | Mintscan | Staking Rewards | On-chain | HIGH |
-| Price ATH | CoinMarketCap | CoinGecko | Trading View | HIGH |
-| Genesis Distribution | Medium Blog | GitHub | Whitepaper | HIGH |
-| Whale Holdings | Estimation | Limited Data | - | MEDIUM |
+| Data Point           | Source 1      | Source 2        | Source 3        | Confidence |
+| -------------------- | ------------- | --------------- | --------------- | ---------- |
+| Total Supply         | Mintscan      | CoinGecko       | Staking Rewards | HIGH       |
+| Staking Ratio        | Mintscan      | Staking Rewards | On-chain        | HIGH       |
+| Price ATH            | CoinMarketCap | CoinGecko       | Trading View    | HIGH       |
+| Genesis Distribution | Medium Blog   | GitHub          | Whitepaper      | HIGH       |
+| Whale Holdings       | Estimation    | Limited Data    | -               | MEDIUM     |
 
 ### Update Requirements
+
 - **Price Data**: Update daily from CoinGecko API
 - **Staking Metrics**: Weekly from Mintscan
 - **Governance**: After each proposal
@@ -3974,10 +4394,15 @@ $0.01 |_╱____________________╲
 ✓ **Future implications considered** - Risk assessment and projections
 
 ### Word Count: ~6,500 words
+
 ### Data Points: 167 specific quantities cited
+
 ### Sources: 38 unique sources referenced
+
 ### Examples: 15 concrete examples
+
 ### Visualizations: 6 data representations
+
 ### Cross-Verification: All major claims verified by 2+ sources
 
 This forensic analysis represents the most comprehensive whale movement study of REGEN Network available, revealing a unique ecosystem where extreme concentration meets minimal trading activity, creating both vulnerabilities and opportunities for this mission-driven blockchain project.
@@ -4053,13 +4478,15 @@ Daily reward distribution approximates **75,000 REGEN tokens**, translating to m
 ### APR/APY Variations and Yield Analysis
 
 Staking yields demonstrate significant variation based on market conditions and network parameters. Current APR ranges from **13.42% to 25%**, with recent data showing:
+
 - **24 hours ago**: 20.36% APR
-- **30 days ago**: 16.11% APR  
+- **30 days ago**: 16.11% APR
 - **Current**: 20.46% APR
 
 This upward trend in yields correlates with the network's below-target bonded ratio of **58.69%** versus the 67% target. The inflation mechanism increases rewards when staking participation falls below target, creating economic incentives for increased delegation. Validator commission impacts net yields, with rates ranging from the 5% minimum to typical maximums of 20%.
 
 Statistical analysis of yield data reveals:
+
 - **Mean APR**: ~18.5% (averaged across data sources)
 - **Median APR**: ~20.0% (central tendency measure)
 - **Standard Deviation**: ~4.2% (yield volatility measure)
@@ -4118,6 +4545,7 @@ Despite technical capabilities for cross-chain staking via IBC, current implemen
 Aggregating data across all research dimensions reveals:
 
 **Token Supply Metrics**:
+
 - Genesis Supply: **100,000,000.000000 REGEN**
 - Current Total Minted: **209,374,009.000000 REGEN**
 - Circulating Supply: **148,354,423.000000 REGEN**
@@ -4125,6 +4553,7 @@ Aggregating data across all research dimensions reveals:
 - Current Bonded Amount: **122,842,476.000000 REGEN** (58.69% of total supply)
 
 **Staking Performance Indicators**:
+
 - Average Daily Rewards: **~75,000 REGEN**
 - Average Block Time: **~6 seconds**
 - Blocks Per Day: **~14,400**
@@ -4134,6 +4563,7 @@ Aggregating data across all research dimensions reveals:
 - Unbonding Period: **21 days**
 
 **Market Dynamics**:
+
 - Current Price: **~$0.0174 USD**
 - 24h Volume: **$56.35 USD**
 - Staking Market Cap: **$2.8M USD**
@@ -4153,6 +4583,7 @@ Statistical analysis reveals several significant correlations:
 ### Time Series Evolution
 
 Tracking daily staking metrics since genesis reveals consistent growth patterns:
+
 - **Q2 2021**: Rapid initial staking as network launched
 - **Q3-Q4 2021**: Stabilization around 85-88% staking ratio
 - **2022**: Gradual increase toward 90% as prices declined
@@ -4184,6 +4615,7 @@ Community discussions weigh security benefits against sovereignty concerns, with
 ### Primary RPC Endpoints
 
 REGEN Network maintains multiple public RPC endpoints ensuring reliable data access:
+
 - **PublicNode**: https://regen-rpc.publicnode.com:443
 - **Vitwit**: http://public-rpc.regen.vitwit.com:26657
 - **StakeSystems**: https://regen.stakesystems.io:2053
@@ -4203,6 +4635,7 @@ Multiple block explorers serve different user needs within the REGEN ecosystem:
 ### Data Verification and Cross-Reference Sources
 
 Ensuring data accuracy requires cross-referencing multiple sources:
+
 - **On-chain data** via direct RPC queries provides authoritative staking metrics
 - **Block explorers** offer user-friendly interfaces with historical tracking
 - **GitHub repositories** document network parameters and upgrade histories
@@ -4216,11 +4649,13 @@ Ensuring data accuracy requires cross-referencing multiple sources:
 Researchers seeking to reproduce this analysis should utilize:
 
 1. **Command Line Tools**:
+
    - `regen` CLI for direct blockchain queries
    - `curl` or `httpie` for REST API interactions
    - `jq` for JSON parsing and data extraction
 
 2. **API Endpoints**:
+
    - LCD endpoints for REST queries
    - RPC endpoints for real-time data
    - GraphQL interfaces where available
@@ -4233,21 +4668,25 @@ Researchers seeking to reproduce this analysis should utilize:
 ### Key Queries for Staking Data
 
 **Total Staked Amount**:
+
 ```bash
 curl -s https://regen-rpc.publicnode.com:443/cosmos/staking/v1beta1/pool | jq '.pool.bonded_tokens'
 ```
 
 **Validator List**:
+
 ```bash
 curl -s https://regen-rpc.publicnode.com:443/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED | jq '.validators[].operator_address'
 ```
 
 **Delegation Information**:
+
 ```bash
 curl -s https://regen-rpc.publicnode.com:443/cosmos/staking/v1beta1/delegations/{delegator_address}
 ```
 
 **Current Inflation Rate**:
+
 ```bash
 curl -s https://regen-rpc.publicnode.com:443/cosmos/mint/v1beta1/inflation
 ```
@@ -4255,6 +4694,7 @@ curl -s https://regen-rpc.publicnode.com:443/cosmos/mint/v1beta1/inflation
 ### Historical Data Reconstruction
 
 Reconstructing historical staking data requires:
+
 1. Archive node access for historical state queries
 2. Block-by-block analysis for event extraction
 3. Aggregation scripts for daily/monthly summaries

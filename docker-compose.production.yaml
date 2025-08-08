@@ -1,0 +1,122 @@
+version: '3.8'
+
+services:
+  # Nginx Reverse Proxy with SSL
+  nginx:
+    image: ghcr.io/gaiaaiagent/gaia/nginx:latest
+    container_name: nginx
+    ports:
+      - '80:80'   # HTTP (for redirect and Let's Encrypt)
+      - '443:443' # HTTPS
+    volumes:
+      # SSL certificates from Let's Encrypt
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:ro
+      # Production nginx config with SSL
+      - ./nginx.production.conf:/etc/nginx/nginx.conf:ro
+      # Basic auth file
+      - ./nginx/.htpasswd:/etc/nginx/auth/.htpasswd:ro
+      # Logs
+      - nginx-logs:/var/log/nginx
+    depends_on:
+      - regen
+      - django
+    restart: always
+    networks:
+      - eliza-network
+
+  # Certbot for SSL certificate management
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/www/certbot:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    restart: always
+
+  # PostgreSQL Database with pgvector
+  postgres:
+    image: ankane/pgvector:latest
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=eliza
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data:rw
+    ports:
+      - '127.0.0.1:5433:5432' # Local access only
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - eliza-network
+
+  # RegenAI Application (ElizaOS-based agents)
+  regen:
+    image: ghcr.io/gaiaaiagent/gaia/regen:latest
+    container_name: regen
+    command: sh -c "cd packages/cli && bun dist/index.js start --character /app/characters/regenai.character.json --character /app/characters/advocate.character.json --character /app/characters/governor.character.json --character /app/characters/narrative.character.json --character /app/characters/voiceofnature.character.json"
+    volumes:
+      - ./characters:/app/characters:ro
+      - ./.env.production:/app/.env:ro
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NODE_ENV=production
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=eliza
+      - POSTGRES_PORT=5432
+      - ENABLE_SERVER=true
+      # API Keys from .env.production
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    expose:
+      - '3000' # Only exposed to nginx, not host
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - eliza-network
+
+  # Django Admin Panel
+  django:
+    image: ghcr.io/gaiaaiagent/gaia/django-admin:latest
+    container_name: django-admin
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/eliza
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DEBUG=False
+      - ALLOWED_HOSTS=admin.regen.gaiaai.xyz,regen.gaiaai.xyz
+      - SECURE_PROXY_SSL_HEADER=HTTP_X_FORWARDED_PROTO,https
+      - CSRF_TRUSTED_ORIGINS=https://admin.regen.gaiaai.xyz
+      - SESSION_COOKIE_SECURE=True
+      - CSRF_COOKIE_SECURE=True
+    volumes:
+      - django-static:/app/staticfiles
+      - django-media:/app/media
+    expose:
+      - '8000' # Only exposed to nginx, not host
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - eliza-network
+    command: sh /app/docker-entrypoint.sh
+
+volumes:
+  postgres-data:
+  django-static:
+  django-media:
+  nginx-logs:
+
+networks:
+  eliza-network:
+    driver: bridge

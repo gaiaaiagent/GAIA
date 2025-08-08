@@ -8,7 +8,7 @@ services:
       dockerfile: nginx.Dockerfile
     container_name: nginx
     ports:
-      - '80:80'  # Main web access
+      - '80:80' # Main web access
     depends_on:
       - regen
       - django
@@ -27,7 +27,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data:rw
     ports:
-      - '127.0.0.1:5433:5432'  # Using 5433 to avoid conflict with local postgres
+      - '127.0.0.1:5433:5432' # Using 5433 to avoid conflict with local postgres
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
       interval: 5s

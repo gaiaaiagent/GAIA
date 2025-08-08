@@ -16,4 +16,4 @@ accuracy-concerns:
 
 # Project Context Directory Index
 
-*This file is currently empty and awaiting content development.*
+_This file is currently empty and awaiting content development._

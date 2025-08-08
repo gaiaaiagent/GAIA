@@ -2,7 +2,7 @@
 
 **Date**: 2025-07-16  
 **Session**: Day 1 Afternoon  
-**Focus**: Django app reorganization and architectural patterns  
+**Focus**: Django app reorganization and architectural patterns
 
 ## What We Accomplished
 
@@ -11,6 +11,7 @@ Today we transformed a monolithic Django application into a well-structured, mul
 ### The Challenge
 
 We started with a single `eliza_tables` app that contained:
+
 - 19 unmanaged models for ElizaOS database tables
 - 3 managed models for contract tracking
 - Dashboard views and templates
@@ -24,6 +25,7 @@ This violated the Django principle of "apps should do one thing and do it well" 
 We applied domain-driven design principles to create four focused apps:
 
 #### 1. **elizaos** - The Data Layer
+
 ```python
 # Unmanaged models for ElizaOS database
 class Agent(models.Model):
@@ -36,6 +38,7 @@ class Agent(models.Model):
 **Key Learning**: Unmanaged models are perfect for interfacing with external databases. They provide Django ORM access without trying to control the schema.
 
 #### 2. **metrics** - The Tracking Layer
+
 ```python
 # Managed models for contract compliance
 class InteractionMetric(models.Model):
@@ -47,6 +50,7 @@ class InteractionMetric(models.Model):
 **Key Learning**: Separate your tracking/analytics data from your source data. This allows independent evolution and prevents conflicts.
 
 #### 3. **knowledge** - The Processing Layer
+
 ```python
 # Models for knowledge indexing workflow
 class DocumentSource(models.Model):
@@ -58,6 +62,7 @@ class DocumentSource(models.Model):
 **Key Learning**: Complex workflows deserve their own app. The 15k document indexing milestone requires sophisticated tracking.
 
 #### 4. **reporting** - The Presentation Layer
+
 ```python
 # Views for dashboards and reports
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -71,12 +76,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 ### Django App Organization Patterns
 
 **The Single Responsibility Principle**: Each app should have one clear responsibility:
+
 - `elizaos`: Interface with ElizaOS database
 - `metrics`: Track contract compliance
 - `knowledge`: Manage document indexing
 - `reporting`: Present dashboards
 
 **The Open/Closed Principle**: Apps should be open for extension but closed for modification:
+
 - Adding new ElizaOS models? Add to `elizaos`
 - New tracking metrics? Add to `metrics`
 - New dashboard views? Add to `reporting`
@@ -85,12 +92,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
 We encountered a common Django challenge: existing tables that need to be managed by new apps.
 
-**The Problem**: 
+**The Problem**:
+
 ```bash
 django.db.utils.ProgrammingError: relation "agent_metrics" already exists
 ```
 
 **The Solution**:
+
 ```bash
 python manage.py migrate metrics 0001 --fake
 ```
@@ -102,6 +111,7 @@ python manage.py migrate metrics 0001 --fake
 We created a sophisticated admin interface that demonstrates several patterns:
 
 #### 1. **Custom Admin Methods**
+
 ```python
 def formatted_metadata(self, obj):
     if obj.metadata:
@@ -112,6 +122,7 @@ formatted_metadata.short_description = 'Metadata (Formatted)'
 ```
 
 #### 2. **Context Enhancement**
+
 ```python
 def changelist_view(self, request, extra_context=None):
     response = super().changelist_view(request, extra_context=extra_context)
@@ -121,6 +132,7 @@ def changelist_view(self, request, extra_context=None):
 ```
 
 #### 3. **Custom Admin Site**
+
 ```python
 class ElizaAdminSite(AdminSite):
     def get_app_list(self, request, app_label=None):
@@ -136,12 +148,14 @@ class ElizaAdminSite(AdminSite):
 We discovered an important distinction when working with PostgreSQL:
 
 **The Problem**:
+
 ```python
 # This works with SQLite but fails with PostgreSQL
 names = models.JSONField(default=list)
 ```
 
 **The Solution**:
+
 ```python
 # Use PostgreSQL's native array type
 from django.contrib.postgres.fields import ArrayField
@@ -166,7 +180,8 @@ Working with external databases requires careful consideration:
 With Darren working on knowledge indexing, we needed clear boundaries:
 
 **Before**: Everyone touching `eliza_tables/models.py`
-**After**: 
+**After**:
+
 - Darren owns `knowledge/` app
 - Others work in `metrics/` and `reporting/`
 - `elizaos/` is shared but stable
@@ -174,6 +189,7 @@ With Darren working on knowledge indexing, we needed clear boundaries:
 ### Version Control Strategy
 
 We're implementing a branch-per-feature strategy:
+
 - `main` - production deployments
 - `develop` - integration branch
 - `feature/knowledge-indexing` - Darren's work
@@ -184,16 +200,19 @@ We're implementing a branch-per-feature strategy:
 Our architecture directly supports the RegenAI contract milestones:
 
 ### Milestone 1.3: 30,000 interactions
+
 - Tracked in `metrics.InteractionMetric`
 - Dashboard in `reporting.DashboardView`
 - Real-time progress monitoring
 
 ### Milestone 1.6: 100,000 interactions + 15,000 documents
+
 - Interactions: `metrics.InteractionMetric`
 - Documents: `knowledge.ProcessedDocument`
 - Comprehensive dashboard showing both metrics
 
 ### Phase 2: Multi-agent coordination
+
 - Agent tracking: `metrics.AgentMetric`
 - Performance monitoring: Built into admin interface
 - Scaling insights: Captured in knowledge queries
@@ -267,6 +286,7 @@ Each app will have its own test suite:
 ```
 
 This isolation allows:
+
 - **Parallel Testing**: Teams can run tests independently
 - **Focused Mocking**: Mock only what your app needs
 - **Clear Failures**: Easier to identify what broke
@@ -278,7 +298,7 @@ This isolation allows:
 Our app structure makes microservice extraction straightforward:
 
 1. **knowledge** → Document Processing Service
-2. **metrics** → Analytics Service  
+2. **metrics** → Analytics Service
 3. **reporting** → Dashboard Service
 4. **elizaos** → Data Access Layer (stays as library)
 
@@ -305,31 +325,41 @@ Clear boundaries enable targeted caching:
 ## Lessons Learned
 
 ### 1. **Start with Domain Boundaries**
+
 Before writing any code, identify your domains. In our case:
+
 - **External Data** (ElizaOS)
 - **Internal Tracking** (Metrics)
 - **Workflow Management** (Knowledge)
 - **User Interface** (Reporting)
 
 ### 2. **Manage vs Unmanaged Models**
+
 This decision affects your entire architecture:
+
 - **Managed**: You control the schema, migrations, constraints
 - **Unmanaged**: You interface with external schemas, no migrations
 
 ### 3. **Migration Strategy Matters**
+
 When reorganizing existing systems:
+
 - Plan your migration strategy before moving models
 - Use `--fake` for existing tables
 - Test migrations on copies of production data
 
 ### 4. **Admin Interface as Architecture Driver**
+
 A well-designed admin interface forces good model design:
+
 - Clear string representations (`__str__` methods)
 - Logical field groupings
 - Efficient query patterns
 
 ### 5. **URL Namespacing is Critical**
+
 With multiple apps, URL namespacing prevents conflicts:
+
 ```python
 # urls.py
 path('eliza/', include('reporting.urls')),

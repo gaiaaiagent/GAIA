@@ -50,6 +50,7 @@ This fourth category joins three previously conceptualized agent types in their 
 The operational framework mirrors the successful EcoToken model. Team members will divide responsibilities with some focusing on operations and execution while others concentrate on substantive design elements, particularly around agentic deployment strategies.
 
 The contract process is moving forward with a target completion date of July 1st. The team acknowledged the complexity of the multi-phase contract but expressed confidence in meeting the timeline. The proposed workflow involves:
+
 - Sending the contract template to the Gaia team
 - Gaia filling it in and returning it before the end of the week
 - Allowing time for final review before the July 1st target

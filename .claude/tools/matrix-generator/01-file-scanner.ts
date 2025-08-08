@@ -2,7 +2,7 @@
 
 /**
  * File Scanner for Taxonomy Matrix Generation
- * 
+ *
  * This tool scans project files to detect relationships through:
  * - Import/export analysis
  * - File path references
@@ -39,11 +39,11 @@ interface Relationship {
   evidence: string[];
 }
 
-type RelationshipType = 
-  | 'import' 
-  | 'export' 
-  | 'reference' 
-  | 'config' 
+type RelationshipType =
+  | 'import'
+  | 'export'
+  | 'reference'
+  | 'config'
   | 'doc-link'
   | 'type-dependency'
   | 'runtime-dependency';
@@ -56,7 +56,7 @@ class FileScanner {
     console.log('🔍 Starting file scan...');
     await this.inventoryFiles(rootPath);
     console.log(`📁 Found ${this.files.size} files`);
-    
+
     await this.analyzeFiles();
     console.log(`🔗 Detected ${this.relationships.length} relationships`);
   }
@@ -69,7 +69,7 @@ class FileScanner {
       const relativePath = relative(baseDir, fullPath);
 
       // Skip ignored patterns
-      if (IGNORE_PATTERNS.some(pattern => relativePath.includes(pattern))) {
+      if (IGNORE_PATTERNS.some((pattern) => relativePath.includes(pattern))) {
         continue;
       }
 
@@ -88,7 +88,7 @@ class FileScanner {
   private async createFileMetadata(fullPath: string, relativePath: string): Promise<FileMetadata> {
     const stats = await Bun.file(fullPath).stat();
     const ext = extname(fullPath);
-    
+
     const metadata: FileMetadata = {
       path: fullPath,
       relativePath,
@@ -98,11 +98,12 @@ class FileScanner {
       lastModified: stats.mtime,
       imports: [],
       exports: [],
-      references: []
+      references: [],
     };
 
     // For small files, include content
-    if (stats.size < 50000) { // 50KB limit
+    if (stats.size < 50000) {
+      // 50KB limit
       try {
         metadata.content = await Bun.file(fullPath).text();
       } catch (e) {
@@ -163,7 +164,8 @@ class FileScanner {
     }
 
     // Extract exports
-    const exportRegex = /export\s+(?:default\s+)?(?:class|interface|type|function|const|let|var)\s+(\w+)/g;
+    const exportRegex =
+      /export\s+(?:default\s+)?(?:class|interface|type|function|const|let|var)\s+(\w+)/g;
     while ((match = exportRegex.exec(file.content)) !== null) {
       file.exports.push(match[1]);
     }
@@ -290,10 +292,15 @@ class FileScanner {
     return null;
   }
 
-  private addRelationship(from: string, to: string, type: RelationshipType, baseStrength: number): void {
+  private addRelationship(
+    from: string,
+    to: string,
+    type: RelationshipType,
+    baseStrength: number
+  ): void {
     // Check if relationship already exists
-    const existing = this.relationships.find(r => r.from === from && r.to === to);
-    
+    const existing = this.relationships.find((r) => r.from === from && r.to === to);
+
     if (existing) {
       if (!existing.types.includes(type)) {
         existing.types.push(type);
@@ -305,7 +312,7 @@ class FileScanner {
         to,
         types: [type],
         strength: baseStrength,
-        evidence: [`${type} detected`]
+        evidence: [`${type} detected`],
       });
     }
   }
@@ -316,14 +323,14 @@ class FileScanner {
         scanDate: new Date().toISOString(),
         fileCount: this.files.size,
         relationshipCount: this.relationships.length,
-        projectRoot: PROJECT_ROOT
+        projectRoot: PROJECT_ROOT,
       },
       files: Array.from(this.files.entries()).map(([path, metadata]) => ({
         path,
         ...metadata,
-        content: undefined // Don't include content in export
+        content: undefined, // Don't include content in export
       })),
-      relationships: this.relationships.sort((a, b) => b.strength - a.strength)
+      relationships: this.relationships.sort((a, b) => b.strength - a.strength),
     };
 
     await Bun.write(outputPath, JSON.stringify(results, null, 2));
@@ -333,7 +340,7 @@ class FileScanner {
   getStats(): void {
     const typeCount = new Map<string, number>();
     const langCount = new Map<string, number>();
-    
+
     for (const file of this.files.values()) {
       typeCount.set(file.type, (typeCount.get(file.type) || 0) + 1);
       if (file.language) {
@@ -344,14 +351,14 @@ class FileScanner {
     console.log('\n📊 File Statistics:');
     console.log('By Type:', Object.fromEntries(typeCount));
     console.log('By Language:', Object.fromEntries(langCount));
-    
+
     console.log('\n🔗 Top Relationships:');
-    const top10 = this.relationships
-      .sort((a, b) => b.strength - a.strength)
-      .slice(0, 10);
-    
+    const top10 = this.relationships.sort((a, b) => b.strength - a.strength).slice(0, 10);
+
     for (const rel of top10) {
-      console.log(`  ${rel.from} → ${rel.to} (strength: ${rel.strength}, types: ${rel.types.join(', ')})`);
+      console.log(
+        `  ${rel.from} → ${rel.to} (strength: ${rel.strength}, types: ${rel.types.join(', ')})`
+      );
     }
   }
 }
@@ -359,20 +366,20 @@ class FileScanner {
 // Run the scanner
 async function main() {
   const scanner = new FileScanner();
-  
+
   try {
     await scanner.scanProject();
     scanner.getStats();
-    
+
     const outputPath = join(
-      PROJECT_ROOT, 
+      PROJECT_ROOT,
       '.claude/tools/matrix-generator/data',
       `scan-${new Date().toISOString().split('T')[0]}.json`
     );
-    
+
     // Create data directory
     await Bun.write(join(PROJECT_ROOT, '.claude/tools/matrix-generator/data/.gitkeep'), '');
-    
+
     await scanner.exportResults(outputPath);
   } catch (error) {
     console.error('❌ Error during scan:', error);

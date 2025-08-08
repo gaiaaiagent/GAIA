@@ -32,6 +32,7 @@ Each feature progresses through these stages:
 ### M1.1 - Knowledge Foundation Features
 
 #### knowledge-system/
+
 **Status**: Design Complete, Requirements Complete
 **Description**: Core memory and document management infrastructure using ElizaOS native patterns
 **Key Discoveries**: FragmentMetadata support, multi-dimensional embeddings
@@ -40,6 +41,7 @@ Each feature progresses through these stages:
 **KOI**: `koi:feature:knowledge-system:*`
 
 #### document-processing/
+
 **Status**: Not Started
 **Description**: Pipeline for ingesting 15,000+ heterogeneous documents
 **Target**: Registry, Discord, forums, blogs, podcasts
@@ -48,6 +50,7 @@ Each feature progresses through these stages:
 **KOI**: `koi:feature:document-processing:*`
 
 #### registry-integration/
+
 **Status**: Not Started
 **Description**: Real-time integration with Regen Registry for credit classes and methodologies
 **Features**: GraphQL queries, hourly updates, methodology parsing
@@ -56,6 +59,7 @@ Each feature progresses through these stages:
 **KOI**: `koi:feature:registry-integration:*`
 
 #### citation-system/
+
 **Status**: Not Started
 **Description**: Trust through verifiable citations with 95% accuracy
 **Components**: Citation extraction, formatting, verification
@@ -66,6 +70,7 @@ Each feature progresses through these stages:
 ### M1.2 - Core Agent Features
 
 #### agent-characters/
+
 **Status**: Not Started
 **Description**: 5 specialized agents with distinct personas and knowledge scopes
 **Agents**: Facilitator, Narrative, Politician, Advocate, Voice of Nature
@@ -74,6 +79,7 @@ Each feature progresses through these stages:
 **KOI**: `koi:feature:agent-characters:*`
 
 #### conversation-engine/
+
 **Status**: Not Started
 **Description**: Context-aware response generation with <2s latency
 **Features**: Context retrieval, response generation, personality injection
@@ -82,6 +88,7 @@ Each feature progresses through these stages:
 **KOI**: `koi:feature:conversation-engine:*`
 
 #### inter-agent-comm/
+
 **Status**: Not Started
 **Description**: Coordination protocols for multi-agent conversations
 **Patterns**: Hand-offs, consultations, consensus building
@@ -92,6 +99,7 @@ Each feature progresses through these stages:
 ### M1.3 - Platform Integration Features
 
 #### platform-connectors/
+
 **Status**: Not Started
 **Description**: Native integrations for Discord, X, Telegram, Farcaster
 **Architecture**: Adapter pattern with common interface
@@ -100,6 +108,7 @@ Each feature progresses through these stages:
 **KOI**: `koi:feature:platform-connectors:*`
 
 #### message-router/
+
 **Status**: Not Started
 **Description**: Cross-platform message orchestration and context preservation
 **Features**: Platform routing, context sync, identity management
@@ -108,6 +117,7 @@ Each feature progresses through these stages:
 **KOI**: `koi:feature:message-router:*`
 
 #### engagement-analytics/
+
 **Status**: Not Started
 **Description**: Track and optimize for 100,000+ interactions
 **Metrics**: Response relevance, engagement rates, user satisfaction
@@ -118,6 +128,7 @@ Each feature progresses through these stages:
 ### M1.4 - Advanced Features
 
 #### dao-integration/
+
 **Status**: Not Started
 **Description**: DAODAO integration for governance participation
 **Features**: Proposal reading, voting recommendations, governance alerts
@@ -126,6 +137,7 @@ Each feature progresses through these stages:
 **KOI**: `koi:feature:dao-integration:*`
 
 #### registry-intelligence/
+
 **Status**: Not Started
 **Description**: Advanced registry analytics and opportunity matching
 **Capabilities**: Trend analysis, credit recommendations, impact forecasting
@@ -149,17 +161,20 @@ Templates for each lifecycle stage are available in `/planning/templates/feature
 ## Creating a New Feature
 
 1. **Create Directory**
+
    ```bash
    mkdir features/{feature-name}
    ```
 
 2. **Copy Templates**
+
    ```bash
    cp templates/features/*.md features/{feature-name}/
    ```
 
 3. **Update Registry**
    Add entry to this README with:
+
    - Status
    - Description
    - Dependencies
@@ -187,18 +202,21 @@ Templates for each lifecycle stage are available in `/planning/templates/feature
 ## Cross-Feature Patterns
 
 ### Shared Components
+
 - **KnowledgeProvider**: Used by all agents
 - **CitationFormatter**: Shared citation rendering
 - **ScopeFilter**: Agent boundary enforcement
 - **PlatformAdapter**: Common platform interface
 
 ### Integration Points
+
 - Knowledge System ↔ All features (via Provider)
 - Agent Characters ↔ Conversation Engine (via personality injection)
 - Platform Connectors ↔ Message Router (via adapter pattern)
 - Registry Integration ↔ Registry Intelligence (via data pipeline)
 
 ### Performance Targets
+
 - Query Response: <2 seconds (all features)
 - Document Processing: 100 docs/minute
 - Concurrent Users: 1000+
@@ -219,4 +237,4 @@ Each feature should address relevant missing aspects in their design.
 
 ---
 
-*This registry is continuously updated as features progress through their lifecycle.*
+_This registry is continuously updated as features progress through their lifecycle._

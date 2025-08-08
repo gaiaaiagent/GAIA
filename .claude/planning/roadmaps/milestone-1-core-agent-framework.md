@@ -32,6 +32,7 @@ Deploy ElizaOS v2 with Django integration, creating the foundation for the Regen
 ## Task Breakdown
 
 ### ElizaOS v2 Setup
+
 - [x] Create v1.2.0 branch for regen AI
 - [ ] Create character file templates for each of the four agent archetypes
   - [ ] Narrative Agent
@@ -42,11 +43,13 @@ Deploy ElizaOS v2 with Django integration, creating the foundation for the Regen
 - [ ] Run local development database
 
 ### Django Integration
+
 - [ ] Connect to ElizaOS Local database
 - [ ] Set up Django Admin Dashboard
 - [ ] Create agent management interface
 
 ### Docker Deployment
+
 - [ ] Create Docker configuration for ElizaOS v2 and Django
 - [ ] Expose Django Admin Dashboard
 - [ ] Expose ElizaOS ClientUI
@@ -78,23 +81,27 @@ elizaos create voice-of-nature-agent --type agent
 ```
 
 ### Day 2-3: Configure agent personalities
+
 - Utilize Eliza's character system to create diverse agents
 - Create character files for each of the 4 agent types
 - Leverage Eliza's built-in runtime management
 
 ### Day 3-4: Django Integration
+
 - Set up Django project structure
 - Create models for agent management
 - Connect to ElizaOS database
 - Build admin interface
 
 ### Day 4-5: Docker Deployment
+
 - Create Dockerfile for ElizaOS
 - Create Dockerfile for Django
 - Set up docker-compose for orchestration
 - Configure networking and expose necessary ports
 
 ## Success Criteria
+
 - [ ] All four agent types have character templates
 - [ ] ElizaOS web UI is accessible locally
 - [ ] Django admin can manage agents
@@ -102,6 +109,7 @@ elizaos create voice-of-nature-agent --type agent
 - [ ] APIs are exposed and functional
 
 ## Notes
+
 - ElizaOS v2 is the first open-source web3-friendly AI Agent Operating System
 - Focus on modular architecture for easy agent addition/modification
 - Ensure proper security configuration for exposed services

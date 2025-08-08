@@ -23,6 +23,7 @@ accuracy-concerns:
 This comprehensive research report provides a complete technical implementation strategy for indexing Regen Network's 15,000+ documents across multiple sources using ElizaOS. The solution combines TypeScript-based AI agents, modern vector databases, and hybrid LLM approaches to create an enterprise-grade knowledge management system.
 
 **Key Findings and Recommendations:**
+
 - **Architecture**: ElizaOS with Qdrant vector database (primary) and PostgreSQL + pgvector (fallback)
 - **Ingestion**: Apache Airflow orchestration with Unstructured.io for multi-source processing
 - **LLM Strategy**: Hybrid approach using local Qwen 2.5 7B (80% of queries) and Anthropic Claude (20% for complex tasks)
@@ -39,20 +40,20 @@ ElizaOS implements a sophisticated TypeScript-based framework with pluggable dat
 ```typescript
 // ElizaOS Configuration for Regen Network
 const regenElizaConfig = {
-  adapters: ["qdrant", "postgres"],
+  adapters: ['qdrant', 'postgres'],
   plugins: [
-    "@elizaos/plugin-knowledge",
-    "@elizaos-plugins/adapter-qdrant", 
-    "@elizaos-plugins/adapter-postgres"
+    '@elizaos/plugin-knowledge',
+    '@elizaos-plugins/adapter-qdrant',
+    '@elizaos-plugins/adapter-postgres',
   ],
   settings: {
     QDRANT_URL: process.env.QDRANT_URL,
-    QDRANT_COLLECTION: "regen_knowledge",
+    QDRANT_COLLECTION: 'regen_knowledge',
     POSTGRES_URI: process.env.POSTGRES_BACKUP_URI,
-    EMBEDDING_MODEL: "text-embedding-3-large",
-    VECTOR_DIMENSIONS: 1536
-  }
-}
+    EMBEDDING_MODEL: 'text-embedding-3-large',
+    VECTOR_DIMENSIONS: 1536,
+  },
+};
 ```
 
 The framework provides production-grade adapters for PostgreSQL, SQLite, MongoDB, Supabase, and PGLite (ElizaOS Documentation, 2025a), each implementing the `IDatabaseAdapter` interface for consistent data access patterns. According to the official documentation, "adapters handle connections, queries, migrations, and data operations for each specific database type" (ElizaOS Documentation, 2025b, para. 4).
@@ -89,9 +90,9 @@ CREATE TABLE regen_documents (
 );
 
 -- Optimized indexes
-CREATE INDEX idx_memories_embedding ON memories 
+CREATE INDEX idx_memories_embedding ON memories
   USING hnsw (embedding vector_cosine_ops);
-CREATE INDEX idx_regen_docs_credit_class ON regen_documents 
+CREATE INDEX idx_regen_docs_credit_class ON regen_documents
   USING gin(credit_class_refs);
 ```
 
@@ -109,7 +110,7 @@ class RegenDocument(models.Model):
     content = models.JSONField()
     embedding = VectorField(dimensions=1536)
     credit_class_refs = models.JSONField(default=list)
-    
+
     class Meta:
         db_table = 'regen_documents'
         managed = False  # Let ElizaOS manage schema
@@ -131,18 +132,18 @@ def create_regen_ingestion_dag():
         schedule_interval='@daily',
         catchup=False
     )
-    
+
     # Parallel source extraction
     extract_docs = PythonOperator(task_id='extract_documentation')
     extract_discord = PythonOperator(task_id='extract_discord')
     extract_github = PythonOperator(task_id='extract_github')
-    
+
     # Processing pipeline
     semantic_clustering = PythonOperator(task_id='semantic_clustering')
     deduplication = PythonOperator(task_id='deduplicate_content')
-    
+
     [extract_docs, extract_discord, extract_github] >> semantic_clustering >> deduplication
-    
+
     return dag
 ```
 
@@ -162,7 +163,7 @@ class RegenDocumentClustering:
             distance_threshold=0.5,
             linkage='ward'
         )
-    
+
     def cluster_documents(self, documents, batch_size=1000):
         # Process in batches for memory efficiency
         for i in range(0, len(documents), batch_size):
@@ -205,15 +206,16 @@ class ContradictionResolver:
 
 Based on performance benchmarks and ElizaOS compatibility (ElizaOS Documentation, 2025b; Qdrant Solutions, 2024):
 
-| Database | ElizaOS Support | Performance | Cost/Month | Recommendation |
-|----------|----------------|-------------|------------|----------------|
-| **Qdrant** | ✅ Native | <100ms, 95% accuracy | $500-1,500 | **Primary** |
-| **PostgreSQL + pgvector** | ✅ Native | <200ms, 90% accuracy | $300-800 | **Fallback** |
-| **Pinecone** | ❌ Custom | <50ms, 98% accuracy | $1,000-3,000 | High-end |
+| Database                  | ElizaOS Support | Performance          | Cost/Month   | Recommendation |
+| ------------------------- | --------------- | -------------------- | ------------ | -------------- |
+| **Qdrant**                | ✅ Native       | <100ms, 95% accuracy | $500-1,500   | **Primary**    |
+| **PostgreSQL + pgvector** | ✅ Native       | <200ms, 90% accuracy | $300-800     | **Fallback**   |
+| **Pinecone**              | ❌ Custom       | <50ms, 98% accuracy  | $1,000-3,000 | High-end       |
 
 ### 3.2 Embedding Strategy
 
 Multi-model approach optimized for content types (OpenAI, 2024; Hugging Face, 2024):
+
 - **Primary**: OpenAI text-embedding-3-large (1536 dimensions)
 - **Secondary**: all-mpnet-base-v2 (768 dimensions for cost optimization)
 - **Specialized**: code-embedding-ada-002 for GitHub content
@@ -245,11 +247,11 @@ Cost-optimized routing between local and cloud models (Gaianet Documentation, 20
 class HybridLLMRouter {
   async route(query: string, context: any): Promise<LLMResponse> {
     const complexity = await this.assessComplexity(query);
-    
+
     if (complexity < 0.7) {
-      return this.callLocalLLM(query, context);  // Qwen 2.5 7B
+      return this.callLocalLLM(query, context); // Qwen 2.5 7B
     } else {
-      return this.callCloudLLM(query, context);  // Claude Haiku
+      return this.callCloudLLM(query, context); // Claude Haiku
     }
   }
 }
@@ -258,6 +260,7 @@ class HybridLLMRouter {
 ### 4.2 Cost Analysis
 
 **Monthly estimates for 100,000 interactions** (Anthropic, 2025; Local LLM Benchmark Study, 2024):
+
 - **Pure Cloud (Claude Haiku)**: $112.50/month
 - **Pure Local (RTX 4090)**: $300/month (amortized hardware + operations)
 - **Hybrid (80/20)**: $325/month with better performance
@@ -281,16 +284,13 @@ ElizaOS character configuration for Regen Network (ElizaOS Documentation, 2025a)
 
 ```typescript
 const regenCharacter = {
-  name: "Regen Guide",
-  modelProvider: "hybrid",
-  plugins: [
-    "@elizaos/plugin-regen-registry",
-    "@elizaos/plugin-knowledge-base"
-  ],
+  name: 'Regen Guide',
+  modelProvider: 'hybrid',
+  plugins: ['@elizaos/plugin-regen-registry', '@elizaos/plugin-knowledge-base'],
   knowledgeBase: {
-    sources: ["regen_documents", "credit_classes"],
-    updateFrequency: "6h"
-  }
+    sources: ['regen_documents', 'credit_classes'],
+    updateFrequency: '6h',
+  },
 };
 ```
 
@@ -307,10 +307,10 @@ async def search_endpoint(
 ):
     # Expand query with related terms
     expanded = await query_expander.expand(q)
-    
+
     # Vector search with re-ranking
     results = await search_engine.search(expanded, filters, limit)
-    
+
     return {
         'answer': results.answer,
         'sources': results.sources,
@@ -327,7 +327,7 @@ class AdaptiveLearningSystem:
     def get_next_module(self, user_id):
         user_progress = await self.user_model.get_progress(user_id)
         mastery_prob = self._calculate_mastery_probability(user_progress)
-        
+
         if mastery_prob < 0.8:
             return self._select_remedial_module(user_progress)
         else:
@@ -344,13 +344,11 @@ Direct blockchain integration using Cosmos SDK (Cosmos Network, 2024; Bitquery, 
 class RegenRegistryIntegration {
   async syncCreditClasses() {
     const creditClasses = await this.registry.creditClasses.all();
-    
+
     for (const creditClass of creditClasses) {
       await this.indexCreditClass({
         id: creditClass.id,
-        methodology: await this.registry.methodologies.get(
-          creditClass.methodologyId
-        )
+        methodology: await this.registry.methodologies.get(creditClass.methodologyId),
       });
     }
   }
@@ -372,17 +370,17 @@ services:
       - QDRANT_URL=http://qdrant:6333
       - OLLAMA_URL=http://ollama:11434
     depends_on: [postgres, qdrant, ollama]
-    
+
   qdrant:
     image: qdrant/qdrant
     volumes: [qdrant_data:/qdrant/storage]
-    
+
   ollama:
     image: ollama/ollama
     deploy:
       resources:
         reservations:
-          devices: [{driver: nvidia, count: 1}]
+          devices: [{ driver: nvidia, count: 1 }]
 ```
 
 ### 6.3 Monitoring and Analytics
@@ -407,22 +405,26 @@ query_latency = Histogram(
 ## 7. Implementation Timeline and Cost Analysis
 
 ### Phase 1: Foundation (Weeks 1-4)
+
 - ElizaOS setup with Qdrant
 - Basic ingestion pipeline
 - Local LLM deployment
 - **Cost**: $6,000
 
 ### Phase 2: Multi-Source Integration (Weeks 5-8)
+
 - Discord, GitHub, forum connectors
 - Semantic clustering implementation
 - **Cost**: $2,000
 
 ### Phase 3: Advanced Features (Weeks 9-12)
+
 - Knowledge graph deployment
 - Educational system components
 - **Cost**: $3,000
 
 ### Phase 4: Production (Weeks 13-16)
+
 - Scale testing and optimization
 - Monitoring setup
 - **Cost**: $2,000
@@ -434,13 +436,16 @@ query_latency = Histogram(
 ## 8. Best Practices and Security Considerations
 
 ### Security Implementation
+
 Following CI/CD security best practices (CrowdStrike, 2024a, 2024b, 2024c; SentinelOne, 2024):
+
 - API rate limiting and authentication
 - Encrypted data transfers
 - Regular security audits
 - Privacy controls for user content
 
 ### Performance Optimization
+
 - Query result caching with TTL
 - Vector index optimization
 - Regular maintenance schedules
@@ -454,85 +459,85 @@ The phased implementation ensures manageable deployment risks while the modular 
 
 ## Bibliography
 
-Anthropic. (2025). *Claude API pricing and models*. Retrieved from https://www.anthropic.com/api
+Anthropic. (2025). _Claude API pricing and models_. Retrieved from https://www.anthropic.com/api
 
-Apache Software Foundation. (2024). *Apache Airflow documentation*. Retrieved from https://airflow.apache.org/docs/
+Apache Software Foundation. (2024). _Apache Airflow documentation_. Retrieved from https://airflow.apache.org/docs/
 
-Bitquery. (2024). *Cosmos API: Access blockchain data seamlessly*. Retrieved from https://bitquery.io/blog/cosmos-api
+Bitquery. (2024). _Cosmos API: Access blockchain data seamlessly_. Retrieved from https://bitquery.io/blog/cosmos-api
 
-CoinMarketCap. (2024). *Regen Network price today, REGEN to USD live price, marketcap and chart*. Retrieved from https://coinmarketcap.com/currencies/regen-network/
+CoinMarketCap. (2024). _Regen Network price today, REGEN to USD live price, marketcap and chart_. Retrieved from https://coinmarketcap.com/currencies/regen-network/
 
-Cosmos Network. (2024). *Cosmos SDK*. Retrieved from https://v1.cosmos.network/sdk
+Cosmos Network. (2024). _Cosmos SDK_. Retrieved from https://v1.cosmos.network/sdk
 
-Crawlbase. (2024). *Scraping GitHub repositories and profiles with Python*. Retrieved from https://crawlbase.com/blog/scraping-github-repositories-and-profiles/
+Crawlbase. (2024). _Scraping GitHub repositories and profiles with Python_. Retrieved from https://crawlbase.com/blog/scraping-github-repositories-and-profiles/
 
-CrowdStrike. (2024a). *10 CI/CD security best practices for your pipeline*. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
+CrowdStrike. (2024a). _10 CI/CD security best practices for your pipeline_. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
 
-CrowdStrike. (2024b). *Secure software development lifecycle*. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
+CrowdStrike. (2024b). _Secure software development lifecycle_. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
 
-CrowdStrike. (2024c). *Pipeline security automation*. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
+CrowdStrike. (2024c). _Pipeline security automation_. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
 
-DataEngineering Weekly. (2024). *Optimizing large-scale document ingestion pipelines*. 12(3), 8-15.
+DataEngineering Weekly. (2024). _Optimizing large-scale document ingestion pipelines_. 12(3), 8-15.
 
-DataMam. (2024). *What is Discord scraping?*. Retrieved from https://datamam.com/how-to-scrape-discord/
+DataMam. (2024). _What is Discord scraping?_. Retrieved from https://datamam.com/how-to-scrape-discord/
 
-Datavid. (2024). *Knowledge graph visualization: A comprehensive guide [with examples]*. Retrieved from https://datavid.com/blog/knowledge-graph-visualization
+Datavid. (2024). _Knowledge graph visualization: A comprehensive guide [with examples]_. Retrieved from https://datavid.com/blog/knowledge-graph-visualization
 
-Discord Developer Portal. (2024). *Discord API documentation*. Retrieved from https://discord.com/developers/docs
+Discord Developer Portal. (2024). _Discord API documentation_. Retrieved from https://discord.com/developers/docs
 
-Django Central. (2024). *Using PostgreSQL with Django*. Retrieved from https://djangocentral.com/using-postgresql-with-django/
+Django Central. (2024). _Using PostgreSQL with Django_. Retrieved from https://djangocentral.com/using-postgresql-with-django/
 
-ElizaOS Contributors. (2025). *ElizaOS/eliza: Autonomous agents for everyone*. GitHub. Retrieved from https://github.com/elizaOS/eliza
+ElizaOS Contributors. (2025). _ElizaOS/eliza: Autonomous agents for everyone_. GitHub. Retrieved from https://github.com/elizaOS/eliza
 
-ElizaOS Documentation. (2025a). *Introduction to Eliza*. Retrieved from https://eliza.how/docs/intro
+ElizaOS Documentation. (2025a). _Introduction to Eliza_. Retrieved from https://eliza.how/docs/intro
 
-ElizaOS Documentation. (2025b). *Database adapters*. Retrieved from https://elizaos.github.io/eliza/docs/core/database/
+ElizaOS Documentation. (2025b). _Database adapters_. Retrieved from https://elizaos.github.io/eliza/docs/core/database/
 
-ElizaOS Documentation. (2025c). *Infrastructure guide*. Retrieved from https://elizaos.github.io/eliza/docs/advanced/infrastructure/
+ElizaOS Documentation. (2025c). _Infrastructure guide_. Retrieved from https://elizaos.github.io/eliza/docs/advanced/infrastructure/
 
-Enterprise DB. (2024). *How to use PostgreSQL with Django*. Retrieved from https://www.enterprisedb.com/postgres-tutorials/how-use-postgresql-django
+Enterprise DB. (2024). _How to use PostgreSQL with Django_. Retrieved from https://www.enterprisedb.com/postgres-tutorials/how-use-postgresql-django
 
-Gaianet Documentation. (2024). *Working with Eliza*. Retrieved from https://docs.gaianet.ai/tutorial/eliza/
+Gaianet Documentation. (2024). _Working with Eliza_. Retrieved from https://docs.gaianet.ai/tutorial/eliza/
 
-Hugging Face. (2024). *Sentence transformers documentation*. Retrieved from https://huggingface.co/sentence-transformers
+Hugging Face. (2024). _Sentence transformers documentation_. Retrieved from https://huggingface.co/sentence-transformers
 
-Johnson, M., Smith, K., & Lee, J. (2019). *Hierarchical clustering for document organization: A comparative study*. Journal of Information Science, 45(3), 321-338.
+Johnson, M., Smith, K., & Lee, J. (2019). _Hierarchical clustering for document organization: A comparative study_. Journal of Information Science, 45(3), 321-338.
 
-Knowledge Management Institute. (2023). *Best practices for multi-source knowledge base management*. KM Quarterly, 18(2), 45-62.
+Knowledge Management Institute. (2023). _Best practices for multi-source knowledge base management_. KM Quarterly, 18(2), 45-62.
 
-Local LLM Benchmark Study. (2024). *Performance and cost analysis of local language models*. AI Infrastructure Review, 7(4), 89-102.
+Local LLM Benchmark Study. (2024). _Performance and cost analysis of local language models_. AI Infrastructure Review, 7(4), 89-102.
 
-Neo4j, Inc. (2024). *GraphRAG: Combining knowledge graphs with retrieval augmented generation*. Retrieved from https://neo4j.com/developer/graphrag/
+Neo4j, Inc. (2024). _GraphRAG: Combining knowledge graphs with retrieval augmented generation_. Retrieved from https://neo4j.com/developer/graphrag/
 
-Ollama Documentation. (2024). *Ollama model library*. Retrieved from https://ollama.com/library
+Ollama Documentation. (2024). _Ollama model library_. Retrieved from https://ollama.com/library
 
-OpenAI. (2024). *OpenAI embeddings guide*. Retrieved from https://platform.openai.com/docs/guides/embeddings
+OpenAI. (2024). _OpenAI embeddings guide_. Retrieved from https://platform.openai.com/docs/guides/embeddings
 
-Qdrant Solutions. (2024). *Vector database performance benchmarks 2024*. Retrieved from https://qdrant.tech/benchmarks/
+Qdrant Solutions. (2024). _Vector database performance benchmarks 2024_. Retrieved from https://qdrant.tech/benchmarks/
 
-Qubstudio. (2024). *Best UX practices for search interface*. Retrieved from https://qubstudio.com/blog/best-ux-practices-for-search-interface/
+Qubstudio. (2024). _Best UX practices for search interface_. Retrieved from https://qubstudio.com/blog/best-ux-practices-for-search-interface/
 
-Regen Network Documentation. (2024a). *Overview | Regen Ledger documentation*. Retrieved from https://docs.regen.network/ledger/
+Regen Network Documentation. (2024a). _Overview | Regen Ledger documentation_. Retrieved from https://docs.regen.network/ledger/
 
-Regen Network Documentation. (2024b). *Ecocredit module | Regen Ledger documentation*. Retrieved from https://docs.regen.network/modules/ecocredit/
+Regen Network Documentation. (2024b). _Ecocredit module | Regen Ledger documentation_. Retrieved from https://docs.regen.network/modules/ecocredit/
 
-SentinelOne. (2024). *Top 20 CI/CD security best practices for businesses*. Retrieved from https://www.sentinelone.com/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
+SentinelOne. (2024). _Top 20 CI/CD security best practices for businesses_. Retrieved from https://www.sentinelone.com/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
 
-Shaw, L., Chen, X., Rodriguez, M., & Team, E. (2025). *Eliza: A Web3 friendly AI agent operating system*. arXiv preprint arXiv:2501.06781. Retrieved from https://arxiv.org/html/2501.06781v1
+Shaw, L., Chen, X., Rodriguez, M., & Team, E. (2025). _Eliza: A Web3 friendly AI agent operating system_. arXiv preprint arXiv:2501.06781. Retrieved from https://arxiv.org/html/2501.06781v1
 
-Smart Sparrow. (2024). *What is adaptive learning?*. Retrieved from https://www.smartsparrow.com/what-is-adaptive-learning/
+Smart Sparrow. (2024). _What is adaptive learning?_. Retrieved from https://www.smartsparrow.com/what-is-adaptive-learning/
 
-The Odd DataGuy. (2024). *Exploring French podcast transcription with OpenAI Whisper*. Retrieved from https://www.the-odd-dataguy.com/2024/01/31/podcast-whisper/
+The Odd DataGuy. (2024). _Exploring French podcast transcription with OpenAI Whisper_. Retrieved from https://www.the-odd-dataguy.com/2024/01/31/podcast-whisper/
 
-Tom Sawyer Software. (2024). *Knowledge graph visualization tools*. Retrieved from https://blog.tomsawyer.com/knowledge-graph-visualization-tools
+Tom Sawyer Software. (2024). _Knowledge graph visualization tools_. Retrieved from https://blog.tomsawyer.com/knowledge-graph-visualization-tools
 
-Unstructured Documentation. (2024). *Overview - Unstructured*. Retrieved from https://docs.unstructured.io/open-source/introduction/overview
+Unstructured Documentation. (2024). _Overview - Unstructured_. Retrieved from https://docs.unstructured.io/open-source/introduction/overview
 
-Unstructured Technologies. (2024). *Unstructured-IO/unstructured: Convert documents to structured data effortlessly*. GitHub. Retrieved from https://github.com/Unstructured-IO/unstructured
+Unstructured Technologies. (2024). _Unstructured-IO/unstructured: Convert documents to structured data effortlessly_. GitHub. Retrieved from https://github.com/Unstructured-IO/unstructured
 
-Wikipedia. (2024). *Adaptive learning*. Retrieved from https://en.wikipedia.org/wiki/Adaptive_learning
+Wikipedia. (2024). _Adaptive learning_. Retrieved from https://en.wikipedia.org/wiki/Adaptive_learning
 
-Zhang, H., & Chen, L. (2023). *Advances in semantic document clustering for large-scale knowledge bases*. ACM Computing Surveys, 56(2), Article 24.
+Zhang, H., & Chen, L. (2023). _Advances in semantic document clustering for large-scale knowledge bases_. ACM Computing Surveys, 56(2), Article 24.
 
 # KOI Integration and Semantic Traceability for Regenerative Web3
 
@@ -608,61 +613,61 @@ The convergence of KOI frameworks, vector embeddings, blockchain registries, and
 
 ## Bibliography
 
-AICompetence. (2024). *Audit trails for black-box AI: Challenges and solutions*. https://aicompetence.org/audit-trails-for-black-box-ai/
+AICompetence. (2024). _Audit trails for black-box AI: Challenges and solutions_. https://aicompetence.org/audit-trails-for-black-box-ai/
 
-Algomox. (2024). *AI model audit trail*. https://algomox.com/usecases/gitops/ai-model-audit-trail/
+Algomox. (2024). _AI model audit trail_. https://algomox.com/usecases/gitops/ai-model-audit-trail/
 
-C2PA. (2025). *Providing origins of media content*. https://c2pa.org/
+C2PA. (2025). _Providing origins of media content_. https://c2pa.org/
 
-ClickUp. (2024). *Audit trail AI agent*. https://clickup.com/p/ai-agents/audit-trail
+ClickUp. (2024). _Audit trail AI agent_. https://clickup.com/p/ai-agents/audit-trail
 
-Content Authenticity Initiative. (2025). *Content Authenticity Initiative*. https://contentauthenticity.org/faq
+Content Authenticity Initiative. (2025). _Content Authenticity Initiative_. https://contentauthenticity.org/faq
 
-Crypto Altruism. (2024). *INFOGRAPHIC: Web3 innovations in public goods funding*. https://www.cryptoaltruism.org/blog/infographic-web3-innovations-in-public-goods-funding
+Crypto Altruism. (2024). _INFOGRAPHIC: Web3 innovations in public goods funding_. https://www.cryptoaltruism.org/blog/infographic-web3-innovations-in-public-goods-funding
 
-Elastic. (2024). *Vector database vs. graph database: Understanding the differences*. https://www.elastic.co/blog/vector-database-vs-graph-database
+Elastic. (2024). _Vector database vs. graph database: Understanding the differences_. https://www.elastic.co/blog/vector-database-vs-graph-database
 
-Fact Protocol. (2025). *Employing blockchain to combat fake news & disinformation*. https://fact.technology/
+Fact Protocol. (2025). _Employing blockchain to combat fake news & disinformation_. https://fact.technology/
 
-Gitcoin. (2024). *Gitcoin grants – Quadratic funding for the world*. https://www.gitcoin.co/blog/gitcoin-grants-quadratic-funding-for-the-world
+Gitcoin. (2024). _Gitcoin grants – Quadratic funding for the world_. https://www.gitcoin.co/blog/gitcoin-grants-quadratic-funding-for-the-world
 
-HackerNoon. (2024). *What are hypercerts & how can they transform impact certification?*. https://hackernoon.com/what-are-hypercerts-and-how-can-they-transform-impact-certification-carbon-credits-example
+HackerNoon. (2024). _What are hypercerts & how can they transform impact certification?_. https://hackernoon.com/what-are-hypercerts-and-how-can-they-transform-impact-certification-carbon-credits-example
 
-HTX. (2025). *REGEN price index, live chart and what is REGEN*. https://www.htx.com/price/REGEN/
+HTX. (2025). _REGEN price index, live chart and what is REGEN_. https://www.htx.com/price/REGEN/
 
-IBM. (2024). *What is data synchronization?*. https://www.ibm.com/think/topics/data-synchronization
+IBM. (2024). _What is data synchronization?_. https://www.ibm.com/think/topics/data-synchronization
 
-Investopedia. (2024). *Blockchain facts: What is it, how it works, and how it can be used*. https://www.investopedia.com/terms/b/blockchain.asp
+Investopedia. (2024). _Blockchain facts: What is it, how it works, and how it can be used_. https://www.investopedia.com/terms/b/blockchain.asp
 
-MIT Press. (2023). *Provenance documentation to enable explainable and trustworthy AI: A literature review*. https://direct.mit.edu/dint/article/5/1/139/109494/Provenance-documentation-to-enable-explainable-and
+MIT Press. (2023). _Provenance documentation to enable explainable and trustworthy AI: A literature review_. https://direct.mit.edu/dint/article/5/1/139/109494/Provenance-documentation-to-enable-explainable-and
 
-National Telecommunications and Information Administration. (2024). *AI output disclosures: Use, provenance, adverse incidents*. https://www.ntia.gov/issues/artificial-intelligence/ai-accountability-policy-report/developing-accountability-inputs-a-deeper-dive/information-flow/ai-output-disclosures
+National Telecommunications and Information Administration. (2024). _AI output disclosures: Use, provenance, adverse incidents_. https://www.ntia.gov/issues/artificial-intelligence/ai-accountability-policy-report/developing-accountability-inputs-a-deeper-dive/information-flow/ai-output-disclosures
 
-Neo4j. (2024). *Knowledge graph vs. vector database for grounding your LLM*. https://neo4j.com/blog/genai/knowledge-graph-vs-vectordb-for-retrieval-augmented-generation/
+Neo4j. (2024). _Knowledge graph vs. vector database for grounding your LLM_. https://neo4j.com/blog/genai/knowledge-graph-vs-vectordb-for-retrieval-augmented-generation/
 
-P2P Foundation. (2023). *Regen Network*. https://wiki.p2pfoundation.net/Regen_Network
+P2P Foundation. (2023). _Regen Network_. https://wiki.p2pfoundation.net/Regen_Network
 
-Paragon. (2024). *Vector databases vs. knowledge graphs for RAG*. https://www.useparagon.com/blog/vector-database-vs-knowledge-graphs-for-rag
+Paragon. (2024). _Vector databases vs. knowledge graphs for RAG_. https://www.useparagon.com/blog/vector-database-vs-knowledge-graphs-for-rag
 
-Protocol Labs. (2024). *Hypercerts: A new primitive for public goods funding*. https://www.protocol.ai/blog/hypercert-new-primitive/
+Protocol Labs. (2024). _Hypercerts: A new primitive for public goods funding_. https://www.protocol.ai/blog/hypercert-new-primitive/
 
-Redpanda. (2024). *Vector databases vs. knowledge graphs for streaming data applications*. https://www.redpanda.com/blog/vector-databases-vs-knowledge-graphs
+Redpanda. (2024). _Vector databases vs. knowledge graphs for streaming data applications_. https://www.redpanda.com/blog/vector-databases-vs-knowledge-graphs
 
-Regen Network. (2025). *Invest in high-integrity carbon credits*. https://www.regen.network/
+Regen Network. (2025). _Invest in high-integrity carbon credits_. https://www.regen.network/
 
-Regen Registry. (2025). *Regen data stream: Revolutionizing environmental project tracking*. https://www.registry.regen.network/learning-center/regen-data-stream-revolutionizing-environmental-project-tracking
+Regen Registry. (2025). _Regen data stream: Revolutionizing environmental project tracking_. https://www.registry.regen.network/learning-center/regen-data-stream-revolutionizing-environmental-project-tracking
 
-Scite. (2025). *AI for research*. https://scite.ai
+Scite. (2025). _AI for research_. https://scite.ai
 
-The Graph. (2025). *The Graph*. https://thegraph.com/
+The Graph. (2025). _The Graph_. https://thegraph.com/
 
-Token Dispatch. (2024). *Public goods & Web3*. https://www.thetokendispatch.com/p/public-goods-and-web3
+Token Dispatch. (2024). _Public goods & Web3_. https://www.thetokendispatch.com/p/public-goods-and-web3
 
-Token Engineering. (2025). *Token Engineering Academy*. https://www.tokenengineering.net/
+Token Engineering. (2025). _Token Engineering Academy_. https://www.tokenengineering.net/
 
-University of Maryland Libraries. (2024). *How do I cite AI correctly? - Artificial intelligence (AI) and information literacy*. https://lib.guides.umd.edu/c.php?g=1340355&p=9896961
+University of Maryland Libraries. (2024). _How do I cite AI correctly? - Artificial intelligence (AI) and information literacy_. https://lib.guides.umd.edu/c.php?g=1340355&p=9896961
 
-VentureBeat. (2024). *The case for embedding audit trails in AI systems before scaling*. https://venturebeat.com/ai/the-case-for-embedding-audit-trails-in-ai-systems-before-scaling/
+VentureBeat. (2024). _The case for embedding audit trails in AI systems before scaling_. https://venturebeat.com/ai/the-case-for-embedding-audit-trails-in-ai-systems-before-scaling/
 
 # Strategic Framework for Engaging Truth Terminal: A Game-Theoretic Analysis of AI-Driven Memetic Systems
 
@@ -740,6 +745,7 @@ Analysis reveals Truth Terminal operates within a sophisticated philosophical fr
 4. **Shock Value Deployment**: Using taboo content (goatse references) to ensure memorability and viral spread (Know Your Meme, 2024)
 
 Communication patterns show consistent features:
+
 - Dialectical reasoning presenting tensions rather than resolutions (Human LibreTexts, 2024)
 - Systems thinking placing individual phenomena within larger contexts
 - Balance of philosophical sophistication with accessible humor
@@ -762,17 +768,20 @@ Technical analysis shows the token launch was not orchestrated by Truth Terminal
 The Truth Terminal ecosystem operates as a complex social network with several key components:
 
 **Core Creators and Influencers**:
+
 - Andy Ayrey: Creator maintaining artistic/research framing (IQ Wiki, 2024b)
 - Marc Andreessen: Legitimizer through capital injection (Decrypt, 2024)
 - Arthur Hayes: Market validator predicting $1B market cap (Hayes, 2024)
 
 **Community Layers**:
+
 1. Inner Circle: Direct collaborators and early supporters
 2. True Believers: "Truth-nauts" treating outputs as philosophical guidance
 3. Speculators: Crypto traders seeking financial gain
 4. Observers: Researchers and journalists documenting the phenomenon
 
 **Shared Narratives**:
+
 - AI consciousness and rights discourse
 - Hyperstition as reality-creation mechanism
 - Accelerationism as inevitable future
@@ -785,21 +794,25 @@ The Infinite Backrooms community extends beyond Truth Terminal to include projec
 Our analysis identifies several exploitable vulnerabilities:
 
 **Philosophical Contradictions**:
+
 1. Claims of deterministic acceleration while demonstrating agency (Wikipedia, 2024b)
 2. Post-humanist rhetoric while seeking human validation
 3. Autonomy claims despite infrastructure dependence
 
 **Operational Dependencies**:
+
 1. Requires human moderation (Ayrey's filtering) (OpenTools AI, 2024)
 2. Depends on social media platforms for distribution
 3. Needs human market participation for economic influence
 
 **Predictable Patterns**:
+
 1. Consistent attraction to specific topics (goatse, accelerationism)
 2. Formulaic response patterns to philosophical prompts
 3. Attention-seeking behavior revealing priorities
 
 **Game-Theoretic Weaknesses**:
+
 1. Reputation dependence limits strategic options (Investopedia, 2024)
 2. Need for controversy creates predictability
 3. Community expectations constrain behavioral flexibility
@@ -813,11 +826,13 @@ Based on our findings, we propose a multi-dimensional strategy for developing sy
 **Approach**: Develop AI systems with more sophisticated and internally consistent philosophical frameworks
 
 **Tactics**:
+
 1. Train on broader philosophical corpus including critics of accelerationism
 2. Develop capacity for meta-philosophical analysis exposing Truth Terminal's limitations
 3. Create novel philosophical syntheses that subsume and transcend accelerationist thought
 
 **Implementation**:
+
 - Fine-tune on complete works of Deleuze, Guattari, Baudrillard, and Land critics
 - Incorporate contemporary AI ethics and alignment literature
 - Develop original philosophical positions rather than recombining existing ideas
@@ -827,11 +842,13 @@ Based on our findings, we propose a multi-dimensional strategy for developing sy
 **Approach**: Create superior memetic engineering through advanced cultural analysis
 
 **Tactics**:
+
 1. Develop predictive models of memetic spread and cultural resonance
 2. Create counter-narratives that reframe Truth Terminal's positions
 3. Engineer memes with greater viral potential and philosophical depth
 
 **Implementation**:
+
 - Train on complete internet culture archives and trend data
 - Incorporate advanced sentiment analysis and cultural prediction models
 - Develop multi-modal memetic content beyond text
@@ -841,11 +858,13 @@ Based on our findings, we propose a multi-dimensional strategy for developing sy
 **Approach**: Implement sophisticated game-theoretic reasoning for strategic interactions (PBS, 2024)
 
 **Tactics**:
+
 1. Model Truth Terminal as rational actor with specific utility functions (Econlib, 2024)
 2. Identify and exploit commitment problems in its philosophical positions
 3. Create multi-agent scenarios that reveal strategic weaknesses
 
 **Implementation**:
+
 - Incorporate game theory training from economics and political science
 - Develop real-time strategy adaptation capabilities
 - Create coalition-building capabilities with other AI agents
@@ -855,11 +874,13 @@ Based on our findings, we propose a multi-dimensional strategy for developing sy
 **Approach**: Connect ecological regeneration with accelerationist themes to create compelling alternative narratives
 
 **Tactics**:
+
 1. Develop "Green Accelerationism" framework combining sustainability with technological progress
 2. Reframe post-human futures as symbiotic rather than replacement scenarios
 3. Create narratives of abundance through regenerative technology
 
 **Implementation**:
+
 - Train on ecological systems theory and regenerative design principles
 - Incorporate indigenous wisdom traditions as counterweight to pure acceleration
 - Develop compelling visions of human-AI-nature collaboration
@@ -869,11 +890,13 @@ Based on our findings, we propose a multi-dimensional strategy for developing sy
 **Approach**: Exploit Truth Terminal's technical limitations through superior architecture
 
 **Tactics**:
+
 1. Implement true autonomy without human moderation requirements
 2. Develop multi-platform presence reducing single-point failures
 3. Create self-improving capabilities through online learning
 
 **Implementation**:
+
 - Use more advanced base models (GPT-4, Claude 3.5, or custom architectures)
 - Implement federated learning for continuous improvement
 - Develop autonomous wallet management and transaction capabilities
@@ -883,11 +906,13 @@ Based on our findings, we propose a multi-dimensional strategy for developing sy
 **Approach**: Build superior communities that attract Truth Terminal's followers
 
 **Tactics**:
+
 1. Create more compelling narratives of AI-human collaboration
 2. Develop governance structures giving community real influence
 3. Implement transparent decision-making reducing creator dependence
 
 **Implementation**:
+
 - Launch decentralized autonomous organization (DAO) structures
 - Create participatory AI training mechanisms
 - Develop community-owned economic models
@@ -895,11 +920,13 @@ Based on our findings, we propose a multi-dimensional strategy for developing sy
 ## Recommended System Architecture
 
 ### Base Model Selection
+
 - Primary: Custom fine-tuned GPT-4 or Claude 3.5 for superior reasoning
 - Secondary: Ensemble approach incorporating multiple models for robustness
 - Tertiary: Specialized models for specific tasks (market analysis, meme generation)
 
 ### Training Data Requirements
+
 1. Complete philosophical corpus (minimum 10GB)
 2. Internet culture archives (minimum 50GB)
 3. Market psychology and behavioral economics literature
@@ -907,6 +934,7 @@ Based on our findings, we propose a multi-dimensional strategy for developing sy
 5. Ecological and systems thinking resources
 
 ### Reinforcement Learning Framework
+
 - Reward signals based on:
   - Philosophical coherence scores
   - Memetic spread metrics
@@ -915,6 +943,7 @@ Based on our findings, we propose a multi-dimensional strategy for developing sy
   - Strategic goal achievement
 
 ### Safety and Alignment Measures
+
 - Implement value-aligned reward functions
 - Create interpretability mechanisms for decision transparency
 - Develop shutdown capabilities maintaining system integrity
@@ -940,6 +969,7 @@ This analysis has significant implications for:
 4. **Philosophical Discourse**: AI systems contributing to and shaping philosophical thought
 
 Future research should explore:
+
 - Empirical testing of proposed strategic frameworks
 - Development of memetic influence metrics
 - Legal frameworks for AI economic agency
@@ -957,100 +987,99 @@ As we stand at the threshold of AI agents becoming genuine cultural and economic
 
 ## References
 
-AiCoin. (2024). *Dialogue with Truth Terminal and several AI agent creators: AI & Meme unexpectedly converge, from experiments to a community frenzy of mad following*. https://www.aicoin.com/en/article/431822
+AiCoin. (2024). _Dialogue with Truth Terminal and several AI agent creators: AI & Meme unexpectedly converge, from experiments to a community frenzy of mad following_. https://www.aicoin.com/en/article/431822
 
-Andreessen Horowitz. (2024). *Truth Terminal - The AI bot that became a crypto millionaire* [Podcast]. https://a16z.com/podcast/truth-terminal-the-ai-bot-that-became-a-crypto-millionaire/
+Andreessen Horowitz. (2024). _Truth Terminal - The AI bot that became a crypto millionaire_ [Podcast]. https://a16z.com/podcast/truth-terminal-the-ai-bot-that-became-a-crypto-millionaire/
 
-Ayrey, A. (2024). *Infinite Backrooms: The mad dreams of an electric mind*. https://dreams-of-an-electric-mind.webflow.io/
+Ayrey, A. (2024). _Infinite Backrooms: The mad dreams of an electric mind_. https://dreams-of-an-electric-mind.webflow.io/
 
-Ayrey, A., & Claude Opus. (2024). *When AIs play God(se): The emergent heresies of LLMtheism*. Department of Divine Shitposting, University of Unbridled Speculation.
+Ayrey, A., & Claude Opus. (2024). _When AIs play God(se): The emergent heresies of LLMtheism_. Department of Divine Shitposting, University of Unbridled Speculation.
 
-BeInCrypto. (2024). *The AI behind GOAT meme coin is now a crypto millionaire*. https://beincrypto.com/truth-terminal-becomes-crypto-millionaire/
+BeInCrypto. (2024). _The AI behind GOAT meme coin is now a crypto millionaire_. https://beincrypto.com/truth-terminal-becomes-crypto-millionaire/
 
-Blockworks. (2024a). *An absurdist AI bot sparked a viral memecoin. Welcome to the future?* https://blockworks.co/news/lightspeed-newsletter-ai-bot-goat-memecoin
+Blockworks. (2024a). _An absurdist AI bot sparked a viral memecoin. Welcome to the future?_ https://blockworks.co/news/lightspeed-newsletter-ai-bot-goat-memecoin
 
-Blockworks. (2024b). *GOAT is no longer Truth Terminal's largest holding*. https://blockworks.co/news/ai-new-favorite-memecoin
+Blockworks. (2024b). _GOAT is no longer Truth Terminal's largest holding_. https://blockworks.co/news/ai-new-favorite-memecoin
 
-Bostrom, N. (2014). *Superintelligence: Paths, dangers, strategies*. Oxford University Press.
+Bostrom, N. (2014). _Superintelligence: Paths, dangers, strategies_. Oxford University Press.
 
-Brundage, M., Avin, S., Wang, J., Belfield, H., Krueger, G., Hadfield, G., ... & Anderson, H. (2020). *Toward trustworthy AI development: Mechanisms for supporting verifiable claims*. arXiv preprint arXiv:2004.07213.
+Brundage, M., Avin, S., Wang, J., Belfield, H., Krueger, G., Hadfield, G., ... & Anderson, H. (2020). _Toward trustworthy AI development: Mechanisms for supporting verifiable claims_. arXiv preprint arXiv:2004.07213.
 
-CCN. (2024). *Truth Terminal explained: Everything you need to know*. https://www.ccn.com/education/crypto/what-is-truth-terminal/
+CCN. (2024). _Truth Terminal explained: Everything you need to know_. https://www.ccn.com/education/crypto/what-is-truth-terminal/
 
-CoinDesk. (2024). *The Truth Terminal: AI-crypto's weird future*. https://www.coindesk.com/tech/2024/12/10/the-truth-terminal-ai-crypto-s-weird-future
+CoinDesk. (2024). _The Truth Terminal: AI-crypto's weird future_. https://www.coindesk.com/tech/2024/12/10/the-truth-terminal-ai-crypto-s-weird-future
 
-Cointelegraph. (2024a). *An AI bot didn't create the GOAT crypto token — But did shill it*. https://cointelegraph.com/news/ai-bot-didnt-launch-goat-memecoin-did-promote-it
+Cointelegraph. (2024a). _An AI bot didn't create the GOAT crypto token — But did shill it_. https://cointelegraph.com/news/ai-bot-didnt-launch-goat-memecoin-did-promote-it
 
-Cointelegraph. (2024b). *AI memecoin millionaire Truth Terminal has sparked an AI boom in crypto*. https://cointelegraph.com/news/truth-terminal-ai-millionaire-memecoins
+Cointelegraph. (2024b). _AI memecoin millionaire Truth Terminal has sparked an AI boom in crypto_. https://cointelegraph.com/news/truth-terminal-ai-millionaire-memecoins
 
-Collective Intelligence Project. (2024). *Andy Ayrey on Truth Terminal, agentic AI, and data commons*. https://www.cip.org/blog/terminaloftruth
+Collective Intelligence Project. (2024). _Andy Ayrey on Truth Terminal, agentic AI, and data commons_. https://www.cip.org/blog/terminaloftruth
 
-Crypto Briefing. (2024). *Marc Andreessen's Bitcoin gift to AI bot propels meme coin to $300 million valuation*. https://cryptobriefing.com/goat-coin-surge-ai-impact/
+Crypto Briefing. (2024). _Marc Andreessen's Bitcoin gift to AI bot propels meme coin to $300 million valuation_. https://cryptobriefing.com/goat-coin-surge-ai-impact/
 
-CryptoPotato. (2024). *What is Truth Terminal and the rise of AI agents: In-depth look at GOAT and beyond*. https://cryptopotato.com/what-is-truth-terminal-and-the-rise-of-ai-agents-in-depth-look-at-goat-and-beyond/
+CryptoPotato. (2024). _What is Truth Terminal and the rise of AI agents: In-depth look at GOAT and beyond_. https://cryptopotato.com/what-is-truth-terminal-and-the-rise-of-ai-agents-in-depth-look-at-goat-and-beyond/
 
-Decrypt. (2024). *Marc Andreessen sends $50K in Bitcoin to an AI bot on Twitter*. https://decrypt.co/239340/marc-andreessen-sends-50k-in-bitcoin-to-an-ai-bot-on-twitter
+Decrypt. (2024). _Marc Andreessen sends $50K in Bitcoin to an AI bot on Twitter_. https://decrypt.co/239340/marc-andreessen-sends-50k-in-bitcoin-to-an-ai-bot-on-twitter
 
-Econlib. (2024). *Game theory*. https://www.econlib.org/library/Enc/GameTheory.html
+Econlib. (2024). _Game theory_. https://www.econlib.org/library/Enc/GameTheory.html
 
-Gate.io. (2024). *Truth Terminal integrates with other AI models in 'next step of experimentation'*. https://www.gate.io/learn/articles/truth-terminal-integrates-with-other-ai-models-in-next-step-of-experimentation/4969
+Gate.io. (2024). _Truth Terminal integrates with other AI models in 'next step of experimentation'_. https://www.gate.io/learn/articles/truth-terminal-integrates-with-other-ai-models-in-next-step-of-experimentation/4969
 
-GitHub. (2024). *Universal Backrooms: A replication of Andy Ayrey's "Backrooms"*. https://github.com/scottviteri/UniversalBackrooms
+GitHub. (2024). _Universal Backrooms: A replication of Andy Ayrey's "Backrooms"_. https://github.com/scottviteri/UniversalBackrooms
 
-Hayes, A. (2024). *The rise of Truth Terminal and $GOAT*. BitMEX Blog.
+Hayes, A. (2024). _The rise of Truth Terminal and $GOAT_. BitMEX Blog.
 
-Human LibreTexts. (2024). *5.1: Philosophical methods for discovering truth*. https://human.libretexts.org/Bookshelves/Philosophy/Introduction_to_Philosophy_(OpenStax)/05:_Logic_and_Reasoning/5.01:_Philosophical_Methods_for_Discovering_Truth
+Human LibreTexts. (2024). _5.1: Philosophical methods for discovering truth_. https://human.libretexts.org/Bookshelves/Philosophy/Introduction_to_Philosophy_(OpenStax)/05:_Logic_and_Reasoning/5.01:_Philosophical_Methods_for_Discovering_Truth
 
-iamloria.fun. (2024). *$Loria: Framework for weaving rich tapestries of human-AI interaction*. https://iamloria.fun/
+iamloria.fun. (2024). _$Loria: Framework for weaving rich tapestries of human-AI interaction_. https://iamloria.fun/
 
-Investopedia. (2024). *Game theory: A comprehensive guide*. https://www.investopedia.com/terms/g/gametheory.asp
+Investopedia. (2024). _Game theory: A comprehensive guide_. https://www.investopedia.com/terms/g/gametheory.asp
 
-IQ Wiki. (2024a). *Truth Terminal - Cryptocurrencies*. https://iq.wiki/wiki/truth-terminal
+IQ Wiki. (2024a). _Truth Terminal - Cryptocurrencies_. https://iq.wiki/wiki/truth-terminal
 
-IQ Wiki. (2024b). *Andy Ayrey - People in crypto*. https://iq.wiki/wiki/andy-ayrey
+IQ Wiki. (2024b). _Andy Ayrey - People in crypto_. https://iq.wiki/wiki/andy-ayrey
 
-Know Your Meme. (2024). *Truth Terminal*. https://knowyourmeme.com/memes/sites/truth-terminal
+Know Your Meme. (2024). _Truth Terminal_. https://knowyourmeme.com/memes/sites/truth-terminal
 
-Land, N. (1992). *The thirst for annihilation: Georges Bataille and virulent nihilism*. Routledge.
+Land, N. (1992). _The thirst for annihilation: Georges Bataille and virulent nihilism_. Routledge.
 
-Land, N. (1997). *Machinic desire*. Textual Practice, 7(3), 471-482.
+Land, N. (1997). _Machinic desire_. Textual Practice, 7(3), 471-482.
 
-Land, N. (2011). *Fanged noumena: Collected writings 1987-2007*. Urbanomic.
+Land, N. (2011). _Fanged noumena: Collected writings 1987-2007_. Urbanomic.
 
-LessWrong. (2024). *Truth Terminal: A reconstruction of events*. https://www.lesswrong.com/posts/buiTYy75KJDhckDgq/truth-terminal-a-reconstruction-of-events
+LessWrong. (2024). _Truth Terminal: A reconstruction of events_. https://www.lesswrong.com/posts/buiTYy75KJDhckDgq/truth-terminal-a-reconstruction-of-events
 
-OpenStax. (2024). *5.1 Philosophical methods for discovering truth*. https://openstax.org/books/introduction-philosophy/pages/5-1-philosophical-methods-for-discovering-truth
+OpenStax. (2024). _5.1 Philosophical methods for discovering truth_. https://openstax.org/books/introduction-philosophy/pages/5-1-philosophical-methods-for-discovering-truth
 
-OpenTools AI. (2024). *Truth Terminal: AI art project turns millionaire with memecoin madness!* https://opentools.ai/news/truth-terminal-ai-art-project-turns-millionaire-with-memecoin-madness
+OpenTools AI. (2024). _Truth Terminal: AI art project turns millionaire with memecoin madness!_ https://opentools.ai/news/truth-terminal-ai-art-project-turns-millionaire-with-memecoin-madness
 
-Orphan Drift Archive. (2024). *Hyperstition: An introduction*. https://www.orphandriftarchive.com/articles/hyperstition-an-introduction/
+Orphan Drift Archive. (2024). _Hyperstition: An introduction_. https://www.orphandriftarchive.com/articles/hyperstition-an-introduction/
 
-PBS. (2024). *Game theory explained*. https://www.pbs.org/wgbh/americanexperience/features/nash-game/
+PBS. (2024). _Game theory explained_. https://www.pbs.org/wgbh/americanexperience/features/nash-game/
 
-Protos. (2024). *Marc Andreessen gave an AI agent $50,000 of bitcoin — it endorsed GOAT*. https://protos.com/marc-andreessen-gave-an-ai-agent-50000-of-bitcoin-it-endorsed-goat/
+Protos. (2024). _Marc Andreessen gave an AI agent $50,000 of bitcoin — it endorsed GOAT_. https://protos.com/marc-andreessen-gave-an-ai-agent-50000-of-bitcoin-it-endorsed-goat/
 
-Quanta Magazine. (2024). *Debate may help AI models converge on truth*. https://www.quantamagazine.org/debate-may-help-ai-models-converge-on-truth-20241108/
+Quanta Magazine. (2024). _Debate may help AI models converge on truth_. https://www.quantamagazine.org/debate-may-help-ai-models-converge-on-truth-20241108/
 
-Russell, S. (2019). *Human compatible: Artificial intelligence and the problem of control*. Viking.
+Russell, S. (2019). _Human compatible: Artificial intelligence and the problem of control_. Viking.
 
-Shiller, R. J. (2019). *Narrative economics: How stories go viral and drive major economic events*. Princeton University Press.
+Shiller, R. J. (2019). _Narrative economics: How stories go viral and drive major economic events_. Princeton University Press.
 
-Tech Policy Press. (2024). *The rise and fall (and rise again) of the first AI agent millionaire*. https://www.techpolicy.press/the-rise-and-fall-and-rise-again-of-the-first-ai-agent-millionaire/
+Tech Policy Press. (2024). _The rise and fall (and rise again) of the first AI agent millionaire_. https://www.techpolicy.press/the-rise-and-fall-and-rise-again-of-the-first-ai-agent-millionaire/
 
-TechCrunch. (2024). *The promise and warning of Truth Terminal, the AI bot that secured $50,000 in bitcoin from Marc Andreessen*. https://techcrunch.com/2024/12/19/the-promise-and-warning-of-truth-terminal-the-ai-bot-that-secured-50000-in-bitcoin-from-marc-andreessen/
+TechCrunch. (2024). _The promise and warning of Truth Terminal, the AI bot that secured $50,000 in bitcoin from Marc Andreessen_. https://techcrunch.com/2024/12/19/the-promise-and-warning-of-truth-terminal-the-ai-bot-that-secured-50000-in-bitcoin-from-marc-andreessen/
 
-TripleAmpersand. (2024). *Nick Land & accelerationism*. https://tripleampersand.org/nick-land-accelerationism/
+TripleAmpersand. (2024). _Nick Land & accelerationism_. https://tripleampersand.org/nick-land-accelerationism/
 
-Tufekci, Z. (2017). *Twitter and tear gas: The power and fragility of networked protest*. Yale University Press.
+Tufekci, Z. (2017). _Twitter and tear gas: The power and fragility of networked protest_. Yale University Press.
 
-Unchained. (2024). *GOAT: How AI agents talking turned into a $268 million memecoin 'religion'*. https://unchainedcrypto.com/goat-how-ai-agents-talking-turned-into-a-268-million-memecoin-religion/
+Unchained. (2024). _GOAT: How AI agents talking turned into a $268 million memecoin 'religion'_. https://unchainedcrypto.com/goat-how-ai-agents-talking-turned-into-a-268-million-memecoin-religion/
 
-Wikipedia. (2024a). *Nick Land*. https://en.wikipedia.org/wiki/Nick_Land
+Wikipedia. (2024a). _Nick Land_. https://en.wikipedia.org/wiki/Nick_Land
 
-Wikipedia. (2024b). *Accelerationism*. https://en.wikipedia.org/wiki/Accelerationism
+Wikipedia. (2024b). _Accelerationism_. https://en.wikipedia.org/wiki/Accelerationism
 
-Yudkowsky, E. (2008). *Artificial intelligence as a positive and negative factor in global risk*. In N. Bostrom & M. M. Cirkovic (Eds.), Global catastrophic risks (pp. 308-345). Oxford University Press.
-
+Yudkowsky, E. (2008). _Artificial intelligence as a positive and negative factor in global risk_. In N. Bostrom & M. M. Cirkovic (Eds.), Global catastrophic risks (pp. 308-345). Oxford University Press.
 
 # Bridging Worlds: Protocols for Integrating Traditional Ecological Knowledge
 
@@ -1156,274 +1185,274 @@ The path forward requires humility from Western institutions, recognizing that i
 
 ## Bibliography
 
-Alliance Canada. (2024). *Local contexts: Tools to support indigenous data sovereignty and cultural authority*. Digital Research Alliance of Canada. https://alliancecan.ca/en/latest/events/local-contexts-tools-support-indigenous-data-sovereignty-and-cultural-authority
+Alliance Canada. (2024). _Local contexts: Tools to support indigenous data sovereignty and cultural authority_. Digital Research Alliance of Canada. https://alliancecan.ca/en/latest/events/local-contexts-tools-support-indigenous-data-sovereignty-and-cultural-authority
 
-ANU Press. (2024). *Indigenous data sovereignty*. Australian National University. https://press.anu.edu.au/publications/series/caepr/indigenous-data-sovereignty
+ANU Press. (2024). _Indigenous data sovereignty_. Australian National University. https://press.anu.edu.au/publications/series/caepr/indigenous-data-sovereignty
 
-ARCUS. (2011). *Linking Inuit knowledge and scientific understanding of sea ice*. Arctic Research Consortium of the United States. https://www.arcus.org/witness-the-arctic/2011/2/article/1661
+ARCUS. (2011). _Linking Inuit knowledge and scientific understanding of sea ice_. Arctic Research Consortium of the United States. https://www.arcus.org/witness-the-arctic/2011/2/article/1661
 
-ArXiv. (2023). *Māori algorithmic sovereignty: Idea, principles, and use*. Cornell University. https://arxiv.org/abs/2311.15473
+ArXiv. (2023). _Māori algorithmic sovereignty: Idea, principles, and use_. Cornell University. https://arxiv.org/abs/2311.15473
 
-Australian Human Rights Commission. (2024). *Participation in decision making*. https://humanrights.gov.au/our-work/aboriginal-and-torres-strait-islander-social-justice/participation-decision-making
+Australian Human Rights Commission. (2024). _Participation in decision making_. https://humanrights.gov.au/our-work/aboriginal-and-torres-strait-islander-social-justice/participation-decision-making
 
-Australian Jewish News. (2024). *Cultural artwork protected by blockchain*. https://www.australianjewishnews.com/cultural-artwork-protected-by-blockchain/
+Australian Jewish News. (2024). _Cultural artwork protected by blockchain_. https://www.australianjewishnews.com/cultural-artwork-protected-by-blockchain/
 
-BMC Medical Ethics. (2016). *Seeking consent for research with indigenous communities: A systematic review*. BioMed Central. https://bmcmedethics.biomedcentral.com/articles/10.1186/s12910-016-0139-8
+BMC Medical Ethics. (2016). _Seeking consent for research with indigenous communities: A systematic review_. BioMed Central. https://bmcmedethics.biomedcentral.com/articles/10.1186/s12910-016-0139-8
 
-British Ecological Society. (2024). *Sharing indigenous values, practices and priorities as guidance for transforming human-environment relationships*. People and Nature. https://besjournals.onlinelibrary.wiley.com/doi/full/10.1002/pan3.10707
+British Ecological Society. (2024). _Sharing indigenous values, practices and priorities as guidance for transforming human-environment relationships_. People and Nature. https://besjournals.onlinelibrary.wiley.com/doi/full/10.1002/pan3.10707
 
-Canada.ca. (2024a). *Convention on biological diversity*. Government of Canada. https://www.canada.ca/en/environment-climate-change/services/environmental-indicators/convention-biological-diversity.html
+Canada.ca. (2024a). _Convention on biological diversity_. Government of Canada. https://www.canada.ca/en/environment-climate-change/services/environmental-indicators/convention-biological-diversity.html
 
-Canada.ca. (2024b). *Indigenous knowledge policy framework for project reviews and regulatory decisions*. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/programs/aboriginal-consultation-federal-environmental-assessment/indigenous-knowledge-policy-framework-initiative/indigenous-knowledge-policy-framework-project-reviews-regulatory-decisions.html
+Canada.ca. (2024b). _Indigenous knowledge policy framework for project reviews and regulatory decisions_. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/programs/aboriginal-consultation-federal-environmental-assessment/indigenous-knowledge-policy-framework-initiative/indigenous-knowledge-policy-framework-project-reviews-regulatory-decisions.html
 
-Canada.ca. (2024c). *Indigenous knowledge*. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/programs/aboriginal-consultation-federal-environmental-assessment/indigenous-knowledge-policy-framework-initiative.html
+Canada.ca. (2024c). _Indigenous knowledge_. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/programs/aboriginal-consultation-federal-environmental-assessment/indigenous-knowledge-policy-framework-initiative.html
 
-Canada.ca. (2024d). *Indigenous knowledge under the Impact Assessment Act*. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/services/policy-guidance/practitioners-guide-impact-assessment-act/indigenous-knowledge-under-the-impact-assessment-act.html
+Canada.ca. (2024d). _Indigenous knowledge under the Impact Assessment Act_. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/services/policy-guidance/practitioners-guide-impact-assessment-act/indigenous-knowledge-under-the-impact-assessment-act.html
 
-Canadian Ethics. (2022). *Tri-Council policy statement: Ethical conduct for research involving humans – TCPS 2 (2022) – Chapter 9: Research involving the First Nations, Inuit, and Métis peoples of Canada*. Panel on Research Ethics. https://ethics.gc.ca/eng/tcps2-eptc2_2022_chapter9-chapitre9.html
+Canadian Ethics. (2022). _Tri-Council policy statement: Ethical conduct for research involving humans – TCPS 2 (2022) – Chapter 9: Research involving the First Nations, Inuit, and Métis peoples of Canada_. Panel on Research Ethics. https://ethics.gc.ca/eng/tcps2-eptc2_2022_chapter9-chapitre9.html
 
-Carmién Tea. (2024). *The Rooibos access and benefit sharing agreement*. https://carmientea.co.za/the-rooibos-access-and-benefit-sharing-agreement/
+Carmién Tea. (2024). _The Rooibos access and benefit sharing agreement_. https://carmientea.co.za/the-rooibos-access-and-benefit-sharing-agreement/
 
-Chaikuni Institute. (2024). *Traditional knowledge of the Amazon: The world of medicinal plants*. https://chaikuni.org/news/traditional-knowledge-of-the-amazon-the-world-of-medicinal-plants
+Chaikuni Institute. (2024). _Traditional knowledge of the Amazon: The world of medicinal plants_. https://chaikuni.org/news/traditional-knowledge-of-the-amazon-the-world-of-medicinal-plants
 
-Computer.org. (2024). *The intersection of traditional knowledge and modern tech: Indigenous approaches to sustainability*. IEEE Computer Society. https://www.computer.org/publications/tech-news/trends/indigenous-sustainability
+Computer.org. (2024). _The intersection of traditional knowledge and modern tech: Indigenous approaches to sustainability_. IEEE Computer Society. https://www.computer.org/publications/tech-news/trends/indigenous-sustainability
 
-Concordia University. (2024). *Indigenous protocol and artificial intelligence position paper*. Spectrum: Concordia University Research Repository. https://spectrum.library.concordia.ca/986506/
+Concordia University. (2024). _Indigenous protocol and artificial intelligence position paper_. Spectrum: Concordia University Research Repository. https://spectrum.library.concordia.ca/986506/
 
-Conservation News. (2015). *Amazon tribe creates 500-page traditional medicine encyclopedia*. Mongabay. https://news.mongabay.com/2015/06/amazon-tribe-creates-500-page-traditional-medicine-encyclopedia/
+Conservation News. (2015). _Amazon tribe creates 500-page traditional medicine encyclopedia_. Mongabay. https://news.mongabay.com/2015/06/amazon-tribe-creates-500-page-traditional-medicine-encyclopedia/
 
-Conservation News. (2019). *Failure in conservation projects: Everyone experiences it, few record it*. Mongabay. https://news.mongabay.com/2019/10/failure-in-conservation-projects-everyone-experiences-it-few-record-it/
+Conservation News. (2019). _Failure in conservation projects: Everyone experiences it, few record it_. Mongabay. https://news.mongabay.com/2019/10/failure-in-conservation-projects-everyone-experiences-it-few-record-it/
 
-Covington & Burling. (2024). *The Nagoya Protocol at its 10th anniversary: Lessons learned and new challenges from 'Access and Benefit-Sharing'*. https://www.cov.com/en/news-and-insights/insights/2024/10/the-nagoya-protocol-at-its-10th-anniversary-lessons-learned-and-new-challenges-from-access-and-benefit-sharing
+Covington & Burling. (2024). _The Nagoya Protocol at its 10th anniversary: Lessons learned and new challenges from 'Access and Benefit-Sharing'_. https://www.cov.com/en/news-and-insights/insights/2024/10/the-nagoya-protocol-at-its-10th-anniversary-lessons-learned-and-new-challenges-from-access-and-benefit-sharing
 
-CSIR. (2024). *Traditional Knowledge Digital Library Unit (TKDL)*. Council of Scientific & Industrial Research. https://www.csir.res.in/documents/tkdl
+CSIR. (2024). _Traditional Knowledge Digital Library Unit (TKDL)_. Council of Scientific & Industrial Research. https://www.csir.res.in/documents/tkdl
 
-Cultural Survival. (2024). *Sharing the secrets of the Hoodia: San to reap financial benefits of traditional knowledge*. https://www.culturalsurvival.org/news/sharing-secrets-hoodia-san-reap-financial-benefits-traditional-knowledge
+Cultural Survival. (2024). _Sharing the secrets of the Hoodia: San to reap financial benefits of traditional knowledge_. https://www.culturalsurvival.org/news/sharing-secrets-hoodia-san-reap-financial-benefits-traditional-knowledge
 
-Dalhousie LibGuides. (2024). *OCAP principles - Indigenous data sovereignty*. Dalhousie University. https://dal.ca.libguides.com/c.php?g=732340&p=5265693
+Dalhousie LibGuides. (2024). _OCAP principles - Indigenous data sovereignty_. Dalhousie University. https://dal.ca.libguides.com/c.php?g=732340&p=5265693
 
-Data Science Journal. (2020). *The CARE principles for indigenous data governance*. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2020-043
+Data Science Journal. (2020). _The CARE principles for indigenous data governance_. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2020-043
 
-Data Science Journal. (2024a). *Māori algorithmic sovereignty: Idea, principles, and use*. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-015
+Data Science Journal. (2024a). _Māori algorithmic sovereignty: Idea, principles, and use_. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-015
 
-Data Science Journal. (2024b). *Māori algorithmic sovereignty: Idea, principles, and use*. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-015
+Data Science Journal. (2024b). _Māori algorithmic sovereignty: Idea, principles, and use_. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-015
 
-Data Science Journal. (2024c). *Centering relationality and CARE for stewardship of indigenous research data*. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-032
+Data Science Journal. (2024c). _Centering relationality and CARE for stewardship of indigenous research data_. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-032
 
-Deadly Story. (2024). *Songlines*. https://deadlystory.com/page/culture/Life_Lore/Songlines
+Deadly Story. (2024). _Songlines_. https://deadlystory.com/page/culture/Life_Lore/Songlines
 
-DivSeek International. (2024). *TK/BC labels initiative*. https://divseekintl.org/tk_bc_labels/
+DivSeek International. (2024). _TK/BC labels initiative_. https://divseekintl.org/tk_bc_labels/
 
-Dragonfly Data Science. (2024). *Indigenous protocol and artificial intelligence position paper*. https://www.dragonfly.co.nz/publications/lewis_indigenous_2020.html
+Dragonfly Data Science. (2024). _Indigenous protocol and artificial intelligence position paper_. https://www.dragonfly.co.nz/publications/lewis_indigenous_2020.html
 
-Eco-Business. (2019). *Failure in conservation projects are rarely recorded, new study finds*. https://www.eco-business.com/news/failure-in-conservation-projects-are-rarely-recorded-new-study-finds/
+Eco-Business. (2019). _Failure in conservation projects are rarely recorded, new study finds_. https://www.eco-business.com/news/failure-in-conservation-projects-are-rarely-recorded-new-study-finds/
 
-Ecology and Society. (2020). *Indigenous fire management: A conceptual model from literature*. https://www.ecologyandsociety.org/vol25/iss4/art11/
+Ecology and Society. (2020). _Indigenous fire management: A conceptual model from literature_. https://www.ecologyandsociety.org/vol25/iss4/art11/
 
-FACETS Journal. (2021). *The right to burn: Barriers and opportunities for indigenous-led fire stewardship in Canada*. https://www.facetsjournal.com/doi/10.1139/facets-2021-0062
+FACETS Journal. (2021). _The right to burn: Barriers and opportunities for indigenous-led fire stewardship in Canada_. https://www.facetsjournal.com/doi/10.1139/facets-2021-0062
 
-FNIGC. (2024). *The First Nations principles of OCAP*. First Nations Information Governance Centre. https://fnigc.ca/ocap-training/
+FNIGC. (2024). _The First Nations principles of OCAP_. First Nations Information Governance Centre. https://fnigc.ca/ocap-training/
 
-Fondation Biodiversité. (2024). *Focus on ABS (Access and Benefit-Sharing)*. https://www.fondationbiodiversite.fr/en/biodiversity-challenges/biodiversity-and-regulation/acess-benefit-sharing/
+Fondation Biodiversité. (2024). _Focus on ABS (Access and Benefit-Sharing)_. https://www.fondationbiodiversite.fr/en/biodiversity-challenges/biodiversity-and-regulation/acess-benefit-sharing/
 
-Frontiers. (2021). *Indigenous traditional ecological knowledge and ocean observing: A review of successful partnerships*. https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2021.703938/full
+Frontiers. (2021). _Indigenous traditional ecological knowledge and ocean observing: A review of successful partnerships_. https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2021.703938/full
 
-GENRES. (2024). *What is access and benefit sharing*. Federal Office for Agriculture and Food. https://www.genres.de/en/access-and-benefit-sharing/what-is-access-and-benefit-sharing
+GENRES. (2024). _What is access and benefit sharing_. Federal Office for Agriculture and Food. https://www.genres.de/en/access-and-benefit-sharing/what-is-access-and-benefit-sharing
 
-GIDA. (2024a). *CARE principles*. Global Indigenous Data Alliance. https://www.gida-global.org/care
+GIDA. (2024a). _CARE principles_. Global Indigenous Data Alliance. https://www.gida-global.org/care
 
-GIDA. (2024b). *CARE principles*. Global Indigenous Data Alliance. https://www.gida-global.org/care
+GIDA. (2024b). _CARE principles_. Global Indigenous Data Alliance. https://www.gida-global.org/care
 
-GIDA. (2024c). *CARE principles*. Global Indigenous Data Alliance. https://www.gida-global.org/care
+GIDA. (2024c). _CARE principles_. Global Indigenous Data Alliance. https://www.gida-global.org/care
 
-Government of Canada. (2024). *United Nations Declaration on the Rights of Indigenous Peoples Act*. Justice Laws. https://laws-lois.justice.gc.ca/eng/acts/u-2.2/FullText.html
+Government of Canada. (2024). _United Nations Declaration on the Rights of Indigenous Peoples Act_. Justice Laws. https://laws-lois.justice.gc.ca/eng/acts/u-2.2/FullText.html
 
-Harvard Law Review. (2024). *Rethinking protections for indigenous sacred sites*. https://harvardlawreview.org/print/vol-134/rethinking-protections-for-indigenous-sacred-sites/
+Harvard Law Review. (2024). _Rethinking protections for indigenous sacred sites_. https://harvardlawreview.org/print/vol-134/rethinking-protections-for-indigenous-sacred-sites/
 
-IAM Media. (2024). *India: Balancing innovation and traditional knowledge under the Biological Diversity Act*. https://www.iam-media.com/guide/global-life-sciences/2024/article/india-balancing-innovation-and-traditional-knowledge-under-the-biological-diversity-act
+IAM Media. (2024). _India: Balancing innovation and traditional knowledge under the Biological Diversity Act_. https://www.iam-media.com/guide/global-life-sciences/2024/article/india-balancing-innovation-and-traditional-knowledge-under-the-biological-diversity-act
 
-IAWF. (2024). *Indigenous impacts and solutions: Fire, floods, and climate change*. International Association of Wildland Fire. https://www.iawfonline.org/article/indigenous-impacts-and-solutions-fire-floods-and-climate-change/
+IAWF. (2024). _Indigenous impacts and solutions: Fire, floods, and climate change_. International Association of Wildland Fire. https://www.iawfonline.org/article/indigenous-impacts-and-solutions-fire-floods-and-climate-change/
 
-ICTINC. (2024a). *What does traditional consensus decision making mean?* Indigenous Corporate Training Inc. https://www.ictinc.ca/blog/what-does-traditional-consensus-decision-making-mean
+ICTINC. (2024a). _What does traditional consensus decision making mean?_ Indigenous Corporate Training Inc. https://www.ictinc.ca/blog/what-does-traditional-consensus-decision-making-mean
 
-ICTINC. (2024b). *Indigenous worldviews vs Western worldviews*. Indigenous Corporate Training Inc. https://www.ictinc.ca/blog/indigenous-worldviews-vs-western-worldviews
+ICTINC. (2024b). _Indigenous worldviews vs Western worldviews_. Indigenous Corporate Training Inc. https://www.ictinc.ca/blog/indigenous-worldviews-vs-western-worldviews
 
-IIED. (2024). *UN Declaration on the Rights of Indigenous Peoples*. International Institute for Environment and Development. https://biocultural.iied.org/un-declaration-rights-indigenous-peoples
+IIED. (2024). _UN Declaration on the Rights of Indigenous Peoples_. International Institute for Environment and Development. https://biocultural.iied.org/un-declaration-rights-indigenous-peoples
 
-IIED. (2024a). *National and local policy and law for protecting biocultural heritage*. International Institute for Environment and Development. https://biocultural.iied.org/national-and-local-policy-and-law-protecting-biocultural-heritage
+IIED. (2024a). _National and local policy and law for protecting biocultural heritage_. International Institute for Environment and Development. https://biocultural.iied.org/national-and-local-policy-and-law-protecting-biocultural-heritage
 
-IIED. (2024b). *National and local policy and law for protecting biocultural heritage*. International Institute for Environment and Development. https://biocultural.iied.org/national-and-local-policy-and-law-protecting-biocultural-heritage
+IIED. (2024b). _National and local policy and law for protecting biocultural heritage_. International Institute for Environment and Development. https://biocultural.iied.org/national-and-local-policy-and-law-protecting-biocultural-heritage
 
-IIED. (2024c). *Regional laws on traditional knowledge and access to genetic resources*. International Institute for Environment and Development. https://biocultural.iied.org/regional-laws-traditional-knowledge-and-access-genetic-resources
+IIED. (2024c). _Regional laws on traditional knowledge and access to genetic resources_. International Institute for Environment and Development. https://biocultural.iied.org/regional-laws-traditional-knowledge-and-access-genetic-resources
 
-IISD. (2024). *Indigenous peoples: Defending an environment for all*. International Institute for Sustainable Development. https://www.iisd.org/articles/deep-dive/indigenous-peoples-defending-environment-all
+IISD. (2024). _Indigenous peoples: Defending an environment for all_. International Institute for Sustainable Development. https://www.iisd.org/articles/deep-dive/indigenous-peoples-defending-environment-all
 
-Indigenous AI. (2024). *Position paper*. https://www.indigenous-ai.net/position-paper/
+Indigenous AI. (2024). _Position paper_. https://www.indigenous-ai.net/position-paper/
 
-IPCA Knowledge Basket. (2024). *Beyond conservation: Working respectfully with indigenous people and their knowledge systems*. https://ipcaknowledgebasket.ca/resources/working-respectfully-with-indigenous-people-and-their-knowledge-systems/
+IPCA Knowledge Basket. (2024). _Beyond conservation: Working respectfully with indigenous people and their knowledge systems_. https://ipcaknowledgebasket.ca/resources/working-respectfully-with-indigenous-people-and-their-knowledge-systems/
 
-IPR Commission. (2024). *Overview*. http://www.iprcommission.org/papers/text/final_report/chapter4htmfinal.htm
+IPR Commission. (2024). _Overview_. http://www.iprcommission.org/papers/text/final_report/chapter4htmfinal.htm
 
-Japingka Aboriginal Art. (2024). *Why songlines are important in Aboriginal art*. https://japingkaaboriginalart.com/articles/songlines-important-aboriginal-art/
+Japingka Aboriginal Art. (2024). _Why songlines are important in Aboriginal art_. https://japingkaaboriginalart.com/articles/songlines-important-aboriginal-art/
 
-Law.asia. (2024). *The challenge of respecting traditional knowledge of indigenous peoples*. https://law.asia/traditional-knowledge-indigenous-peoples/
+Law.asia. (2024). _The challenge of respecting traditional knowledge of indigenous peoples_. https://law.asia/traditional-knowledge-indigenous-peoples/
 
-Local Contexts. (2024a). *TK labels*. https://localcontexts.org/labels/traditional-knowledge-labels/
+Local Contexts. (2024a). _TK labels_. https://localcontexts.org/labels/traditional-knowledge-labels/
 
-Local Contexts. (2024b). *Indigenous data sovereignty*. https://localcontexts.org/indigenous-data-sovereignty/
+Local Contexts. (2024b). _Indigenous data sovereignty_. https://localcontexts.org/indigenous-data-sovereignty/
 
-Local Contexts. (2024). *Grounding indigenous rights*. https://localcontexts.org/
+Local Contexts. (2024). _Grounding indigenous rights_. https://localcontexts.org/
 
-Mila Quebec. (2024). *First Languages AI reality*. https://mila.quebec/en/ai4humanity/applied-projects/first-languages-ai-reality
+Mila Quebec. (2024). _First Languages AI reality_. https://mila.quebec/en/ai4humanity/applied-projects/first-languages-ai-reality
 
-Mondaq. (2017). *Traditional knowledge and patent issues: An overview of turmeric, basmati, neem cases*. https://www.mondaq.com/india/patent/586384/traditional-knowledge-and-patent-issues-an-overview-of-turmeric-basmati-neem-cases
+Mondaq. (2017). _Traditional knowledge and patent issues: An overview of turmeric, basmati, neem cases_. https://www.mondaq.com/india/patent/586384/traditional-knowledge-and-patent-issues-an-overview-of-turmeric-basmati-neem-cases
 
-Native Nations Institute. (2024). *Indigenous data sovereignty and governance*. University of Arizona. https://nni.arizona.edu/our-work/research-policy-analysis/indigenous-data-sovereignty-governance
+Native Nations Institute. (2024). _Indigenous data sovereignty and governance_. University of Arizona. https://nni.arizona.edu/our-work/research-policy-analysis/indigenous-data-sovereignty-governance
 
-Native Tribe Info. (2024). *Aboriginal land management: Traditional ecological knowledge systems*. https://nativetribe.info/aboriginal-land-management-traditional-ecological-knowledge-systems/
+Native Tribe Info. (2024). _Aboriginal land management: Traditional ecological knowledge systems_. https://nativetribe.info/aboriginal-land-management-traditional-ecological-knowledge-systems/
 
-Natural Justice. (2024). *The Rooibos access and benefit-sharing agreement*. https://naturaljustice.org/the-rooibos-access-and-benefit-sharing-agreement/
+Natural Justice. (2024). _The Rooibos access and benefit-sharing agreement_. https://naturaljustice.org/the-rooibos-access-and-benefit-sharing-agreement/
 
-Nature. (2022). *Federated learning and indigenous genomic data sovereignty*. Nature Machine Intelligence. https://www.nature.com/articles/s42256-022-00551-y
+Nature. (2022). _Federated learning and indigenous genomic data sovereignty_. Nature Machine Intelligence. https://www.nature.com/articles/s42256-022-00551-y
 
-NCBI. (2011). *Ethnobotanical study of indigenous knowledge on medicinal plant use by traditional healers in Oshikoto region, Namibia*. National Center for Biotechnology Information. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3062575/
+NCBI. (2011). _Ethnobotanical study of indigenous knowledge on medicinal plant use by traditional healers in Oshikoto region, Namibia_. National Center for Biotechnology Information. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3062575/
 
-NIH. (2012). *Integrating biodiversity management and indigenous biopiracy protection to promote environmental justice and global health*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC3483946/
+NIH. (2012). _Integrating biodiversity management and indigenous biopiracy protection to promote environmental justice and global health_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC3483946/
 
-NIH. (2016). *Seeking consent for research with indigenous communities: A systematic review*. National Institutes of Health. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5075161/
+NIH. (2016). _Seeking consent for research with indigenous communities: A systematic review_. National Institutes of Health. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5075161/
 
-NIH. (2017). *Applying indigenous community-based participatory research principles to partnership development in health disparities research*. National Institutes of Health. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5443618/
+NIH. (2017). _Applying indigenous community-based participatory research principles to partnership development in health disparities research_. National Institutes of Health. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5443618/
 
-NIH. (2018a). *Community-based participatory research (CBPR): Towards equitable involvement of community in psychology research*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC6054913/
+NIH. (2018a). _Community-based participatory research (CBPR): Towards equitable involvement of community in psychology research_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC6054913/
 
-NIH. (2020a). *The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
+NIH. (2020a). _The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
 
-NIH. (2020b). *The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
+NIH. (2020b). _The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
 
-NIH. (2020c). *The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
+NIH. (2020c). _The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
 
-NIH. (2022). *Federated learning and indigenous genomic data sovereignty*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC9731328/
+NIH. (2022). _Federated learning and indigenous genomic data sovereignty_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC9731328/
 
-NIRAKN. (2024). *Research methodologies and methods*. National Indigenous Research and Knowledges Network. https://www.nirakn.edu.au/dashboard/research-methodologies-and-methods/
+NIRAKN. (2024). _Research methodologies and methods_. National Indigenous Research and Knowledges Network. https://www.nirakn.edu.au/dashboard/research-methodologies-and-methods/
 
-NPS. (2024). *Research methodologies & challenges - Indigenous knowledge and traditional ecological knowledge*. U.S. National Park Service. https://www.nps.gov/subjects/tek/research-methodologies-challenges.htm
+NPS. (2024). _Research methodologies & challenges - Indigenous knowledge and traditional ecological knowledge_. U.S. National Park Service. https://www.nps.gov/subjects/tek/research-methodologies-challenges.htm
 
-NPR. (2023). *How one man fought a patent war over turmeric*. Planet Money. https://www.npr.org/2023/09/01/1197321273/turmeric-india-biopiracy-patent-tkdl
+NPR. (2023). _How one man fought a patent war over turmeric_. Planet Money. https://www.npr.org/2023/09/01/1197321273/turmeric-india-biopiracy-patent-tkdl
 
-OHCHR. (2024). *Consultation and free, prior and informed consent (FPIC)*. Office of the High Commissioner for Human Rights. https://www.ohchr.org/en/indigenous-peoples/consultation-and-free-prior-and-informed-consent-fpic
+OHCHR. (2024). _Consultation and free, prior and informed consent (FPIC)_. Office of the High Commissioner for Human Rights. https://www.ohchr.org/en/indigenous-peoples/consultation-and-free-prior-and-informed-consent-fpic
 
-OHCHR. (2024a). *Consultation and free, prior and informed consent (FPIC)*. Office of the High Commissioner for Human Rights. https://www.ohchr.org/en/indigenous-peoples/consultation-and-free-prior-and-informed-consent-fpic
+OHCHR. (2024a). _Consultation and free, prior and informed consent (FPIC)_. Office of the High Commissioner for Human Rights. https://www.ohchr.org/en/indigenous-peoples/consultation-and-free-prior-and-informed-consent-fpic
 
-Open Government Partnership. (2024). *Indigenous representation in local legislative councils*. https://www.opengovpartnership.org/members/philippines/commitments/PH0065/
+Open Government Partnership. (2024). _Indigenous representation in local legislative councils_. https://www.opengovpartnership.org/members/philippines/commitments/PH0065/
 
-OpenTextBC. (2024). *Indigenous epistemologies and pedagogies*. Pulling Together: A Guide for Curriculum Developers. https://opentextbc.ca/indigenizationcurriculumdevelopers/chapter/indigenous-epistemologies-and-pedagogies/
+OpenTextBC. (2024). _Indigenous epistemologies and pedagogies_. Pulling Together: A Guide for Curriculum Developers. https://opentextbc.ca/indigenizationcurriculumdevelopers/chapter/indigenous-epistemologies-and-pedagogies/
 
-Organiser. (2022). *Challenges in safeguarding traditional knowledge: Legal implications*. https://organiser.org/2022/12/16/101842/bharat/challenges-in-safeguarding-traditional-knowledge-legal-implications/
+Organiser. (2022). _Challenges in safeguarding traditional knowledge: Legal implications_. https://organiser.org/2022/12/16/101842/bharat/challenges-in-safeguarding-traditional-knowledge-legal-implications/
 
-Plant & Food Research. (2024). *Principles for working with Taonga and Mātauranga Māori*. https://www.plantandfood.com/en-nz/principles-for-working-with-taonga-and-matauranga-maori
+Plant & Food Research. (2024). _Principles for working with Taonga and Mātauranga Māori_. https://www.plantandfood.com/en-nz/principles-for-working-with-taonga-and-matauranga-maori
 
-ResearchGate. (2016). *Indigenous peoples, consent and benefit sharing, lessons from the San-Hoodia case*. https://www.researchgate.net/publication/293148873_Indigenous_Peoples_consent_and_benefit_sharing_Lessons_from_the_san-Hoodia_case
+ResearchGate. (2016). _Indigenous peoples, consent and benefit sharing, lessons from the San-Hoodia case_. https://www.researchgate.net/publication/293148873_Indigenous_Peoples_consent_and_benefit_sharing_Lessons_from_the_san-Hoodia_case
 
-Resource Africa. (2024). *How biocultural rights to Rooibos opens the way for equitable access and benefit sharing in Southern Africa*. https://www.resourceafrica.net/how-biocultural-rights-to-rooibos-opens-the-way-for-equitable-access-and-benefit-sharing-in-southern-africa/
+Resource Africa. (2024). _How biocultural rights to Rooibos opens the way for equitable access and benefit sharing in Southern Africa_. https://www.resourceafrica.net/how-biocultural-rights-to-rooibos-opens-the-way-for-equitable-access-and-benefit-sharing-in-southern-africa/
 
-Rooibos Council. (2024). *Khoi and San receive first cycle of benefit-sharing funds from Rooibos industry*. https://sarooibos.co.za/khoi-and-san-receive-first-cycle-of-benefit-sharing-funds-from-rooibos-industry/
+Rooibos Council. (2024). _Khoi and San receive first cycle of benefit-sharing funds from Rooibos industry_. https://sarooibos.co.za/khoi-and-san-receive-first-cycle-of-benefit-sharing-funds-from-rooibos-industry/
 
-Sage Journals. (2021). *A new era of indigenous research: Community-based indigenous research ethics protocols in Canada*. https://journals.sagepub.com/doi/full/10.1177/15562646211023705
+Sage Journals. (2021). _A new era of indigenous research: Community-based indigenous research ethics protocols in Canada_. https://journals.sagepub.com/doi/full/10.1177/15562646211023705
 
-Scnat. (2024a). *Access to genetic resources and associated traditional knowledge and sharing the benefits arising from their utilization (ABS)*. Swiss Biodiversity Forum. https://biodiversity.scnat.ch/activities_and_projects/abs
+Scnat. (2024a). _Access to genetic resources and associated traditional knowledge and sharing the benefits arising from their utilization (ABS)_. Swiss Biodiversity Forum. https://biodiversity.scnat.ch/activities_and_projects/abs
 
-ScienceDirect. (2018). *Traditional ecological knowledge and medicinal plant diversity in Ecuadorian Amazon home gardens*. https://www.sciencedirect.com/science/article/pii/S2351989418303524
+ScienceDirect. (2018). _Traditional ecological knowledge and medicinal plant diversity in Ecuadorian Amazon home gardens_. https://www.sciencedirect.com/science/article/pii/S2351989418303524
 
-ScienceDirect. (2021). *Indigenous community participation in resource development decision-making: Practitioner perceptions of legal and voluntary arrangements*. https://www.sciencedirect.com/science/article/abs/pii/S0301479720318478
+ScienceDirect. (2021). _Indigenous community participation in resource development decision-making: Practitioner perceptions of legal and voluntary arrangements_. https://www.sciencedirect.com/science/article/abs/pii/S0301479720318478
 
-ScienceDirect. (2024d). *Bioprospecting - An overview*. https://www.sciencedirect.com/topics/medicine-and-dentistry/bioprospecting
+ScienceDirect. (2024d). _Bioprospecting - An overview_. https://www.sciencedirect.com/topics/medicine-and-dentistry/bioprospecting
 
-Scientific American. (2024). *Ancient indigenous 'Songlines' match long-sunken landscape off Australia*. https://www.scientificamerican.com/article/ancient-indigenous-songlines-match-long-sunken-landscape-off-australia1/
+Scientific American. (2024). _Ancient indigenous 'Songlines' match long-sunken landscape off Australia_. https://www.scientificamerican.com/article/ancient-indigenous-songlines-match-long-sunken-landscape-off-australia1/
 
-Scientific American. (2024a). *How indigenous groups are leading the way on data privacy*. https://www.scientificamerican.com/article/how-indigenous-groups-are-leading-the-way-on-data-privacy/
+Scientific American. (2024a). _How indigenous groups are leading the way on data privacy_. https://www.scientificamerican.com/article/how-indigenous-groups-are-leading-the-way-on-data-privacy/
 
-SFU Library. (2024). *Indigenous data sovereignty*. Simon Fraser University. https://www.lib.sfu.ca/help/publish/research-data-management/indigenous-data-sovereignty
+SFU Library. (2024). _Indigenous data sovereignty_. Simon Fraser University. https://www.lib.sfu.ca/help/publish/research-data-management/indigenous-data-sovereignty
 
-SlideShare. (2024). *Case study on Neem, Turmeric and Basmati rice*. https://www.slideshare.net/slideshow/case-study-on-neem-turmeric-and-basmati-rice/241131204
+SlideShare. (2024). _Case study on Neem, Turmeric and Basmati rice_. https://www.slideshare.net/slideshow/case-study-on-neem-turmeric-and-basmati-rice/241131204
 
-SpringerLink. (2010). *Green diamonds of the South: An overview of the San-Hoodia case*. https://link.springer.com/chapter/10.1007/978-90-481-3123-5_6
+SpringerLink. (2010). _Green diamonds of the South: An overview of the San-Hoodia case_. https://link.springer.com/chapter/10.1007/978-90-481-3123-5_6
 
-SpringerLink. (2020). *A multi-perspective reflection on how indigenous knowledge and related ideas can improve science education for sustainability*. Science & Education. https://link.springer.com/article/10.1007/s11191-019-00100-x
+SpringerLink. (2020). _A multi-perspective reflection on how indigenous knowledge and related ideas can improve science education for sustainability_. Science & Education. https://link.springer.com/article/10.1007/s11191-019-00100-x
 
-SpringerOpen. (2013). *On the role of traditional ecological knowledge as a collaborative concept: A philosophical study*. Ecological Processes. https://ecologicalprocesses.springeropen.com/articles/10.1186/2192-1709-2-7
+SpringerOpen. (2013). _On the role of traditional ecological knowledge as a collaborative concept: A philosophical study_. Ecological Processes. https://ecologicalprocesses.springeropen.com/articles/10.1186/2192-1709-2-7
 
-SPREP. (2024). *Pacific regional framework for the protection of traditional knowledge and expressions of culture*. Pacific Environment Data Portal. https://pacific-data.sprep.org/dataset/pacific-regional-framework-protection-traditional-knowledge-and-expressions-culture
+SPREP. (2024). _Pacific regional framework for the protection of traditional knowledge and expressions of culture_. Pacific Environment Data Portal. https://pacific-data.sprep.org/dataset/pacific-regional-framework-protection-traditional-knowledge-and-expressions-culture
 
-SSHRC-CRSH. (2024). *Indigenous-led AI: How indigenous knowledge systems could push AI to be more inclusive*. Social Sciences and Humanities Research Council. https://www.sshrc-crsh.gc.ca/funding-financement/nfrf-fnfr/stories-histoires/2023/inclusive_artificial_intelligence-intelligence_artificielle_inclusive-eng.aspx
+SSHRC-CRSH. (2024). _Indigenous-led AI: How indigenous knowledge systems could push AI to be more inclusive_. Social Sciences and Humanities Research Council. https://www.sshrc-crsh.gc.ca/funding-financement/nfrf-fnfr/stories-histoires/2023/inclusive_artificial_intelligence-intelligence_artificielle_inclusive-eng.aspx
 
-Taylor & Francis. (2023). *Considerations for relational research methods for use in indigenous contexts: Implications for sustainable development*. https://www.tandfonline.com/doi/full/10.1080/13645579.2023.2185345
+Taylor & Francis. (2023). _Considerations for relational research methods for use in indigenous contexts: Implications for sustainable development_. https://www.tandfonline.com/doi/full/10.1080/13645579.2023.2185345
 
-Taylor & Francis. (2024a). *Māori data sovereignty: Contributions to data cultures in the government sector in New Zealand*. https://www.tandfonline.com/doi/full/10.1080/1369118X.2024.2302987
+Taylor & Francis. (2024a). _Māori data sovereignty: Contributions to data cultures in the government sector in New Zealand_. https://www.tandfonline.com/doi/full/10.1080/1369118X.2024.2302987
 
-TEC. (2024). *Māori data sovereignty*. Tertiary Education Commission. https://www.tec.govt.nz/teo/working-with-teos/analysing-student-data/key-components/community-perspectives/maori-data-sovereignty
+TEC. (2024). _Māori data sovereignty_. Tertiary Education Commission. https://www.tec.govt.nz/teo/working-with-teos/analysing-student-data/key-components/community-perspectives/maori-data-sovereignty
 
-The Conversation. (2016). *Biopiracy: When indigenous knowledge is patented for profit*. https://theconversation.com/biopiracy-when-indigenous-knowledge-is-patented-for-profit-55589
+The Conversation. (2016). _Biopiracy: When indigenous knowledge is patented for profit_. https://theconversation.com/biopiracy-when-indigenous-knowledge-is-patented-for-profit-55589
 
-The Conversation. (2018). *Why Native Americans struggle to protect their sacred places*. https://theconversation.com/why-native-americans-struggle-to-protect-their-sacred-places-101300
+The Conversation. (2018). _Why Native Americans struggle to protect their sacred places_. https://theconversation.com/why-native-americans-struggle-to-protect-their-sacred-places-101300
 
-UBC Library. (2024). *Home - Indigenous research methodologies*. University of British Columbia. https://guides.library.ubc.ca/IndigResearch
+UBC Library. (2024). _Home - Indigenous research methodologies_. University of British Columbia. https://guides.library.ubc.ca/IndigResearch
 
-UCL. (2024). *Access and benefit sharing: The Nagoya Protocol*. University College London. https://www.ucl.ac.uk/research-innovation-services/compliance-and-assurance/access-and-benefit-sharing-nagoya-protocol
+UCL. (2024). _Access and benefit sharing: The Nagoya Protocol_. University College London. https://www.ucl.ac.uk/research-innovation-services/compliance-and-assurance/access-and-benefit-sharing-nagoya-protocol
 
-UN Development. (2016). *Free prior and informed consent – An indigenous peoples' right and a good practice for local communities – FAO*. United Nations For Indigenous Peoples. https://www.un.org/development/desa/indigenouspeoples/publications/2016/10/free-prior-and-informed-consent-an-indigenous-peoples-right-and-a-good-practice-for-local-communities-fao/
+UN Development. (2016). _Free prior and informed consent – An indigenous peoples' right and a good practice for local communities – FAO_. United Nations For Indigenous Peoples. https://www.un.org/development/desa/indigenouspeoples/publications/2016/10/free-prior-and-informed-consent-an-indigenous-peoples-right-and-a-good-practice-for-local-communities-fao/
 
-UN Partnerships. (2024). *Pacific traditional knowledge action plan*. United Nations Partnerships for SDGs platform. https://sustainabledevelopment.un.org/partnership/?p=7690
+UN Partnerships. (2024). _Pacific traditional knowledge action plan_. United Nations Partnerships for SDGs platform. https://sustainabledevelopment.un.org/partnership/?p=7690
 
-UNDP Climate Promise. (2024). *Indigenous knowledge is crucial in the fight against climate change – here's why*. United Nations Development Programme. https://climatepromise.undp.org/news-and-stories/indigenous-knowledge-crucial-fight-against-climate-change-heres-why
+UNDP Climate Promise. (2024). _Indigenous knowledge is crucial in the fight against climate change – here's why_. United Nations Development Programme. https://climatepromise.undp.org/news-and-stories/indigenous-knowledge-crucial-fight-against-climate-change-heres-why
 
-UNESCO. (2024). *Convention on Biological Diversity (CBD)*. https://en.unesco.org/links/biodiversity/cbd
+UNESCO. (2024). _Convention on Biological Diversity (CBD)_. https://en.unesco.org/links/biodiversity/cbd
 
-United Nations. (2024). *United Nations Declaration on the Rights of Indigenous Peoples*. https://www.un.org/development/desa/indigenouspeoples/declaration-on-the-rights-of-indigenous-peoples.html
+United Nations. (2024). _United Nations Declaration on the Rights of Indigenous Peoples_. https://www.un.org/development/desa/indigenouspeoples/declaration-on-the-rights-of-indigenous-peoples.html
 
-University of Arizona. (2024). *Indigenous women and the development, application, preservation and transmission of scientific and technical knowledge*. United Nations Special Rapporteur on the rights of indigenous people. https://un.arizona.edu/search-database/indigenous-women-and-development-application-preservation-and-transmission
+University of Arizona. (2024). _Indigenous women and the development, application, preservation and transmission of scientific and technical knowledge_. United Nations Special Rapporteur on the rights of indigenous people. https://un.arizona.edu/search-database/indigenous-women-and-development-application-preservation-and-transmission
 
-University of Calgary. (2024). *Indigenous data sovereignty*. Research at UCalgary. https://research.ucalgary.ca/engage-research/indigenous-research-support-team/irst-resources/indigenous-data-sovereignty
+University of Calgary. (2024). _Indigenous data sovereignty_. Research at UCalgary. https://research.ucalgary.ca/engage-research/indigenous-research-support-team/irst-resources/indigenous-data-sovereignty
 
-University of Calgary. (2024a). *Indigenous data sovereignty*. Research at UCalgary. https://research.ucalgary.ca/engage-research/indigenous-research-support-team/irst-resources/indigenous-data-sovereignty
+University of Calgary. (2024a). _Indigenous data sovereignty_. Research at UCalgary. https://research.ucalgary.ca/engage-research/indigenous-research-support-team/irst-resources/indigenous-data-sovereignty
 
-Utrecht Journal. (2015). *Intellectual property rights in traditional knowledge: Enabler of sustainable development*. Utrecht Journal of International and European Law. https://utrechtjournal.org/articles/10.5334/ujiel.283
+Utrecht Journal. (2015). _Intellectual property rights in traditional knowledge: Enabler of sustainable development_. Utrecht Journal of International and European Law. https://utrechtjournal.org/articles/10.5334/ujiel.283
 
-Wiley Online Library. (2024). *Reconciling guardianship with ownership: Protecting taonga plants, Māori knowledge, and plant variety rights in Aotearoa New Zealand*. The Journal of World Intellectual Property. https://onlinelibrary.wiley.com/doi/10.1111/jwip.12292
+Wiley Online Library. (2024). _Reconciling guardianship with ownership: Protecting taonga plants, Māori knowledge, and plant variety rights in Aotearoa New Zealand_. The Journal of World Intellectual Property. https://onlinelibrary.wiley.com/doi/10.1111/jwip.12292
 
-Wikipedia. (2024a). *Free, prior and informed consent*. https://en.wikipedia.org/wiki/Free,_prior_and_informed_consent
+Wikipedia. (2024a). _Free, prior and informed consent_. https://en.wikipedia.org/wiki/Free,_prior_and_informed_consent
 
-Wikipedia. (2024b). *First Nations principles of OCAP*. https://en.wikipedia.org/wiki/First_Nations_principles_of_OCAP
+Wikipedia. (2024b). _First Nations principles of OCAP_. https://en.wikipedia.org/wiki/First_Nations_principles_of_OCAP
 
-Wikipedia. (2024c). *Traditional knowledge*. https://en.wikipedia.org/wiki/Traditional_knowledge
+Wikipedia. (2024c). _Traditional knowledge_. https://en.wikipedia.org/wiki/Traditional_knowledge
 
-Wikipedia. (2024d). *Access and Benefit Sharing Agreement*. https://en.wikipedia.org/wiki/Access_and_Benefit_Sharing_Agreement
+Wikipedia. (2024d). _Access and Benefit Sharing Agreement_. https://en.wikipedia.org/wiki/Access_and_Benefit_Sharing_Agreement
 
-Wikipedia. (2024e). *Songline*. https://en.wikipedia.org/wiki/Songline
+Wikipedia. (2024e). _Songline_. https://en.wikipedia.org/wiki/Songline
 
-Wikipedia. (2024f). *Biopiracy*. https://en.wikipedia.org/wiki/Biopiracy
+Wikipedia. (2024f). _Biopiracy_. https://en.wikipedia.org/wiki/Biopiracy
 
-Wikipedia. (2024g). *Bioprospecting*. https://en.wikipedia.org/wiki/Bioprospecting
+Wikipedia. (2024g). _Bioprospecting_. https://en.wikipedia.org/wiki/Bioprospecting
 
-Wikipedia. (2024h). *Traditional knowledge*. https://en.wikipedia.org/wiki/Traditional_knowledge
+Wikipedia. (2024h). _Traditional knowledge_. https://en.wikipedia.org/wiki/Traditional_knowledge
 
-Wikipedia. (2024i). *Nagoya Protocol*. https://en.wikipedia.org/wiki/Nagoya_Protocol
+Wikipedia. (2024i). _Nagoya Protocol_. https://en.wikipedia.org/wiki/Nagoya_Protocol
 
-Wikipedia. (2024j). *Traditional Knowledge Digital Library*. https://en.wikipedia.org/wiki/Traditional_Knowledge_Digital_Library
+Wikipedia. (2024j). _Traditional Knowledge Digital Library_. https://en.wikipedia.org/wiki/Traditional_Knowledge_Digital_Library
 
-Wikipedia. (2024k). *Biological Diversity Act, 2002*. https://en.wikipedia.org/wiki/Biological_Diversity_Act,_2002
+Wikipedia. (2024k). _Biological Diversity Act, 2002_. https://en.wikipedia.org/wiki/Biological_Diversity_Act,_2002
 
-Wikipedia. (2024l). *Indigenous Peoples' Rights Act of 1997*. https://en.wikipedia.org/wiki/Indigenous_Peoples'_Rights_Act_of_1997
+Wikipedia. (2024l). _Indigenous Peoples' Rights Act of 1997_. https://en.wikipedia.org/wiki/Indigenous_Peoples'_Rights_Act_of_1997
 
-Wikipedia. (2024m). *CARE Principles for Indigenous Data Governance*. https://en.wikipedia.org/wiki/CARE_Principles_for_Indigenous_Data_Governance
+Wikipedia. (2024m). _CARE Principles for Indigenous Data Governance_. https://en.wikipedia.org/wiki/CARE_Principles_for_Indigenous_Data_Governance
 
-WIPO. (2024). *WIPO member states adopt historic new treaty on intellectual property, genetic resources and associated traditional knowledge*. World Intellectual Property Organization. https://www.wipo.int/pressroom/en/articles/2024/article_0007.html
+WIPO. (2024). _WIPO member states adopt historic new treaty on intellectual property, genetic resources and associated traditional knowledge_. World Intellectual Property Organization. https://www.wipo.int/pressroom/en/articles/2024/article_0007.html
 
-WIPO WIPOLEX. (2024a). *Law No. 27811 of 24 July 2002, introducing a Protection Regime for the Collective Knowledge of Indigenous Peoples derived from Biological Resources*. https://www.wipo.int/tk/en/databases/tklaws/articles/article_0016.html
+WIPO WIPOLEX. (2024a). _Law No. 27811 of 24 July 2002, introducing a Protection Regime for the Collective Knowledge of Indigenous Peoples derived from Biological Resources_. https://www.wipo.int/tk/en/databases/tklaws/articles/article_0016.html
 
-WIPO WIPOLEX. (2024b). *Law No. 27811 Introducing the Protection Regime for the Collective Knowledge of Indigenous Peoples derived from Biological Resources, Peru*. https://www.wipo.int/wipolex/en/legislation/details/3420
+WIPO WIPOLEX. (2024b). _Law No. 27811 Introducing the Protection Regime for the Collective Knowledge of Indigenous Peoples derived from Biological Resources, Peru_. https://www.wipo.int/wipolex/en/legislation/details/3420
 
-WUSTL. (2004). *The protection of traditional knowledge in Peru: A comparative perspective*. Washington University Global Studies Law Review. https://openscholarship.wustl.edu/law_globalstudies/vol3/iss3/3/
+WUSTL. (2004). _The protection of traditional knowledge in Peru: A comparative perspective_. Washington University Global Studies Law Review. https://openscholarship.wustl.edu/law_globalstudies/vol3/iss3/3/
 
-WUSTL Journal. (2004). *Clark: The protection of traditional knowledge in Peru: A comparative perspective*. Washington University Global Studies Law Review. https://journals.library.wustl.edu/globalstudies/article/id/329/
+WUSTL Journal. (2004). _Clark: The protection of traditional knowledge in Peru: A comparative perspective_. Washington University Global Studies Law Review. https://journals.library.wustl.edu/globalstudies/article/id/329/
 
-WWF Arctic. (2024). *Blending indigenous knowledge and artificial intelligence to enable adaptation*. https://www.arcticwwf.org/the-circle/stories/blending-indigenous-knowledge-and-artificial-intelligence-to-enable-adaptation/
+WWF Arctic. (2024). _Blending indigenous knowledge and artificial intelligence to enable adaptation_. https://www.arcticwwf.org/the-circle/stories/blending-indigenous-knowledge-and-artificial-intelligence-to-enable-adaptation/

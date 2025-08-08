@@ -24,6 +24,7 @@ accuracy-concerns:
 ## Deliverables Checklist
 
 ### 1.1.1 Core agent framework deployed on cloud infrastructure
+
 - [ ] ElizaOSv2
   - [x] Create v1.2.0 branch for regen AI
   - [ ] Create character file templates for each of the four agent archetypes
@@ -63,10 +64,12 @@ elizaos create voice-of-nature-agent --type agent
 ```
 
 ### Day 2-3: Configure agent personalities using Eliza's character system
+
 - Eliza provides a flexible character system to create diverse agents using character files
 - Create character files for each of the 4 agent types
 - Leverage Eliza's built-in runtime management
 
 ## Notes
+
 - Eliza OS v2 is the first open-source web3-friendly AI Agent Operating System
 - Remember: 5 agents total (added RegenAI Facilitator as orchestrator)

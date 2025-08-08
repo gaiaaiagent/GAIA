@@ -9,12 +9,15 @@
 What a journey this has been. The user's confusion was completely justified - we had gone from a working system into an authentication rabbit hole that broke everything. Here's what actually happened:
 
 ### Phase 1: Initial Success (Early in the session)
+
 - Had ElizaOS running successfully with basic docker-compose
 - Simple, clean configuration
 - Everything working as expected
 
 ### Phase 2: The Authentication Ambition
+
 Attempted to add team authentication features:
+
 - Created Nginx reverse proxy configuration
 - Added HTTP Basic Auth with .htpasswd files
 - Built complex docker-compose variations:
@@ -32,7 +35,9 @@ Attempted to add team authentication features:
   ```
 
 ### Phase 3: The Breaking Point
+
 During reorganization to "clean up the root directory":
+
 - Moved critical files, breaking Docker build contexts
 - Changed docker-compose.yaml from working configuration to broken one
 - Created orphan containers (elizav2, regenai-nginx, regenai-agents, regenai-django)
@@ -41,6 +46,7 @@ During reorganization to "clean up the root directory":
 - Build context couldn't find packages/ directory
 
 ### Phase 4: The Confusion
+
 - User correctly identified that "nothing is working"
 - Blank screens at localhost:3000
 - Multiple conflicting configurations
@@ -48,7 +54,9 @@ During reorganization to "clean up the root directory":
 - Documentation describing things that didn't exist yet
 
 ### Phase 5: The Cleanup (Today)
+
 Finally achieved clarity by:
+
 1. Removing all orphan containers with `--remove-orphans`
 2. Deleting the complex deployment/ directory entirely
 3. Creating a single, simple, clean docker-compose.yaml
@@ -60,29 +68,37 @@ Finally achieved clarity by:
 ## Key Lessons Learned
 
 ### 1. Premature Optimization is the Root of All Evil
+
 We tried to add authentication, team management, and production deployment features before having a stable, working base. This violated the principle of incremental development.
 
 ### 2. Simple First, Complex Later
+
 The working solution is remarkably simple:
+
 ```yaml
 services:
-  postgres:  # Database
-  eliza:     # Application
+  postgres: # Database
+  eliza: # Application
 ```
+
 That's it. No Nginx, no auth, no complex orchestration. Just the essentials.
 
 ### 3. Don't Move Working Code
+
 When something works, resist the urge to "organize" it until you fully understand the dependencies. Moving files broke our Docker build context.
 
 ### 4. Track Working State
+
 We lost track of what was working vs. what was aspirational. The deployment documentation described a future state, not current reality.
 
 ### 5. Browser Matters
+
 The final "blank screen" issue wasn't even our code - it was Brave browser's security features. Always test in multiple browsers.
 
 ## What We Have Now
 
 ### Working Local Setup
+
 - Clean docker-compose.yaml with just PostgreSQL and ElizaOS
 - Accessible at http://localhost:3000
 - Works in Firefox, Chrome, Safari, and Brave incognito
@@ -90,12 +106,15 @@ The final "blank screen" issue wasn't even our code - it was Brave browser's sec
 - No orphan containers
 
 ### Ready for Server Deployment
+
 The same simple docker-compose.yaml will work on a server:
+
 1. Copy files to server
 2. Run `docker compose up -d`
 3. Access via server IP
 
 ### Documentation Reality
+
 - Removed aspirational deployment docs
 - Focusing on what actually exists and works
 - Will document server deployment when we actually do it
@@ -103,13 +122,16 @@ The same simple docker-compose.yaml will work on a server:
 ## Technical Insights
 
 ### The Brave Browser Issue
+
 - Works in private window but not regular window
 - Even after clearing site data
 - Likely Brave Shields blocking JavaScript or WebSockets
 - Solution: Shields down for localhost or use different browser for development
 
 ### Docker Compose Evolution
+
 Started with complexity, ended with simplicity:
+
 - Removed version specification (obsolete)
 - Clear service names
 - Explicit environment variables
@@ -118,6 +140,7 @@ Started with complexity, ended with simplicity:
 - Single volume for postgres
 
 ### Port Management
+
 - PostgreSQL on 5433 (avoiding local 5432)
 - ElizaOS on 3000 (standard for the app)
 - No Nginx proxy needed for development
@@ -145,4 +168,4 @@ The best code is often not the most sophisticated - it's the simplest code that 
 
 ---
 
-*Day 35 of 60 - Sometimes progress means going backward to move forward*
+_Day 35 of 60 - Sometimes progress means going backward to move forward_

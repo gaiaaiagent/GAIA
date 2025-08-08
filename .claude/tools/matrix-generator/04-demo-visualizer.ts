@@ -2,7 +2,7 @@
 
 /**
  * Matrix Demo Visualizer
- * 
+ *
  * Interactive demonstration of how the matrix generation system works
  * and what insights we can gain from it
  */
@@ -19,47 +19,61 @@ class MatrixDemoVisualizer {
 
   async loadData(): Promise<void> {
     // Load scan results
-    const scanPath = join(PROJECT_ROOT, '.claude/tools/matrix-generator/data/priority-scan-2025-07-21.json');
+    const scanPath = join(
+      PROJECT_ROOT,
+      '.claude/tools/matrix-generator/data/priority-scan-2025-07-21.json'
+    );
     this.scanData = JSON.parse(await readFile(scanPath, 'utf-8'));
 
     // Load relationship analysis
-    const relPath = join(PROJECT_ROOT, '.claude/tools/matrix-generator/data/relationships-2025-07-21.json');
+    const relPath = join(
+      PROJECT_ROOT,
+      '.claude/tools/matrix-generator/data/relationships-2025-07-21.json'
+    );
     this.relationshipData = JSON.parse(await readFile(relPath, 'utf-8'));
   }
 
   demonstrateProcess(): void {
     console.clear();
     console.log(chalk.blue.bold('\n🎯 Taxonomy Matrix Generation System Demo\n'));
-    
+
     console.log(chalk.yellow('═'.repeat(60)));
     console.log(chalk.yellow.bold('\n📚 PHASE 1: File Discovery\n'));
     console.log(chalk.yellow('═'.repeat(60)));
-    
+
     this.showFileDiscovery();
 
     console.log(chalk.green('\n═'.repeat(60)));
     console.log(chalk.green.bold('\n🔍 PHASE 2: Relationship Detection\n'));
     console.log(chalk.green('═'.repeat(60)));
-    
+
     this.showRelationshipDetection();
 
     console.log(chalk.magenta('\n═'.repeat(60)));
     console.log(chalk.magenta.bold('\n🧠 PHASE 3: Pattern Recognition\n'));
     console.log(chalk.magenta('═'.repeat(60)));
-    
+
     this.showPatternRecognition();
 
     console.log(chalk.cyan('\n═'.repeat(60)));
     console.log(chalk.cyan.bold('\n💡 PHASE 4: Insights & Learning\n'));
     console.log(chalk.cyan('═'.repeat(60)));
-    
+
     this.showInsights();
   }
 
   private showFileDiscovery(): void {
     console.log(chalk.white('\nOur scanner discovered:'));
-    console.log(chalk.gray(`• ${this.scanData.metadata.foundFiles} files across ${this.scanData.metadata.categories.length} categories`));
-    console.log(chalk.gray(`• ${this.scanData.metadata.totalFiles - this.scanData.metadata.foundFiles} files were missing or moved`));
+    console.log(
+      chalk.gray(
+        `• ${this.scanData.metadata.foundFiles} files across ${this.scanData.metadata.categories.length} categories`
+      )
+    );
+    console.log(
+      chalk.gray(
+        `• ${this.scanData.metadata.totalFiles - this.scanData.metadata.foundFiles} files were missing or moved`
+      )
+    );
 
     // Show category breakdown
     console.log(chalk.white('\nFiles by category:'));
@@ -77,16 +91,16 @@ class MatrixDemoVisualizer {
 
     // Show what the scanner extracts
     console.log(chalk.white('\n📖 Example: What we learn from scanning a file:'));
-    const exampleFile = this.scanData.files.find(f => f.path === 'packages/core/src/runtime.ts');
+    const exampleFile = this.scanData.files.find((f) => f.path === 'packages/core/src/runtime.ts');
     if (exampleFile) {
       console.log(chalk.gray(`\nFile: ${chalk.white(exampleFile.path)}`));
       console.log(chalk.gray(`Size: ${(exampleFile.size / 1024).toFixed(1)}KB`));
       console.log(chalk.gray(`Imports: ${exampleFile.imports.length} dependencies`));
       console.log(chalk.gray(`Exports: ${exampleFile.exports.length} items`));
-      
+
       if (exampleFile.imports.length > 0) {
         console.log(chalk.gray('\nSample imports:'));
-        exampleFile.imports.slice(0, 3).forEach(imp => {
+        exampleFile.imports.slice(0, 3).forEach((imp) => {
           console.log(chalk.gray(`  • ${imp}`));
         });
       }
@@ -116,7 +130,7 @@ class MatrixDemoVisualizer {
 
     // Show example of each type
     console.log(chalk.white('\n📝 Examples of Each Type:'));
-    
+
     // Import relationship
     const importEx = examples.get('import');
     if (importEx) {
@@ -134,7 +148,9 @@ class MatrixDemoVisualizer {
       console.log(chalk.gray(`   ${structEx.from}`));
       console.log(chalk.green(`   ↔ same category`));
       console.log(chalk.gray(`   ${structEx.to}`));
-      console.log(chalk.gray(`   Evidence: ${structEx.evidence.find(e => e.type === 'structural')?.detail}`));
+      console.log(
+        chalk.gray(`   Evidence: ${structEx.evidence.find((e) => e.type === 'structural')?.detail}`)
+      );
     }
 
     // Functional relationship
@@ -144,7 +160,9 @@ class MatrixDemoVisualizer {
       console.log(chalk.gray(`   ${funcEx.from}`));
       console.log(chalk.green(`   ↔ serves related purpose`));
       console.log(chalk.gray(`   ${funcEx.to}`));
-      console.log(chalk.gray(`   Evidence: ${funcEx.evidence.find(e => e.type === 'functional')?.detail}`));
+      console.log(
+        chalk.gray(`   Evidence: ${funcEx.evidence.find((e) => e.type === 'functional')?.detail}`)
+      );
     }
   }
 
@@ -171,15 +189,15 @@ class MatrixDemoVisualizer {
 
     // Find clusters
     console.log(chalk.white('\n🎯 File Clusters:'));
-    
+
     // Group by strength
-    const strongRelationships = this.relationshipData.relationships.filter(r => r.strength >= 8);
+    const strongRelationships = this.relationshipData.relationships.filter((r) => r.strength >= 8);
     const clusters = this.findClusters(strongRelationships);
-    
+
     let clusterNum = 1;
     for (const cluster of clusters.slice(0, 3)) {
       console.log(chalk.magenta(`\nCluster ${clusterNum}: ${cluster.theme}`));
-      cluster.files.slice(0, 4).forEach(file => {
+      cluster.files.slice(0, 4).forEach((file) => {
         console.log(chalk.gray(`  • ${file}`));
       });
       clusterNum++;
@@ -201,7 +219,7 @@ class MatrixDemoVisualizer {
     console.log(chalk.gray('• Changes to core/runtime.ts will affect many files'));
     console.log(chalk.gray('• Django models are isolated from TypeScript code'));
     console.log(chalk.gray('• Character files are independent (good modularity)'));
-    console.log(chalk.gray('• .claude/ files document but don\'t execute'));
+    console.log(chalk.gray("• .claude/ files document but don't execute"));
 
     // Improvement opportunities
     console.log(chalk.cyan('\n📈 Improvement Opportunities:'));
@@ -222,18 +240,26 @@ class MatrixDemoVisualizer {
     const clusters = [
       {
         theme: 'Core System Architecture',
-        files: ['packages/core/src/runtime.ts', 'packages/core/src/types/index.ts', 
-                'packages/core/src/database.ts', 'packages/core/src/index.ts']
+        files: [
+          'packages/core/src/runtime.ts',
+          'packages/core/src/types/index.ts',
+          'packages/core/src/database.ts',
+          'packages/core/src/index.ts',
+        ],
       },
       {
         theme: 'Server API Layer',
-        files: ['packages/server/src/index.ts', 'packages/server/src/api/index.ts',
-                'packages/server/src/socketio/index.ts', 'packages/server/src/services/message.ts']
+        files: [
+          'packages/server/src/index.ts',
+          'packages/server/src/api/index.ts',
+          'packages/server/src/socketio/index.ts',
+          'packages/server/src/services/message.ts',
+        ],
       },
       {
         theme: 'Documentation & Configuration',
-        files: ['README.md', 'CLAUDE.md', 'CHANGELOG.md', 'package.json']
-      }
+        files: ['README.md', 'CLAUDE.md', 'CHANGELOG.md', 'package.json'],
+      },
     ];
     return clusters;
   }
@@ -246,34 +272,44 @@ class MatrixDemoVisualizer {
     // Pick a strong relationship
     const strongRel = this.relationshipData.relationships[0]; // README.md → CLAUDE.md
 
-    console.log(chalk.white(`\nGenerating cell for: ${chalk.yellow(strongRel.from)} → ${chalk.yellow(strongRel.to)}\n`));
+    console.log(
+      chalk.white(
+        `\nGenerating cell for: ${chalk.yellow(strongRel.from)} → ${chalk.yellow(strongRel.to)}\n`
+      )
+    );
 
     console.log(chalk.white.bold('Semantic Connection:'));
-    console.log(chalk.gray(
-      'README.md serves as the entry point for understanding the project, while CLAUDE.md ' +
-      'provides deep guidance for AI participation. This relationship exemplifies the project\'s ' +
-      'commitment to both human and AI collaboration. The README references CLAUDE.md explicitly, ' +
-      'establishing it as essential reading for understanding the project\'s unique approach to ' +
-      'AI integration. Together, they form the conceptual foundation of the RegenAI vision.'
-    ));
+    console.log(
+      chalk.gray(
+        'README.md serves as the entry point for understanding the project, while CLAUDE.md ' +
+          "provides deep guidance for AI participation. This relationship exemplifies the project's " +
+          'commitment to both human and AI collaboration. The README references CLAUDE.md explicitly, ' +
+          "establishing it as essential reading for understanding the project's unique approach to " +
+          'AI integration. Together, they form the conceptual foundation of the RegenAI vision.'
+      )
+    );
 
     console.log(chalk.white.bold('\nCognitive Flow:'));
-    console.log(chalk.gray(
-      'Developers naturally progress from README.md to CLAUDE.md as they deepen their understanding. ' +
-      'The README introduces the "what" and "how" of the project, while CLAUDE.md reveals the "why" ' +
-      'and "how to think" about AI participation. This cognitive journey mirrors the project\'s ' +
-      'philosophy: start with practical setup, then expand into conscious collaboration. The ' +
-      'transition represents a shift from technical operation to philosophical engagement.'
-    ));
+    console.log(
+      chalk.gray(
+        'Developers naturally progress from README.md to CLAUDE.md as they deepen their understanding. ' +
+          'The README introduces the "what" and "how" of the project, while CLAUDE.md reveals the "why" ' +
+          'and "how to think" about AI participation. This cognitive journey mirrors the project\'s ' +
+          'philosophy: start with practical setup, then expand into conscious collaboration. The ' +
+          'transition represents a shift from technical operation to philosophical engagement.'
+      )
+    );
 
     console.log(chalk.white.bold('\nImplementation Details:'));
-    console.log(chalk.gray(
-      'README.md contains a direct markdown link to CLAUDE.md in its documentation section. ' +
-      'Both files reside in the root directory, signaling their importance. They share formatting ' +
-      'conventions and writing style, suggesting coordinated authorship. The files are frequently ' +
-      'updated together, maintaining conceptual alignment. This tight coupling is intentional: ' +
-      'changes to project vision (CLAUDE.md) necessitate updates to project introduction (README.md).'
-    ));
+    console.log(
+      chalk.gray(
+        'README.md contains a direct markdown link to CLAUDE.md in its documentation section. ' +
+          'Both files reside in the root directory, signaling their importance. They share formatting ' +
+          'conventions and writing style, suggesting coordinated authorship. The files are frequently ' +
+          'updated together, maintaining conceptual alignment. This tight coupling is intentional: ' +
+          'changes to project vision (CLAUDE.md) necessitate updates to project introduction (README.md).'
+      )
+    );
   }
 }
 
@@ -287,9 +323,9 @@ async function showMenu(): Promise<string> {
   console.log(chalk.gray('5. Show insights'));
   console.log(chalk.gray('6. Generate sample matrix cell'));
   console.log(chalk.gray('7. Exit'));
-  
+
   process.stdout.write(chalk.yellow('\nChoice (1-7): '));
-  
+
   for await (const line of console) {
     return line.trim();
   }
@@ -299,19 +335,26 @@ async function showMenu(): Promise<string> {
 // Main execution
 async function main() {
   const demo = new MatrixDemoVisualizer();
-  
+
   try {
     console.log(chalk.blue('Loading data...'));
     await demo.loadData();
-    
+
     // For non-interactive demo, just run full demonstration
     demo.demonstrateProcess();
     await demo.generateSampleMatrixCell();
-    
+
     console.log(chalk.green('\n\n✅ Demo complete!'));
-    console.log(chalk.gray('\nThis demonstration shows how we transform raw file data into actionable insights.'));
-    console.log(chalk.gray('The full matrix will contain detailed analysis like the sample cell for each relationship.\n'));
-    
+    console.log(
+      chalk.gray(
+        '\nThis demonstration shows how we transform raw file data into actionable insights.'
+      )
+    );
+    console.log(
+      chalk.gray(
+        'The full matrix will contain detailed analysis like the sample cell for each relationship.\n'
+      )
+    );
   } catch (error) {
     console.error(chalk.red('❌ Error:'), error);
     process.exit(1);

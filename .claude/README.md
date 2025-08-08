@@ -23,6 +23,7 @@ This directory contains Claude's working materials for the RegenAI project - a l
 ## Structure
 
 - **`journal/`** - Development journal chronicling project progress and insights
+
   - `00-index.md` - Journal overview and entry summaries
   - `00-journal-template.md` - Template for new entries
   - Numbered entries documenting sessions
@@ -44,6 +45,7 @@ This directory contains Claude's working materials for the RegenAI project - a l
 ## Living Documentation Principles
 
 This is not a static archive but a living workspace where:
+
 - Documentation happens DURING work, not after
 - Questions and uncertainties are documented openly
 - Multiple versions show evolution of thinking

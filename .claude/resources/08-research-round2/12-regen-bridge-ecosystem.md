@@ -67,22 +67,22 @@ The research reveals that REGEN Network's bridge strategy fundamentally differs 
 
 #### REGEN Token Distribution by Chain
 
-| Chain | Total REGEN | Holders | % of Supply | Status |
-|-------|-------------|---------|-------------|--------|
-| Cosmos (Native) | 148,343,487.104248 | ~10,000+ | 99.9926% | Active |
-| Ethereum | 10,936.095752 | 9 | 0.0074% | Minimal |
-| Polygon | 0 | 0 | 0% | Credits only |
-| BSC | Unknown | Unknown | <0.001% | Inactive |
-| Other Chains | 0 | 0 | 0% | None |
+| Chain           | Total REGEN        | Holders  | % of Supply | Status       |
+| --------------- | ------------------ | -------- | ----------- | ------------ |
+| Cosmos (Native) | 148,343,487.104248 | ~10,000+ | 99.9926%    | Active       |
+| Ethereum        | 10,936.095752      | 9        | 0.0074%     | Minimal      |
+| Polygon         | 0                  | 0        | 0%          | Credits only |
+| BSC             | Unknown            | Unknown  | <0.001%     | Inactive     |
+| Other Chains    | 0                  | 0        | 0%          | None         |
 
 #### Bridge Volume Analysis (All-Time)
 
-| Bridge | Type | Volume | Primary Use | Status |
-|--------|------|--------|-------------|--------|
-| Toucan | Carbon Credits | 25M+ tonnes CO2 | Environmental assets | Active |
-| Gravity | Token/USDC | <11K REGEN | USDC transfers | Active |
-| Axelar | Multi-asset | No REGEN data | USDC transfers | Active |
-| IBC | Native Cosmos | 95%+ of volume | REGEN transfers | Primary |
+| Bridge  | Type           | Volume          | Primary Use          | Status  |
+| ------- | -------------- | --------------- | -------------------- | ------- |
+| Toucan  | Carbon Credits | 25M+ tonnes CO2 | Environmental assets | Active  |
+| Gravity | Token/USDC     | <11K REGEN      | USDC transfers       | Active  |
+| Axelar  | Multi-asset    | No REGEN data   | USDC transfers       | Active  |
+| IBC     | Native Cosmos  | 95%+ of volume  | REGEN transfers      | Primary |
 
 #### Current Market Metrics
 
@@ -98,33 +98,35 @@ The research reveals that REGEN Network's bridge strategy fundamentally differs 
 
 #### Bridge Processing Times
 
-| Bridge | Average Time | Best Case | Worst Case | Reliability |
-|--------|--------------|-----------|------------|-------------|
-| IBC | <1 minute | 6 seconds | 5 minutes | 99.9% |
-| Gravity | 15 minutes | 10 minutes | 30 minutes | 95% |
-| Axelar | 10 minutes | 5 minutes | 20 minutes | 98% |
-| Toucan | Variable | 10 minutes | 60 minutes | 90% |
+| Bridge  | Average Time | Best Case  | Worst Case | Reliability |
+| ------- | ------------ | ---------- | ---------- | ----------- |
+| IBC     | <1 minute    | 6 seconds  | 5 minutes  | 99.9%       |
+| Gravity | 15 minutes   | 10 minutes | 30 minutes | 95%         |
+| Axelar  | 10 minutes   | 5 minutes  | 20 minutes | 98%         |
+| Toucan  | Variable     | 10 minutes | 60 minutes | 90%         |
 
 #### Fee Structure Comparison
 
-| Bridge | Base Fee | % Fee | Gas Costs | Total Cost (1000 USDC) |
-|--------|----------|-------|-----------|------------------------|
-| Gravity | $10 | 0.1% | $5-50 | $16-61 |
-| Axelar | $5-10 | 0% | $5-30 | $10-40 |
-| IBC | <$0.01 | 0% | <$0.01 | <$0.02 |
-| Toucan | $0 | 0% | $0.01-0.05 | $0.01-0.05 |
+| Bridge  | Base Fee | % Fee | Gas Costs  | Total Cost (1000 USDC) |
+| ------- | -------- | ----- | ---------- | ---------------------- |
+| Gravity | $10      | 0.1%  | $5-50      | $16-61                 |
+| Axelar  | $5-10    | 0%    | $5-30      | $10-40                 |
+| IBC     | <$0.01   | 0%    | <$0.01     | <$0.02                 |
+| Toucan  | $0       | 0%    | $0.01-0.05 | $0.01-0.05             |
 
 ### 2.3 Financial Calculations
 
 #### Osmosis Liquidity Pool Analysis
 
 **Pool #22 (REGEN/ATOM)**
+
 - Total Value Locked: ~$250,000
 - 24h Volume: ~$1,000
 - APR: Variable (5-25%)
 - Depth: Sufficient for <$10K trades
 
 **Pool #45 (REGEN/OSMO)**
+
 - Total Value Locked: ~$500,000
 - 24h Volume: ~$781
 - APR: Variable (10-30%)
@@ -133,12 +135,14 @@ The research reveals that REGEN Network's bridge strategy fundamentally differs 
 #### Carbon Credit Market Metrics
 
 **NCT (Nature Carbon Tonne)**
+
 - Supply: 1,396,074
 - Price: $0.67-0.72
 - Market Cap: ~$1,000,000
 - Daily Volume: $50,000-500,000
 
 **BCT (Base Carbon Tonne)**
+
 - Supply: 19,834,444
 - Price: $0.31
 - Market Cap: ~$6,150,000
@@ -149,13 +153,16 @@ The research reveals that REGEN Network's bridge strategy fundamentally differs 
 ### 3.1 Primary Data Sources Used
 
 #### Blockchain Explorers
+
 - **Mintscan**: https://www.mintscan.io/regen
+
   - Query: `/txs?limit=100&page=1`
   - Rate Limit: 10 requests/second
   - Data Format: JSON
   - Update Frequency: Real-time
 
 - **Etherscan**: https://etherscan.io/
+
   - Contract: `0xeee10b3736d5978924f392ed67497cfae795128b`
   - API Key: Required for automated queries
   - Rate Limit: 5 requests/second
@@ -168,7 +175,9 @@ The research reveals that REGEN Network's bridge strategy fundamentally differs 
   - Update Frequency: ~6 second blocks
 
 #### Analytics APIs
-- **Osmosis Zone API**: 
+
+- **Osmosis Zone API**:
+
   - Endpoint: Requires frontend parsing
   - Data: Pool volumes, liquidity, APRs
   - Format: JavaScript-rendered
@@ -183,6 +192,7 @@ The research reveals that REGEN Network's bridge strategy fundamentally differs 
 ### 3.2 Tools & Infrastructure
 
 #### Analysis Tools
+
 ```python
 # Example query for REGEN on Ethereum
 import requests
@@ -198,6 +208,7 @@ print(f"Total REGEN on Ethereum: {total_supply / 10**6}")
 ```
 
 #### Data Storage
+
 - Local cache: JSON files for historical data
 - Database: PostgreSQL for time series
 - Backup: IPFS for immutable records
@@ -205,12 +216,14 @@ print(f"Total REGEN on Ethereum: {total_supply / 10**6}")
 ### 3.3 Alternative Sources
 
 #### Community Resources
+
 - **Discord API Monitoring**: Real-time bridge issues
 - **GitHub Issues**: Bug reports and feature requests
 - **Forum Posts**: Historical context and decisions
 - **Twitter API**: Sentiment analysis and announcements
 
 #### Verification Sources
+
 - **CoinGecko API**: Price and volume verification
 - **DeFiLlama**: TVL cross-reference (limited coverage)
 - **Direct RPC Nodes**: For real-time validation
@@ -227,7 +240,7 @@ graph LR
     A -->|Gravity| C[Ethereum]
     A -->|Axelar| D[Multi-chain]
     E[Polygon] -->|Toucan| A
-    
+
     B -->|95% Liquidity| F[DEX Trading]
     C -->|<0.01% Supply| G[Minimal Activity]
     D -->|USDC Primary| H[Marketplace]
@@ -235,6 +248,7 @@ graph LR
 ```
 
 #### Toucan Bridge Technical Flow
+
 ```
 1. User initiates bridge on Polygon
 2. TCO2 tokens burned (permanently removed)
@@ -246,6 +260,7 @@ graph LR
 ```
 
 #### Gravity Bridge Architecture
+
 ```
 Ethereum Side:
 - Gravity.sol (0xa4108aa1ec4967f8b52220a4f7e94a8201f2d906)
@@ -260,6 +275,7 @@ Cosmos Side:
 ```
 
 #### Axelar Gateway Protocol
+
 ```
 Components:
 1. Gateway Smart Contracts (per chain)
@@ -277,6 +293,7 @@ Security Model:
 ### 4.2 Operational Workflows
 
 #### USDC Bridge Workflow (Ethereum → REGEN)
+
 ```
 1. User approves USDC spend on Ethereum
 2. Deposits USDC to bridge contract
@@ -288,6 +305,7 @@ Security Model:
 ```
 
 #### Carbon Credit Bridge Workflow
+
 ```
 1. Hold TCO2 on Polygon (from Toucan)
 2. Initiate bridge via Toucan interface
@@ -306,6 +324,7 @@ Security Model:
 #### Protocol Parameters
 
 **Gravity Bridge**
+
 - Validator Set Size: Mirrors Cosmos chain
 - Attestation Threshold: 66.67%
 - Slashing Conditions: Double signing, prolonged downtime
@@ -313,6 +332,7 @@ Security Model:
 - Maximum Response: 10MB (causes issues)
 
 **Axelar Network**
+
 - Consensus: Delegated Proof-of-Stake
 - Block Time: ~6 seconds
 - Finality: 1-2 blocks
@@ -320,6 +340,7 @@ Security Model:
 - Supported Chains: 30+
 
 **Toucan Protocol**
+
 - Token Standard: ERC20 (Polygon)
 - Retirement Contract: Immutable
 - Metadata Storage: IPFS
@@ -327,6 +348,7 @@ Security Model:
 - Bridge Contract: Upgradeable proxy
 
 **IBC Protocol**
+
 - Version: IBC-Go v3+
 - Light Client: Tendermint
 - Channel Types: Ordered, unordered
@@ -338,18 +360,21 @@ Security Model:
 #### Bridge Security Models
 
 **Economic Security**
+
 - Gravity: Slashable stake on Cosmos
 - Axelar: AXL token staking + insurance
 - IBC: Chain-specific validator stakes
 - Toucan: No direct economic security
 
 **Technical Security**
+
 - Smart Contract Audits: Multiple firms
 - Formal Verification: Limited implementation
 - Bug Bounties: Active programs
 - Monitoring: 24/7 automated systems
 
 #### Regulatory Considerations
+
 - Carbon Credit Standards: Verra, Gold Standard
 - Securities Laws: Token classification unclear
 - Bridge Operator Requirements: Varies by jurisdiction
@@ -360,38 +385,49 @@ Security Model:
 ### 6.1 Historical Context
 
 #### The Genesis Era (2021)
+
 REGEN Network launched on April 15, 2021, with a vision of ecological assets on blockchain. The initial token distribution included no bridge infrastructure, reflecting a Cosmos-first approach.
 
 #### The Osmosis Discovery (June 2021)
+
 The first major liquidity event occurred through Osmosis's Liquidity Bootstrapping Pool. This established REGEN's primary trading venue, which remains dominant today with 95%+ of all liquidity.
 
 #### The Bridge Anticipation Phase (2021-2022)
+
 Community members expected traditional token bridges following the pattern of other Cosmos projects. Gravity Bridge integration was announced but faced implementation challenges.
 
 #### The Toucan Revolution (February 2022)
+
 The game-changing partnership with Toucan Protocol revealed REGEN's true cross-chain vision: bridging carbon credits, not tokens. The NCT standard launch marked a pivotal shift in strategy.
 
 #### The Verra Halt Crisis (May 2022)
+
 When Verra paused tokenization of carbon credits, it temporarily froze the primary bridge use case, demonstrating the ecosystem's dependency on traditional carbon markets.
 
 #### The USDC Revelation (October 2022)
+
 As REGEN Marketplace launched, the need for stablecoin bridges became apparent. Gravity and Axelar bridges found their primary use case: facilitating USDC transfers for carbon credit purchases.
 
 #### The ecoBridge Confusion (October 2024)
+
 The announcement of ecoBridge partnership created widespread confusion. Despite its name, this was a governance integration for the Community Climate Ecological Protocol, not a token bridge.
 
 ### 6.2 Community Narratives
 
 #### "The Missing Bridge" Narrative
+
 A persistent community concern about limited REGEN token mobility across chains. This narrative misunderstands REGEN's focus on ecological assets over token speculation.
 
 #### "The Osmosis Monopoly"
+
 The concentration of liquidity on Osmosis is seen as both a strength (deep liquidity) and weakness (single point of failure) by different community factions.
 
 #### "The Carbon Credit Revolution"
+
 Celebrated as REGEN's true innovation - creating the first effective bridge for environmental assets between traditional registries and blockchain.
 
 #### Notable Transactions
+
 - First NCT bridge: 1,000 tonnes in February 2022
 - Largest credit bridge: 100,000 tonnes (unverified)
 - The decimal bug incident: User loses tokens due to precision error
@@ -458,6 +494,7 @@ Celebrated as REGEN's true innovation - creating the first effective bridge for 
 ### 8.1 Transaction Examples
 
 #### Example 1: Minimal REGEN Presence on Ethereum
+
 ```
 Contract: 0xeee10b3736d5978924f392ed67497cfae795128b
 Total Supply: 10,936.095752 REGEN
@@ -467,6 +504,7 @@ Value: ~$52.20 USD
 ```
 
 #### Example 2: Toucan Decimal Bug Incident
+
 ```
 Date: October 2022
 User Input: 1.0000007 NCT
@@ -478,6 +516,7 @@ Status: Bug remains unfixed
 ```
 
 #### Example 3: Osmosis Pool Trade
+
 ```
 Pool: #22 (REGEN/ATOM)
 Trade: 100 ATOM → 5,747.126437 REGEN
@@ -488,6 +527,7 @@ Block: 11234567
 ```
 
 #### Example 4: USDC Bridge via Gravity
+
 ```
 Source: Ethereum (USDC)
 Amount: 10,000 USDC
@@ -499,6 +539,7 @@ Destination: REGEN Network (USDC.grv)
 ```
 
 #### Example 5: Carbon Credit Bridge Success
+
 ```
 Source: Polygon
 Token: 1,000 TCO2 (VCS-1234-2019)
@@ -511,6 +552,7 @@ Marketplace Listing: $15.50/credit
 ```
 
 #### Example 6: IBC Transfer Example
+
 ```
 From: Osmosis (osmo1abc...xyz)
 To: REGEN (regen1def...uvw)
@@ -523,6 +565,7 @@ Status: Success
 ```
 
 #### Example 7: Failed Gravity Bridge Event
+
 ```
 Issue: Non-UTF8 token name
 Token: "🌍EARTH"
@@ -534,6 +577,7 @@ Required Fix: Contract redeployment
 ```
 
 #### Example 8: Axelar USDC Route
+
 ```
 Path: Ethereum → Axelar → REGEN
 USDC Amount: 50,000
@@ -545,6 +589,7 @@ Validators Involved: 75
 ```
 
 #### Example 9: NCT Liquidity Provision
+
 ```
 Platform: SushiSwap (Polygon)
 Pair: NCT-USDC
@@ -556,6 +601,7 @@ APR: 18.25%
 ```
 
 #### Example 10: ecoBridge Governance Transaction
+
 ```
 Type: Governance Proposal (NOT token bridge)
 Proposal: "Integrate CCEP with Regen Ledger"
@@ -569,6 +615,7 @@ Token Movement: None (governance only)
 ### 8.2 Use Case Demonstrations
 
 #### Carbon Credit Purchase Flow
+
 ```
 1. Buyer acquires USDC on Ethereum ($10,000)
 2. Bridges via Gravity to REGEN Network
@@ -583,6 +630,7 @@ Token Movement: None (governance only)
 ```
 
 #### Liquidity Provider Journey
+
 ```
 1. User holds 10,000 REGEN tokens
 2. Acquires equivalent OSMO (~$174)
@@ -599,6 +647,7 @@ Token Movement: None (governance only)
 ### 8.3 Code Samples
 
 #### Query REGEN Balance on Ethereum
+
 ```javascript
 const Web3 = require('web3');
 const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_KEY');
@@ -606,16 +655,19 @@ const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_KEY');
 const contractAddress = '0xeee10b3736d5978924f392ed67497cfae795128b';
 const userAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f2bD9C';
 
-const abi = [/* Standard ERC20 ABI */];
+const abi = [
+  /* Standard ERC20 ABI */
+];
 const contract = new web3.eth.Contract(abi, contractAddress);
 
 async function getBalance() {
-    const balance = await contract.methods.balanceOf(userAddress).call();
-    console.log(`Balance: ${balance / 1e6} REGEN`);
+  const balance = await contract.methods.balanceOf(userAddress).call();
+  console.log(`Balance: ${balance / 1e6} REGEN`);
 }
 ```
 
 #### Monitor Bridge Events
+
 ```python
 from web3 import Web3
 import json
@@ -716,6 +768,7 @@ for event in event_filter.get_new_entries():
 ### Direct Data Access
 
 #### Block Explorers
+
 - **REGEN Network Explorer**: https://www.mintscan.io/regen
 - **Ethereum (REGEN Contract)**: https://etherscan.io/token/0xeee10b3736d5978924f392ed67497cfae795128b
 - **Polygon (Carbon Tokens)**: https://polygonscan.com/
@@ -723,12 +776,14 @@ for event in event_filter.get_new_entries():
 - **Osmosis Pools**: https://info.osmosis.zone/
 
 #### API Documentation
+
 - **Mintscan API**: https://api.mintscan.io/
 - **Axelarscan API**: https://docs.axelarscan.io/
 - **Etherscan API**: https://docs.etherscan.io/
 - **CoinGecko API**: https://www.coingecko.com/api/documentation
 
 #### Bridge Interfaces
+
 - **Gravity Bridge**: https://bridge.blockscape.network/
 - **Toucan App**: https://app.toucan.earth/
 - **Axelar Satellite**: https://satellite.money/
@@ -737,12 +792,14 @@ for event in event_filter.get_new_entries():
 ### Analysis Tools
 
 #### GitHub Repositories
+
 - **REGEN Ledger**: https://github.com/regen-network/regen-ledger
 - **Toucan Bridge**: https://github.com/regen-network/toucan-bridge
 - **Gravity Bridge**: https://github.com/Gravity-Bridge/Gravity-Bridge
 - **Axelar Core**: https://github.com/axelarnetwork/axelar-core
 
 #### Query Tools
+
 ```bash
 # Example: Query REGEN supply on Ethereum
 curl https://api.etherscan.io/api \
@@ -753,6 +810,7 @@ curl https://api.etherscan.io/api \
 ```
 
 #### Monitoring Dashboards
+
 - **KlimaDAO Carbon Dashboard**: https://data.klimadao.finance/
 - **Osmosis Analytics**: https://info.osmosis.zone/
 - **DeFi Llama**: https://defillama.com/ (limited REGEN coverage)
@@ -761,18 +819,21 @@ curl https://api.etherscan.io/api \
 ### Community Resources
 
 #### Official Channels
+
 - **Website**: https://www.regen.network/
 - **Documentation**: https://docs.regen.network/
 - **GitHub**: https://github.com/regen-network
 - **Twitter**: https://twitter.com/regen_network
 
 #### Community Platforms
+
 - **Discord**: REGEN Network Discord (invite required)
 - **Telegram**: Various community groups
 - **Forum**: https://forum.regen.network/
 - **Reddit**: r/RegenNetwork (low activity)
 
 #### Educational Resources
+
 - **REGEN Academy**: Educational content (if available)
 - **YouTube Channel**: Video tutorials and updates
 - **Medium Blog**: https://medium.com/regen-network
@@ -783,6 +844,7 @@ curl https://api.etherscan.io/api \
 ### Appendix A: Raw Data Samples
 
 #### Ethereum Contract State
+
 ```json
 {
   "contract": "0xeee10b3736d5978924f392ed67497cfae795128b",
@@ -807,14 +869,15 @@ curl https://api.etherscan.io/api \
 ```
 
 #### Osmosis Pool Configuration
+
 ```json
 {
   "pools": {
     "22": {
       "id": "22",
       "tokens": [
-        {"denom": "uregen", "amount": "14350000000000"},
-        {"denom": "uatom", "amount": "2500000000"}
+        { "denom": "uregen", "amount": "14350000000000" },
+        { "denom": "uatom", "amount": "2500000000" }
       ],
       "totalShares": "1000000000000",
       "poolParams": {
@@ -824,10 +887,10 @@ curl https://api.etherscan.io/api \
       "created": "2021-06-23T15:04:05Z"
     },
     "45": {
-      "id": "45", 
+      "id": "45",
       "tokens": [
-        {"denom": "uregen", "amount": "28700000000000"},
-        {"denom": "uosmo", "amount": "5000000000"}
+        { "denom": "uregen", "amount": "28700000000000" },
+        { "denom": "uosmo", "amount": "5000000000" }
       ],
       "incentives": true
     }
@@ -836,6 +899,7 @@ curl https://api.etherscan.io/api \
 ```
 
 #### Bridge Transaction Sample
+
 ```json
 {
   "gravity_bridge_tx": {
@@ -862,6 +926,7 @@ curl https://api.etherscan.io/api \
 ### Appendix B: Calculation Methodologies
 
 #### Token Distribution Calculation
+
 ```
 Total REGEN Supply: 100,000,000
 Circulating Supply: 148,354,423 (includes staking rewards)
@@ -873,6 +938,7 @@ Percentage on Ethereum = (10,936.095752 / 148,354,423) × 100
 ```
 
 #### Bridge Fee Calculation Example
+
 ```
 Gravity Bridge (10,000 USDC):
 - Base Fee: $10
@@ -883,6 +949,7 @@ Gravity Bridge (10,000 USDC):
 ```
 
 #### Liquidity Pool APR Estimation
+
 ```
 Pool #45 (REGEN/OSMO):
 - 24h Volume: $1,781.88
@@ -897,18 +964,21 @@ Pool #45 (REGEN/OSMO):
 ### Appendix C: Extended Analysis
 
 #### Bridge Usage Patterns
+
 1. **Temporal Analysis**: Most bridge activity occurs during US market hours
 2. **Size Distribution**: 90% of transactions under $10,000
 3. **User Segmentation**: Institutional (carbon buyers) vs. retail (speculation)
 4. **Seasonal Patterns**: Increased activity during carbon credit vintage releases
 
 #### Network Effects
+
 - First-mover advantage: Osmosis dominance
 - Liquidity begets liquidity: Self-reinforcing concentration
 - Bridge friction: High costs discourage token movement
 - Use case alignment: Carbon credits match REGEN's mission
 
 #### Risk Assessment
+
 1. **Technical Risks**: Smart contract bugs, bridge failures
 2. **Economic Risks**: Liquidity concentration, low volume
 3. **Regulatory Risks**: Carbon credit standards changes
@@ -930,6 +1000,7 @@ Pool #45 (REGEN/OSMO):
 ### Appendix E: Reproducibility Guide
 
 #### Required Tools
+
 ```bash
 # Install dependencies
 npm install web3 axios ethers
@@ -941,6 +1012,7 @@ cd regen-bridge-analysis
 ```
 
 #### Data Collection Script
+
 ```python
 import requests
 import json
@@ -953,15 +1025,15 @@ class RegenBridgeAnalyzer:
             'mintscan': 'https://api.mintscan.io/v1',
             'coingecko': 'https://api.coingecko.com/api/v3'
         }
-    
+
     def get_ethereum_supply(self):
         # Implementation for querying Ethereum supply
         pass
-    
+
     def analyze_bridge_transactions(self):
         # Implementation for transaction analysis
         pass
-    
+
     def generate_report(self):
         # Compile all data into report format
         pass
@@ -972,6 +1044,7 @@ analyzer.generate_report()
 ```
 
 #### Verification Steps
+
 1. Cross-reference all contract addresses on multiple explorers
 2. Verify token supplies match across data sources
 3. Confirm transaction hashes on respective block explorers
@@ -992,6 +1065,7 @@ analyzer.generate_report()
 ### 12.2 Limitations & Caveats
 
 #### Data Gaps
+
 1. **User Metrics**: No public data on unique bridge users
 2. **Transaction Counts**: Aggregate bridge transaction numbers unavailable
 3. **Historical Time Series**: Limited historical bridge volume data
@@ -999,12 +1073,14 @@ analyzer.generate_report()
 5. **Geographic Distribution**: User location data not available
 
 #### Assumptions Made
+
 1. Osmosis pools represent primary REGEN liquidity (verified through multiple sources)
 2. Bridge fees estimated from documentation (actual may vary)
 3. Carbon credit volumes based on public announcements (not all verifiable on-chain)
 4. User categories inferred from transaction patterns
 
 #### Potential Errors
+
 - ±5% on calculated percentages due to rounding
 - Time-based snapshots may not reflect current state
 - Some bridge transactions may be missed due to API limitations
@@ -1013,24 +1089,29 @@ analyzer.generate_report()
 ### 12.3 Reproducibility Guide
 
 #### Step-by-Step Replication
+
 1. **Setup Environment** (30 minutes)
+
    - Install required tools and libraries
    - Obtain necessary API keys
    - Clone analysis repositories
 
 2. **Data Collection** (4-6 hours)
+
    - Query all blockchain explorers
    - Collect bridge contract data
    - Gather market metrics
    - Archive documentation
 
 3. **Analysis Phase** (8-10 hours)
+
    - Process raw data
    - Calculate metrics
    - Cross-validate findings
    - Identify patterns
 
 4. **Verification** (4-5 hours)
+
    - Cross-reference all data points
    - Validate calculations
    - Check community sources
@@ -1043,12 +1124,14 @@ analyzer.generate_report()
    - Format for publication
 
 #### Required Access
+
 - Etherscan API key (free tier sufficient)
 - Web3 RPC endpoints (Infura/Alchemy)
 - No special permissions required
 - All data publicly accessible
 
 #### Skill Requirements
+
 - Basic blockchain knowledge
 - API interaction experience
 - Data analysis capabilities

@@ -93,14 +93,14 @@ Follow the principle of minimal permissions, granting only essential rights like
 
 ```javascript
 class EcoRateLimiter {
-    checkUserLimit(userId, action) {
-        const limits = {
-            'message': { count: 10, window: 60000 },
-            'carbon_claim': { count: 3, window: 86400000 },
-            'quiz_attempt': { count: 5, window: 3600000 }
-        };
-        return this.checkLimit(userId, action, limits[action]);
-    }
+  checkUserLimit(userId, action) {
+    const limits = {
+      message: { count: 10, window: 60000 },
+      carbon_claim: { count: 3, window: 86400000 },
+      quiz_attempt: { count: 5, window: 3600000 },
+    };
+    return this.checkLimit(userId, action, limits[action]);
+  }
 }
 ```
 
@@ -119,6 +119,7 @@ Telegram's simplicity and global reach make it excellent for building ecological
 For ElizaOS integration, the Telegram Bot API provides the best balance of simplicity and functionality. Among available frameworks, aiogram (Python) offers the highest performance at ~1000 messages/second with its fully asynchronous architecture, while Telegraf.js provides good Node.js integration at ~800 messages/second (GitHub - telegraf/telegraf, 2024; ArXiv, 2024a).
 
 Configure ElizaOS with specific Telegram parameters (GitHub - elizaos-plugins/client-telegram, 2024):
+
 ```javascript
 {
   "clients": ["telegram"],

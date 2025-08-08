@@ -30,6 +30,7 @@ This directory contains planning documents, roadmaps, and strategic planning mat
 ## Usage
 
 Use this directory to:
+
 1. Document planned features and enhancements
 2. Track architectural decisions
 3. Organize sprint planning materials

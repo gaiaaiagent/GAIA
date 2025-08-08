@@ -22,7 +22,6 @@ INSTALLED_APPS = [
     'elizaos',       # Read-only ElizaOS models
     'metrics',       # Our tracking tables
     'knowledge',     # Knowledge indexing progress
-    'eliza_tables',  # Legacy - needed for templatetags
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

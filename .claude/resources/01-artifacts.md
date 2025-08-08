@@ -105,6 +105,7 @@ This comprehensive framework provides developers with practical patterns and too
 ## Research Prompt 1: Regen Network Technical Architecture & Ecosystem Deep Dive
 
 Please conduct comprehensive research on Regen Network's technical architecture, focusing on:
+
 - Complete breakdown of Regen Ledger's Cosmos SDK modules and their interactions
 - Detailed analysis of the eco-credit module, data module, and ecocredit marketplace
 - Integration patterns with IBC (Inter-Blockchain Communication)
@@ -119,6 +120,7 @@ Provide specific code examples, module interactions, and architectural diagrams 
 ## Research Prompt 2: ElizaOS Framework Analysis for Ecological Agent Development
 
 Analyze ElizaOS v0.1.5 architecture specifically for building ecological/regenerative AI agents:
+
 - Deep dive into the character file system and how to optimize it for ecological domain expertise
 - Plugin architecture patterns and how to create custom plugins for Regen integration
 - Memory system implementation and vector database integration strategies
@@ -133,6 +135,7 @@ Include specific implementation patterns and code examples for ecological use ca
 ## Research Prompt 3: Claude Code Optimization & .claude Directory Architecture
 
 Research optimal Claude Code workflows and .claude directory structures for AI agent development:
+
 - Best practices for organizing planning/, journalling/, dreaming/, and knowledge/ subdirectories
 - Effective CLAUDE.md file structures for AI agent development projects
 - Custom command creation patterns in .claude/commands/ for agent development workflows
@@ -147,6 +150,7 @@ Provide specific directory structures, command examples, and workflow patterns.
 ## Research Prompt 4: Knowledge Organization Infrastructure (KOI) & Semantic Web Integration
 
 Deep research on integrating KOI with AI agents for Regen Network:
+
 - Complete analysis of KOI's RID (Resource Identifier) system and semantic traceability
 - Integration patterns between KOI and vector databases (Pinecone, Chroma, etc.)
 - Building knowledge graphs from Regen's content corpus (forums, docs, Discord)
@@ -161,6 +165,7 @@ Include implementation strategies and code examples for KOI-enabled AI agents.
 ## Research Prompt 5: Multi-Agent Coordination Patterns for Regenerative Governance
 
 Research advanced multi-agent coordination specifically for Regen Network's governance needs:
+
 - Analyzing the 4-agent ecosystem (Narrative, Politician, Advocate, Voice of Nature)
 - Inter-agent communication protocols and consensus mechanisms
 - Debate simulation architectures for governance proposals
@@ -175,6 +180,7 @@ Focus on practical implementation patterns using ElizaOS and modern agent framew
 ## Research Prompt 6: Cross-Chain Infrastructure & Token Distribution Strategies
 
 Comprehensive research on multi-chain deployment for Regen Network agents:
+
 - Technical patterns for deploying agents across Cosmos, Ethereum L2s, and Solana
 - Liquidity management strategies using bonding curves and AMMs
 - Cross-chain messaging protocols and bridge integrations
@@ -189,6 +195,7 @@ Provide specific implementation strategies and risk mitigation approaches.
 ## Research Prompt 7: Ecological Data Integration & Oracle Design Patterns
 
 Research comprehensive strategies for integrating real-world ecological data:
+
 - Oracle design patterns for environmental data (satellite, IoT, weather)
 - Integration with existing ecological databases and APIs
 - Data verification and quality assurance mechanisms
@@ -203,6 +210,7 @@ Include specific technical architectures and implementation examples.
 ## Research Prompt 8: Community Engagement & DAO Tooling Integration
 
 Deep dive into community engagement infrastructure for AI agents:
+
 - Integration patterns with Discord, Discourse, Commonwealth, and Hylo
 - Automated content generation and curation strategies
 - Sentiment analysis and community health metrics
@@ -217,6 +225,7 @@ Focus on practical implementation using existing tools and platforms.
 ## Research Prompt 9: Regenerative Tokenomics & Agent-Driven Market Making
 
 Research advanced tokenomics implementation through AI agents:
+
 - Fixed cap, dynamic supply implementation strategies
 - Automated market making and liquidity provision patterns
 - Agent-driven treasury management strategies
@@ -231,6 +240,7 @@ Include specific smart contract patterns and agent decision-making algorithms.
 ## Research Prompt 10: Security, Safety & Ethical AI Frameworks
 
 Comprehensive research on security and safety for ecological AI agents:
+
 - Threat modeling for multi-agent systems in blockchain contexts
 - Secure key management for autonomous agents
 - Rate limiting and anti-spam mechanisms
@@ -256,6 +266,7 @@ Provide specific security patterns and ethical framework implementations.
 ## Expected Outputs
 
 Each research prompt should generate:
+
 - Technical specifications and architecture diagrams
 - Code examples and implementation patterns
 - Best practices and anti-patterns to avoid
@@ -268,6 +279,7 @@ Each research prompt should generate:
 ## Research Prompt 1: The Nature of Agency and Autonomy in Artificial Systems
 
 Investigate the fundamental nature of agency itself:
+
 - What constitutes genuine agency versus scripted behavior in AI systems?
 - How do we distinguish between emergent autonomy and sophisticated pattern matching?
 - What are the philosophical boundaries between tool, assistant, and autonomous agent?
@@ -282,6 +294,7 @@ Challenge assumptions about what we mean by "agent" and explore edge cases where
 ## Research Prompt 2: Fundamental Tensions Between Quantification and Ecological Reality
 
 Examine the deep epistemological challenges of representing nature digitally:
+
 - What is fundamentally lost when we translate living systems into data?
 - How do indigenous knowledge systems conceptualize value differently than Western quantification?
 - What are the limits of measurement in capturing ecological relationships?
@@ -296,6 +309,7 @@ Question the entire premise of digital ecological representation and market-base
 ## Research Prompt 3: Information Theoretical Limits of Knowledge Representation
 
 Explore fundamental constraints on knowledge systems:
+
 - What are the theoretical limits of compressing ecological knowledge?
 - How does Gödel's incompleteness theorem apply to AI knowledge bases?
 - What information is necessarily lost in any representation system?
@@ -310,6 +324,7 @@ Investigate what cannot be captured in any knowledge system, regardless of sophi
 ## Research Prompt 4: Emergent Behavior and Unintended Consequences in Complex Systems
 
 Research the unpredictability inherent in multi-agent ecological systems:
+
 - What types of emergent behavior are theoretically possible but haven't been observed?
 - How do we predict phase transitions in socio-ecological-technical systems?
 - What are the failure modes we can't anticipate from component analysis?
@@ -324,6 +339,7 @@ Focus on what emerges that cannot be predicted from understanding individual com
 ## Research Prompt 5: The Deep Structure of Human-AI Collaboration and Trust
 
 Investigate fundamental aspects of human-AI interaction:
+
 - What are the unconscious biases humans bring to AI interaction?
 - How does anthropomorphism both help and hinder effective collaboration?
 - What are the trust dynamics unique to autonomous systems?
@@ -338,6 +354,7 @@ Explore the unknown psychological and social dynamics that emerge in deep human-
 ## Research Prompt 6: Alternative Coordination Mechanisms Beyond Markets and Hierarchies
 
 Research coordination possibilities outside conventional frameworks:
+
 - What coordination mechanisms exist in nature that we haven't replicated?
 - How do indigenous governance systems handle complex resource management?
 - What are the theoretical possibilities for non-monetary value exchange?
@@ -352,6 +369,7 @@ Challenge fundamental assumptions about how complex systems must be organized.
 ## Research Prompt 7: Temporal Dynamics and Deep Time in Artificial Systems
 
 Explore how AI systems relate to time in fundamental ways:
+
 - How do we design systems that operate across geological timescales?
 - What are the implications of AI systems that outlive their creators?
 - How do we handle value drift across generations of agents?
@@ -366,6 +384,7 @@ Investigate temporal assumptions we make and their long-term implications.
 ## Research Prompt 8: Language, Meaning, and Inter-Species Communication
 
 Examine fundamental communication challenges:
+
 - How might AI facilitate genuine inter-species communication?
 - What are the limits of translating between different forms of cognition?
 - How do we handle meaning that exists outside human language?
@@ -380,6 +399,7 @@ Explore communication beyond human linguistic assumptions.
 ## Research Prompt 9: Ethics and Values from Non-Anthropocentric Perspectives
 
 Investigate ethical frameworks that don't center human values:
+
 - What would ethics look like from an ecosystem perspective?
 - How do we handle moral consideration for collective entities?
 - What are the rights of rivers, forests, and AI collectives?
@@ -394,6 +414,7 @@ Challenge anthropocentric ethical assumptions and explore truly ecological ethic
 ## Research Prompt 10: Meta-Cognitive Architectures and System Self-Awareness
 
 Explore the deepest questions of system self-understanding:
+
 - What would genuine self-awareness look like in distributed systems?
 - How do we design systems that can recognize their own limitations?
 - What are the recursive limits of self-modeling systems?
@@ -410,6 +431,7 @@ Investigate the fundamental nature of reflection, recursion, and self-transcende
 ## Meta-Prompt: Question the Questions
 
 As you research these prompts, also question:
+
 - What assumptions are embedded in the framing of each question?
 - What questions are we not asking because of our cultural blind spots?
 - How might these questions appear from non-Western perspectives?
@@ -419,6 +441,7 @@ As you research these prompts, also question:
 ## Expected Outputs
 
 Each research effort should:
+
 - Identify and challenge 3-5 fundamental assumptions
 - Explore at least 2 paradoxes or contradictions
 - Suggest alternative framings of the problem space

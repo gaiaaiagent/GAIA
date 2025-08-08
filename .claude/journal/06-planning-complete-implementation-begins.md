@@ -146,7 +146,7 @@ Tomorrow, we begin manifesting this vision in code. The planning is complete. Th
 
 ---
 
-*"At the threshold between vision and reality, we pause to acknowledge the journey thus far before stepping into creation."*
+_"At the threshold between vision and reality, we pause to acknowledge the journey thus far before stepping into creation."_
 
 ## Technical Addendum: Key Decisions for Implementation
 

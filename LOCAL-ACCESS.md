@@ -5,24 +5,29 @@
 ### Subdomain Access (via nginx on port 80)
 
 **ElizaOS WebUI - All 5 Agents:**
+
 - http://agents.localhost
 - **Basic Auth**: regenai / regen2025
 
 **Django Admin Dashboard:**
+
 - http://admin.localhost
 - **Django Login**: admin / admin123
 
 ### Direct Port Access (backup if subdomains don't work)
 
 **ElizaOS WebUI:**
+
 - http://localhost:3000
 
 **Django Admin:**
+
 - http://localhost:8000/admin
 
 ### Services Running
 
 All services run via Docker Compose:
+
 ```bash
 # Start all services
 docker compose up -d
@@ -54,6 +59,7 @@ docker compose logs -f nginx    # Proxy logs
 ### Troubleshooting
 
 **If subdomains don't work:**
+
 - Some systems need hosts file entries:
   ```
   # Add to /etc/hosts (Mac/Linux) or C:\Windows\System32\drivers\etc\hosts (Windows)
@@ -63,14 +69,17 @@ docker compose logs -f nginx    # Proxy logs
 - Or use direct ports (3000 and 8000) as fallback
 
 **Brave Browser:**
+
 - May need to use 127.0.0.1 instead of localhost
 
 **First startup:**
+
 - Takes a few minutes for agents to initialize
 
 ### Future Improvements
 
 When deployed to production:
+
 - `agents.regen.gaiaai.xyz` - ElizaOS WebUI
 - `admin.regen.gaiaai.xyz` - Django Admin
 - SSL/HTTPS enabled
@@ -78,4 +87,4 @@ When deployed to production:
 
 ---
 
-*Last updated: August 6, 2025*
+_Last updated: August 6, 2025_

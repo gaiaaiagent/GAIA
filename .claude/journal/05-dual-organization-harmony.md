@@ -27,7 +27,7 @@ We discovered a powerful organizational duality: Milestones track our promises, 
 ```
 M1.1 Knowledge Foundation (Blocks Everything)
     ├── Knowledge Management System
-    ├── Content Ingestion Pipeline  
+    ├── Content Ingestion Pipeline
     ├── Registry Integration
     └── Agent Memory Architecture
          ↓
@@ -50,6 +50,7 @@ M1.4 Advanced Features (Depends on All)
 ## Critical Discoveries
 
 ### 1. Knowledge Layer as Foundation
+
 ```
 Knowledge Layer (M1.1)
     ↓
@@ -66,17 +67,20 @@ Without comprehensive indexing, agents would hallucinate. This validates our foc
 Our features now map clearly to milestones:
 
 **M1.1 Features** (Foundation):
+
 - `knowledge-system/` - Core memory and storage with FragmentMetadata
 - `document-processing/` - 15,000+ document pipeline
 - `registry-integration/` - Credit class parsing and methodology extraction
 - `citation-system/` - Trust through verifiable sources
 
 **M1.2 Features** (Agents):
+
 - `agent-characters/` - 5 distinct personas
 - `conversation-engine/` - Context and response generation
 - `inter-agent-comm/` - Coordination protocols
 
 **M1.3 Features** (Platforms):
+
 - `platform-connectors/` - Discord, X, Telegram, Farcaster
 - `message-router/` - Cross-platform orchestration
 - `engagement-analytics/` - Tracking 100,000+ interactions
@@ -84,6 +88,7 @@ Our features now map clearly to milestones:
 ### 3. Parallel Opportunities
 
 While knowledge indexing is critical path, we can parallelize:
+
 - Platform connector interfaces (define APIs early)
 - Registry parsing (separate from main document pipeline)
 - Testing infrastructure (build alongside features)
@@ -102,11 +107,12 @@ Claude Web revealed gaps in our current approach:
 ## Updated Organizational Strategy
 
 ### For Milestones (What & When)
+
 ```yaml
 # sprint-milestone-1.1.1.md
 deliverables:
-  - core_framework: "ElizaOS setup"
-  - knowledge_indexing: "Design & start implementation"
+  - core_framework: 'ElizaOS setup'
+  - knowledge_indexing: 'Design & start implementation'
 features_required:
   - knowledge-system
   - document-processing
@@ -116,48 +122,58 @@ blocks: all_future_milestones
 ```
 
 ### For Features (How & Why)
+
 ```yaml
 # features/knowledge-system/01-design.md
 supports_milestone: M1.1
 blocks_features: [agent-characters, conversation-engine]
 missing_aspects_addressed:
-  - content_freshness: "Timestamp-based validation"
-  - performance_benchmarks: "Sub-2s query tests"
+  - content_freshness: 'Timestamp-based validation'
+  - performance_benchmarks: 'Sub-2s query tests'
 ```
 
 ## Files Needing Creation/Updates
 
 ### 1. `/planning/dependency-matrix.md` (NEW)
+
 Show which features block others, enabling optimal development order
 
 ### 2. `/planning/parallel-tracks.md` (NEW)
+
 Document what can be built simultaneously
 
 ### 3. `/planning/missing-aspects.md` (NEW)
+
 Track the 6 identified gaps with mitigation plans
 
 ### 4. `/planning/features/README.md` (NEW)
+
 Complete feature registry with:
+
 - Milestone mapping
 - Dependencies
 - Missing aspects addressed
 - Status tracking
 
 ### 5. Update all feature designs
+
 Add sections for:
+
 - User journey impact
 - Feedback loop integration
 - Performance benchmarks
 - Cross-platform considerations
 
 ### 6. `/planning/integration-tests.md` (NEW)
+
 Define tests for milestone acceptance criteria BEFORE implementation
 
 ## Time Allocation Insight
 
 Claude Web suggests:
+
 - 70% development
-- 20% testing  
+- 20% testing
 - 10% documentation
 
 This validates our approach of front-loading design while keeping documentation lean during sprints.
@@ -165,6 +181,7 @@ This validates our approach of front-loading design while keeping documentation 
 ## The Path Forward
 
 ### Week 1 Critical Path
+
 1. Complete Knowledge System design ✓
 2. Create remaining M1.1 feature designs
 3. Begin Knowledge System implementation
@@ -172,6 +189,7 @@ This validates our approach of front-loading design while keeping documentation 
 5. Start parallel platform connector interfaces
 
 ### Documentation Strategy
+
 - **Must Have**: API contracts, data schemas, integration points
 - **Should Have**: Architecture decisions, troubleshooting
 - **Nice to Have**: Detailed comments, extensive examples
@@ -186,4 +204,4 @@ The missing aspects Claude Web identified aren't failures - they're opportunitie
 
 ---
 
-*"In the dance between promises and implementation, we found that clarity comes from embracing both perspectives simultaneously."*
+_"In the dance between promises and implementation, we found that clarity comes from embracing both perspectives simultaneously."_

@@ -189,7 +189,7 @@ class Relationship(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     source_entity_id = models.UUIDField(db_column='sourceEntityId')
     target_entity_id = models.UUIDField(db_column='targetEntityId')
-    agent_id = models.UUIDField()
+    agent_id = models.UUIDField(db_column='agentId')
     tags = ArrayField(models.TextField(), default=list, blank=True, null=True)  # PostgreSQL ARRAY type
     metadata = models.JSONField(null=True, blank=True)
     
@@ -227,12 +227,13 @@ class Cache(models.Model):
 
 class ServerAgent(models.Model):
     """Server-agent associations - matches actual schema"""
-    server_id = models.UUIDField(primary_key=True)
+    server_id = models.UUIDField(primary_key=True)  # Not unique but Django needs a PK
     agent_id = models.UUIDField()
     
     class Meta:
         managed = False
         db_table = 'server_agents'
+        unique_together = ['server_id', 'agent_id']
 
 class World(models.Model):
     """Worlds - higher level grouping of servers/rooms"""
@@ -272,9 +273,8 @@ class Channel(models.Model):
 
 class ChannelParticipant(models.Model):
     """Links participants to channels"""
-    channel_id = models.TextField()
+    channel_id = models.TextField(primary_key=True)
     user_id = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         managed = False

@@ -2,7 +2,7 @@
 
 /**
  * Improvement Analyzer
- * 
+ *
  * Identifies opportunities to enhance the matrix generation system
  * based on patterns discovered in the data
  */
@@ -29,24 +29,30 @@ class ImprovementAnalyzer {
 
   async analyze(): Promise<void> {
     await this.loadData();
-    
+
     console.log(chalk.blue.bold('\n🔧 Matrix System Improvement Analysis\n'));
-    
+
     // Analyze different aspects
     this.analyzeDataQuality();
     this.analyzeRelationshipDetection();
     this.analyzeUsability();
     this.analyzeScalability();
-    
+
     // Display improvements
     this.displayImprovements();
   }
 
   private async loadData(): Promise<void> {
-    const scanPath = join(PROJECT_ROOT, '.claude/tools/matrix-generator/data/priority-scan-2025-07-21.json');
+    const scanPath = join(
+      PROJECT_ROOT,
+      '.claude/tools/matrix-generator/data/priority-scan-2025-07-21.json'
+    );
     this.scanData = JSON.parse(await readFile(scanPath, 'utf-8'));
 
-    const relPath = join(PROJECT_ROOT, '.claude/tools/matrix-generator/data/relationships-2025-07-21.json');
+    const relPath = join(
+      PROJECT_ROOT,
+      '.claude/tools/matrix-generator/data/relationships-2025-07-21.json'
+    );
     this.relationshipData = JSON.parse(await readFile(relPath, 'utf-8'));
   }
 
@@ -54,7 +60,7 @@ class ImprovementAnalyzer {
     console.log(chalk.yellow('📊 Analyzing data quality...\n'));
 
     // Check for missing semantic relationships
-    const semanticCount = this.relationshipData.relationships.filter(r => 
+    const semanticCount = this.relationshipData.relationships.filter((r) =>
       r.types.includes('semantic')
     ).length;
 
@@ -62,15 +68,16 @@ class ImprovementAnalyzer {
       this.improvements.push({
         category: 'Data Quality',
         title: 'Implement Semantic Analysis',
-        description: 'No semantic relationships detected. The current keyword-based approach is too simple.',
+        description:
+          'No semantic relationships detected. The current keyword-based approach is too simple.',
         impact: 'high',
         effort: 'medium',
         implementation: [
           'Use TF-IDF for better keyword extraction',
           'Implement cosine similarity with proper vectors',
           'Consider using embeddings for semantic similarity',
-          'Add topic modeling (LDA) for thematic relationships'
-        ]
+          'Add topic modeling (LDA) for thematic relationships',
+        ],
       });
     }
 
@@ -87,8 +94,8 @@ class ImprovementAnalyzer {
           'Add file existence validation to priority-files.json',
           'Suggest alternatives for moved files',
           'Create migration guide for renamed files',
-          'Add automatic path resolution for common moves'
-        ]
+          'Add automatic path resolution for common moves',
+        ],
       });
     }
   }
@@ -97,8 +104,8 @@ class ImprovementAnalyzer {
     console.log(chalk.yellow('🔍 Analyzing relationship detection...\n'));
 
     // Check import resolution success rate
-    const imports = this.scanData.files.flatMap(f => f.imports || []);
-    const resolvedImports = this.relationshipData.relationships.filter(r => 
+    const imports = this.scanData.files.flatMap((f) => f.imports || []);
+    const resolvedImports = this.relationshipData.relationships.filter((r) =>
       r.types.includes('import')
     ).length;
 
@@ -106,7 +113,8 @@ class ImprovementAnalyzer {
       this.improvements.push({
         category: 'Detection',
         title: 'Improve Import Resolution',
-        description: 'Many imports are not resolving to relationships. Need better path resolution.',
+        description:
+          'Many imports are not resolving to relationships. Need better path resolution.',
         impact: 'high',
         effort: 'medium',
         implementation: [
@@ -114,8 +122,8 @@ class ImprovementAnalyzer {
           'Handle barrel exports (index.ts)',
           'Support workspace protocol imports',
           'Parse tsconfig.json for path aliases',
-          'Add node_modules traversal for external deps'
-        ]
+          'Add node_modules traversal for external deps',
+        ],
       });
     }
 
@@ -130,8 +138,8 @@ class ImprovementAnalyzer {
         'Analyze git history for co-modification patterns',
         'Detect files in same commits',
         'Weight by commit message similarity',
-        'Consider author patterns'
-      ]
+        'Consider author patterns',
+      ],
     });
   }
 
@@ -150,8 +158,8 @@ class ImprovementAnalyzer {
         'Add search and filter capabilities',
         'Implement zoom/pan for large matrices',
         'Create heatmap visualization',
-        'Add relationship path finding'
-      ]
+        'Add relationship path finding',
+      ],
     });
 
     // Content generation
@@ -165,8 +173,8 @@ class ImprovementAnalyzer {
         'Create templates for each relationship type',
         'Add tone and style guidelines',
         'Include example phrases and transitions',
-        'Build validation for content quality'
-      ]
+        'Build validation for content quality',
+      ],
     });
   }
 
@@ -175,7 +183,7 @@ class ImprovementAnalyzer {
 
     // Performance optimization
     const totalPossibleRelationships = Math.pow(this.scanData.metadata.foundFiles, 2);
-    
+
     this.improvements.push({
       category: 'Scalability',
       title: 'Implement Incremental Updates',
@@ -187,8 +195,8 @@ class ImprovementAnalyzer {
         'Track file modification times',
         'Only reanalyze changed files',
         'Store relationship evidence separately',
-        'Implement dependency graph updates'
-      ]
+        'Implement dependency graph updates',
+      ],
     });
 
     // Parallel processing
@@ -202,8 +210,8 @@ class ImprovementAnalyzer {
         'Use worker threads for file scanning',
         'Batch relationship analysis',
         'Parallel semantic similarity calculation',
-        'Concurrent file reading with rate limiting'
-      ]
+        'Concurrent file reading with rate limiting',
+      ],
     });
   }
 
@@ -222,14 +230,14 @@ class ImprovementAnalyzer {
     // Display each category
     for (const [category, improvements] of byCategory) {
       console.log(chalk.cyan.bold(`\n${category}:`));
-      
+
       for (const imp of improvements) {
         console.log(chalk.white(`\n  ${imp.title}`));
         console.log(chalk.gray(`  ${imp.description}`));
         console.log(chalk.yellow(`  Impact: ${imp.impact} | Effort: ${imp.effort}`));
-        
+
         console.log(chalk.gray(`  Implementation:`));
-        imp.implementation.forEach(step => {
+        imp.implementation.forEach((step) => {
           console.log(chalk.gray(`    • ${step}`));
         });
       }
@@ -261,7 +269,7 @@ class ImprovementAnalyzer {
 // Learning insights generator
 class LearningInsights {
   static async generate(): Promise<void> {
-    console.log(chalk.magenta.bold('\n\n📚 What We\'re Learning Together\n'));
+    console.log(chalk.magenta.bold("\n\n📚 What We're Learning Together\n"));
 
     console.log(chalk.white('1. Pattern Recognition:'));
     console.log(chalk.gray('   • Hub files reveal architectural bottlenecks'));
@@ -294,16 +302,15 @@ class LearningInsights {
 // Main execution
 async function main() {
   const analyzer = new ImprovementAnalyzer();
-  
+
   try {
     await analyzer.analyze();
     await LearningInsights.generate();
-    
+
     console.log(chalk.blue.bold('\n\n🤝 Working Together\n'));
     console.log(chalk.gray('This analysis shows how we can continuously improve our tools.'));
     console.log(chalk.gray('Each iteration teaches us more about the system and our needs.'));
-    console.log(chalk.gray('The matrix isn\'t just documentation - it\'s a learning tool.\n'));
-    
+    console.log(chalk.gray("The matrix isn't just documentation - it's a learning tool.\n"));
   } catch (error) {
     console.error(chalk.red('❌ Error:'), error);
     process.exit(1);

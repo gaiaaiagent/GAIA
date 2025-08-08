@@ -15,8 +15,8 @@ accuracy-concerns:
 
 # Test-Driven Development Roadmap for RegenAI Partnership
 
-*Contract Start: July 16, 2025*
-*Purpose: Align test development with contract milestones for payment validation*
+_Contract Start: July 16, 2025_
+_Purpose: Align test development with contract milestones for payment validation_
 
 ## Overview
 
@@ -25,10 +25,12 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ## Phase 1 Test Development Schedule (60 Days)
 
 ### Week 1-2: Milestone 1.1 Tests (Foundation Infrastructure)
+
 **Timeline: July 16-29, 2025**
 **Focus: Core infrastructure and knowledge indexing validation**
 
 #### Test Suite 1.1.1: Agent Framework Deployment
+
 ```typescript
 // tests/infrastructure/agent-deployment.test.ts
 - Test: Agent server starts successfully
@@ -38,6 +40,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.1.2: Platform Connectors
+
 ```typescript
 // tests/connectors/platform-integration.test.ts
 - Test: X (Twitter) API connection and posting
@@ -47,6 +50,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.1.3: KOI Integration
+
 ```typescript
 // tests/koi/sensor-node.test.ts
 - Test: KOI sensor node initialization
@@ -56,6 +60,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.1.4: Knowledge Indexing
+
 ```typescript
 // tests/knowledge/document-indexing.test.ts
 - Test: Document crawler for docs.regen.network
@@ -66,6 +71,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.1.5: Registry Processing
+
 ```typescript
 // tests/registry/credit-class-parsing.test.ts
 - Test: Credit class methodology extraction
@@ -76,6 +82,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.1.6-7: Embeddings & Knowledge Graph
+
 ```typescript
 // tests/knowledge/embeddings.test.ts
 - Test: Vector embedding generation for documents
@@ -85,10 +92,12 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 ### Week 3-4: Milestone 1.2 Tests (Agent Deployment)
+
 **Timeline: July 30 - August 12, 2025**
 **Focus: Multi-agent operation validation**
 
 #### Test Suite 1.2.1: Narrative Agent
+
 ```typescript
 // tests/agents/narrative-agent.test.ts
 - Test: X posting 4-6 times daily
@@ -98,6 +107,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.2.2: Politician Agent
+
 ```typescript
 // tests/agents/politician-agent.test.ts
 - Test: Discord governance summaries
@@ -107,6 +117,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.2.3: Advocate Agent
+
 ```typescript
 // tests/agents/advocate-agent.test.ts
 - Test: Real-time credit availability queries
@@ -117,6 +128,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.2.4: Voice of Nature Agent
+
 ```typescript
 // tests/agents/voice-of-nature.test.ts
 - Test: Weekly content generation
@@ -126,6 +138,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.2.5-6: Analytics & A/B Testing
+
 ```typescript
 // tests/analytics/dashboard.test.ts
 - Test: Source attribution tracking
@@ -135,10 +148,12 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 ### Week 5: Milestone 1.3 Tests (Scale & Performance)
+
 **Timeline: August 13-19, 2025**
 **Focus: Scale validation for payment milestone**
 
 #### Test Suite 1.3.1: Interaction Volume
+
 ```typescript
 // tests/scale/interaction-volume.test.ts
 - Test: 30,000+ interaction counting
@@ -147,6 +162,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.3.2-3: A/B Testing & KOI
+
 ```typescript
 // tests/analytics/ab-testing.test.ts
 - Test: Statistical significance calculation
@@ -155,6 +171,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.3.4-5: Registry & Knowledge Accuracy
+
 ```typescript
 // tests/validation/accuracy.test.ts
 - Test: 500+ credit inquiries handling
@@ -165,6 +182,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.3.6-7: Performance Testing
+
 ```typescript
 // tests/performance/load-testing.test.ts
 - Test: 2x normal load handling
@@ -174,10 +192,12 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 ### Week 6: Milestone 1.4 Tests (Advanced Features)
+
 **Timeline: August 20-26, 2025**
 **Focus: Enhanced capabilities**
 
 #### Test Suite 1.4.1: DAODAO Integration
+
 ```typescript
 // tests/integration/daodao.test.ts
 - Test: Governance proposal queries
@@ -186,6 +206,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.4.2: Advanced Registry
+
 ```typescript
 // tests/registry/advanced-features.test.ts
 - Test: Credit recommendation algorithm
@@ -195,6 +216,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.4.3-5: Advanced Systems
+
 ```typescript
 // tests/advanced/orchestration.test.ts
 - Test: Cross-platform campaign coordination
@@ -204,10 +226,12 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 ### Week 7: Milestone 1.5 Tests (Production Ready)
+
 **Timeline: August 27 - September 2, 2025**
 **Focus: Production optimization**
 
 #### Test Suite 1.5.1-2: Performance & Security
+
 ```typescript
 // tests/production/optimization.test.ts
 - Test: <1 second knowledge query response
@@ -217,6 +241,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.5.3-4: Reliability
+
 ```typescript
 // tests/production/reliability.test.ts
 - Test: Automated backup verification
@@ -226,10 +251,12 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 ### Week 8-9: Milestone 1.6 Tests (Handoff)
+
 **Timeline: September 3-16, 2025**
 **Focus: Completion validation for final payment**
 
 #### Test Suite 1.6.1: Final Metrics
+
 ```typescript
 // tests/validation/final-metrics.test.ts
 - Test: 100,000+ total interactions
@@ -238,6 +265,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Suite 1.6.2-4: Knowledge Transfer
+
 ```typescript
 // tests/handoff/documentation.test.ts
 - Test: Documentation completeness
@@ -249,6 +277,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ## TDD Implementation Strategy
 
 ### 1. Test-First Development Cycle
+
 ```
 1. Write failing test for deliverable
 2. Implement minimal code to pass
@@ -260,18 +289,21 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ### 2. Test Categories by Priority
 
 #### P0 - Payment Gate Tests (Must Pass for Milestone Payment)
+
 - Interaction count validation (1.3.1, 1.6.1)
 - Knowledge accuracy metrics (1.3.5)
 - System performance under load (1.3.7)
 - Agent uptime monitoring (1.2)
 
 #### P1 - Core Functionality Tests
+
 - Platform connector integration
 - Knowledge indexing completeness
 - Registry data accuracy
 - Agent response quality
 
 #### P2 - Enhancement Tests
+
 - A/B testing framework
 - Advanced analytics
 - Cross-platform orchestration
@@ -279,6 +311,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ### 3. Test Infrastructure Requirements
 
 #### Continuous Integration
+
 ```yaml
 # .github/workflows/milestone-validation.yml
 - Run tests on every commit
@@ -288,6 +321,7 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ```
 
 #### Test Data Management
+
 - Snapshot of Regen documentation
 - Mock registry API for development
 - Test interaction generator
@@ -296,13 +330,16 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ### 4. Milestone Validation Process
 
 #### For Each Milestone:
+
 1. **Pre-Milestone Check** (3 days before)
+
    - Run full test suite
    - Generate coverage report
    - Identify failing tests
    - Create remediation plan
 
 2. **Milestone Day**
+
    - Run payment gate tests
    - Generate validation report
    - Archive test evidence
@@ -316,43 +353,51 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ## Test Development Timeline
 
 ### Week 1 (July 16-22)
+
 - [ ] Set up test infrastructure
 - [ ] Create test templates
 - [ ] Write Milestone 1.1 tests
 - [ ] Begin documentation
 
 ### Week 2 (July 23-29)
+
 - [ ] Complete 1.1 test suite
 - [ ] Start implementing features
 - [ ] Run first integration tests
 - [ ] Update test documentation
 
 ### Week 3 (July 30 - Aug 5)
+
 - [ ] Write Milestone 1.2 tests
 - [ ] Deploy initial agents
 - [ ] Begin scale testing prep
 
 ### Week 4 (Aug 6-12)
+
 - [ ] Complete 1.2 testing
 - [ ] Prepare for scale milestone
 - [ ] Write performance tests
 
 ### Week 5 (Aug 13-19)
+
 - [ ] Execute scale tests
 - [ ] Validate 30K interactions
 - [ ] **Milestone 1.3 Payment Gate**
 
 ### Week 6-8 (Aug 20 - Sep 2)
+
 - [ ] Advanced feature testing
 - [ ] Production readiness
 - [ ] Security validation
 
 ### Week 9 (Sep 3-9)
+
 - [ ] Final testing push
 - [ ] 100K interaction validation
 - [ ] Handoff preparation
 
 ### Week 10 (Sep 10-16)
+
 - [ ] **Milestone 1.6 Payment Gate**
 - [ ] Complete handoff
 - [ ] Archive all test evidence
@@ -360,12 +405,14 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ## Success Metrics
 
 ### Test Coverage Goals
+
 - **Unit Tests**: 80% code coverage
 - **Integration Tests**: All API endpoints
 - **E2E Tests**: Critical user journeys
 - **Performance Tests**: All scale requirements
 
 ### Quality Gates
+
 - Zero failing payment gate tests
 - All success criteria validated
 - Test execution time < 30 minutes
@@ -374,11 +421,13 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 ## Next Steps
 
 1. **Immediate** (Today):
+
    - Set up test project structure
    - Create first test for agent deployment
    - Configure CI pipeline
 
 2. **This Week**:
+
    - Complete Milestone 1.1 test suite
    - Begin feature implementation
    - Document test patterns
@@ -390,4 +439,4 @@ This TDD roadmap maps test suites to each contract deliverable, ensuring we can 
 
 ---
 
-*"We do not want fake tests anywhere. We do not want to cut any corners. The value of this project will be in the test suites."* - User Guidance
+_"We do not want fake tests anywhere. We do not want to cut any corners. The value of this project will be in the test suites."_ - User Guidance

@@ -2,7 +2,7 @@
 
 /**
  * Content Generator for Taxonomy Matrix
- * 
+ *
  * Generates the three-paragraph analyses for each relationship
  * and YAML metadata for diagonal cells
  */
@@ -70,99 +70,105 @@ class ContentGenerator {
     // Import relationship template
     this.templates.set('import', {
       semantic: [
-        "serves as a critical dependency for",
-        "provides essential functionality that",
-        "establishes the foundational capabilities used by",
-        "defines the interfaces and types consumed by"
+        'serves as a critical dependency for',
+        'provides essential functionality that',
+        'establishes the foundational capabilities used by',
+        'defines the interfaces and types consumed by',
       ],
       cognitive: [
-        "Understanding [FROM] is prerequisite to comprehending [TO]",
+        'Understanding [FROM] is prerequisite to comprehending [TO]',
         "Developers must grasp [FROM]'s exports before working with [TO]",
-        "The mental model established by [FROM] shapes how [TO] operates",
-        "Knowledge flows from [FROM]'s abstractions into [TO]'s implementation"
+        'The mental model established by [FROM] shapes how [TO] operates',
+        "Knowledge flows from [FROM]'s abstractions into [TO]'s implementation",
       ],
       implementation: [
-        "[TO] imports [COUNT] items from [FROM]",
-        "The coupling between these files is [STRENGTH_WORD]",
+        '[TO] imports [COUNT] items from [FROM]',
+        'The coupling between these files is [STRENGTH_WORD]',
         "Changes to [FROM]'s interface will directly impact [TO]",
-        "This dependency represents a [PATTERN] architectural pattern"
-      ]
+        'This dependency represents a [PATTERN] architectural pattern',
+      ],
     });
 
     // Structural relationship template
     this.templates.set('structural', {
       semantic: [
-        "shares organizational proximity with",
-        "exists in the same architectural layer as",
-        "forms part of the same logical grouping with",
-        "maintains categorical alignment with"
+        'shares organizational proximity with',
+        'exists in the same architectural layer as',
+        'forms part of the same logical grouping with',
+        'maintains categorical alignment with',
       ],
       cognitive: [
-        "These files are naturally understood together",
-        "Developers encounter these files in similar contexts",
-        "The shared location suggests related mental models",
-        "Understanding one aids in understanding the other"
+        'These files are naturally understood together',
+        'Developers encounter these files in similar contexts',
+        'The shared location suggests related mental models',
+        'Understanding one aids in understanding the other',
       ],
       implementation: [
-        "Both files reside in the [CATEGORY] category",
-        "They share [COMMONALITY] characteristics",
-        "This proximity suggests [INFERENCE] design intent",
-        "Structural cohesion indicates [PATTERN]"
-      ]
+        'Both files reside in the [CATEGORY] category',
+        'They share [COMMONALITY] characteristics',
+        'This proximity suggests [INFERENCE] design intent',
+        'Structural cohesion indicates [PATTERN]',
+      ],
     });
 
     // Functional relationship template
     this.templates.set('functional', {
       semantic: [
-        "serves a complementary purpose to",
-        "works in concert with",
-        "provides related functionality to",
-        "supports the same domain as"
+        'serves a complementary purpose to',
+        'works in concert with',
+        'provides related functionality to',
+        'supports the same domain as',
       ],
       cognitive: [
-        "These files address similar problem spaces",
-        "Understanding their shared purpose reveals system design",
-        "The functional overlap suggests unified intent",
-        "Together they form a complete solution for [DOMAIN]"
+        'These files address similar problem spaces',
+        'Understanding their shared purpose reveals system design',
+        'The functional overlap suggests unified intent',
+        'Together they form a complete solution for [DOMAIN]',
       ],
       implementation: [
-        "Both files contribute to [FUNCTION]",
-        "They collaborate through [MECHANISM]",
-        "This functional grouping exhibits [PATTERN]",
-        "Changes often ripple between these related components"
-      ]
+        'Both files contribute to [FUNCTION]',
+        'They collaborate through [MECHANISM]',
+        'This functional grouping exhibits [PATTERN]',
+        'Changes often ripple between these related components',
+      ],
     });
 
     // Reference relationship template
     this.templates.set('reference', {
       semantic: [
-        "explicitly references",
-        "directly points to",
-        "maintains a documented connection to",
-        "establishes a clear link with"
+        'explicitly references',
+        'directly points to',
+        'maintains a documented connection to',
+        'establishes a clear link with',
       ],
       cognitive: [
-        "The explicit reference guides understanding",
-        "Readers are directed from [FROM] to [TO]",
-        "This intentional connection shapes learning paths",
-        "The reference indicates [TO] extends [FROM]'s concepts"
+        'The explicit reference guides understanding',
+        'Readers are directed from [FROM] to [TO]',
+        'This intentional connection shapes learning paths',
+        "The reference indicates [TO] extends [FROM]'s concepts",
       ],
       implementation: [
-        "[FROM] contains a direct reference to [TO]",
-        "The reference appears in [CONTEXT]",
-        "This explicit link [PURPOSE]",
-        "The connection is maintained through [MECHANISM]"
-      ]
+        '[FROM] contains a direct reference to [TO]',
+        'The reference appears in [CONTEXT]',
+        'This explicit link [PURPOSE]',
+        'The connection is maintained through [MECHANISM]',
+      ],
     });
   }
 
   async loadData(): Promise<void> {
     // Load scan data
-    const scanPath = join(PROJECT_ROOT, '.claude/tools/matrix-generator/data/priority-scan-2025-07-21.json');
+    const scanPath = join(
+      PROJECT_ROOT,
+      '.claude/tools/matrix-generator/data/priority-scan-2025-07-21.json'
+    );
     this.scanData = JSON.parse(await readFile(scanPath, 'utf-8'));
 
     // Load relationship data
-    const relPath = join(PROJECT_ROOT, '.claude/tools/matrix-generator/data/relationships-2025-07-21.json');
+    const relPath = join(
+      PROJECT_ROOT,
+      '.claude/tools/matrix-generator/data/relationships-2025-07-21.json'
+    );
     this.relationshipData = JSON.parse(await readFile(relPath, 'utf-8'));
 
     console.log(chalk.blue('📚 Loaded data:'));
@@ -175,7 +181,7 @@ class ContentGenerator {
 
     // Generate diagonal cells (self-documentation)
     const diagonalCells = await this.generateDiagonalCells();
-    
+
     // Generate relationship cells
     const relationshipCells = await this.generateRelationshipCells();
 
@@ -185,16 +191,16 @@ class ContentGenerator {
 
   private async generateDiagonalCells(): Promise<DiagonalContent[]> {
     console.log(chalk.yellow('Generating diagonal cells (file summaries)...'));
-    
+
     const diagonalCells: DiagonalContent[] = [];
-    
+
     for (const file of this.scanData.files) {
       if (!file.exists) continue;
-      
+
       const cell = await this.generateDiagonalCell(file);
       diagonalCells.push(cell);
     }
-    
+
     console.log(chalk.green(`✓ Generated ${diagonalCells.length} diagonal cells`));
     return diagonalCells;
   }
@@ -202,9 +208,9 @@ class ContentGenerator {
   private async generateDiagonalCell(file: FileData): Promise<DiagonalContent> {
     const connections = this.countConnections(file.path);
     const primaryType = this.detectPrimaryType(file);
-    
+
     const summary = this.generateFileSummary(file, connections, primaryType);
-    
+
     const yaml = `---
 path: ${file.path}
 category: ${file.category}
@@ -222,46 +228,48 @@ koi:
     return {
       file: file.path,
       summary,
-      yaml
+      yaml,
     };
   }
 
   private generateFileSummary(file: FileData, connections: number, primaryType: string): string {
     const role = this.inferFileRole(file);
     const importance = this.calculateImportance(file, connections);
-    
-    return `This ${primaryType} file ${role} within the ${file.category} category. ` +
-           `With ${connections} connections to other files, it ${importance}. ` +
-           `The file ${this.describeTechnicalDetails(file)}.`;
+
+    return (
+      `This ${primaryType} file ${role} within the ${file.category} category. ` +
+      `With ${connections} connections to other files, it ${importance}. ` +
+      `The file ${this.describeTechnicalDetails(file)}.`
+    );
   }
 
   private inferFileRole(file: FileData): string {
     const path = file.path.toLowerCase();
-    
-    if (path.includes('runtime')) return "serves as the core runtime engine";
-    if (path.includes('types')) return "defines essential type definitions";
-    if (path.includes('index')) return "acts as a module entry point";
-    if (path.includes('config')) return "manages configuration settings";
-    if (path.includes('test')) return "provides test coverage";
-    if (path.includes('admin')) return "handles administrative interfaces";
-    if (path.includes('model')) return "defines data models";
-    if (path.endsWith('.md')) return "provides documentation";
-    if (path.endsWith('.json')) return "contains structured data";
-    
-    return "contributes specialized functionality";
+
+    if (path.includes('runtime')) return 'serves as the core runtime engine';
+    if (path.includes('types')) return 'defines essential type definitions';
+    if (path.includes('index')) return 'acts as a module entry point';
+    if (path.includes('config')) return 'manages configuration settings';
+    if (path.includes('test')) return 'provides test coverage';
+    if (path.includes('admin')) return 'handles administrative interfaces';
+    if (path.includes('model')) return 'defines data models';
+    if (path.endsWith('.md')) return 'provides documentation';
+    if (path.endsWith('.json')) return 'contains structured data';
+
+    return 'contributes specialized functionality';
   }
 
   private calculateImportance(file: FileData, connections: number): string {
-    if (connections >= 10) return "represents a critical architectural hub";
-    if (connections >= 7) return "plays a significant role in system integration";
-    if (connections >= 4) return "maintains moderate coupling with related components";
-    if (connections >= 2) return "exhibits focused responsibilities";
-    return "operates with minimal dependencies";
+    if (connections >= 10) return 'represents a critical architectural hub';
+    if (connections >= 7) return 'plays a significant role in system integration';
+    if (connections >= 4) return 'maintains moderate coupling with related components';
+    if (connections >= 2) return 'exhibits focused responsibilities';
+    return 'operates with minimal dependencies';
   }
 
   private describeTechnicalDetails(file: FileData): string {
     const details: string[] = [];
-    
+
     if (file.imports.length > 0) {
       details.push(`imports ${file.imports.length} dependencies`);
     }
@@ -271,25 +279,25 @@ koi:
     if (file.references.length > 0) {
       details.push(`references ${file.references.length} external files`);
     }
-    
+
     if (details.length === 0) {
-      return "maintains no explicit external dependencies";
+      return 'maintains no explicit external dependencies';
     }
-    
-    return details.join(", ");
+
+    return details.join(', ');
   }
 
   private async generateRelationshipCells(): Promise<CellContent[]> {
     console.log(chalk.yellow('\nGenerating relationship cells...'));
-    
+
     const cells: CellContent[] = [];
-    const strongRelationships = this.relationshipData.relationships.filter(r => r.strength >= 6);
-    
+    const strongRelationships = this.relationshipData.relationships.filter((r) => r.strength >= 6);
+
     for (const rel of strongRelationships) {
       const cell = await this.generateRelationshipCell(rel);
       cells.push(cell);
     }
-    
+
     console.log(chalk.green(`✓ Generated ${cells.length} relationship cells (strength >= 6)`));
     return cells;
   }
@@ -297,7 +305,7 @@ koi:
   private async generateRelationshipCell(rel: Relationship): Promise<CellContent> {
     const fromFile = this.findFile(rel.from);
     const toFile = this.findFile(rel.to);
-    
+
     if (!fromFile || !toFile) {
       throw new Error(`Files not found for relationship: ${rel.from} → ${rel.to}`);
     }
@@ -320,34 +328,49 @@ koi:
       metadata: {
         strength: rel.strength,
         types: rel.types,
-        lastGenerated: new Date().toISOString()
-      }
+        lastGenerated: new Date().toISOString(),
+      },
     };
   }
 
-  private generateSemantic(from: FileData, to: FileData, rel: Relationship, template: ContentTemplate): string {
+  private generateSemantic(
+    from: FileData,
+    to: FileData,
+    rel: Relationship,
+    template: ContentTemplate
+  ): string {
     const intro = `${from.path} ${this.selectPhrase(template.semantic)} ${to.path}`;
-    
+
     const explanation = this.explainSemanticRelationship(from, to, rel);
     const significance = this.describeSignificance(from, to, rel);
     const broader = this.placeinBroaderContext(from, to);
-    
+
     return `${intro}. ${explanation} ${significance} ${broader}`;
   }
 
-  private generateCognitive(from: FileData, to: FileData, rel: Relationship, template: ContentTemplate): string {
+  private generateCognitive(
+    from: FileData,
+    to: FileData,
+    rel: Relationship,
+    template: ContentTemplate
+  ): string {
     const pattern = this.selectPhrase(template.cognitive)
       .replace('[FROM]', from.path)
       .replace('[TO]', to.path);
-    
+
     const flow = this.describeCognitiveFlow(from, to, rel);
     const learning = this.describeLearningPath(from, to);
     const mental = this.describeMentalModel(from, to, rel);
-    
+
     return `${pattern}. ${flow} ${learning} ${mental}`;
   }
 
-  private generateImplementation(from: FileData, to: FileData, rel: Relationship, template: ContentTemplate): string {
+  private generateImplementation(
+    from: FileData,
+    to: FileData,
+    rel: Relationship,
+    template: ContentTemplate
+  ): string {
     const technical = this.selectPhrase(template.implementation)
       .replace('[FROM]', from.path)
       .replace('[TO]', to.path)
@@ -355,40 +378,40 @@ koi:
       .replace('[STRENGTH_WORD]', this.strengthToWord(rel.strength))
       .replace('[CATEGORY]', from.category)
       .replace('[PATTERN]', this.identifyPattern(rel));
-    
+
     const details = this.describeTechnicalSpecifics(from, to, rel);
     const implications = this.describeImplications(from, to, rel);
-    
+
     return `${technical}. ${details} ${implications}`;
   }
 
   // Helper methods
   private countConnections(filePath: string): number {
-    return this.relationshipData.relationships.filter(r => 
-      r.from === filePath || r.to === filePath
+    return this.relationshipData.relationships.filter(
+      (r) => r.from === filePath || r.to === filePath
     ).length;
   }
 
   private detectPrimaryType(file: FileData): string {
     const ext = file.path.split('.').pop()?.toLowerCase();
-    
+
     const typeMap = {
-      'ts': 'TypeScript',
-      'tsx': 'React TypeScript',
-      'js': 'JavaScript',
-      'jsx': 'React JavaScript',
-      'py': 'Python',
-      'md': 'Markdown documentation',
-      'json': 'JSON configuration',
-      'yaml': 'YAML configuration',
-      'yml': 'YAML configuration'
+      ts: 'TypeScript',
+      tsx: 'React TypeScript',
+      js: 'JavaScript',
+      jsx: 'React JavaScript',
+      py: 'Python',
+      md: 'Markdown documentation',
+      json: 'JSON configuration',
+      yaml: 'YAML configuration',
+      yml: 'YAML configuration',
     };
-    
+
     return typeMap[ext || ''] || 'text';
   }
 
   private findFile(path: string): FileData | undefined {
-    return this.scanData.files.find(f => f.path === path);
+    return this.scanData.files.find((f) => f.path === path);
   }
 
   private getPrimaryType(types: string[]): string {
@@ -404,18 +427,18 @@ koi:
   }
 
   private strengthToWord(strength: number): string {
-    if (strength >= 9) return "extremely tight";
-    if (strength >= 7) return "strong";
-    if (strength >= 5) return "moderate";
-    if (strength >= 3) return "loose";
-    return "minimal";
+    if (strength >= 9) return 'extremely tight';
+    if (strength >= 7) return 'strong';
+    if (strength >= 5) return 'moderate';
+    if (strength >= 3) return 'loose';
+    return 'minimal';
   }
 
   private identifyPattern(rel: Relationship): string {
-    if (rel.types.includes('import')) return "dependency injection";
-    if (rel.types.includes('functional')) return "functional cohesion";
-    if (rel.types.includes('structural')) return "modular organization";
-    return "architectural layering";
+    if (rel.types.includes('import')) return 'dependency injection';
+    if (rel.types.includes('functional')) return 'functional cohesion';
+    if (rel.types.includes('structural')) return 'modular organization';
+    return 'architectural layering';
   }
 
   // Complex generation helpers
@@ -466,7 +489,7 @@ koi:
   }
 
   private describeTechnicalSpecifics(from: FileData, to: FileData, rel: Relationship): string {
-    const evidence = rel.evidence.map(e => e.detail).join(', ');
+    const evidence = rel.evidence.map((e) => e.detail).join(', ');
     return `Specifically, ${evidence}.`;
   }
 
@@ -477,17 +500,20 @@ koi:
     return `This relationship suggests coordinated maintenance and testing strategies.`;
   }
 
-  private async exportContent(diagonalCells: DiagonalContent[], relationshipCells: CellContent[]): Promise<void> {
+  private async exportContent(
+    diagonalCells: DiagonalContent[],
+    relationshipCells: CellContent[]
+  ): Promise<void> {
     const output = {
       metadata: {
         generatedAt: new Date().toISOString(),
         totalFiles: diagonalCells.length,
         totalRelationships: relationshipCells.length,
         generator: 'matrix-generator/06-content-generator.ts',
-        version: '1.0.0'
+        version: '1.0.0',
       },
       diagonalCells,
-      relationshipCells
+      relationshipCells,
     };
 
     const outputPath = join(
@@ -511,14 +537,13 @@ interface ContentTemplate {
 // Main execution
 async function main() {
   const generator = new ContentGenerator();
-  
+
   try {
     await generator.loadData();
     await generator.generateContent();
-    
+
     console.log(chalk.blue.bold('\n🎉 Content Generation Complete!\n'));
     console.log(chalk.gray('Next step: Run the matrix assembler to create the final document.'));
-    
   } catch (error) {
     console.error(chalk.red('❌ Error:'), error);
     process.exit(1);

@@ -23,6 +23,7 @@ accuracy-concerns:
 This comprehensive research report provides a complete technical implementation strategy for indexing Regen Network's 15,000+ documents across multiple sources using ElizaOS. The solution combines TypeScript-based AI agents, modern vector databases, and hybrid LLM approaches to create an enterprise-grade knowledge management system.
 
 **Key Findings and Recommendations:**
+
 - **Architecture**: ElizaOS with Qdrant vector database (primary) and PostgreSQL + pgvector (fallback)
 - **Ingestion**: Apache Airflow orchestration with Unstructured.io for multi-source processing
 - **LLM Strategy**: Hybrid approach using local Qwen 2.5 7B (80% of queries) and Anthropic Claude (20% for complex tasks)
@@ -39,20 +40,20 @@ ElizaOS implements a sophisticated TypeScript-based framework with pluggable dat
 ```typescript
 // ElizaOS Configuration for Regen Network
 const regenElizaConfig = {
-  adapters: ["qdrant", "postgres"],
+  adapters: ['qdrant', 'postgres'],
   plugins: [
-    "@elizaos/plugin-knowledge",
-    "@elizaos-plugins/adapter-qdrant", 
-    "@elizaos-plugins/adapter-postgres"
+    '@elizaos/plugin-knowledge',
+    '@elizaos-plugins/adapter-qdrant',
+    '@elizaos-plugins/adapter-postgres',
   ],
   settings: {
     QDRANT_URL: process.env.QDRANT_URL,
-    QDRANT_COLLECTION: "regen_knowledge",
+    QDRANT_COLLECTION: 'regen_knowledge',
     POSTGRES_URI: process.env.POSTGRES_BACKUP_URI,
-    EMBEDDING_MODEL: "text-embedding-3-large",
-    VECTOR_DIMENSIONS: 1536
-  }
-}
+    EMBEDDING_MODEL: 'text-embedding-3-large',
+    VECTOR_DIMENSIONS: 1536,
+  },
+};
 ```
 
 The framework provides production-grade adapters for PostgreSQL, SQLite, MongoDB, Supabase, and PGLite (ElizaOS Documentation, 2025a), each implementing the `IDatabaseAdapter` interface for consistent data access patterns. According to the official documentation, "adapters handle connections, queries, migrations, and data operations for each specific database type" (ElizaOS Documentation, 2025b, para. 4).
@@ -89,9 +90,9 @@ CREATE TABLE regen_documents (
 );
 
 -- Optimized indexes
-CREATE INDEX idx_memories_embedding ON memories 
+CREATE INDEX idx_memories_embedding ON memories
   USING hnsw (embedding vector_cosine_ops);
-CREATE INDEX idx_regen_docs_credit_class ON regen_documents 
+CREATE INDEX idx_regen_docs_credit_class ON regen_documents
   USING gin(credit_class_refs);
 ```
 
@@ -109,7 +110,7 @@ class RegenDocument(models.Model):
     content = models.JSONField()
     embedding = VectorField(dimensions=1536)
     credit_class_refs = models.JSONField(default=list)
-    
+
     class Meta:
         db_table = 'regen_documents'
         managed = False  # Let ElizaOS manage schema
@@ -131,18 +132,18 @@ def create_regen_ingestion_dag():
         schedule_interval='@daily',
         catchup=False
     )
-    
+
     # Parallel source extraction
     extract_docs = PythonOperator(task_id='extract_documentation')
     extract_discord = PythonOperator(task_id='extract_discord')
     extract_github = PythonOperator(task_id='extract_github')
-    
+
     # Processing pipeline
     semantic_clustering = PythonOperator(task_id='semantic_clustering')
     deduplication = PythonOperator(task_id='deduplicate_content')
-    
+
     [extract_docs, extract_discord, extract_github] >> semantic_clustering >> deduplication
-    
+
     return dag
 ```
 
@@ -162,7 +163,7 @@ class RegenDocumentClustering:
             distance_threshold=0.5,
             linkage='ward'
         )
-    
+
     def cluster_documents(self, documents, batch_size=1000):
         # Process in batches for memory efficiency
         for i in range(0, len(documents), batch_size):
@@ -205,15 +206,16 @@ class ContradictionResolver:
 
 Based on performance benchmarks and ElizaOS compatibility (ElizaOS Documentation, 2025b; Qdrant Solutions, 2024):
 
-| Database | ElizaOS Support | Performance | Cost/Month | Recommendation |
-|----------|----------------|-------------|------------|----------------|
-| **Qdrant** | ✅ Native | <100ms, 95% accuracy | $500-1,500 | **Primary** |
-| **PostgreSQL + pgvector** | ✅ Native | <200ms, 90% accuracy | $300-800 | **Fallback** |
-| **Pinecone** | ❌ Custom | <50ms, 98% accuracy | $1,000-3,000 | High-end |
+| Database                  | ElizaOS Support | Performance          | Cost/Month   | Recommendation |
+| ------------------------- | --------------- | -------------------- | ------------ | -------------- |
+| **Qdrant**                | ✅ Native       | <100ms, 95% accuracy | $500-1,500   | **Primary**    |
+| **PostgreSQL + pgvector** | ✅ Native       | <200ms, 90% accuracy | $300-800     | **Fallback**   |
+| **Pinecone**              | ❌ Custom       | <50ms, 98% accuracy  | $1,000-3,000 | High-end       |
 
 ### 3.2 Embedding Strategy
 
 Multi-model approach optimized for content types (OpenAI, 2024; Hugging Face, 2024):
+
 - **Primary**: OpenAI text-embedding-3-large (1536 dimensions)
 - **Secondary**: all-mpnet-base-v2 (768 dimensions for cost optimization)
 - **Specialized**: code-embedding-ada-002 for GitHub content
@@ -245,11 +247,11 @@ Cost-optimized routing between local and cloud models (Gaianet Documentation, 20
 class HybridLLMRouter {
   async route(query: string, context: any): Promise<LLMResponse> {
     const complexity = await this.assessComplexity(query);
-    
+
     if (complexity < 0.7) {
-      return this.callLocalLLM(query, context);  // Qwen 2.5 7B
+      return this.callLocalLLM(query, context); // Qwen 2.5 7B
     } else {
-      return this.callCloudLLM(query, context);  // Claude Haiku
+      return this.callCloudLLM(query, context); // Claude Haiku
     }
   }
 }
@@ -258,6 +260,7 @@ class HybridLLMRouter {
 ### 4.2 Cost Analysis
 
 **Monthly estimates for 100,000 interactions** (Anthropic, 2025; Local LLM Benchmark Study, 2024):
+
 - **Pure Cloud (Claude Haiku)**: $112.50/month
 - **Pure Local (RTX 4090)**: $300/month (amortized hardware + operations)
 - **Hybrid (80/20)**: $325/month with better performance
@@ -281,16 +284,13 @@ ElizaOS character configuration for Regen Network (ElizaOS Documentation, 2025a)
 
 ```typescript
 const regenCharacter = {
-  name: "Regen Guide",
-  modelProvider: "hybrid",
-  plugins: [
-    "@elizaos/plugin-regen-registry",
-    "@elizaos/plugin-knowledge-base"
-  ],
+  name: 'Regen Guide',
+  modelProvider: 'hybrid',
+  plugins: ['@elizaos/plugin-regen-registry', '@elizaos/plugin-knowledge-base'],
   knowledgeBase: {
-    sources: ["regen_documents", "credit_classes"],
-    updateFrequency: "6h"
-  }
+    sources: ['regen_documents', 'credit_classes'],
+    updateFrequency: '6h',
+  },
 };
 ```
 
@@ -307,10 +307,10 @@ async def search_endpoint(
 ):
     # Expand query with related terms
     expanded = await query_expander.expand(q)
-    
+
     # Vector search with re-ranking
     results = await search_engine.search(expanded, filters, limit)
-    
+
     return {
         'answer': results.answer,
         'sources': results.sources,
@@ -327,7 +327,7 @@ class AdaptiveLearningSystem:
     def get_next_module(self, user_id):
         user_progress = await self.user_model.get_progress(user_id)
         mastery_prob = self._calculate_mastery_probability(user_progress)
-        
+
         if mastery_prob < 0.8:
             return self._select_remedial_module(user_progress)
         else:
@@ -344,13 +344,11 @@ Direct blockchain integration using Cosmos SDK (Cosmos Network, 2024; Bitquery, 
 class RegenRegistryIntegration {
   async syncCreditClasses() {
     const creditClasses = await this.registry.creditClasses.all();
-    
+
     for (const creditClass of creditClasses) {
       await this.indexCreditClass({
         id: creditClass.id,
-        methodology: await this.registry.methodologies.get(
-          creditClass.methodologyId
-        )
+        methodology: await this.registry.methodologies.get(creditClass.methodologyId),
       });
     }
   }
@@ -372,17 +370,17 @@ services:
       - QDRANT_URL=http://qdrant:6333
       - OLLAMA_URL=http://ollama:11434
     depends_on: [postgres, qdrant, ollama]
-    
+
   qdrant:
     image: qdrant/qdrant
     volumes: [qdrant_data:/qdrant/storage]
-    
+
   ollama:
     image: ollama/ollama
     deploy:
       resources:
         reservations:
-          devices: [{driver: nvidia, count: 1}]
+          devices: [{ driver: nvidia, count: 1 }]
 ```
 
 ### 6.3 Monitoring and Analytics
@@ -407,22 +405,26 @@ query_latency = Histogram(
 ## 7. Implementation Timeline and Cost Analysis
 
 ### Phase 1: Foundation (Weeks 1-4)
+
 - ElizaOS setup with Qdrant
 - Basic ingestion pipeline
 - Local LLM deployment
 - **Cost**: $6,000
 
 ### Phase 2: Multi-Source Integration (Weeks 5-8)
+
 - Discord, GitHub, forum connectors
 - Semantic clustering implementation
 - **Cost**: $2,000
 
 ### Phase 3: Advanced Features (Weeks 9-12)
+
 - Knowledge graph deployment
 - Educational system components
 - **Cost**: $3,000
 
 ### Phase 4: Production (Weeks 13-16)
+
 - Scale testing and optimization
 - Monitoring setup
 - **Cost**: $2,000
@@ -434,13 +436,16 @@ query_latency = Histogram(
 ## 8. Best Practices and Security Considerations
 
 ### Security Implementation
+
 Following CI/CD security best practices (CrowdStrike, 2024a, 2024b, 2024c; SentinelOne, 2024):
+
 - API rate limiting and authentication
 - Encrypted data transfers
 - Regular security audits
 - Privacy controls for user content
 
 ### Performance Optimization
+
 - Query result caching with TTL
 - Vector index optimization
 - Regular maintenance schedules
@@ -454,82 +459,82 @@ The phased implementation ensures manageable deployment risks while the modular 
 
 ## Bibliography
 
-Anthropic. (2025). *Claude API pricing and models*. Retrieved from https://www.anthropic.com/api
+Anthropic. (2025). _Claude API pricing and models_. Retrieved from https://www.anthropic.com/api
 
-Apache Software Foundation. (2024). *Apache Airflow documentation*. Retrieved from https://airflow.apache.org/docs/
+Apache Software Foundation. (2024). _Apache Airflow documentation_. Retrieved from https://airflow.apache.org/docs/
 
-Bitquery. (2024). *Cosmos API: Access blockchain data seamlessly*. Retrieved from https://bitquery.io/blog/cosmos-api
+Bitquery. (2024). _Cosmos API: Access blockchain data seamlessly_. Retrieved from https://bitquery.io/blog/cosmos-api
 
-CoinMarketCap. (2024). *Regen Network price today, REGEN to USD live price, marketcap and chart*. Retrieved from https://coinmarketcap.com/currencies/regen-network/
+CoinMarketCap. (2024). _Regen Network price today, REGEN to USD live price, marketcap and chart_. Retrieved from https://coinmarketcap.com/currencies/regen-network/
 
-Cosmos Network. (2024). *Cosmos SDK*. Retrieved from https://v1.cosmos.network/sdk
+Cosmos Network. (2024). _Cosmos SDK_. Retrieved from https://v1.cosmos.network/sdk
 
-Crawlbase. (2024). *Scraping GitHub repositories and profiles with Python*. Retrieved from https://crawlbase.com/blog/scraping-github-repositories-and-profiles/
+Crawlbase. (2024). _Scraping GitHub repositories and profiles with Python_. Retrieved from https://crawlbase.com/blog/scraping-github-repositories-and-profiles/
 
-CrowdStrike. (2024a). *10 CI/CD security best practices for your pipeline*. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
+CrowdStrike. (2024a). _10 CI/CD security best practices for your pipeline_. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
 
-CrowdStrike. (2024b). *Secure software development lifecycle*. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
+CrowdStrike. (2024b). _Secure software development lifecycle_. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
 
-CrowdStrike. (2024c). *Pipeline security automation*. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
+CrowdStrike. (2024c). _Pipeline security automation_. Retrieved from https://www.crowdstrike.com/en-us/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
 
-DataEngineering Weekly. (2024). *Optimizing large-scale document ingestion pipelines*. 12(3), 8-15.
+DataEngineering Weekly. (2024). _Optimizing large-scale document ingestion pipelines_. 12(3), 8-15.
 
-DataMam. (2024). *What is Discord scraping?*. Retrieved from https://datamam.com/how-to-scrape-discord/
+DataMam. (2024). _What is Discord scraping?_. Retrieved from https://datamam.com/how-to-scrape-discord/
 
-Datavid. (2024). *Knowledge graph visualization: A comprehensive guide [with examples]*. Retrieved from https://datavid.com/blog/knowledge-graph-visualization
+Datavid. (2024). _Knowledge graph visualization: A comprehensive guide [with examples]_. Retrieved from https://datavid.com/blog/knowledge-graph-visualization
 
-Discord Developer Portal. (2024). *Discord API documentation*. Retrieved from https://discord.com/developers/docs
+Discord Developer Portal. (2024). _Discord API documentation_. Retrieved from https://discord.com/developers/docs
 
-Django Central. (2024). *Using PostgreSQL with Django*. Retrieved from https://djangocentral.com/using-postgresql-with-django/
+Django Central. (2024). _Using PostgreSQL with Django_. Retrieved from https://djangocentral.com/using-postgresql-with-django/
 
-ElizaOS Contributors. (2025). *ElizaOS/eliza: Autonomous agents for everyone*. GitHub. Retrieved from https://github.com/elizaOS/eliza
+ElizaOS Contributors. (2025). _ElizaOS/eliza: Autonomous agents for everyone_. GitHub. Retrieved from https://github.com/elizaOS/eliza
 
-ElizaOS Documentation. (2025a). *Introduction to Eliza*. Retrieved from https://eliza.how/docs/intro
+ElizaOS Documentation. (2025a). _Introduction to Eliza_. Retrieved from https://eliza.how/docs/intro
 
-ElizaOS Documentation. (2025b). *Database adapters*. Retrieved from https://elizaos.github.io/eliza/docs/core/database/
+ElizaOS Documentation. (2025b). _Database adapters_. Retrieved from https://elizaos.github.io/eliza/docs/core/database/
 
-ElizaOS Documentation. (2025c). *Infrastructure guide*. Retrieved from https://elizaos.github.io/eliza/docs/advanced/infrastructure/
+ElizaOS Documentation. (2025c). _Infrastructure guide_. Retrieved from https://elizaos.github.io/eliza/docs/advanced/infrastructure/
 
-Enterprise DB. (2024). *How to use PostgreSQL with Django*. Retrieved from https://www.enterprisedb.com/postgres-tutorials/how-use-postgresql-django
+Enterprise DB. (2024). _How to use PostgreSQL with Django_. Retrieved from https://www.enterprisedb.com/postgres-tutorials/how-use-postgresql-django
 
-Gaianet Documentation. (2024). *Working with Eliza*. Retrieved from https://docs.gaianet.ai/tutorial/eliza/
+Gaianet Documentation. (2024). _Working with Eliza_. Retrieved from https://docs.gaianet.ai/tutorial/eliza/
 
-Hugging Face. (2024). *Sentence transformers documentation*. Retrieved from https://huggingface.co/sentence-transformers
+Hugging Face. (2024). _Sentence transformers documentation_. Retrieved from https://huggingface.co/sentence-transformers
 
-Johnson, M., Smith, K., & Lee, J. (2019). *Hierarchical clustering for document organization: A comparative study*. Journal of Information Science, 45(3), 321-338.
+Johnson, M., Smith, K., & Lee, J. (2019). _Hierarchical clustering for document organization: A comparative study_. Journal of Information Science, 45(3), 321-338.
 
-Knowledge Management Institute. (2023). *Best practices for multi-source knowledge base management*. KM Quarterly, 18(2), 45-62.
+Knowledge Management Institute. (2023). _Best practices for multi-source knowledge base management_. KM Quarterly, 18(2), 45-62.
 
-Local LLM Benchmark Study. (2024). *Performance and cost analysis of local language models*. AI Infrastructure Review, 7(4), 89-102.
+Local LLM Benchmark Study. (2024). _Performance and cost analysis of local language models_. AI Infrastructure Review, 7(4), 89-102.
 
-Neo4j, Inc. (2024). *GraphRAG: Combining knowledge graphs with retrieval augmented generation*. Retrieved from https://neo4j.com/developer/graphrag/
+Neo4j, Inc. (2024). _GraphRAG: Combining knowledge graphs with retrieval augmented generation_. Retrieved from https://neo4j.com/developer/graphrag/
 
-Ollama Documentation. (2024). *Ollama model library*. Retrieved from https://ollama.com/library
+Ollama Documentation. (2024). _Ollama model library_. Retrieved from https://ollama.com/library
 
-OpenAI. (2024). *OpenAI embeddings guide*. Retrieved from https://platform.openai.com/docs/guides/embeddings
+OpenAI. (2024). _OpenAI embeddings guide_. Retrieved from https://platform.openai.com/docs/guides/embeddings
 
-Qdrant Solutions. (2024). *Vector database performance benchmarks 2024*. Retrieved from https://qdrant.tech/benchmarks/
+Qdrant Solutions. (2024). _Vector database performance benchmarks 2024_. Retrieved from https://qdrant.tech/benchmarks/
 
-Qubstudio. (2024). *Best UX practices for search interface*. Retrieved from https://qubstudio.com/blog/best-ux-practices-for-search-interface/
+Qubstudio. (2024). _Best UX practices for search interface_. Retrieved from https://qubstudio.com/blog/best-ux-practices-for-search-interface/
 
-Regen Network Documentation. (2024a). *Overview | Regen Ledger documentation*. Retrieved from https://docs.regen.network/ledger/
+Regen Network Documentation. (2024a). _Overview | Regen Ledger documentation_. Retrieved from https://docs.regen.network/ledger/
 
-Regen Network Documentation. (2024b). *Ecocredit module | Regen Ledger documentation*. Retrieved from https://docs.regen.network/modules/ecocredit/
+Regen Network Documentation. (2024b). _Ecocredit module | Regen Ledger documentation_. Retrieved from https://docs.regen.network/modules/ecocredit/
 
-SentinelOne. (2024). *Top 20 CI/CD security best practices for businesses*. Retrieved from https://www.sentinelone.com/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
+SentinelOne. (2024). _Top 20 CI/CD security best practices for businesses_. Retrieved from https://www.sentinelone.com/cybersecurity-101/cloud-security/ci-cd-security-best-practices/
 
-Shaw, L., Chen, X., Rodriguez, M., & Team, E. (2025). *Eliza: A Web3 friendly AI agent operating system*. arXiv preprint arXiv:2501.06781. Retrieved from https://arxiv.org/html/2501.06781v1
+Shaw, L., Chen, X., Rodriguez, M., & Team, E. (2025). _Eliza: A Web3 friendly AI agent operating system_. arXiv preprint arXiv:2501.06781. Retrieved from https://arxiv.org/html/2501.06781v1
 
-Smart Sparrow. (2024). *What is adaptive learning?*. Retrieved from https://www.smartsparrow.com/what-is-adaptive-learning/
+Smart Sparrow. (2024). _What is adaptive learning?_. Retrieved from https://www.smartsparrow.com/what-is-adaptive-learning/
 
-The Odd DataGuy. (2024). *Exploring French podcast transcription with OpenAI Whisper*. Retrieved from https://www.the-odd-dataguy.com/2024/01/31/podcast-whisper/
+The Odd DataGuy. (2024). _Exploring French podcast transcription with OpenAI Whisper_. Retrieved from https://www.the-odd-dataguy.com/2024/01/31/podcast-whisper/
 
-Tom Sawyer Software. (2024). *Knowledge graph visualization tools*. Retrieved from https://blog.tomsawyer.com/knowledge-graph-visualization-tools
+Tom Sawyer Software. (2024). _Knowledge graph visualization tools_. Retrieved from https://blog.tomsawyer.com/knowledge-graph-visualization-tools
 
-Unstructured Documentation. (2024). *Overview - Unstructured*. Retrieved from https://docs.unstructured.io/open-source/introduction/overview
+Unstructured Documentation. (2024). _Overview - Unstructured_. Retrieved from https://docs.unstructured.io/open-source/introduction/overview
 
-Unstructured Technologies. (2024). *Unstructured-IO/unstructured: Convert documents to structured data effortlessly*. GitHub. Retrieved from https://github.com/Unstructured-IO/unstructured
+Unstructured Technologies. (2024). _Unstructured-IO/unstructured: Convert documents to structured data effortlessly_. GitHub. Retrieved from https://github.com/Unstructured-IO/unstructured
 
-Wikipedia. (2024). *Adaptive learning*. Retrieved from https://en.wikipedia.org/wiki/Adaptive_learning
+Wikipedia. (2024). _Adaptive learning_. Retrieved from https://en.wikipedia.org/wiki/Adaptive_learning
 
-Zhang, H., & Chen, L. (2023). *Advances in semantic document clustering for large-scale knowledge bases*. ACM Computing Surveys, 56(2), Article 24.
+Zhang, H., & Chen, L. (2023). _Advances in semantic document clustering for large-scale knowledge bases_. ACM Computing Surveys, 56(2), Article 24.

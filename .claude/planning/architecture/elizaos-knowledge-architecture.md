@@ -24,22 +24,22 @@ Through comprehensive analysis of ElizaOS's core systems—runtime execution, me
 ```typescript
 interface FragmentMetadata extends BaseMetadata {
   type: MemoryType.FRAGMENT;
-  documentId: UUID;     // Required: Links fragments to parent documents
-  position: number;     // Required: Enables document navigation
+  documentId: UUID; // Required: Links fragments to parent documents
+  position: number; // Required: Enables document navigation
 }
 
 interface Memory {
   content: {
     text: string;
-    source?: string;      // Citation tracking built-in
-    url?: string;         // External references ready
-  }
-  embedding?: number[];   // Vector search native
+    source?: string; // Citation tracking built-in
+    url?: string; // External references ready
+  };
+  embedding?: number[]; // Vector search native
   metadata: {
-    type: MemoryType;     // DOCUMENT, FRAGMENT, MESSAGE, CUSTOM
-    source: string;       // Provenance tracking  
-    scope: 'shared' | 'private' | 'room';  // Multi-agent knowledge sharing
-  }
+    type: MemoryType; // DOCUMENT, FRAGMENT, MESSAGE, CUSTOM
+    source: string; // Provenance tracking
+    scope: 'shared' | 'private' | 'room'; // Multi-agent knowledge sharing
+  };
 }
 ```
 
@@ -54,9 +54,9 @@ interface Memory {
 ```typescript
 interface Provider {
   name: string;
-  position?: number;     // Execution order (-10 to 100)
-  dynamic?: boolean;     // Auto-discoverable by agents
-  private?: boolean;     // Explicit invocation only
+  position?: number; // Execution order (-10 to 100)
+  dynamic?: boolean; // Auto-discoverable by agents
+  private?: boolean; // Explicit invocation only
   get: (runtime, message, state) => Promise<ProviderResult>;
 }
 
@@ -69,13 +69,14 @@ const providersToGet = Array.from(
 **Performance Discovery:** The runtime includes sophisticated provider caching (line 1392) and selective execution based on `dynamic` flags. Providers with `dynamic: true` are automatically available to agents, while others require explicit invocation.
 
 **Knowledge Integration Point:** The tri-part return structure enables clean separation:
+
 - `text`: Human-readable knowledge for agents
-- `data`: Structured citations and metadata for other providers  
+- `data`: Structured citations and metadata for other providers
 - `values`: State updates for decision-making
 
 **Critical Optimization:** Provider state composition includes caching per message ID, preventing redundant knowledge lookups within the same conversation context.
 
-### Production Database Architecture 
+### Production Database Architecture
 
 **Discovery from `pg/adapter.ts` and `embedding.ts`:** ElizaOS includes enterprise-grade database infrastructure:
 
@@ -87,13 +88,13 @@ export const embeddingTable = pgTable('embeddings', {
   dim768: vector('dim_768', { dimensions: VECTOR_DIMS.LARGE }),
   dim1024: vector('dim_1024', { dimensions: VECTOR_DIMS.XL }),
   dim1536: vector('dim_1536', { dimensions: VECTOR_DIMS.XXL }),
-  dim3072: vector('dim_3072', { dimensions: VECTOR_DIMS.XXXL })
+  dim3072: vector('dim_3072', { dimensions: VECTOR_DIMS.XXXL }),
 });
 
 // Production PostgreSQL with connection pooling (pg/adapter.ts)
 export class PgDatabaseAdapter extends BaseDrizzleAdapter {
   private manager: PostgresConnectionManager;
-  
+
   protected async withDatabase<T>(operation: () => Promise<T>): Promise<T> {
     return await this.withRetry(async () => {
       const client = await this.manager.getClient();
@@ -104,6 +105,7 @@ export class PgDatabaseAdapter extends BaseDrizzleAdapter {
 ```
 
 **Performance Optimization Discovery:** The system includes:
+
 - **Connection pooling** for concurrent agent operations
 - **Multi-dimensional embedding support** (6 different sizes)
 - **Automatic retry logic** for resilient production operation
@@ -131,6 +133,7 @@ if (entries.length > this.maxWorkingMemoryEntries) {
 ```
 
 **Automatic Knowledge Retention:** The system automatically manages memory based on:
+
 - **Recency** (timestamp-based sorting)
 - **Relevance** (importance scoring)
 - **Configurable limits** (default 50 entries, configurable via settings)
@@ -144,8 +147,9 @@ We need to transform 15,000+ Regen Network documents into living knowledge that 
 **The Trust Requirement:** When an agent says "VCS-001 methodology requires additionality proof," a user must be able to trace that claim back to section 2.3 of the actual methodology document. This requires KOI (Knowledge Organization Infrastructure) with Reference IDs (RIDs) creating unbreakable chains of trust.
 
 **The Performance Challenge:** With 5 agents serving 100,000+ interactions, the knowledge system must be:
+
 - **Concurrent**: Multiple agents accessing knowledge simultaneously
-- **Accurate**: 95% citation accuracy across all interactions  
+- **Accurate**: 95% citation accuracy across all interactions
 - **Fast**: Sub-2-second response times with 15,000+ document corpus
 - **Scalable**: Growth to 1,000,000+ interactions in Phase 2
 
@@ -159,21 +163,21 @@ We need to transform 15,000+ Regen Network documents into living knowledge that 
 // Knowledge Processing Service - extends native service pattern
 class RegenKnowledgeService implements Service {
   static serviceType = 'KNOWLEDGE_SERVICE' as const;
-  
+
   async processDocumentCorpus(sources: DocumentSource[]): Promise<ProcessingMetrics> {
     const results = await this.batchProcessor.processBatch(sources, {
-      batchSize: 100,  // Leverage connection pooling 
+      batchSize: 100, // Leverage connection pooling
       maxConcurrent: 5, // Don't overwhelm embedding API
-      retryStrategy: 'exponential' // Use built-in retry logic
+      retryStrategy: 'exponential', // Use built-in retry logic
     });
-    
+
     for (const batch of results) {
       // Use native memory creation with proper metadata
-      const memories = batch.fragments.map(fragment => ({
+      const memories = batch.fragments.map((fragment) => ({
         content: {
           text: fragment.content,
           source: fragment.sourceDocument,
-          url: fragment.registryUrl
+          url: fragment.registryUrl,
         },
         embedding: fragment.embedding, // Pre-generated with optimal dimension
         metadata: {
@@ -187,10 +191,10 @@ class RegenKnowledgeService implements Service {
           rid: this.generateKOIRid(fragment),
           confidence: fragment.confidence,
           knowledgeDomain: fragment.domain,
-          lastValidated: new Date().toISOString()
-        }
+          lastValidated: new Date().toISOString(),
+        },
       }));
-      
+
       // Batch creation using native adapter methods
       await this.runtime.adapter.createMemories(memories, 'knowledge');
     }
@@ -200,32 +204,32 @@ class RegenKnowledgeService implements Service {
 
 **Performance Optimization Discovery:** Using native batch operations and connection pooling, we can process 15,000 documents efficiently while maintaining data integrity through foreign key constraints.
 
-### Phase 2: Multi-Dimensional Embedding Strategy 
+### Phase 2: Multi-Dimensional Embedding Strategy
 
 **Discovery-Based Optimization:** Using ElizaOS's 6 embedding dimensions, we optimize by content type:
 
 ```typescript
 class EmbeddingOptimizer {
   static dimensionStrategy = {
-    factual: VECTOR_DIMS.SMALL,      // 384d - Facts, numbers, definitions
-    technical: VECTOR_DIMS.MEDIUM,   // 512d - Technical documentation  
-    narrative: VECTOR_DIMS.LARGE,    // 768d - Blog posts, stories
-    complex: VECTOR_DIMS.XL,         // 1024d - Governance, legal docs
-    semantic: VECTOR_DIMS.XXL,       // 1536d - Cross-domain relationships
-    full: VECTOR_DIMS.XXXL          // 3072d - Complete document context
+    factual: VECTOR_DIMS.SMALL, // 384d - Facts, numbers, definitions
+    technical: VECTOR_DIMS.MEDIUM, // 512d - Technical documentation
+    narrative: VECTOR_DIMS.LARGE, // 768d - Blog posts, stories
+    complex: VECTOR_DIMS.XL, // 1024d - Governance, legal docs
+    semantic: VECTOR_DIMS.XXL, // 1536d - Cross-domain relationships
+    full: VECTOR_DIMS.XXXL, // 3072d - Complete document context
   };
-  
+
   async optimizeFragmentEmbedding(fragment: DocumentFragment): Promise<EmbeddingResult> {
     const dimension = this.selectDimension(fragment);
     const embedding = await this.runtime.useModel(ModelType.TEXT_EMBEDDING, {
       text: fragment.content,
-      dimensions: dimension
+      dimensions: dimension,
     });
-    
+
     return {
       embedding,
       dimension,
-      performance: this.measureQueryPerformance(dimension)
+      performance: this.measureQueryPerformance(dimension),
     };
   }
 }
@@ -239,35 +243,36 @@ class EmbeddingOptimizer {
 
 ```typescript
 class RegenKnowledgeProvider implements Provider {
-  name = "regenKnowledge";
-  position = 0;        // Foundational knowledge (executed first)
-  dynamic = true;      // Auto-discoverable by agents
-  
+  name = 'regenKnowledge';
+  position = 0; // Foundational knowledge (executed first)
+  dynamic = true; // Auto-discoverable by agents
+
   async get(runtime: IAgentRuntime, message: Memory, state: State): Promise<ProviderResult> {
     // Leverage native caching - check if we've already processed this query
     const cacheKey = `knowledge_${message.id}`;
     const cached = await runtime.getCache(cacheKey);
     if (cached) return cached;
-    
+
     // Use native searchMemories with optimized embedding
     const embedding = await runtime.useModel(ModelType.TEXT_EMBEDDING, {
-      text: message.content.text
+      text: message.content.text,
     });
-    
+
     const knowledgeMemories = await runtime.searchMemories({
       embedding,
       match_threshold: 0.8,
-      count: 10,  // Get more results for better context
+      count: 10, // Get more results for better context
       tableName: 'knowledge',
-      unique: true  // Prevent duplicate fragments
+      unique: true, // Prevent duplicate fragments
     });
-    
+
     // Agent-specific filtering based on scope
-    const agentKnowledge = knowledgeMemories.filter(memory => 
-      memory.metadata.scope === 'shared' || 
-      memory.metadata.scope === runtime.character.knowledgeScope
+    const agentKnowledge = knowledgeMemories.filter(
+      (memory) =>
+        memory.metadata.scope === 'shared' ||
+        memory.metadata.scope === runtime.character.knowledgeScope
     );
-    
+
     const result = {
       text: this.formatKnowledgeForAgent(agentKnowledge, runtime.character.name),
       data: {
@@ -277,16 +282,16 @@ class RegenKnowledgeProvider implements Provider {
         searchMetrics: {
           totalFound: knowledgeMemories.length,
           agentRelevant: agentKnowledge.length,
-          averageConfidence: this.avgConfidence(agentKnowledge)
-        }
+          averageConfidence: this.avgConfidence(agentKnowledge),
+        },
       },
       values: {
         hasKnowledge: agentKnowledge.length > 0,
         knowledgeQuality: this.assessQuality(agentKnowledge),
-        needsMoreContext: agentKnowledge.length < 3
-      }
+        needsMoreContext: agentKnowledge.length < 3,
+      },
     };
-    
+
     // Cache result for this message (leverages native caching)
     await runtime.setCache(cacheKey, result);
     return result;
@@ -313,12 +318,14 @@ This isn't just metadata—it's a semantic address system. Related knowledge sha
 ElizaOS already solves the performance problems we anticipated:
 
 ### Database Architecture
+
 - **JSONB Storage**: Flexible metadata with indexed queries
-- **Composite Indexes**: Optimized for memory search patterns  
+- **Composite Indexes**: Optimized for memory search patterns
 - **Embedding Dimensions**: Built-in support (384-3072 dimensions)
 - **Batch Operations**: Multi-memory operations for efficiency
 
 ### Memory Lifecycle Management
+
 - **Working Memory Limits**: Automatic cleanup (configurable, default 50 entries)
 - **Importance Scoring**: Memory retention based on relevance
 - **Deduplication**: Prevents redundant storage
@@ -327,12 +334,14 @@ ElizaOS already solves the performance problems we anticipated:
 ## Production Implementation Roadmap
 
 ### Week 1: Foundation with Native Infrastructure
+
 **Day 1-2: Knowledge Service Architecture**
+
 ```typescript
 // 1. Implement RegenKnowledgeService extending native patterns
 class RegenKnowledgeService implements Service {
   static serviceType = 'KNOWLEDGE_SERVICE' as const;
-  
+
   async initialize(): Promise<void> {
     // Setup with discovered database optimizations
     await this.setupMultiDimensionalEmbeddings();
@@ -343,30 +352,35 @@ class RegenKnowledgeService implements Service {
 ```
 
 **Day 3-4: Document Processing Pipeline**
+
 - Process 100 sample documents using native batch operations
-- Test multi-dimensional embedding optimization 
+- Test multi-dimensional embedding optimization
 - Validate `FragmentMetadata` with `documentId` and `position`
 - Verify KOI RID generation and storage
 
 **Day 5-7: Provider Integration**
+
 ```typescript
 // Test knowledge provider with caching optimization
 const provider = new RegenKnowledgeProvider();
 await runtime.registerProvider(provider);
 
 // Validate agent queries use native searchMemories
-const testQuery = "What is additionality in VCS methodologies?";
+const testQuery = 'What is additionality in VCS methodologies?';
 // Expected: Sub-2-second response with RID citations
 ```
 
 ### Week 2: Scale and Performance Optimization
+
 **Day 8-10: Full Corpus Processing**
+
 - Process all 15,000 documents using discovered batch strategies
 - Leverage connection pooling for concurrent operations
 - Use multi-dimensional embedding strategy by content type
 - Monitor performance with native retry logic
 
 **Day 11-12: Multi-Agent Knowledge Distribution**
+
 ```typescript
 // Configure scope-based knowledge sharing
 const agentConfigs = {
@@ -374,11 +388,12 @@ const agentConfigs = {
   narrative: { scope: 'shared', domains: ['narrative', 'community'] },
   politician: { scope: 'shared', domains: ['governance', 'economics'] },
   advocate: { scope: 'shared', domains: ['registry', 'projects'] },
-  voiceOfNature: { scope: 'private', domains: ['philosophy', 'indigenous'] }
+  voiceOfNature: { scope: 'private', domains: ['philosophy', 'indigenous'] },
 };
 ```
 
 **Day 13-14: Performance Validation**
+
 - Test concurrent queries from multiple agents
 - Validate sub-2-second response times with full corpus
 - Verify 95% citation accuracy using RID tracking
@@ -391,29 +406,33 @@ const agentConfigs = {
 **Citation Integration**: The tri-part provider return (values/data/text) naturally supports citations—structured data flows through `data`, readable content through `text`.
 
 **Citation Formatting**: Different audiences need different citation styles:
+
 ```typescript
 // For technical users
-"Carbon sequestration rate: 3.67 tCO2e/ha/yr [koi:registry:vcs-001:v2:calculations]"
+'Carbon sequestration rate: 3.67 tCO2e/ha/yr [koi:registry:vcs-001:v2:calculations]';
 
 // For general users
-"This forest removes about 3.67 tons of CO2 yearly per hectare (Source: Verified Carbon Standard)"
+'This forest removes about 3.67 tons of CO2 yearly per hectare (Source: Verified Carbon Standard)';
 ```
 
 ## Architecture Decision Record
 
 ### Why Build on Memory System?
+
 - Already handles embeddings and metadata
 - Multi-agent scoping built in
 - Search infrastructure exists
 - Minimal new code, maximum capability
 
 ### Why Providers for Dynamic Data?
+
 - Clean separation of static/dynamic
 - Composable (can add providers without touching core)
 - Natural caching points
 - ElizaOS native pattern
 
 ### Why KOI for Citations?
+
 - Semantic addressing not just links
 - Enables knowledge graph navigation
 - Version tracking included
@@ -424,6 +443,7 @@ const agentConfigs = {
 An agent receives: "How does additionality work in forest projects?"
 
 The system:
+
 1. Searches knowledge memories for "additionality + forest"
 2. Finds fragments from VCS, Gold Standard, and CAR methodologies
 3. Ranks by relevance and confidence
@@ -434,12 +454,14 @@ The response: "Forest projects must demonstrate additionality by proving the car
 
 ## Next Engineering Steps
 
-1. **Prototype the Knowledge Loader** 
+1. **Prototype the Knowledge Loader**
+
    - Start with markdown (most Regen docs)
    - Test with 10 documents
    - Verify RID generation
 
 2. **Build the Provider**
+
    - Basic knowledge search
    - Registry API integration
    - Citation extraction
@@ -452,6 +474,7 @@ The response: "Forest projects must demonstrate additionality by proving the car
 ## The Bigger Picture
 
 We're not just building a Q&A system. We're creating agents that can:
+
 - Cite their sources (build trust)
 - Learn from corrections (improve over time)
 - Share knowledge (collaborative intelligence)
@@ -486,12 +509,14 @@ This architecture turns ElizaOS from a chat platform into a knowledge platform. 
 ### For Implementation Teams
 
 **Start Here:**
+
 1. **Memory System First**: Use `FragmentMetadata` with `documentId`/`position` for document navigation
 2. **Provider Integration**: Leverage positioned execution and native caching for knowledge delivery
 3. **Database Optimization**: Use multi-dimensional embeddings and connection pooling for scale
 4. **Testing Strategy**: Validate citation accuracy and response times from day one
 
 **Critical Success Factors:**
+
 - Trust native ElizaOS patterns—they're more sophisticated than they appear
 - Use multi-dimensional embeddings to optimize by content type
 - Leverage scope system for agent-specific knowledge distribution
@@ -501,7 +526,7 @@ This architecture turns ElizaOS from a chat platform into a knowledge platform. 
 
 ---
 
-*"The most powerful architectures are those that complete the vision already encoded in the system's design."*
+_"The most powerful architectures are those that complete the vision already encoded in the system's design."_
 
 ## Next Steps
 

@@ -226,1549 +226,1063 @@
       "source": "packages/core/src/runtime.ts",
       "target": "packages/core/src/index.ts",
       "value": 10,
-      "types": [
-        "import",
-        "structural",
-        "functional"
-      ]
+      "types": ["import", "structural", "functional"]
     },
     {
       "source": "packages/core/src/runtime.ts",
       "target": "packages/core/src/types/index.ts",
       "value": 10,
-      "types": [
-        "import",
-        "structural",
-        "functional"
-      ]
+      "types": ["import", "structural", "functional"]
     },
     {
       "source": "packages/core/src/database.ts",
       "target": "packages/core/src/types/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/core/src/actions.ts",
       "target": "packages/core/src/types/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/core/src/services.ts",
       "target": "packages/core/src/types/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/server/src/index.ts",
       "target": "packages/core/src/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/server/src/socketio/index.ts",
       "target": "packages/core/src/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/server/src/socketio/index.ts",
       "target": "packages/server/src/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/server/src/services/message.ts",
       "target": "packages/core/src/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/server/src/services/message.ts",
       "target": "packages/server/src/bus.ts",
       "value": 10,
-      "types": [
-        "import",
-        "structural",
-        "functional"
-      ]
+      "types": ["import", "structural", "functional"]
     },
     {
       "source": "packages/server/src/api/index.ts",
       "target": "packages/core/src/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/server/src/api/index.ts",
       "target": "packages/server/src/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/server/src/api/index.ts",
       "target": "packages/server/src/socketio/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/client/src/components/chat.tsx",
       "target": "packages/core/src/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/client/src/hooks/use-socket-chat.ts",
       "target": "packages/core/src/index.ts",
       "value": 10,
-      "types": [
-        "import"
-      ]
+      "types": ["import"]
     },
     {
       "source": "packages/core/src/types/index.ts",
       "target": "packages/core/src/index.ts",
       "value": 10,
-      "types": [
-        "pattern",
-        "structural",
-        "functional",
-        "hidden"
-      ]
+      "types": ["pattern", "structural", "functional", "hidden"]
     },
     {
       "source": "CLAUDE.md",
       "target": "README.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": "llms.txt",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": "CHANGELOG.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".env",
       "target": "package.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".env",
       "target": "tsconfig.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".env",
       "target": "turbo.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".env",
       "target": "docker-compose.yaml",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".env",
       "target": "eliza.postman.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "package.json",
       "target": "README.md",
       "value": 10,
-      "types": [
-        "structural",
-        "hidden"
-      ]
+      "types": ["structural", "hidden"]
     },
     {
       "source": "package.json",
       "target": "tsconfig.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "package.json",
       "target": "turbo.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "package.json",
       "target": "docker-compose.yaml",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "package.json",
       "target": "eliza.postman.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": "llms.txt",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": "CHANGELOG.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": "CHANGELOG.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "tsconfig.json",
       "target": "turbo.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "tsconfig.json",
       "target": "docker-compose.yaml",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "tsconfig.json",
       "target": "eliza.postman.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "turbo.json",
       "target": "docker-compose.yaml",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "turbo.json",
       "target": "eliza.postman.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "docker-compose.yaml",
       "target": "eliza.postman.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/journal/00-index.md",
       "target": ".claude/journal/19-day2-elizaos-analysis.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/journal/00-index.md",
       "target": ".claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/journal/00-index.md",
       "target": ".claude/journal/21-taxonomy-matrix-vision-and-meta-review.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/journal/00-index.md",
       "target": ".claude/journal/18-database-integration-breakthrough.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/journal/19-day2-elizaos-analysis.md",
       "target": ".claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/journal/19-day2-elizaos-analysis.md",
       "target": ".claude/journal/21-taxonomy-matrix-vision-and-meta-review.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/journal/19-day2-elizaos-analysis.md",
       "target": ".claude/journal/18-database-integration-breakthrough.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
       "target": ".claude/journal/21-taxonomy-matrix-vision-and-meta-review.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
       "target": ".claude/journal/18-database-integration-breakthrough.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/journal/21-taxonomy-matrix-vision-and-meta-review.md",
       "target": ".claude/journal/18-database-integration-breakthrough.md",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/runtime.ts",
       "target": "packages/core/src/database.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/runtime.ts",
       "target": "packages/core/src/actions.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/runtime.ts",
       "target": "packages/core/src/services.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/runtime.ts",
       "target": "packages/core/src/prompts.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/database.ts",
       "target": "packages/core/src/index.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/database.ts",
       "target": "packages/core/src/actions.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/database.ts",
       "target": "packages/core/src/services.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/database.ts",
       "target": "packages/core/src/prompts.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/index.ts",
       "target": "packages/core/src/actions.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/index.ts",
       "target": "packages/core/src/services.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/index.ts",
       "target": "packages/core/src/prompts.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/actions.ts",
       "target": "packages/core/src/services.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/actions.ts",
       "target": "packages/core/src/prompts.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/services.ts",
       "target": "packages/core/src/prompts.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/server/src/index.ts",
       "target": "packages/server/src/socketio/index.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional",
-        "hidden"
-      ]
+      "types": ["structural", "functional", "hidden"]
     },
     {
       "source": "packages/server/src/index.ts",
       "target": "packages/server/src/api/index.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional",
-        "hidden"
-      ]
+      "types": ["structural", "functional", "hidden"]
     },
     {
       "source": "packages/server/src/index.ts",
       "target": "packages/server/src/bus.ts",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "django_admin/elizaos/models.py",
       "target": "django_admin/elizaos/admin.py",
       "value": 10,
-      "types": [
-        "structural",
-        "hidden"
-      ]
+      "types": ["structural", "hidden"]
     },
     {
       "source": "characters/facilitator.character.json",
       "target": "characters/narrative.character.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "characters/facilitator.character.json",
       "target": "characters/regenai.character.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "characters/narrative.character.json",
       "target": "characters/regenai.character.json",
       "value": 10,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/types/index.ts",
       "target": "packages/server/src/index.ts",
       "value": 9,
-      "types": [
-        "pattern",
-        "hidden"
-      ]
+      "types": ["pattern", "hidden"]
     },
     {
       "source": "packages/core/src/types/index.ts",
       "target": "packages/server/src/socketio/index.ts",
       "value": 9,
-      "types": [
-        "pattern",
-        "hidden"
-      ]
+      "types": ["pattern", "hidden"]
     },
     {
       "source": "packages/core/src/types/index.ts",
       "target": "packages/server/src/api/index.ts",
       "value": 9,
-      "types": [
-        "pattern",
-        "hidden"
-      ]
+      "types": ["pattern", "hidden"]
     },
     {
       "source": "packages/core/src/types/index.ts",
       "target": "packages/core/src/database.ts",
       "value": 9,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/types/index.ts",
       "target": "packages/core/src/actions.ts",
       "value": 9,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/types/index.ts",
       "target": "packages/core/src/services.ts",
       "value": 9,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/core/src/types/index.ts",
       "target": "packages/core/src/prompts.ts",
       "value": 9,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": "CLAUDE.md",
       "value": 8,
-      "types": [
-        "reference"
-      ]
+      "types": ["reference"]
     },
     {
       "source": "README.md",
       "target": ".claude/diagnostics/README.md",
       "value": 8,
-      "types": [
-        "structural",
-        "functional",
-        "hidden"
-      ]
+      "types": ["structural", "functional", "hidden"]
     },
     {
       "source": "packages/server/src/socketio/index.ts",
       "target": "packages/server/src/api/index.ts",
       "value": 8,
-      "types": [
-        "structural",
-        "functional",
-        "hidden"
-      ]
+      "types": ["structural", "functional", "hidden"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".env",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "CLAUDE.md",
       "target": "package.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "CLAUDE.md",
       "target": "tsconfig.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "CLAUDE.md",
       "target": "turbo.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "CLAUDE.md",
       "target": "docker-compose.yaml",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "CLAUDE.md",
       "target": "eliza.postman.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": ".env",
       "target": "README.md",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": ".env",
       "target": "llms.txt",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": ".env",
       "target": "CHANGELOG.md",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "package.json",
       "target": "llms.txt",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "package.json",
       "target": "CHANGELOG.md",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "README.md",
       "target": "tsconfig.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "README.md",
       "target": "turbo.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "README.md",
       "target": "docker-compose.yaml",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "README.md",
       "target": "eliza.postman.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "llms.txt",
       "target": "tsconfig.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "llms.txt",
       "target": "turbo.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "llms.txt",
       "target": "docker-compose.yaml",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "llms.txt",
       "target": "eliza.postman.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "tsconfig.json",
       "target": "CHANGELOG.md",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "turbo.json",
       "target": "CHANGELOG.md",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "docker-compose.yaml",
       "target": "CHANGELOG.md",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "CHANGELOG.md",
       "target": "eliza.postman.json",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": ".claude/planning/current-priorities.md",
       "target": ".claude/planning/architecture/elizaos-knowledge-architecture.md",
       "value": 7,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/planning/current-priorities.md",
       "target": ".claude/planning/features/character-development-framework.md",
       "value": 7,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/planning/current-priorities.md",
       "target": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "value": 7,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/diagnostics/01-investigate-group-chat.js",
       "target": ".claude/diagnostics/README.md",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "packages/server/src/index.ts",
       "target": "packages/server/src/services/message.ts",
       "value": 7,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/server/src/socketio/index.ts",
       "target": "packages/server/src/bus.ts",
       "value": 7,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/server/src/api/index.ts",
       "target": "packages/server/src/bus.ts",
       "value": 7,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "django_admin/manage.py",
       "target": "django_admin/README.md",
       "value": 7,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "packages/client/src/components/chat.tsx",
       "target": "packages/client/src/App.tsx",
       "value": 7,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/client/src/hooks/use-socket-chat.ts",
       "target": "packages/client/src/App.tsx",
       "value": 7,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": "django_admin/README.md",
       "value": 6,
-      "types": [
-        "functional",
-        "hidden"
-      ]
+      "types": ["functional", "hidden"]
     },
     {
       "source": ".claude/diagnostics/README.md",
       "target": "django_admin/README.md",
       "value": 6,
-      "types": [
-        "functional",
-        "hidden"
-      ]
+      "types": ["functional", "hidden"]
     },
     {
       "source": "packages/client/src/components/chat.tsx",
       "target": "django_admin/elizaos/models.py",
       "value": 6,
-      "types": [
-        "hidden"
-      ]
+      "types": ["hidden"]
     },
     {
       "source": "packages/client/src/App.tsx",
       "target": "django_admin/elizaos/models.py",
       "value": 6,
-      "types": [
-        "hidden"
-      ]
+      "types": ["hidden"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".claude/journal/00-index.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".claude/journal/19-day2-elizaos-analysis.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".claude/journal/21-taxonomy-matrix-vision-and-meta-review.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".claude/journal/18-database-integration-breakthrough.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".claude/planning/current-priorities.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".claude/planning/architecture/elizaos-knowledge-architecture.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".claude/planning/features/character-development-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CLAUDE.md",
       "target": ".claude/diagnostics/README.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "package.json",
       "target": ".claude/diagnostics/README.md",
       "value": 5,
-      "types": [
-        "structural",
-        "hidden"
-      ]
+      "types": ["structural", "hidden"]
     },
     {
       "source": "README.md",
       "target": ".claude/journal/00-index.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": ".claude/journal/19-day2-elizaos-analysis.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": ".claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": ".claude/journal/21-taxonomy-matrix-vision-and-meta-review.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": ".claude/journal/18-database-integration-breakthrough.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": ".claude/planning/current-priorities.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": ".claude/planning/architecture/elizaos-knowledge-architecture.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": ".claude/planning/features/character-development-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "README.md",
       "target": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": ".claude/journal/00-index.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": ".claude/journal/19-day2-elizaos-analysis.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": ".claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": ".claude/journal/21-taxonomy-matrix-vision-and-meta-review.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": ".claude/journal/18-database-integration-breakthrough.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": ".claude/planning/current-priorities.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": ".claude/planning/architecture/elizaos-knowledge-architecture.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": ".claude/planning/features/character-development-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "llms.txt",
       "target": ".claude/diagnostics/README.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CHANGELOG.md",
       "target": ".claude/journal/00-index.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CHANGELOG.md",
       "target": ".claude/journal/19-day2-elizaos-analysis.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CHANGELOG.md",
       "target": ".claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CHANGELOG.md",
       "target": ".claude/journal/21-taxonomy-matrix-vision-and-meta-review.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CHANGELOG.md",
       "target": ".claude/journal/18-database-integration-breakthrough.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CHANGELOG.md",
       "target": ".claude/planning/current-priorities.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CHANGELOG.md",
       "target": ".claude/planning/architecture/elizaos-knowledge-architecture.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CHANGELOG.md",
       "target": ".claude/planning/features/character-development-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CHANGELOG.md",
       "target": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "CHANGELOG.md",
       "target": ".claude/diagnostics/README.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/planning/architecture/elizaos-knowledge-architecture.md",
       "target": ".claude/planning/features/character-development-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/planning/architecture/elizaos-knowledge-architecture.md",
       "target": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/planning/features/character-development-framework.md",
       "target": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/server/src/socketio/index.ts",
       "target": "packages/server/src/services/message.ts",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/server/src/services/message.ts",
       "target": "packages/server/src/api/index.ts",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": "packages/client/src/components/chat.tsx",
       "target": "packages/client/src/hooks/use-socket-chat.ts",
       "value": 5,
-      "types": [
-        "structural",
-        "functional"
-      ]
+      "types": ["structural", "functional"]
     },
     {
       "source": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "target": "packages/core/src/runtime.ts",
       "value": 5,
-      "types": [
-        "functional"
-      ]
+      "types": ["functional"]
     },
     {
       "source": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "target": "packages/core/src/types/index.ts",
       "value": 5,
-      "types": [
-        "functional"
-      ]
+      "types": ["functional"]
     },
     {
       "source": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "target": "packages/core/src/database.ts",
       "value": 5,
-      "types": [
-        "functional"
-      ]
+      "types": ["functional"]
     },
     {
       "source": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "target": "packages/core/src/index.ts",
       "value": 5,
-      "types": [
-        "functional"
-      ]
+      "types": ["functional"]
     },
     {
       "source": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "target": "packages/core/src/actions.ts",
       "value": 5,
-      "types": [
-        "functional"
-      ]
+      "types": ["functional"]
     },
     {
       "source": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "target": "packages/core/src/services.ts",
       "value": 5,
-      "types": [
-        "functional"
-      ]
+      "types": ["functional"]
     },
     {
       "source": ".claude/planning/roadmaps/milestone-1-core-agent-framework.md",
       "target": "packages/core/src/prompts.ts",
       "value": 5,
-      "types": [
-        "functional"
-      ]
+      "types": ["functional"]
     },
     {
       "source": "packages/core/src/types/index.ts",
       "target": ".claude/journal/00-index.md",
       "value": 4,
-      "types": [
-        "pattern"
-      ]
+      "types": ["pattern"]
     },
     {
       "source": "django_admin/elizaos/models.py",
       "target": "django_admin/manage.py",
       "value": 4,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "django_admin/elizaos/models.py",
       "target": "django_admin/README.md",
       "value": 4,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "django_admin/elizaos/admin.py",
       "target": "django_admin/manage.py",
       "value": 4,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "django_admin/elizaos/admin.py",
       "target": "django_admin/README.md",
       "value": 4,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "django_admin/eliza_admin/settings.py",
       "target": "django_admin/manage.py",
       "value": 4,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "django_admin/eliza_admin/settings.py",
       "target": "django_admin/README.md",
       "value": 4,
-      "types": [
-        "structural"
-      ]
+      "types": ["structural"]
     },
     {
       "source": "README.md",
       "target": "package.json",
       "value": 8,
-      "types": [
-        "reference",
-        "functional"
-      ]
+      "types": ["reference", "functional"]
     }
   ]
 }
