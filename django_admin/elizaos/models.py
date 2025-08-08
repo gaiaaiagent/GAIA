@@ -272,9 +272,8 @@ class Channel(models.Model):
 
 class ChannelParticipant(models.Model):
     """Links participants to channels"""
-    channel_id = models.TextField()
+    channel_id = models.TextField(primary_key=True)
     user_id = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         managed = False
