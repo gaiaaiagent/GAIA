@@ -5,7 +5,7 @@ Django admin interface for viewing ElizaOS database tables, tracking interaction
 ## Features
 
 - **Agent Management**: View all agents and their activity
-- **Conversation History**: Browse memories, fragments, and interactions  
+- **Conversation History**: Browse memories, fragments, and interactions
 - **Contract Compliance**: Track progress against 100,000 interactions and 15,000 documents
 - **Real-time Metrics**: Interaction counts, document indexing status
 - **Database Visibility**: All ElizaOS tables accessible through web interface
@@ -35,6 +35,7 @@ python manage.py runserver
 The admin interface provides access to:
 
 ### Core ElizaOS Tables
+
 - **agents**: Agent instances
 - **accounts**: User accounts and identities
 - **rooms**: Conversation rooms/channels
@@ -46,12 +47,14 @@ The admin interface provides access to:
 - **logs**: System logs and events
 
 ### RegenAI Contract Tables
+
 - **interaction_metrics**: Tracks interactions for compliance
 - **document_index**: Indexed documents with KOI metadata
 
 ## Contract Compliance Dashboard
 
 Track progress against contract requirements:
+
 - **100,000 interactions** in 60 days
 - **15,000 documents** processed
 - **5 agents** deployed
@@ -71,7 +74,7 @@ The admin interface connects to the same PostgreSQL database as ElizaOS:
 ```typescript
 // ElizaOS database config
 const db = new SqliteDatabaseAdapter({
-  connectionString: process.env.POSTGRES_URL
+  connectionString: process.env.POSTGRES_URL,
 });
 ```
 
@@ -85,18 +88,21 @@ const db = new SqliteDatabaseAdapter({
 ## Troubleshooting
 
 ### Database Connection Issues
+
 ```bash
 # Test database connection
 python manage.py dbshell
 ```
 
 ### Missing Tables
+
 ```bash
 # Inspect database schema
 python manage.py inspectdb > schema_check.py
 ```
 
 ### Performance
+
 ```bash
 # Run with debug toolbar for query analysis
 pip install django-debug-toolbar
