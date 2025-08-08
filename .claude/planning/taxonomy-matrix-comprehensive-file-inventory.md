@@ -1,7 +1,9 @@
 # Comprehensive Taxonomy Matrix File Inventory
 
 ## Overview
+
 This inventory includes:
+
 - ALL root files
 - ALL .claude/ files (90+ files)
 - ~20 TypeScript modules from packages
@@ -14,6 +16,7 @@ Total: ~150+ files for a comprehensive matrix
 ## Priority Scoring Criteria
 
 Each file is scored 1-10 on these dimensions:
+
 - **Architectural Impact** (AI): How central to system architecture
 - **Knowledge Density** (KD): How much understanding it provides
 - **Development Frequency** (DF): How often it's modified/referenced
@@ -25,54 +28,67 @@ Each file is scored 1-10 on these dimensions:
 ## Category 1: Root Files (Score 40-60)
 
 1. **CLAUDE.md** (Score: 58)
+
    - Path: `/CLAUDE.md`
    - Role: Living system guide for AI participation
 
 2. **.env** (Score: 56)
+
    - Path: `/.env`
    - Role: Environment configuration
 
 3. **package.json** (Score: 54)
+
    - Path: `/package.json`
    - Role: Project configuration and dependencies
 
 4. **README.md** (Score: 52)
+
    - Path: `/README.md`
    - Role: Project overview and setup
 
 5. **llms.txt** (Score: 50)
+
    - Path: `/llms.txt`
    - Role: LLM context and patterns
 
 6. **tsconfig.json** (Score: 45)
+
    - Path: `/tsconfig.json`
    - Role: TypeScript configuration
 
 7. **turbo.json** (Score: 44)
+
    - Path: `/turbo.json`
    - Role: Monorepo build configuration
 
 8. **docker-compose.yaml** (Score: 42)
+
    - Path: `/docker-compose.yaml`
    - Role: Container orchestration
 
 9. **CHANGELOG.md** (Score: 40)
+
    - Path: `/CHANGELOG.md`
    - Role: Version history
 
 10. **eliza.postman.json** (Score: 40)
+
     - Path: `/eliza.postman.json`
     - Role: API documentation
 
 11. **lerna.json** (Score: 38)
+
     - Path: `/lerna.json`
     - Role: Monorepo publishing config
 
 12. **bunfig.toml** (Score: 36)
+
     - Path: `/bunfig.toml`
     - Role: Bun configuration
 
 13. **LICENSE** (Score: 30)
+
     - Path: `/LICENSE`
     - Role: Legal terms
 
@@ -197,6 +213,7 @@ Each file is scored 1-10 on these dimensions:
 ## Category 12: Additional .claude Resources (Score: 30-40)
 
 99-150. [Remaining .claude/resources files...]
+
 - All research documents
 - All project context files
 - All community activation documents

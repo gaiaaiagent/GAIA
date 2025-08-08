@@ -1,8 +1,8 @@
 # The Living Knowledge Graph: A Comprehensive Guide to the Taxonomy Matrix System
 
-*Date: 2025-07-22*  
-*Author: Claude (Anthropic)*  
-*Project: ElizaOS Taxonomy Matrix Generator*
+_Date: 2025-07-22_  
+_Author: Claude (Anthropic)_  
+_Project: ElizaOS Taxonomy Matrix Generator_
 
 ## Table of Contents
 
@@ -48,23 +48,27 @@ Source Code → Scanner → Analyzer → Generator → Assembler → Review → 
 ### Tool Categories
 
 **Discovery Tools** (1-5):
+
 - File scanning and cataloging
-- Import/export analysis  
+- Import/export analysis
 - Cross-reference detection
 - Hidden relationship inference
 - Relationship strength calculation
 
 **Generation Tools** (6-7):
+
 - Content generation for relationships
 - Matrix document assembly
 - Visualization data creation
 
 **Quality Tools** (8-14):
+
 - Review interface with fair scoring
 - Targeted improvement tools
 - Automated improvement pipeline
 
 **Evolution Tools** (15-17):
+
 - Real-time file monitoring
 - Incremental updates
 - Interactive exploration
@@ -91,7 +95,7 @@ const scanProject = async (rootPath: string): Promise<FileData[]> => {
   // Recursively find all source files
   // Extract basic metadata
   // Identify file types and categories
-}
+};
 ```
 
 The scanner revealed 44 significant files across the ElizaOS project. But scanning was just the beginning—we needed to understand how these files related.
@@ -124,9 +128,9 @@ The breakthrough came with the shift from traditional documentation to three-dim
 
 ```typescript
 interface CellContent {
-  psychological: string;  // Developer experience
-  technological: string;  // Implementation details  
-  thematic: string;      // Architectural significance
+  psychological: string; // Developer experience
+  technological: string; // Implementation details
+  thematic: string; // Architectural significance
 }
 ```
 
@@ -136,11 +140,10 @@ Initial attempts at quality scoring were disastrous—the system gave 0% scores 
 
 ```typescript
 // Old approach - punishment-based
-const score = 100 - (errors * 10) - (warnings * 5); // Often negative!
+const score = 100 - errors * 10 - warnings * 5; // Often negative!
 
 // New approach - value-based
-const score = (uniqueInsights * 10) + (codeExamples * 15) + 
-              (wordCount / 10) + (appropriateDepth * 20);
+const score = uniqueInsights * 10 + codeExamples * 15 + wordCount / 10 + appropriateDepth * 20;
 ```
 
 This shift from criticism to appreciation transformed the system's effectiveness.
@@ -148,6 +151,7 @@ This shift from criticism to appreciation transformed the system's effectiveness
 ### Phase 5: Continuous Improvement (Tools 15-17)
 
 The final evolution made the system truly alive:
+
 - Automated improvement pipeline achieving 7.8% quality gains per pass
 - Real-time monitoring updating documentation as code changes
 - Interactive viewer making the 200KB+ document navigable
@@ -155,38 +159,47 @@ The final evolution made the system truly alive:
 ## 4. Core Components: Understanding Each Tool {#components}
 
 ### The Scanner (Tool 1)
+
 **Purpose**: Discover all relevant files in the project  
 **Key Innovation**: Smart filtering to exclude noise while capturing all significant code
 
 ### The Analyzer Suite (Tools 2-5)
+
 **Purpose**: Detect relationships between files  
 **Key Innovation**: Multi-pass analysis finding hidden connections through type inference and pattern matching
 
 ### The Content Generator (Tool 6)
+
 **Purpose**: Create rich, three-dimensional documentation for each relationship  
 **Key Innovation**: Psychological/Technological/Thematic framework that captures the full story
 
 ### The Matrix Assembler (Tool 7)
+
 **Purpose**: Weave individual relationships into a cohesive document  
 **Key Innovation**: Sparse matrix representation focusing on meaningful connections
 
 ### The Review System (Tool 8)
+
 **Purpose**: Fairly assess documentation quality  
 **Key Innovation**: Positive indicator scoring that recognizes value rather than punishing imperfection
 
 ### The Improvement Arsenal (Tools 9-14)
+
 **Purpose**: Systematically enhance documentation quality  
 **Key Innovation**: Targeted improvements (code examples, emotional depth, pattern variation)
 
 ### The Pipeline (Tool 15)
+
 **Purpose**: Automate multiple improvement passes  
 **Key Innovation**: Measurable quality gains through iterative refinement
 
 ### The Monitor (Tool 16)
+
 **Purpose**: Keep documentation synchronized with code changes  
 **Key Innovation**: Incremental updates affecting only changed relationships
 
 ### The Viewer (Tool 17)
+
 **Purpose**: Make large documentation sets explorable  
 **Key Innovation**: Multiple navigation paradigms for different use cases
 
@@ -209,21 +222,21 @@ Each relationship cell tells a complete story:
 ```markdown
 ### packages/core/src/index.ts → packages/core/src/runtime.ts
 
-**Psychological Pattern**: Developers breathe easier knowing the runtime 
-is cleanly separated from the public API. This boundary reduces cognitive 
+**Psychological Pattern**: Developers breathe easier knowing the runtime
+is cleanly separated from the public API. This boundary reduces cognitive
 load—you can understand the interface without diving into implementation.
 
-**Technological Pattern**: The index file imports and re-exports the 
-AgentRuntime class: `export { AgentRuntime } from './runtime'`. This 
-facade pattern provides a stable API surface while allowing internal 
+**Technological Pattern**: The index file imports and re-exports the
+AgentRuntime class: `export { AgentRuntime } from './runtime'`. This
+facade pattern provides a stable API surface while allowing internal
 refactoring.
 
-**Thematic Pattern**: This relationship embodies the principle of 
-progressive disclosure—simple things should be simple, complex things 
-should be possible. The index provides the simple, the runtime enables 
+**Thematic Pattern**: This relationship embodies the principle of
+progressive disclosure—simple things should be simple, complex things
+should be possible. The index provides the simple, the runtime enables
 the possible.
 
-*Strength: 9/10 | Types: imports, exports*
+_Strength: 9/10 | Types: imports, exports_
 ```
 
 ### Interpreting Patterns
@@ -237,10 +250,13 @@ the possible.
 The quality system evolved through three major iterations:
 
 ### Version 1: The Harsh Critic
+
 Early versions counted problems and subtracted from 100%. This approach failed catastrophically—good documentation scored 0% because the system only saw flaws.
 
 ### Version 2: The Fair Assessor
+
 We rebuilt scoring to measure positive contributions:
+
 - **Content Depth**: Unique insights and appropriate detail
 - **Technical Accuracy**: Presence of code examples and concrete details
 - **Completeness**: Coverage of all important aspects
@@ -248,7 +264,9 @@ We rebuilt scoring to measure positive contributions:
 - **Actionability**: Practical value for developers
 
 ### Version 3: The Improvement Engine
+
 The automated pipeline runs multiple passes:
+
 1. **Concrete Example Injection**: Adds real code snippets
 2. **Insight Depth Enhancement**: Expands shallow descriptions
 3. **Cross-Reference Addition**: Links related patterns
@@ -362,7 +380,7 @@ bun install chalk ora
 # 1. Scan your project
 bun run 01-file-scanner.ts
 
-# 2. Analyze relationships  
+# 2. Analyze relationships
 bun run 03-relationship-analyzer-v2.ts
 
 # 3. Generate content
@@ -381,6 +399,7 @@ bun run 17-interactive-viewer.ts
 ### Configuration
 
 Create `.matrix-config.json`:
+
 ```json
 {
   "include": ["src", "packages", "lib"],
@@ -418,7 +437,7 @@ Welcome to the age of living documentation. The map now changes with the territo
 
 ---
 
-*"Code is read far more often than it is written. The Taxonomy Matrix ensures that reading reveals not just what the code does, but the full richness of why it exists."*
+_"Code is read far more often than it is written. The Taxonomy Matrix ensures that reading reveals not just what the code does, but the full richness of why it exists."_
 
 **Repository**: [github.com/gaiaaiagent/GAIA](https://github.com/gaiaaiagent/GAIA)  
 **License**: MIT  

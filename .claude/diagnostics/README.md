@@ -5,6 +5,7 @@ This directory contains diagnostic scripts and tools for investigating ElizaOS b
 ## Purpose
 
 Rather than debugging through trial and error, these tools help us:
+
 - Understand system behavior before attempting fixes
 - Create reproducible investigation processes
 - Build a library of diagnostic capabilities
@@ -13,7 +14,9 @@ Rather than debugging through trial and error, these tools help us:
 ## Tools
 
 ### 01-investigate-group-chat.js
+
 Investigates why agents aren't responding in group chats by checking:
+
 - Message presence in database
 - Channel existence and configuration
 - Participant registration
@@ -21,6 +24,7 @@ Investigates why agents aren't responding in group chats by checking:
 - Complete message flow analysis
 
 **Usage:**
+
 ```bash
 node .claude/diagnostics/01-investigate-group-chat.js
 ```
@@ -55,6 +59,7 @@ When creating new diagnostic tools:
 ## Integration with Development
 
 These tools support our development philosophy:
+
 - **Understand before fixing**
 - **Document discoveries**
 - **Build knowledge systematically**
@@ -62,4 +67,4 @@ These tools support our development philosophy:
 
 ---
 
-*Part of the RegenAI development toolkit*
+_Part of the RegenAI development toolkit_

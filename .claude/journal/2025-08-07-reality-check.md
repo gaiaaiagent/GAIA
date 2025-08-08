@@ -1,6 +1,7 @@
 # Reality Check: What's Actually Deployed
-*Date: 2025-08-07 Late Evening*
-*Type: Course Correction*
+
+_Date: 2025-08-07 Late Evening_
+_Type: Course Correction_
 
 ## Getting Carried Away
 
@@ -17,6 +18,7 @@ The production deployment at https://regen.gaiaai.xyz is real and working, but i
 - ✅ Basic auth is protecting the agents interface
 
 But:
+
 - ❌ No documents indexed yet (goal is 15,000+)
 - ❌ No Regen Registry integration
 - ❌ No real knowledge base beyond character definitions
@@ -36,4 +38,4 @@ No more silly announcements. Just honest assessment of where we are and what nee
 
 ---
 
-*Note: The deployment is still a real achievement. We solved real problems today. But let's not pretend we've done more than we have.*
+_Note: The deployment is still a real achievement. We solved real problems today. But let's not pretend we've done more than we have._
