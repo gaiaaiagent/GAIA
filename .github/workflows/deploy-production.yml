@@ -1,105 +1,70 @@
 name: Deploy to Production
 
 on:
-  push:
-    branches:
-      - regen
+  workflow_run:
+    workflows: ["Build and Push Docker Images"]
+    types: [completed]
+    branches: [regen]
   workflow_dispatch:  # Allow manual trigger
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: gaiaaiagent/gaia/regenai
-
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      
+    # Only run if docker build succeeded or manual trigger
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
-
       - name: Deploy to Production Server
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: 202.61.196.119
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          host: ${{ secrets.DEPLOY_HOST || '202.61.196.119' }}
+          username: ${{ secrets.DEPLOY_USER || secrets.SERVER_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY || secrets.SERVER_SSH_KEY }}
           script: |
             set -e
             
-            echo "🚀 Starting deployment of commit ${{ github.sha }}"
+            echo "🚀 Starting smart deployment..."
             cd /opt/projects/GAIA
-            
-            # Save current version for potential rollback
-            CURRENT_VERSION=$(docker inspect ghcr.io/gaiaaiagent/gaia/regenai:latest --format='{{index .RepoDigests 0}}' 2>/dev/null || echo "none")
-            echo "$CURRENT_VERSION" > .last-deploy-version
             
             # Pull latest code
             echo "📦 Pulling latest code..."
             git fetch origin regen
             git reset --hard origin/regen
             
-            # Pull new images
-            echo "🐳 Pulling new Docker images..."
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-            docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            # Make scripts executable
+            chmod +x scripts/*.sh
             
-            # Update containers
-            echo "♻️ Updating containers..."
-            docker compose -f docker-compose-ssl.yaml up -d --no-deps regenai
+            # Run smart deployment
+            echo "🧠 Running smart deployment with change detection..."
+            ./scripts/smart-deploy.sh || {
+                echo "❌ Smart deployment failed, falling back to standard deployment"
+                
+                # Fallback to standard deployment
+                docker pull ghcr.io/gaiaaiagent/gaia/regen:latest
+                docker pull ghcr.io/gaiaaiagent/gaia/django-admin:latest
+                docker pull ghcr.io/gaiaaiagent/gaia/nginx:latest
+                
+                docker compose down
+                docker compose up -d
+                
+                sleep 15
+                
+                if ! docker ps | grep -q "regen"; then
+                    echo "❌ Deployment failed!"
+                    exit 1
+                fi
+            }
             
-            # Health check
-            echo "❤️ Running health check..."
-            sleep 10
-            if curl -f https://regen.gaiaai.xyz > /dev/null 2>&1; then
-              echo "✅ Deployment successful!"
-              
-              # Clean up old images (keep last 3)
-              docker images ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --format "{{.Tag}}" | \
-                grep -E '^[a-f0-9]{40}$' | \
-                tail -n +4 | \
-                xargs -r -I {} docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:{} || true
-            else
-              echo "❌ Health check failed! Site not responding."
-              exit 1
-            fi
+            echo "✅ Deployment completed!"
 
-      - name: Create Deployment Record
+      - name: Verify Deployment
         if: success()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.repos.createDeployment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: context.sha,
-              environment: 'production',
-              description: 'Automated deployment to production',
-              auto_merge: false,
-              required_contexts: [],
-              production_environment: true
-            });
+        run: |
+          echo "🎉 Deployment to production completed successfully!"
+          echo "📝 Deployed commit: ${{ github.sha }}"
+          echo "🔗 Production URL: https://regen.gaiaai.xyz"

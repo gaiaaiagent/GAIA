@@ -2,6 +2,7 @@ FROM node:23.3.0-slim AS builder
 
 WORKDIR /app
 
+# Install system dependencies (rarely changes - cached)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
@@ -15,22 +16,42 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install global tools (rarely changes - cached)
 RUN npm install -g bun@1.2.5 turbo@2.3.3
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-COPY package.json turbo.json tsconfig.json lerna.json renovate.json .npmrc ./
+# Copy dependency files first (changes less frequently)
+COPY package.json bun.lockb turbo.json tsconfig.json lerna.json renovate.json .npmrc ./
+
+# Copy package.json files for all packages (for dependency resolution)
+COPY packages/*/package.json ./packages-temp/
+
+# Move package.json files to correct structure
+RUN mkdir -p packages && \
+    for dir in packages-temp/*; do \
+        pkg=$(basename "$dir"); \
+        mkdir -p "packages/${pkg%.json}" && \
+        cp "$dir" "packages/${pkg%.json}/package.json"; \
+    done && \
+    rm -rf packages-temp
+
+# Install dependencies (cached when dependencies don't change)
+RUN SKIP_POSTINSTALL=1 bun install --frozen-lockfile --no-cache
+
+# Copy source code (changes frequently - at the end)
 COPY scripts ./scripts
 COPY packages ./packages
 
-RUN SKIP_POSTINSTALL=1 bun install --no-cache
-
+# Build the application
 RUN bun run build
 
+# Production stage
 FROM node:23.3.0-slim
 
 WORKDIR /app
 
+# Install runtime dependencies only
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     curl \
@@ -43,6 +64,7 @@ RUN apt-get update && \
 
 RUN npm install -g bun@1.2.5 turbo@2.3.3
 
+# Copy built application from builder
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/turbo.json ./
 COPY --from=builder /app/tsconfig.json ./
