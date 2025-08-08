@@ -16,7 +16,8 @@ accuracy-concerns:
 ---
 
 # Regen Network & GAIA AI Collaboration Meeting
-*Verbatim Transcript in Essay Format*
+
+_Verbatim Transcript in Essay Format_
 
 ## Opening & Setting the Stage
 
@@ -95,7 +96,7 @@ The vision involves "creating these different archetypes and allowing them to be
 Colin suggested enhancing this with "a digital twin perspective. So if we could actually have a digital twin of the beavers that has that data available. Hey, it's talking about, OK, there's this many beavers. This is where beavers are endangered. This is areas where beaver habitat is under threat."
 
 **Level 3: Narrative Advocates**
-"The narrative advocates for the region, region coin" exploring different economic models. Gregory outlined two primary narratives: "Are we building a regenerative store of value system that's basically like lobbying that, like, you want scarcity, the scarcest thing in the whole universe is life. This is a store of value that's based on life, provable life, it is the best store of value in the universe, right?" 
+"The narrative advocates for the region, region coin" exploring different economic models. Gregory outlined two primary narratives: "Are we building a regenerative store of value system that's basically like lobbying that, like, you want scarcity, the scarcest thing in the whole universe is life. This is a store of value that's based on life, provable life, it is the best store of value in the universe, right?"
 
 Alternatively: "Is it a regenerative reserve currency, like this is a currency that's designed to flow and ebb and be careful of rain and all these things. But we don't have to choose one narrative." The key insight: "We have to understand the design dependencies be at the depth of these narratives, they optimize different things. Different things might as well have different impacts on different stakeholders, whether those are beaver stakeholders, or river stakeholders, or stakers of region, etc."
 

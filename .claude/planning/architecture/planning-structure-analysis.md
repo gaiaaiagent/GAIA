@@ -21,6 +21,7 @@ accuracy-concerns:
 ## Current Structure Assessment
 
 We have three planning mechanisms:
+
 1. **Roadmaps** - Long-term vision and milestones
 2. **Sprints** - Time-boxed execution cycles
 3. **Priorities** - Dynamic task ordering
@@ -28,12 +29,14 @@ We have three planning mechanisms:
 ## Potential Redundancy Issues
 
 ### The Overlap Problem
+
 - Roadmaps contain tasks
 - Sprints contain tasks
 - Priorities contain tasks
 - Risk: Same task in multiple places, getting out of sync
 
 ### The Hierarchy Question
+
 - Are priorities extracted from roadmaps?
 - Do sprints pull from priorities?
 - Or do they all exist independently?
@@ -41,7 +44,9 @@ We have three planning mechanisms:
 ## Proposed Unified Approach
 
 ### 1. Single Source of Truth for Tasks
+
 All tasks live in ONE place, with metadata that allows different views:
+
 ```
 Task: "Create RegenAI Facilitator character"
 - Milestone: 1.1.1
@@ -60,6 +65,7 @@ Task: "Create RegenAI Facilitator character"
 ### 3. Dynamic Priority System
 
 Instead of static lists, priorities could be:
+
 ```
 priorities/
 ├── priority-algorithm.md (how we determine priority)
@@ -68,6 +74,7 @@ priorities/
 ```
 
 Priorities are calculated based on:
+
 - Milestone deadlines
 - Dependencies
 - Team availability
@@ -76,12 +83,14 @@ Priorities are calculated based on:
 ## Workflow Integration Points
 
 ### Research Tasks (like KOI)
+
 1. Create research task with "investigation" tag
 2. Research outputs go to appropriate docs
 3. Decision recorded in journal
 4. Implementation tasks created if needed
 
 ### Character Development
+
 1. High-priority in current focus
 2. Part of Milestone 1.1.1
 3. Not yet assigned to sprint (awaiting research)
@@ -89,11 +98,13 @@ Priorities are calculated based on:
 ## Recommendation
 
 **Keep it simple for now:**
+
 - Use roadmaps for vision/milestones
 - Use priorities for "what's next"
 - Add sprints only when working with a team
 
 **Avoid:**
+
 - Duplicating tasks across documents
 - Creating structure before we need it
 - Over-engineering the system

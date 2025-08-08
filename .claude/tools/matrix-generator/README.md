@@ -5,6 +5,7 @@ A progressive system for analyzing and documenting relationships between project
 ## Overview
 
 This tooling creates a comprehensive relationship matrix between project files, helping to:
+
 - Understand architectural dependencies
 - Document knowledge relationships
 - Identify patterns and clusters
@@ -13,27 +14,35 @@ This tooling creates a comprehensive relationship matrix between project files, 
 ## Components
 
 ### 1. File Scanner (`01-file-scanner.ts`)
+
 Full project scanner that inventories all files and detects basic relationships.
+
 - Scans 1700+ files
 - Detects imports, exports, and references
 - Outputs comprehensive scan data
 
 ### 2. Priority Scanner (`02-priority-scanner.ts`)
+
 Focused scanner for priority files defined in `priority-files.json`.
+
 - Scans ~50 high-priority files
 - Faster, more manageable scope
 - Ideal for initial matrix development
 
 ### 3. Relationship Analyzer (`03-relationship-analyzer.ts`)
+
 Analyzes relationships between files to determine strength and type.
+
 - Multiple relationship types (import, semantic, structural, functional)
 - Strength scoring (0-10)
 - Evidence-based analysis
 
 ### 4. Content Generator (Coming Soon)
+
 Generates the 3-paragraph analysis for each matrix cell.
 
 ### 5. Matrix Builder (Coming Soon)
+
 Assembles the final matrix documentation.
 
 ## Usage
@@ -124,6 +133,7 @@ bun run 05-improvement-analyzer.ts
 ## Matrix Content
 
 Each relationship cell contains three paragraphs:
+
 1. **Semantic Connection**: Conceptual and meaning-based relationships
 2. **Cognitive Flow**: How developers understand and navigate
 3. **Implementation Details**: Technical specifics and implications
@@ -131,6 +141,7 @@ Each relationship cell contains three paragraphs:
 ## Quality Metrics
 
 The review interface evaluates:
+
 - Content Quality (paragraph length, variety)
 - Completeness (coverage of relationships)
 - Consistency (terminology, formatting)

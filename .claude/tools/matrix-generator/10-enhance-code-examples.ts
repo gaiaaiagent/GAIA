@@ -2,7 +2,7 @@
 
 /**
  * Enhance Code Examples
- * 
+ *
  * Adds concrete code examples to technological patterns that lack them
  * Reads actual files to extract real imports and code snippets
  */
@@ -37,7 +37,7 @@ class CodeExampleEnhancer {
 
     // Process each relationship
     console.log(chalk.yellow('\nEnhancing technological patterns...'));
-    
+
     for (const cell of contentData.relationshipCells) {
       if (cell.technological && !this.hasCodeExample(cell.technological)) {
         const enhanced = await this.enhanceTechnologicalPattern(cell);
@@ -55,7 +55,9 @@ class CodeExampleEnhancer {
 
     // Save enhanced content
     await writeFile(contentPath, JSON.stringify(contentData, null, 2));
-    console.log(chalk.green(`\n✅ Enhanced ${this.enhancedCount} technological patterns with code examples`));
+    console.log(
+      chalk.green(`\n✅ Enhanced ${this.enhancedCount} technological patterns with code examples`)
+    );
   }
 
   private hasCodeExample(text: string): boolean {
@@ -64,24 +66,30 @@ class CodeExampleEnhancer {
 
   private async enhanceTechnologicalPattern(cell: any): Promise<string> {
     const { from, to } = cell;
-    
+
     // Try to read actual files for real examples
     const fromContent = await this.readFileIfExists(from);
     const toContent = await this.readFileIfExists(to);
 
     // Extract real imports and code patterns
-    const examples = this.extractCodeExamples(from, to, fromContent, toContent, cell.metadata.types);
+    const examples = this.extractCodeExamples(
+      from,
+      to,
+      fromContent,
+      toContent,
+      cell.metadata.types
+    );
 
     // If we found good examples, append them to the technological pattern
     if (examples.length > 0) {
       const currentText = cell.technological;
       const exampleText = examples.join(' ');
-      
+
       // Intelligently insert examples into the text
       if (currentText.includes('import') || currentText.includes('export')) {
         // Replace generic mentions with specific examples
         return currentText.replace(/imports?(?:\s+\w+)?/gi, (match) => {
-          const example = examples.find(e => e.includes('import')) || examples[0];
+          const example = examples.find((e) => e.includes('import')) || examples[0];
           return `${match} like ${example}`;
         });
       } else {
@@ -108,7 +116,13 @@ class CodeExampleEnhancer {
     }
   }
 
-  private extractCodeExamples(from: string, to: string, fromContent: string | null, toContent: string | null, types: string[]): string[] {
+  private extractCodeExamples(
+    from: string,
+    to: string,
+    fromContent: string | null,
+    toContent: string | null,
+    types: string[]
+  ): string[] {
     const examples: string[] = [];
 
     // Handle specific common patterns
@@ -137,7 +151,9 @@ class CodeExampleEnhancer {
 
     // Look for export patterns
     if (toContent && types.includes('import')) {
-      const exportMatch = toContent.match(/export\s+(?:const|function|class|interface|type)\s+(\w+)/);
+      const exportMatch = toContent.match(
+        /export\s+(?:const|function|class|interface|type)\s+(\w+)/
+      );
       if (exportMatch) {
         examples.push(`The file exports \`${exportMatch[1]}\` which is imported elsewhere.`);
       }
@@ -175,7 +191,7 @@ class CodeExampleEnhancer {
     const patterns = [
       new RegExp(`import\\s+.*?from\\s+['"].*?${moduleName}['"]`, 'g'),
       new RegExp(`require\\(['"].*?${moduleName}['"]\\)`, 'g'),
-      new RegExp(`import\\(['"].*?${moduleName}['"]\\)`, 'g')
+      new RegExp(`import\\(['"].*?${moduleName}['"]\\)`, 'g'),
     ];
 
     for (const pattern of patterns) {
@@ -192,14 +208,15 @@ class CodeExampleEnhancer {
 // Main execution
 async function main() {
   const enhancer = new CodeExampleEnhancer();
-  
+
   try {
     await enhancer.enhance();
-    
+
     console.log(chalk.blue.bold('\n✅ Code examples enhanced successfully!\n'));
     console.log(chalk.gray('Technological patterns now include concrete code examples.'));
-    console.log(chalk.gray('Re-run the matrix assembler and review interface to see improvements.\n'));
-    
+    console.log(
+      chalk.gray('Re-run the matrix assembler and review interface to see improvements.\n')
+    );
   } catch (error) {
     console.error(chalk.red('❌ Error:'), error);
     process.exit(1);

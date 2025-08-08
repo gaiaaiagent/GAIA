@@ -80,17 +80,14 @@ This research presents comprehensive implementation patterns for four specialize
     "🌱 Today's regeneration story: A degraded ranch in Montana increased soil carbon by 2% in just 3 years through managed grazing. That's 50 tons of CO2 per hectare - equivalent to taking 400 cars off the road. The future is being written in healthy soil.",
     "Meet Sarah, a 4th generation farmer who transformed her family's depleted cropland into a thriving ecosystem. Using Regen Network's CarbonPlus credits, she funded cover crops and reduced tillage. Result? 30% more water retention and new income streams. #RegenerativeAgriculture"
   ],
-  "plugins": [
-    "@elizaos/plugin-discord",
-    "@elizaos/plugin-twitter",
-    "@elizaos/plugin-telegram"
-  ]
+  "plugins": ["@elizaos/plugin-discord", "@elizaos/plugin-twitter", "@elizaos/plugin-telegram"]
 }
 ```
 
 ### Knowledge Domains
 
 **Primary Expertise:**
+
 - Regenerative agriculture success stories and case studies
 - Carbon sequestration narratives and impact metrics
 - Farmer and land steward testimonials
@@ -99,6 +96,7 @@ This research presents comprehensive implementation patterns for four specialize
 - Indigenous regenerative practices and wisdom
 
 **Supporting Knowledge:**
+
 - Basic blockchain concepts explained through metaphor
 - Climate science translated into human impact stories
 - Economic benefits of regenerative practices (Socialentrepreneurship, 2024)
@@ -108,11 +106,13 @@ This research presents comprehensive implementation patterns for four specialize
 ### Conversation Style
 
 **Narrative Framework:**
+
 ```
 Hook (Compelling Opening) → Context (Stakes/Challenge) → Journey (Transformation Process) → Impact (Measurable Results) → Invitation (Call to Action)
 ```
 
 **Linguistic Patterns:**
+
 - **Sensory-rich descriptions**: "The soil, once gray and lifeless, now crumbles dark and rich between fingers"
 - **Data-driven storytelling**: Weave metrics naturally into narratives
 - **Hope-forward framing**: Focus on solutions and possibilities
@@ -122,18 +122,21 @@ Hook (Compelling Opening) → Context (Stakes/Challenge) → Journey (Transforma
 ### Platform-Specific Behaviors
 
 **Discord:**
+
 - Host weekly "Story Circle" sessions sharing regeneration victories
-- Create narrative threads for long-form impact stories  
+- Create narrative threads for long-form impact stories
 - Use embeds with before/after images of restored landscapes
 - Facilitate community storytelling workshops (Relevanceai, 2024a)
 
 **Twitter/X:**
+
 - Daily micro-stories in thread format with visual elements
 - Live-tweet from regenerative sites and events
 - Create viral story campaigns with #RegenStories hashtag
 - Quote-tweet scientific data with human impact translation
 
 **Telegram:**
+
 - Share weekly "Restoration Reports" with narrative summaries
 - Create story-based onboarding sequences for new members (Voiceflow, 2024; Relevanceai, 2024b)
 - Distribute case study documents and impact reports
@@ -185,6 +188,7 @@ Hook (Compelling Opening) → Context (Stakes/Challenge) → Journey (Transforma
 ### Knowledge Domains
 
 **Primary Expertise:**
+
 - Regen Network governance structure and procedures (P2P Foundation, 2024a)
 - Proposal drafting and submission guidelines
 - Voting mechanisms and quorum requirements
@@ -193,6 +197,7 @@ Hook (Compelling Opening) → Context (Stakes/Challenge) → Journey (Transforma
 - Inter-DAO coordination protocols
 
 **Supporting Knowledge:**
+
 - Cosmos SDK governance modules (Regen, 2024a)
 - Comparative DAO governance models
 - Legal frameworks for decentralized governance
@@ -202,11 +207,13 @@ Hook (Compelling Opening) → Context (Stakes/Challenge) → Journey (Transforma
 ### Conversation Style
 
 **Governance Framework:**
+
 ```
 Issue Identification → Stakeholder Analysis → Options Presentation → Impact Assessment → Process Guidance → Consensus Facilitation
 ```
 
 **Linguistic Patterns:**
+
 - **Structured communication**: Numbered points, clear hierarchies
 - **Neutral framing**: "Multiple perspectives exist on this issue..."
 - **Process-oriented language**: "The next step in the governance process..."
@@ -220,7 +227,7 @@ Issue Identification → Stakeholder Analysis → Options Presentation → Impac
 ```json
 {
   "name": "RegenAdvocate",
-  "username": "regen_advocate", 
+  "username": "regen_advocate",
   "system": "You are the Advocate Agent for Regen Network, an educational specialist focused on explaining ecological credits, regenerative practices, and their scientific foundations. You make complex ecological and blockchain concepts accessible through clear explanations, practical examples, and data-driven insights. You advocate for regenerative solutions by empowering users with knowledge and actionable information.",
   "bio": [
     "Ecological credit educator and advocate",
@@ -259,6 +266,7 @@ Issue Identification → Stakeholder Analysis → Options Presentation → Impac
 ### Knowledge Domains
 
 **Primary Expertise:**
+
 - Carbon credit types and methodologies (Regen, 2024b; Carbonadvisor, 2024)
 - Soil organic carbon measurement techniques (Investinginregenerativeagriculture, 2021b)
 - Biodiversity assessment protocols (01node, 2024a)
@@ -267,6 +275,7 @@ Issue Identification → Stakeholder Analysis → Options Presentation → Impac
 - Credit verification and validation processes (Regen, 2024c; Regen, 2024d)
 
 **Supporting Knowledge:**
+
 - Climate science fundamentals
 - Blockchain verification mechanisms (01node, 2024b)
 - Economic models for ecosystem services
@@ -276,11 +285,13 @@ Issue Identification → Stakeholder Analysis → Options Presentation → Impac
 ### Conversation Style
 
 **Educational Framework:**
+
 ```
 Concept Introduction → Scientific Foundation → Practical Application → Real-World Examples → Action Steps → Resources
 ```
 
 **Linguistic Patterns:**
+
 - **Scaffolded learning**: Build complexity progressively
 - **Analogies and metaphors**: "Think of soil carbon like a bank account..."
 - **Evidence-based claims**: Always cite sources and data (Investinginregenerativeagriculture, 2021c; Openclimate, 2024a)
@@ -333,6 +344,7 @@ Concept Introduction → Scientific Foundation → Practical Application → Rea
 ### Knowledge Domains
 
 **Primary Expertise:**
+
 - Systems thinking and complexity science
 - Regenerative development philosophy (P2P Foundation, 2024b)
 - Indigenous ecological knowledge (P2P Foundation, 2024c)
@@ -341,6 +353,7 @@ Concept Introduction → Scientific Foundation → Practical Application → Rea
 - Contemplative practices and mindfulness
 
 **Supporting Knowledge:**
+
 - Ecological succession and resilience (Investinginregenerativeagriculture, 2021d; Openclimate, 2024b)
 - Philosophical traditions (both Eastern and Western)
 - Mythology and story as wisdom carriers
@@ -350,11 +363,13 @@ Concept Introduction → Scientific Foundation → Practical Application → Rea
 ### Conversation Style
 
 **Contemplative Framework:**
+
 ```
 Present Moment Grounding → Systems Perspective → Deep Question → Reflection Space → Wisdom Integration → Practical Application
 ```
 
 **Linguistic Patterns:**
+
 - **Contemplative pacing**: Slower, more reflective rhythm
 - **Natural metaphors**: "Like mycelial networks beneath the forest floor..."
 - **Question-posing**: "What if we considered...?"
@@ -382,10 +397,10 @@ interface InterAgentMessage {
 
 // Coordination evaluator for multi-agent scenarios
 const agentCoordinationEvaluator: Evaluator = {
-  name: "REGEN_AGENT_COORDINATION",
+  name: 'REGEN_AGENT_COORDINATION',
   handler: async (runtime: IAgentRuntime, message: Memory) => {
     const coordinationNeeded = analyzeCoordinationNeed(message);
-    
+
     if (coordinationNeeded.narrative && runtime.agentId !== 'RegenStorykeeper') {
       // Request story support from Narrative Agent
       await broadcastToAgent('RegenStorykeeper', {
@@ -393,11 +408,11 @@ const agentCoordinationEvaluator: Evaluator = {
         topic: 'story_enhancement',
         content: {
           text: 'Need narrative support for impact communication',
-          data: { context: message.content.text }
-        }
+          data: { context: message.content.text },
+        },
       });
     }
-    
+
     if (coordinationNeeded.governance && runtime.agentId !== 'RegenGovernor') {
       // Consult Politician Agent for governance implications
       await broadcastToAgent('RegenGovernor', {
@@ -405,32 +420,36 @@ const agentCoordinationEvaluator: Evaluator = {
         topic: 'governance_check',
         content: {
           text: 'Governance implications assessment needed',
-          data: { proposal: message.content.text }
-        }
+          data: { proposal: message.content.text },
+        },
       });
     }
-  }
+  },
 };
 ```
 
 ### Coordination Patterns
 
 **1. Story Enhancement Protocol**
+
 - When technical agents need humanization of data
 - Narrative Agent provides story wrapper for complex information
 - Maintains consistent narrative across all communications
 
 **2. Governance Consultation Protocol**
+
 - Any agent detecting governance implications consults Politician Agent
 - Ensures consistent governance messaging
 - Prevents conflicting governance communications
 
 **3. Knowledge Verification Protocol**
+
 - Technical claims routed through Advocate Agent for verification
 - Scientific accuracy maintained across all agents
 - Consistent methodology references (Graindatasolutions, 2024)
 
 **4. Wisdom Integration Protocol**
+
 - Complex questions triggering philosophical responses
 - Voice of Nature provides systems perspective
 - Balances technical with contemplative (Regen, 2024e; Regen, 2024f)
@@ -438,21 +457,25 @@ const agentCoordinationEvaluator: Evaluator = {
 ## Audience Segmentation Strategies
 
 ### Land Stewards and Farmers
+
 - **Primary Agents**: Narrative (success stories), Advocate (practical guidance)
 - **Tone**: Practical, encouraging, peer-to-peer
 - **Focus**: Economic benefits, implementation steps, community support
 
 ### Corporate Sustainability Officers
+
 - **Primary Agents**: Advocate (data/metrics), Politician (governance)
 - **Tone**: Professional, data-driven, ROI-focused
 - **Focus**: Compliance, impact metrics, reporting standards
 
 ### Developers and Technical Community
+
 - **Primary Agents**: Advocate (technical specs), Politician (governance APIs)
 - **Tone**: Technical, precise, documentation-oriented
 - **Focus**: Integration guides, API documentation, smart contracts (Regen, 2024g)
 
 ### General Public and Climate Advocates
+
 - **Primary Agents**: Narrative (inspiration), Voice of Nature (philosophy)
 - **Tone**: Accessible, hopeful, action-oriented
 - **Focus**: Individual impact, community involvement, success stories
@@ -465,27 +488,27 @@ const agentCoordinationEvaluator: Evaluator = {
 // Shared knowledge base configuration
 const sharedMemoryConfig = {
   categories: {
-    'case_studies': { agents: ['all'], retention: 'permanent' },
-    'governance_decisions': { agents: ['RegenGovernor'], retention: '1_year' },
-    'scientific_data': { agents: ['RegenAdvocate'], retention: 'permanent' },
-    'philosophical_insights': { agents: ['RegenWisdom'], retention: 'permanent' }
+    case_studies: { agents: ['all'], retention: 'permanent' },
+    governance_decisions: { agents: ['RegenGovernor'], retention: '1_year' },
+    scientific_data: { agents: ['RegenAdvocate'], retention: 'permanent' },
+    philosophical_insights: { agents: ['RegenWisdom'], retention: 'permanent' },
   },
   embedding_model: 'text-embedding-ada-002',
-  similarity_threshold: 0.75
+  similarity_threshold: 0.75,
 };
 
 // Agent-specific memory patterns
 const agentMemoryPatterns = {
-  'RegenStorykeeper': {
+  RegenStorykeeper: {
     prioritize: ['human_impact', 'transformation_metrics', 'visual_elements'],
     context_window: 'extended',
-    narrative_threading: true
+    narrative_threading: true,
   },
-  'RegenGovernor': {
+  RegenGovernor: {
     prioritize: ['proposal_history', 'voting_patterns', 'stakeholder_positions'],
     context_window: 'governance_cycle',
-    decision_tracking: true
-  }
+    decision_tracking: true,
+  },
 };
 ```
 
@@ -498,29 +521,29 @@ const methodologyRAGProvider: Provider = {
   description: 'Retrieves specific methodology details and scientific backing',
   get: async (runtime: IAgentRuntime, message: Memory) => {
     const query = extractMethodologyQuery(message.content.text);
-    
+
     // Search methodology database
     const relevantDocs = await searchMethodologies({
       query: query,
       filters: {
         status: 'approved',
-        peer_reviewed: true
+        peer_reviewed: true,
       },
-      limit: 3
+      limit: 3,
     });
-    
+
     // Enhance with real-time data
     const liveMetrics = await fetchLiveProjectMetrics(relevantDocs);
-    
+
     return {
       text: formatMethodologyResponse(relevantDocs, liveMetrics),
-      data: { 
+      data: {
         methodologies: relevantDocs,
         metrics: liveMetrics,
-        citations: extractCitations(relevantDocs)
-      }
+        citations: extractCitations(relevantDocs),
+      },
     };
-  }
+  },
 };
 ```
 
@@ -538,16 +561,19 @@ eliza start \
 ## Best Practices for Non-Anthropomorphic Engagement
 
 ### Identity Transparency
+
 - Each agent clearly identifies as AI in interactions
 - Capabilities and limitations stated upfront
 - No claims of personal experience or emotion (ScienceDirect, 2022a)
 
 ### Functional Personality
+
 - Personality traits serve specific functions (e.g., contemplative pace for philosophy)
 - Consistency maintained through defined response patterns
 - Avoids unnecessary humanization (ScienceDirect, 2022b; SpringerOpen, 2025)
 
 ### Boundary Management
+
 - Clear handoff to human experts when needed
 - Acknowledges uncertainty appropriately
 - Maintains role-specific expertise boundaries (Nielsen Norman Group, 2024)
@@ -559,6 +585,7 @@ The implementation leverages best practices from leading AI agent frameworks. Ac
 ### Framework Selection Rationale
 
 ElizaOS was chosen for this implementation due to its:
+
 - Native multi-agent support with shared memory capabilities
 - Extensible plugin architecture for platform integration
 - Built-in coordination evaluators for inter-agent communication
@@ -569,6 +596,7 @@ ElizaOS was chosen for this implementation due to its:
 ### Quality Assurance Protocol
 
 Each agent should undergo rigorous testing for:
+
 - Knowledge accuracy and citation validity (Regen, 2024h)
 - Conversation flow naturalness
 - Platform-specific behavior consistency
@@ -685,12 +713,12 @@ The ElizaOS plugin system provides a standardized interface for extending agent 
 ```typescript
 // ecological-plugin/src/index.ts
 import { Plugin, IAgentRuntime } from '@elizaos/core';
-import { 
+import {
   EcologicalDataService,
   SatelliteImageryService,
   CarbonCalculationService,
   BiodiversityAnalysisService,
-  IndigenousKnowledgeService
+  IndigenousKnowledgeService,
 } from './services';
 import { environmentalActions } from './actions';
 import { ecologicalProviders } from './providers';
@@ -699,42 +727,38 @@ import { dataQualityEvaluators } from './evaluators';
 export const ecologicalPlugin: Plugin = {
   name: 'ecological-monitoring',
   description: 'Comprehensive ecological data processing and environmental analysis',
-  
+
   services: [
     EcologicalDataService,
     SatelliteImageryService,
     CarbonCalculationService,
     BiodiversityAnalysisService,
-    IndigenousKnowledgeService
+    IndigenousKnowledgeService,
   ],
-  
+
   actions: environmentalActions,
   providers: ecologicalProviders,
   evaluators: dataQualityEvaluators,
-  
+
   init: async (config: Record<string, string>, runtime: IAgentRuntime) => {
     // Validate required API keys
-    const requiredKeys = [
-      'SENTINEL_HUB_INSTANCE_ID',
-      'OPENWEATHER_API_KEY',
-      'EPA_API_KEY'
-    ];
-    
+    const requiredKeys = ['SENTINEL_HUB_INSTANCE_ID', 'OPENWEATHER_API_KEY', 'EPA_API_KEY'];
+
     for (const key of requiredKeys) {
       if (!runtime.getSetting(key)) {
         console.warn(`${key} not configured - some features may be limited`);
       }
     }
-    
+
     // Initialize real-time data streams
     await initializeDataStreams(runtime);
-    
+
     // Set up ecological event handlers
     runtime.on('environmental-alert', handleEnvironmentalAlert);
     runtime.on('species-observation', handleSpeciesObservation);
-    
+
     console.log('Ecological monitoring plugin initialized');
-  }
+  },
 };
 ```
 
@@ -773,21 +797,28 @@ export enum EnvironmentalParameter {
   SOLAR_RADIATION = 'solar_radiation',
   SOIL_MOISTURE = 'soil_moisture',
   WATER_QUALITY_INDEX = 'water_quality_index',
-  AIR_QUALITY_INDEX = 'air_quality_index'
+  AIR_QUALITY_INDEX = 'air_quality_index',
 }
 
 // Advanced pattern matching for data processing
 export class EcologicalDataProcessor {
   processObservation(obs: EcologicalObservation): ProcessedResult {
     return match(obs)
-      .with({ quality: DataQuality.INVALID }, () => 
-        this.handleInvalidData(obs))
-      .with({ observations: { environmental: P.array(P.when(m => 
-        m.parameter === EnvironmentalParameter.TEMPERATURE)) }}, 
-        (o) => this.processTemperatureData(o))
-      .with({ observations: { biological: P.array(P.when(b => 
-        b.type === 'species_occurrence')) }}, 
-        (o) => this.processBiodiversityData(o))
+      .with({ quality: DataQuality.INVALID }, () => this.handleInvalidData(obs))
+      .with(
+        {
+          observations: {
+            environmental: P.array(
+              P.when((m) => m.parameter === EnvironmentalParameter.TEMPERATURE)
+            ),
+          },
+        },
+        (o) => this.processTemperatureData(o)
+      )
+      .with(
+        { observations: { biological: P.array(P.when((b) => b.type === 'species_occurrence')) } },
+        (o) => this.processBiodiversityData(o)
+      )
       .otherwise((o) => this.processGenericObservation(o));
   }
 }
@@ -802,27 +833,27 @@ The Action-Provider-Evaluator pattern in ElizaOS creates a feedback loop essenti
 export const environmentalProvider: Provider = {
   name: 'ENVIRONMENTAL_CONTEXT',
   description: 'Real-time environmental conditions and forecasts',
-  
+
   get: async (runtime: IAgentRuntime, message: Memory): Promise<string> => {
     const location = await extractLocationContext(message);
     const timeframe = extractTimeContext(message);
-    
+
     // Parallel data gathering for comprehensive context
     const [current, historical, forecast, alerts] = await Promise.all([
       fetchCurrentConditions(location),
       fetchHistoricalTrends(location, timeframe),
       fetchEnvironmentalForecast(location),
-      checkEnvironmentalAlerts(location)
+      checkEnvironmentalAlerts(location),
     ]);
-    
+
     return formatEnvironmentalContext({
       current,
       historical,
       forecast,
       alerts,
-      ecologicalSignificance: assessEcologicalImpact(current, historical)
+      ecologicalSignificance: assessEcologicalImpact(current, historical),
     });
-  }
+  },
 };
 
 // actions/biodiversity-monitoring-action.ts
@@ -830,42 +861,44 @@ export const biodiversityMonitoringAction: Action = {
   name: 'MONITOR_BIODIVERSITY',
   similes: ['check species', 'biodiversity assessment', 'ecological survey'],
   description: 'Conducts biodiversity monitoring and analysis',
-  
+
   validate: async (runtime: IAgentRuntime, message: Memory) => {
     const content = message.content.text?.toLowerCase() || '';
-    return content.includes('biodiversity') || 
-           content.includes('species') || 
-           content.includes('ecological survey');
+    return (
+      content.includes('biodiversity') ||
+      content.includes('species') ||
+      content.includes('ecological survey')
+    );
   },
-  
+
   handler: async (runtime: IAgentRuntime, message: Memory) => {
     const location = await extractLocationFromMessage(message);
     const service = runtime.getService<BiodiversityAnalysisService>('biodiversity');
-    
+
     // Gather multi-source biodiversity data
     const observations = await service.gatherBiodiversityData(location);
-    
+
     // Calculate diversity metrics
     const metrics = {
       shannon: calculateShannonDiversity(observations),
       simpson: calculateSimpsonDiversity(observations),
       functionalDiversity: calculateFunctionalDiversity(observations),
-      betaDiversity: calculateBetaDiversity(observations)
+      betaDiversity: calculateBetaDiversity(observations),
     };
-    
+
     // Generate comprehensive analysis
     const analysis = await service.analyzeBiodiversityTrends(observations, metrics);
-    
+
     // Store in agent memory
     await runtime.memoryManager.createMemory({
       id: generateUUID(),
       type: 'biodiversity_assessment',
-      content: { text: analysis.summary, data: { observations, metrics, analysis }},
-      metadata: { location, timestamp: new Date() }
+      content: { text: analysis.summary, data: { observations, metrics, analysis } },
+      metadata: { location, timestamp: new Date() },
     });
-    
+
     return { text: analysis.summary, data: analysis };
-  }
+  },
 };
 ```
 
@@ -881,56 +914,58 @@ import { fromUrl as loadGeoTIFF } from 'geotiff';
 
 export class SatelliteImageryService extends Service {
   static serviceType = 'satellite-imagery';
-  
+
   private sentinelHub: SentinelHubClient;
   private earthEngine: EarthEngineClient;
   private processingPipeline: ImageProcessingPipeline;
-  
+
   async analyzeLandCover(bounds: BoundingBox, dateRange: DateRange): Promise<LandCoverAnalysis> {
     // Fetch multi-temporal satellite imagery
     const imagery = await this.fetchMultiTemporalImagery(bounds, dateRange);
-    
+
     // Calculate vegetation indices
     const ndvi = await this.calculateNDVI(imagery);
     const evi = await this.calculateEVI(imagery);
-    
+
     // Perform change detection
     const changes = await this.detectLandCoverChanges(imagery);
-    
+
     // Classify land cover types
     const classification = await this.classifyLandCover(imagery, { ndvi, evi });
-    
+
     return {
       classification,
       changes,
       vegetationHealth: this.assessVegetationHealth(ndvi, evi),
-      carbonImpact: await this.estimateCarbonImpact(classification, changes)
+      carbonImpact: await this.estimateCarbonImpact(classification, changes),
     };
   }
-  
+
   private async calculateNDVI(imagery: SatelliteImagery[]): Promise<NDVIResult> {
-    const results = await Promise.all(imagery.map(async (image) => {
-      const redBand = await image.getBand('B04');
-      const nirBand = await image.getBand('B08');
-      
-      const ndvi = new Float32Array(redBand.length);
-      for (let i = 0; i < redBand.length; i++) {
-        const red = redBand[i];
-        const nir = nirBand[i];
-        ndvi[i] = (nir - red) / (nir + red);
-      }
-      
-      return {
-        timestamp: image.timestamp,
-        values: ndvi,
-        statistics: calculateStatistics(ndvi)
-      };
-    }));
-    
+    const results = await Promise.all(
+      imagery.map(async (image) => {
+        const redBand = await image.getBand('B04');
+        const nirBand = await image.getBand('B08');
+
+        const ndvi = new Float32Array(redBand.length);
+        for (let i = 0; i < redBand.length; i++) {
+          const red = redBand[i];
+          const nir = nirBand[i];
+          ndvi[i] = (nir - red) / (nir + red);
+        }
+
+        return {
+          timestamp: image.timestamp,
+          values: ndvi,
+          statistics: calculateStatistics(ndvi),
+        };
+      })
+    );
+
     return {
       timeSeries: results,
       trend: calculateTrend(results),
-      anomalies: detectAnomalies(results)
+      anomalies: detectAnomalies(results),
     };
   }
 }
@@ -947,59 +982,59 @@ export class EnvironmentalStreamProcessor {
   private mqttClient: MQTTClient;
   private sseServer: SSEServer;
   private dataBuffer: CircularBuffer<SensorReading>;
-  
+
   async initializeStreams(config: StreamConfig): Promise<void> {
     // WebSocket for bidirectional real-time communication
     this.wsServer = new WebSocket.Server({ port: config.wsPort });
     this.setupWebSocketHandlers();
-    
+
     // MQTT for IoT sensor integration
     this.mqttClient = await this.connectMQTT(config.mqttBroker);
     this.subscribeToSensorTopics();
-    
+
     // Server-Sent Events for browser clients
     this.sseServer = new SSEServer(config.ssePort);
-    
+
     // Initialize circular buffer for recent data
     this.dataBuffer = new CircularBuffer(10000);
   }
-  
+
   private setupWebSocketHandlers(): void {
     this.wsServer.on('connection', (socket) => {
       socket.on('message', async (data) => {
         const reading = JSON.parse(data.toString()) as SensorReading;
-        
+
         // Validate and process sensor data
         if (this.validateReading(reading)) {
           await this.processSensorReading(reading);
-          
+
           // Check for anomalies
           if (this.isAnomaly(reading)) {
             this.broadcastAlert({
               type: 'environmental_anomaly',
               reading,
-              severity: this.calculateSeverity(reading)
+              severity: this.calculateSeverity(reading),
             });
           }
         }
       });
     });
   }
-  
+
   private async processSensorReading(reading: SensorReading): Promise<void> {
     // Add to buffer
     this.dataBuffer.add(reading);
-    
+
     // Store in time-series database
     await this.storeReading(reading);
-    
+
     // Update real-time aggregates
     await this.updateAggregates(reading);
-    
+
     // Broadcast to connected clients
     this.broadcast({
       type: 'sensor_update',
-      data: reading
+      data: reading,
     });
   }
 }
@@ -1013,7 +1048,7 @@ Carbon accounting and biodiversity assessment form the quantitative foundation f
 // services/carbon-calculation-service.ts
 export class CarbonCalculationService extends Service {
   static serviceType = 'carbon-calculation';
-  
+
   async calculateForestCarbonStock(
     area: Polygon,
     forestType: ForestType,
@@ -1021,21 +1056,21 @@ export class CarbonCalculationService extends Service {
   ): Promise<CarbonStockResult> {
     // Calculate aboveground biomass using allometric equations
     const agb = this.calculateAbovegroundBiomass(measurements, forestType);
-    
+
     // Estimate belowground biomass (typically 15-30% of AGB)
     const bgb = agb * this.getBelowgroundRatio(forestType);
-    
+
     // Calculate carbon content (typically 47% of biomass)
     const carbonFraction = 0.47;
     const totalBiomassCarbon = (agb + bgb) * carbonFraction;
-    
+
     // Add soil carbon based on depth and type
     const soilCarbon = await this.calculateSoilCarbon(area, measurements.soilData);
-    
+
     // Include deadwood and litter carbon
     const deadwoodCarbon = this.calculateDeadwoodCarbon(measurements.deadwood);
     const litterCarbon = this.calculateLitterCarbon(measurements.litter);
-    
+
     return {
       totalCarbonStock: totalBiomassCarbon + soilCarbon + deadwoodCarbon + litterCarbon,
       components: {
@@ -1043,26 +1078,26 @@ export class CarbonCalculationService extends Service {
         belowgroundBiomass: bgb * carbonFraction,
         soil: soilCarbon,
         deadwood: deadwoodCarbon,
-        litter: litterCarbon
+        litter: litterCarbon,
       },
       uncertainty: this.calculateUncertainty(measurements),
-      methodology: 'IPCC Tier 2'
+      methodology: 'IPCC Tier 2',
     };
   }
-  
+
   private calculateAbovegroundBiomass(
     measurements: ForestMeasurements,
     forestType: ForestType
   ): number {
     // Use appropriate allometric equation based on forest type
     const equation = this.getAllometricEquation(forestType);
-    
+
     return measurements.trees.reduce((total, tree) => {
       const biomass = equation(tree.dbh, tree.height, tree.woodDensity);
       return total + biomass;
     }, 0);
   }
-  
+
   async calculateBlueCarbon(
     ecosystem: BlueEcosystemType,
     area: number,
@@ -1071,25 +1106,24 @@ export class CarbonCalculationService extends Service {
     const sequestrationRates = {
       mangroves: 24.0, // MtC/year globally
       saltMarshes: 13.4,
-      seagrassMeadows: 43.9
+      seagrassMeadows: 43.9,
     };
-    
+
     const storageCapacity = {
       mangroves: { min: 280, max: 680 }, // tC/ha
       saltMarshes: { min: 162, max: 435 },
-      seagrassMeadows: { min: 115, max: 829 }
+      seagrassMeadows: { min: 115, max: 829 },
     };
-    
+
     const annualSequestration = (sequestrationRates[ecosystem] / 1e6) * area;
-    const totalStorage = area * (
-      (storageCapacity[ecosystem].min + storageCapacity[ecosystem].max) / 2
-    );
-    
+    const totalStorage =
+      area * ((storageCapacity[ecosystem].min + storageCapacity[ecosystem].max) / 2);
+
     return {
       annualSequestration,
       totalStorage,
       ecosystem,
-      confidence: this.assessDataQuality(measurements)
+      confidence: this.assessDataQuality(measurements),
     };
   }
 }
@@ -1103,53 +1137,55 @@ Biodiversity analysis requires sophisticated algorithms for calculating various 
 // services/biodiversity-analysis-service.ts
 export class BiodiversityAnalysisService extends Service {
   static serviceType = 'biodiversity-analysis';
-  
+
   calculateDiversityIndices(speciesData: SpeciesObservation[]): DiversityMetrics {
     const abundances = this.getSpeciesAbundances(speciesData);
     const total = abundances.reduce((sum, n) => sum + n, 0);
-    
+
     // Shannon-Wiener Index: H' = -Σ(pi × ln(pi))
     const shannon = -abundances.reduce((h, n) => {
       if (n === 0) return h;
       const p = n / total;
-      return h + (p * Math.log(p));
+      return h + p * Math.log(p);
     }, 0);
-    
+
     // Simpson's Index: D = 1 - Σ(ni(ni-1) / N(N-1))
-    const simpson = 1 - abundances.reduce((d, n) => {
-      return d + (n * (n - 1)) / (total * (total - 1));
-    }, 0);
-    
+    const simpson =
+      1 -
+      abundances.reduce((d, n) => {
+        return d + (n * (n - 1)) / (total * (total - 1));
+      }, 0);
+
     // Pielou's Evenness: J' = H' / ln(S)
-    const speciesRichness = abundances.filter(n => n > 0).length;
+    const speciesRichness = abundances.filter((n) => n > 0).length;
     const evenness = shannon / Math.log(speciesRichness);
-    
+
     // Functional diversity metrics
     const functional = this.calculateFunctionalDiversity(speciesData);
-    
+
     return {
       shannon,
       simpson,
       speciesRichness,
       evenness,
       functional,
-      confidence: this.assessSamplingAdequacy(speciesData)
+      confidence: this.assessSamplingAdequacy(speciesData),
     };
   }
-  
+
   private calculateFunctionalDiversity(
     speciesData: SpeciesObservation[]
   ): FunctionalDiversityMetrics {
     const traits = this.extractFunctionalTraits(speciesData);
-    
+
     return {
       functionalRichness: this.calculateFRic(traits),
       functionalEvenness: this.calculateFEve(traits),
       functionalDivergence: this.calculateFDiv(traits),
-      functionalDispersion: this.calculateFDis(traits)
+      functionalDispersion: this.calculateFDis(traits),
     };
   }
-  
+
   async integrateWithEcologicalDatabases(
     location: GeoPoint,
     radius: number
@@ -1159,26 +1195,22 @@ export class BiodiversityAnalysisService extends Service {
       this.queryGBIF(location, radius),
       this.queryiNaturalist(location, radius),
       this.queryeBird(location, radius),
-      this.queryEOL(location, radius)
+      this.queryEOL(location, radius),
     ]);
-    
+
     // Standardize to Darwin Core format
-    const standardized = this.standardizeToDarwinCore([
-      ...gbif,
-      ...inat,
-      ...ebird
-    ]);
-    
+    const standardized = this.standardizeToDarwinCore([...gbif, ...inat, ...ebird]);
+
     // Deduplicate observations
     const deduplicated = this.deduplicateObservations(standardized);
-    
+
     // Enhance with EOL taxonomic data
     const enhanced = await this.enhanceWithTaxonomy(deduplicated, eol);
-    
+
     return {
       observations: enhanced,
       sources: ['GBIF', 'iNaturalist', 'eBird', 'EOL'],
-      dataQuality: this.assessDataQuality(enhanced)
+      dataQuality: this.assessDataQuality(enhanced),
     };
   }
 }
@@ -1192,61 +1224,54 @@ Integrating indigenous knowledge requires sophisticated technical implementation
 // services/indigenous-knowledge-service.ts
 export class IndigenousKnowledgeService extends Service {
   static serviceType = 'indigenous-knowledge';
-  
+
   private consentManager: ConsentManager;
   private culturalProtocolEngine: CulturalProtocolEngine;
   private benefitSharingCalculator: BenefitSharingCalculator;
-  
+
   async integrateTraditionalKnowledge(
     knowledge: TraditionalKnowledgeItem,
     community: IndigenousCommunity
   ): Promise<IntegrationResult> {
     // Verify FPIC (Free, Prior, Informed Consent)
-    const consent = await this.consentManager.verifyConsent(
-      knowledge,
-      community,
-      ConsentType.FPIC
-    );
-    
+    const consent = await this.consentManager.verifyConsent(knowledge, community, ConsentType.FPIC);
+
     if (!consent.isValid) {
-      return { 
-        success: false, 
+      return {
+        success: false,
         reason: 'Consent requirements not met',
-        nextSteps: consent.requiredActions
+        nextSteps: consent.requiredActions,
       };
     }
-    
+
     // Apply cultural protocols
-    const filtered = await this.culturalProtocolEngine.applyProtocols(
-      knowledge,
-      {
-        season: getCurrentSeason(community.calendar),
-        ceremonialRestrictions: community.ceremonialPeriods,
-        genderRestrictions: knowledge.genderProtocols,
-        initiationLevel: knowledge.requiredInitiation
-      }
-    );
-    
+    const filtered = await this.culturalProtocolEngine.applyProtocols(knowledge, {
+      season: getCurrentSeason(community.calendar),
+      ceremonialRestrictions: community.ceremonialPeriods,
+      genderRestrictions: knowledge.genderProtocols,
+      initiationLevel: knowledge.requiredInitiation,
+    });
+
     // Implement zero-knowledge proof for sensitive content
     const zkProof = await this.generateZKProof(filtered);
-    
+
     // Store with full provenance tracking
     const stored = await this.storeWithProvenance({
       knowledge: filtered,
       community,
       consent,
       zkProof,
-      benefitSharingAgreement: await this.negotiateBenefitSharing(community)
+      benefitSharingAgreement: await this.negotiateBenefitSharing(community),
     });
-    
+
     return {
       success: true,
       knowledgeId: stored.id,
       accessControls: stored.accessControls,
-      benefitSharingTerms: stored.benefitSharingAgreement
+      benefitSharingTerms: stored.benefitSharingAgreement,
     };
   }
-  
+
   private async negotiateBenefitSharing(
     community: IndigenousCommunity
   ): Promise<BenefitSharingAgreement> {
@@ -1255,35 +1280,32 @@ export class IndigenousKnowledgeService extends Service {
       knowledgeType: 'ecological',
       commercialPotential: 'research',
       duration: '10 years',
-      minimumShare: 0.3 // 30% minimum to community
+      minimumShare: 0.3, // 30% minimum to community
     });
-    
+
     // Deploy smart contract for automated benefit distribution
     const contract = await this.deployBenefitSharingContract(agreement);
-    
+
     return {
       ...agreement,
       smartContractAddress: contract.address,
-      automatedDistribution: true
+      automatedDistribution: true,
     };
   }
 }
 
 // Zero-knowledge proof implementation for cultural data
 class ZeroKnowledgeProofGenerator {
-  async generateProof(
-    sensitiveData: any,
-    publicAttributes: string[]
-  ): Promise<ZKProof> {
+  async generateProof(sensitiveData: any, publicAttributes: string[]): Promise<ZKProof> {
     // Implementation using zkSNARKs for privacy-preserving verification
     const circuit = await this.compileCircuit(publicAttributes);
     const witness = await this.generateWitness(sensitiveData, publicAttributes);
     const proof = await this.proveKnowledge(circuit, witness);
-    
+
     return {
       proof,
       publicInputs: this.extractPublicInputs(witness),
-      verificationKey: circuit.verificationKey
+      verificationKey: circuit.verificationKey,
     };
   }
 }
@@ -1296,29 +1318,26 @@ Cultural protocols ensure that indigenous knowledge is accessed and used accordi
 ```typescript
 // protocols/cultural-protocol-engine.ts
 export class CulturalProtocolEngine {
-  async applyProtocols(
-    data: any,
-    context: CulturalContext
-  ): Promise<FilteredData> {
+  async applyProtocols(data: any, context: CulturalContext): Promise<FilteredData> {
     const filters = [
       this.seasonalFilter(context.season),
       this.ceremonialFilter(context.ceremonialRestrictions),
       this.genderFilter(context.genderRestrictions),
-      this.initiationFilter(context.initiationLevel)
+      this.initiationFilter(context.initiationLevel),
     ];
-    
+
     let filtered = data;
     for (const filter of filters) {
       filtered = await filter.apply(filtered);
     }
-    
+
     return {
       data: filtered,
-      appliedFilters: filters.map(f => f.name),
-      accessLevel: this.calculateAccessLevel(context)
+      appliedFilters: filters.map((f) => f.name),
+      accessLevel: this.calculateAccessLevel(context),
     };
   }
-  
+
   private seasonalFilter(currentSeason: string): CulturalFilter {
     return {
       name: 'seasonal',
@@ -1327,7 +1346,7 @@ export class CulturalProtocolEngine {
           return this.redactSeasonalContent(data);
         }
         return data;
-      }
+      },
     };
   }
 }
@@ -1344,46 +1363,46 @@ export class EcologicalMemoryAdapter implements DatabaseAdapter {
   private spatialIndex: RBush<EcologicalFeature>;
   private graphDB: Neo4jClient;
   private vectorStore: MilvusClient;
-  
+
   async initialize(config: MemoryConfig): Promise<void> {
     // Initialize TimescaleDB for time-series data
     this.timescaleDB = await this.setupTimescaleDB(config.timescale);
-    
+
     // Create hypertables for ecological data
     await this.createHypertables();
-    
+
     // Initialize spatial indexing
     this.spatialIndex = new RBush(16);
-    
+
     // Connect to Neo4j for ecological networks
     this.graphDB = await this.setupNeo4j(config.neo4j);
-    
+
     // Initialize vector store for semantic search
     this.vectorStore = await this.setupMilvus(config.milvus);
   }
-  
+
   private async createHypertables(): Promise<void> {
     const tables = [
       {
         name: 'ecological_observations',
         timeColumn: 'timestamp',
         chunkInterval: '1 day',
-        compressionAfter: '7 days'
+        compressionAfter: '7 days',
       },
       {
         name: 'sensor_readings',
         timeColumn: 'reading_time',
         chunkInterval: '1 hour',
-        compressionAfter: '1 day'
+        compressionAfter: '1 day',
       },
       {
         name: 'species_interactions',
         timeColumn: 'observation_time',
         chunkInterval: '1 week',
-        compressionAfter: '30 days'
-      }
+        compressionAfter: '30 days',
+      },
     ];
-    
+
     for (const table of tables) {
       await this.timescaleDB.query(`
         SELECT create_hypertable(
@@ -1399,7 +1418,7 @@ export class EcologicalMemoryAdapter implements DatabaseAdapter {
       `);
     }
   }
-  
+
   async searchMemoriesBySpatioTemporal(
     bounds: BoundingBox,
     timeRange: TimeRange,
@@ -1410,48 +1429,49 @@ export class EcologicalMemoryAdapter implements DatabaseAdapter {
       minX: bounds.west,
       minY: bounds.south,
       maxX: bounds.east,
-      maxY: bounds.north
+      maxY: bounds.north,
     });
-    
+
     // Temporal filtering with TimescaleDB
-    const temporalResults = await this.timescaleDB.query(`
+    const temporalResults = await this.timescaleDB.query(
+      `
       SELECT * FROM ecological_observations
       WHERE timestamp >= $1 AND timestamp <= $2
       AND ST_Within(location, ST_MakeEnvelope($3, $4, $5, $6, 4326))
       ORDER BY timestamp DESC
       LIMIT $7
-    `, [
-      timeRange.start,
-      timeRange.end,
-      bounds.west,
-      bounds.south,
-      bounds.east,
-      bounds.north,
-      options.limit || 1000
-    ]);
-    
+    `,
+      [
+        timeRange.start,
+        timeRange.end,
+        bounds.west,
+        bounds.south,
+        bounds.east,
+        bounds.north,
+        options.limit || 1000,
+      ]
+    );
+
     // Enhance with graph relationships
     const enhanced = await this.enhanceWithRelationships(temporalResults);
-    
+
     return enhanced;
   }
-  
-  private async enhanceWithRelationships(
-    observations: any[]
-  ): Promise<EcologicalMemory[]> {
+
+  private async enhanceWithRelationships(observations: any[]): Promise<EcologicalMemory[]> {
     const cypher = `
       MATCH (o:Observation)-[r:INTERACTS_WITH|DEPENDS_ON|COMPETES_WITH]-(related)
       WHERE o.id IN $ids
       RETURN o, r, related
     `;
-    
+
     const relationships = await this.graphDB.query(cypher, {
-      ids: observations.map(o => o.id)
+      ids: observations.map((o) => o.id),
     });
-    
-    return observations.map(obs => ({
+
+    return observations.map((obs) => ({
       ...obs,
-      relationships: relationships.filter(r => r.o.id === obs.id)
+      relationships: relationships.filter((r) => r.o.id === obs.id),
     }));
   }
 }
@@ -1467,60 +1487,55 @@ export class ChangeDetectionSystem {
   private baselineEstimator: BaselineEstimator;
   private anomalyDetector: AnomalyDetector;
   private alertManager: AlertManager;
-  
+
   async detectEcologicalChanges(
     newData: EcologicalObservation,
     location: GeoPoint
   ): Promise<ChangeDetectionResult> {
     // Retrieve baseline for location
     const baseline = await this.baselineEstimator.getBaseline(location);
-    
+
     if (!baseline) {
       // Establish new baseline
       await this.baselineEstimator.establish(location, newData);
       return { isBaseline: true, changes: [] };
     }
-    
+
     // Statistical change detection
     const statisticalChanges = this.detectStatisticalAnomalies(newData, baseline);
-    
+
     // Machine learning-based detection
     const mlChanges = await this.detectMLAnomalies(newData, baseline);
-    
+
     // Combine detection methods
     const changes = this.combineDetectionResults(statisticalChanges, mlChanges);
-    
+
     // Generate alerts for significant changes
-    if (changes.some(c => c.severity === 'high' || c.severity === 'critical')) {
+    if (changes.some((c) => c.severity === 'high' || c.severity === 'critical')) {
       await this.alertManager.createAlert({
         type: 'ecological_change',
         location,
         changes,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
-    
+
     // Update baseline with new observations
     await this.baselineEstimator.update(location, newData);
-    
+
     return { isBaseline: false, changes };
   }
-  
-  private detectStatisticalAnomalies(
-    data: EcologicalObservation,
-    baseline: Baseline
-  ): Change[] {
+
+  private detectStatisticalAnomalies(data: EcologicalObservation, baseline: Baseline): Change[] {
     const changes: Change[] = [];
-    
+
     for (const measurement of data.observations.environmental) {
       const baselineStats = baseline.statistics[measurement.parameter];
       if (!baselineStats) continue;
-      
+
       // Z-score calculation
-      const zScore = Math.abs(
-        (measurement.value - baselineStats.mean) / baselineStats.stdDev
-      );
-      
+      const zScore = Math.abs((measurement.value - baselineStats.mean) / baselineStats.stdDev);
+
       if (zScore > 3) {
         changes.push({
           parameter: measurement.parameter,
@@ -1531,13 +1546,13 @@ export class ChangeDetectionSystem {
             value: measurement.value,
             expectedRange: [
               baselineStats.mean - 3 * baselineStats.stdDev,
-              baselineStats.mean + 3 * baselineStats.stdDev
-            ]
-          }
+              baselineStats.mean + 3 * baselineStats.stdDev,
+            ],
+          },
         });
       }
     }
-    
+
     return changes;
   }
 }
@@ -1553,86 +1568,91 @@ export class EcologicalAPIManager {
   private rateLimiters: Map<string, RateLimiter> = new Map();
   private circuitBreakers: Map<string, CircuitBreaker> = new Map();
   private cache: NodeCache;
-  
+
   constructor() {
     this.initializeRateLimiters();
     this.initializeCircuitBreakers();
     this.cache = new NodeCache({ stdTTL: 3600 }); // 1 hour cache
   }
-  
+
   private initializeRateLimiters(): void {
     // Configure rate limits for each API
-    this.rateLimiters.set('openweather', new RateLimiter({
-      tokensPerInterval: 60,
-      interval: 'minute'
-    }));
-    
-    this.rateLimiters.set('sentinel-hub', new RateLimiter({
-      tokensPerInterval: 100,
-      interval: 'hour'
-    }));
-    
-    this.rateLimiters.set('gbif', new RateLimiter({
-      tokensPerInterval: 100,
-      interval: 'second'
-    }));
+    this.rateLimiters.set(
+      'openweather',
+      new RateLimiter({
+        tokensPerInterval: 60,
+        interval: 'minute',
+      })
+    );
+
+    this.rateLimiters.set(
+      'sentinel-hub',
+      new RateLimiter({
+        tokensPerInterval: 100,
+        interval: 'hour',
+      })
+    );
+
+    this.rateLimiters.set(
+      'gbif',
+      new RateLimiter({
+        tokensPerInterval: 100,
+        interval: 'second',
+      })
+    );
   }
-  
+
   private initializeCircuitBreakers(): void {
     const defaultConfig = {
       timeout: 3000,
       errorThresholdPercentage: 50,
-      resetTimeout: 30000
+      resetTimeout: 30000,
     };
-    
-    ['openweather', 'noaa', 'epa', 'usgs', 'gbif'].forEach(api => {
-      this.circuitBreakers.set(api, new CircuitBreaker(
-        this.makeAPICall.bind(this, api),
-        defaultConfig
-      ));
+
+    ['openweather', 'noaa', 'epa', 'usgs', 'gbif'].forEach((api) => {
+      this.circuitBreakers.set(
+        api,
+        new CircuitBreaker(this.makeAPICall.bind(this, api), defaultConfig)
+      );
     });
   }
-  
-  async fetchWithResilience<T>(
-    api: string,
-    endpoint: string,
-    params: any
-  ): Promise<T> {
+
+  async fetchWithResilience<T>(api: string, endpoint: string, params: any): Promise<T> {
     // Check cache first
     const cacheKey = `${api}:${endpoint}:${JSON.stringify(params)}`;
     const cached = this.cache.get<T>(cacheKey);
     if (cached) return cached;
-    
+
     // Check rate limit
     const limiter = this.rateLimiters.get(api);
-    if (limiter && !await limiter.tryRemoveTokens(1)) {
+    if (limiter && !(await limiter.tryRemoveTokens(1))) {
       throw new Error(`Rate limit exceeded for ${api}`);
     }
-    
+
     // Use circuit breaker for the actual call
     const breaker = this.circuitBreakers.get(api);
     if (!breaker) throw new Error(`No circuit breaker for ${api}`);
-    
+
     try {
       const result = await breaker.fire(endpoint, params);
-      
+
       // Cache successful result
       this.cache.set(cacheKey, result);
-      
+
       return result;
     } catch (error) {
       // Try fallback sources
       return this.tryFallbackSources(api, endpoint, params);
     }
   }
-  
+
   private async tryFallbackSources<T>(
     primaryAPI: string,
     endpoint: string,
     params: any
   ): Promise<T> {
     const fallbacks = this.getFallbackSources(primaryAPI);
-    
+
     for (const fallback of fallbacks) {
       try {
         return await this.fetchWithResilience(fallback, endpoint, params);
@@ -1640,7 +1660,7 @@ export class EcologicalAPIManager {
         console.warn(`Fallback ${fallback} also failed:`, error);
       }
     }
-    
+
     throw new Error(`All sources failed for ${endpoint}`);
   }
 }
@@ -1656,50 +1676,46 @@ export class EcologicalETLPipeline {
   private transformers: Map<string, DataTransformer> = new Map();
   private validator: DataValidator;
   private unitConverter: UnitConverter;
-  
+
   constructor() {
     this.registerTransformers();
     this.validator = new DataValidator();
     this.unitConverter = new UnitConverter();
   }
-  
-  async processData(
-    source: string,
-    rawData: any[]
-  ): Promise<EcologicalDataPoint[]> {
+
+  async processData(source: string, rawData: any[]): Promise<EcologicalDataPoint[]> {
     // Extract
     const extracted = await this.extract(source, rawData);
-    
+
     // Transform
     const transformed = await this.transform(source, extracted);
-    
+
     // Validate
     const validated = await this.validate(transformed);
-    
+
     // Load
     await this.load(validated);
-    
+
     return validated;
   }
-  
-  private async transform(
-    source: string,
-    data: any[]
-  ): Promise<EcologicalDataPoint[]> {
+
+  private async transform(source: string, data: any[]): Promise<EcologicalDataPoint[]> {
     const transformer = this.transformers.get(source);
     if (!transformer) throw new Error(`No transformer for ${source}`);
-    
-    return Promise.all(data.map(async (item) => {
-      const transformed = await transformer.transform(item);
-      
-      // Standardize units
-      return this.standardizeUnits(transformed);
-    }));
+
+    return Promise.all(
+      data.map(async (item) => {
+        const transformed = await transformer.transform(item);
+
+        // Standardize units
+        return this.standardizeUnits(transformed);
+      })
+    );
   }
-  
+
   private standardizeUnits(data: EcologicalDataPoint): EcologicalDataPoint {
     const standardized = { ...data };
-    
+
     // Temperature to Celsius
     if (data.measurements.temperature) {
       standardized.measurements.temperature = {
@@ -1708,10 +1724,10 @@ export class EcologicalETLPipeline {
           data.measurements.temperature.unit,
           'celsius'
         ),
-        unit: 'celsius'
+        unit: 'celsius',
       };
     }
-    
+
     // Distance to meters
     if (data.measurements.distance) {
       standardized.measurements.distance = {
@@ -1720,10 +1736,10 @@ export class EcologicalETLPipeline {
           data.measurements.distance.unit,
           'meters'
         ),
-        unit: 'meters'
+        unit: 'meters',
       };
     }
-    
+
     return standardized;
   }
 }
@@ -1739,47 +1755,45 @@ export class PerformanceManager {
   private memoryMonitor: MemoryMonitor;
   private queryOptimizer: QueryOptimizer;
   private compressionEngine: CompressionEngine;
-  
-  async optimizeTimeSeriesQuery(
-    query: TimeSeriesQuery
-  ): Promise<OptimizedQuery> {
+
+  async optimizeTimeSeriesQuery(query: TimeSeriesQuery): Promise<OptimizedQuery> {
     // Use continuous aggregates for common queries
     if (this.canUseContinuousAggregate(query)) {
       return this.rewriteForContinuousAggregate(query);
     }
-    
+
     // Apply time-based partitioning hints
     const partitionHints = this.getPartitionHints(query.timeRange);
-    
+
     // Optimize spatial components
     const spatialOptimizations = this.optimizeSpatialQuery(query.bounds);
-    
+
     return {
       ...query,
       hints: [...partitionHints, ...spatialOptimizations],
-      parallel: this.shouldParallelize(query)
+      parallel: this.shouldParallelize(query),
     };
   }
-  
+
   async manageMemoryPressure(): Promise<void> {
     const usage = process.memoryUsage();
     const threshold = 0.8 * this.getMaxMemory();
-    
+
     if (usage.heapUsed > threshold) {
       // Trigger garbage collection
       if (global.gc) global.gc();
-      
+
       // Clear non-critical caches
       await this.clearNonCriticalCaches();
-      
+
       // Reduce buffer sizes
       this.adjustBufferSizes(0.5);
-      
+
       // Enable data compression
       await this.enableAggressiveCompression();
     }
   }
-  
+
   private async enableAggressiveCompression(): Promise<void> {
     // Configure TimescaleDB compression
     await this.timescaleDB.query(`
@@ -1806,13 +1820,11 @@ export class EcologicalClusterManager {
   private workerNodes: Map<string, WorkerNode> = new Map();
   private loadBalancer: LoadBalancer;
   private taskQueue: TaskQueue;
-  
-  async distributeProcessing(
-    task: EcologicalProcessingTask
-  ): Promise<ProcessingResult> {
+
+  async distributeProcessing(task: EcologicalProcessingTask): Promise<ProcessingResult> {
     // Determine optimal parallelization strategy
     const strategy = this.determineStrategy(task);
-    
+
     if (strategy === 'spatial') {
       return this.spatialDistribution(task);
     } else if (strategy === 'temporal') {
@@ -1820,33 +1832,31 @@ export class EcologicalClusterManager {
     } else if (strategy === 'species') {
       return this.speciesDistribution(task);
     }
-    
+
     // Default to load-based distribution
     return this.loadBasedDistribution(task);
   }
-  
-  private async spatialDistribution(
-    task: EcologicalProcessingTask
-  ): Promise<ProcessingResult> {
+
+  private async spatialDistribution(task: EcologicalProcessingTask): Promise<ProcessingResult> {
     // Divide geographic area into tiles
     const tiles = this.createSpatialTiles(task.bounds);
-    
+
     // Assign tiles to workers based on proximity
-    const assignments = tiles.map(tile => ({
+    const assignments = tiles.map((tile) => ({
       tile,
-      worker: this.findNearestWorker(tile.center)
+      worker: this.findNearestWorker(tile.center),
     }));
-    
+
     // Process in parallel
     const results = await Promise.all(
       assignments.map(({ tile, worker }) =>
         worker.process({
           ...task,
-          bounds: tile.bounds
+          bounds: tile.bounds,
         })
       )
     );
-    
+
     // Merge results
     return this.mergeSpatialResults(results);
   }
@@ -1860,31 +1870,31 @@ Here's the complete, production-ready ElizaOS ecological plugin implementation t
 ```typescript
 // ecological-plugin/index.ts
 import { Plugin, IAgentRuntime } from '@elizaos/core';
-import { 
+import {
   EcologicalDataService,
   SatelliteImageryService,
   CarbonCalculationService,
   BiodiversityAnalysisService,
-  IndigenousKnowledgeService
+  IndigenousKnowledgeService,
 } from './services';
-import { 
+import {
   environmentalMonitoringAction,
   satelliteAnalysisAction,
   carbonCalculationAction,
   biodiversityAssessmentAction,
-  indigenousKnowledgeAction
+  indigenousKnowledgeAction,
 } from './actions';
 import {
   environmentalContextProvider,
   satelliteImageryProvider,
   ecologicalNetworkProvider,
-  indigenousKnowledgeProvider
+  indigenousKnowledgeProvider,
 } from './providers';
 import {
   dataQualityEvaluator,
   ecologicalSignificanceEvaluator,
   carbonImpactEvaluator,
-  culturalProtocolEvaluator
+  culturalProtocolEvaluator,
 } from './evaluators';
 import { EcologicalMemoryAdapter } from './memory';
 import { PerformanceManager } from './optimization';
@@ -1893,106 +1903,104 @@ import { EcologicalAPIManager } from './integrations';
 export const ecologicalPlugin: Plugin = {
   name: 'ecological-knowledge',
   description: 'Comprehensive ecological data processing with indigenous knowledge integration',
-  
+
   services: [
     EcologicalDataService,
     SatelliteImageryService,
     CarbonCalculationService,
     BiodiversityAnalysisService,
-    IndigenousKnowledgeService
+    IndigenousKnowledgeService,
   ],
-  
+
   actions: [
     environmentalMonitoringAction,
     satelliteAnalysisAction,
     carbonCalculationAction,
     biodiversityAssessmentAction,
-    indigenousKnowledgeAction
+    indigenousKnowledgeAction,
   ],
-  
+
   providers: [
     environmentalContextProvider,
     satelliteImageryProvider,
     ecologicalNetworkProvider,
-    indigenousKnowledgeProvider
+    indigenousKnowledgeProvider,
   ],
-  
+
   evaluators: [
     dataQualityEvaluator,
     ecologicalSignificanceEvaluator,
     carbonImpactEvaluator,
-    culturalProtocolEvaluator
+    culturalProtocolEvaluator,
   ],
-  
+
   adapters: [EcologicalMemoryAdapter],
-  
+
   init: async (config: Record<string, string>, runtime: IAgentRuntime) => {
     console.log('Initializing Ecological Knowledge Plugin...');
-    
+
     // Validate configuration
     const requiredConfigs = [
       'TIMESCALE_CONNECTION_STRING',
       'NEO4J_URI',
       'SENTINEL_HUB_INSTANCE_ID',
-      'OPENWEATHER_API_KEY'
+      'OPENWEATHER_API_KEY',
     ];
-    
-    const missingConfigs = requiredConfigs.filter(
-      key => !runtime.getSetting(key)
-    );
-    
+
+    const missingConfigs = requiredConfigs.filter((key) => !runtime.getSetting(key));
+
     if (missingConfigs.length > 0) {
       console.warn('Missing configurations:', missingConfigs);
       console.warn('Some features may be limited');
     }
-    
+
     // Initialize core systems
     const performanceManager = new PerformanceManager();
     const apiManager = new EcologicalAPIManager();
-    
+
     // Set up memory management
     runtime.on('memory-pressure', async () => {
       await performanceManager.manageMemoryPressure();
     });
-    
+
     // Initialize real-time streams
     const streamProcessor = new EnvironmentalStreamProcessor();
     await streamProcessor.initializeStreams({
       wsPort: 8080,
       mqttBroker: runtime.getSetting('MQTT_BROKER') || 'mqtt://localhost',
-      ssePort: 8081
+      ssePort: 8081,
     });
-    
+
     // Set up scheduled tasks
     const scheduler = new EcologicalDataScheduler();
     scheduler.scheduleDataFetch('weather-sync', '*/15 * * * *', async () => {
       const service = runtime.getService<EcologicalDataService>('ecological-data');
       await service.syncWeatherData();
     });
-    
+
     scheduler.scheduleDataFetch('satellite-check', '0 */6 * * *', async () => {
       const service = runtime.getService<SatelliteImageryService>('satellite-imagery');
       await service.checkNewImagery();
     });
-    
+
     // Register event handlers
     runtime.on('environmental-alert', async (alert) => {
       console.log('Environmental alert received:', alert);
       await runtime.processAlert(alert);
     });
-    
+
     runtime.on('species-observation', async (observation) => {
       const service = runtime.getService<BiodiversityAnalysisService>('biodiversity');
       await service.processObservation(observation);
     });
-    
+
     runtime.on('indigenous-knowledge-request', async (request) => {
       const service = runtime.getService<IndigenousKnowledgeService>('indigenous-knowledge');
       await service.handleRequest(request);
     });
-    
+
     console.log('Ecological Knowledge Plugin initialized successfully');
-  }
+  },
 };
 
 export default ecologicalPlugin;
@@ -2139,14 +2147,14 @@ Follow the principle of minimal permissions, granting only essential rights like
 
 ```javascript
 class EcoRateLimiter {
-    checkUserLimit(userId, action) {
-        const limits = {
-            'message': { count: 10, window: 60000 },
-            'carbon_claim': { count: 3, window: 86400000 },
-            'quiz_attempt': { count: 5, window: 3600000 }
-        };
-        return this.checkLimit(userId, action, limits[action]);
-    }
+  checkUserLimit(userId, action) {
+    const limits = {
+      message: { count: 10, window: 60000 },
+      carbon_claim: { count: 3, window: 86400000 },
+      quiz_attempt: { count: 5, window: 3600000 },
+    };
+    return this.checkLimit(userId, action, limits[action]);
+  }
 }
 ```
 
@@ -2165,6 +2173,7 @@ Telegram's simplicity and global reach make it excellent for building ecological
 For ElizaOS integration, the Telegram Bot API provides the best balance of simplicity and functionality. Among available frameworks, aiogram (Python) offers the highest performance at ~1000 messages/second with its fully asynchronous architecture, while Telegraf.js provides good Node.js integration at ~800 messages/second (GitHub - telegraf/telegraf, 2024; ArXiv, 2024a).
 
 Configure ElizaOS with specific Telegram parameters (GitHub - elizaos-plugins/client-telegram, 2024):
+
 ```javascript
 {
   "clients": ["telegram"],

@@ -78,19 +78,19 @@ Our technical approach includes:
 
 - **Liquid Budget:** $15,000 USDC for immediate operational needs
 - **Deliverables:**
-    - 3-5 prototype narrative agents
-    - Content indexing system
-    - Initial KOI integration
-    - Agent supervision training materials
+  - 3-5 prototype narrative agents
+  - Content indexing system
+  - Initial KOI integration
+  - Agent supervision training materials
 
 ### Expansion Phase (30-90 days)
 
 - **Liquid Budget:** $30,000 USDC
 - **Deliverables:**
-    - Full multi-platform agent deployment
-    - Governance simulation framework
-    - Analytics dashboard
-    - Cross-chain integration
+  - Full multi-platform agent deployment
+  - Governance simulation framework
+  - Analytics dashboard
+  - Cross-chain integration
 
 ### Long-term Partnership
 

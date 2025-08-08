@@ -2,7 +2,7 @@
 
 /**
  * Review Interface v2 - Complete Redesign
- * 
+ *
  * A quality scoring system that actually makes sense
  * Based on positive indicators rather than just counting problems
  */
@@ -14,11 +14,11 @@ import chalk from 'chalk';
 const PROJECT_ROOT = '/home/ygg/Workspace/cognitive-ecosystem/09-resources/13-eliza/GAIA';
 
 interface QualityMetrics {
-  contentDepth: number;      // How insightful is the content?
+  contentDepth: number; // How insightful is the content?
   technicalAccuracy: number; // Are code examples correct?
-  completeness: number;      // Coverage of important relationships
-  uniqueness: number;        // Avoiding repetition and boilerplate
-  actionability: number;     // Can developers use this information?
+  completeness: number; // Coverage of important relationships
+  uniqueness: number; // Avoiding repetition and boilerplate
+  actionability: number; // Can developers use this information?
   overall: number;
 }
 
@@ -28,11 +28,11 @@ interface ContentQualityIndicators {
   wordCount: number;
   uniqueInsights: number;
   technicalDepth: number;
-  
+
   // Negative indicators
   repetitionScore: number;
   genericityScore: number;
-  
+
   // Relationship-specific
   appropriateForStrength: boolean;
 }
@@ -76,29 +76,31 @@ class MatrixReviewInterfaceV2 {
 
   private async loadData(): Promise<void> {
     console.log(chalk.yellow('Loading matrix and content data...'));
-    
+
     this.matrixContent = await readFile(this.matrixPath, 'utf-8');
-    console.log(chalk.green(`✓ Loaded matrix (${(this.matrixContent.length / 1024).toFixed(1)} KB)`));
-    
+    console.log(
+      chalk.green(`✓ Loaded matrix (${(this.matrixContent.length / 1024).toFixed(1)} KB)`)
+    );
+
     const contentPath = join(
       PROJECT_ROOT,
       '.claude/tools/matrix-generator/data',
       `content-v2-${new Date().toISOString().split('T')[0]}.json`
     );
-    
+
     this.contentData = JSON.parse(await readFile(contentPath, 'utf-8'));
     console.log(chalk.green(`✓ Loaded ${this.contentData.relationshipCells.length} relationships`));
   }
 
   private async analyzeContentQuality(): Promise<void> {
     console.log(chalk.yellow('\nAnalyzing content quality...'));
-    
+
     for (const cell of this.contentData.relationshipCells) {
       const key = `${cell.from}|${cell.to}`;
       const indicators = this.assessContent(cell);
       this.qualityScores.set(key, indicators);
     }
-    
+
     console.log(chalk.green(`✓ Analyzed ${this.qualityScores.size} relationships`));
   }
 
@@ -107,91 +109,92 @@ class MatrixReviewInterfaceV2 {
     const tech = cell.technological || '';
     const theme = cell.thematic || '';
     const fullText = `${psych} ${tech} ${theme}`;
-    
+
     return {
       // Positive indicators
       hasConcreteExamples: this.hasConcreteExamples(tech),
       wordCount: fullText.split(/\s+/).length,
       uniqueInsights: this.countUniqueInsights(psych, tech, theme),
       technicalDepth: this.assessTechnicalDepth(tech),
-      
+
       // Negative indicators
       repetitionScore: this.calculateRepetition(fullText),
       genericityScore: this.calculateGenericity(fullText),
-      
+
       // Relationship-specific
-      appropriateForStrength: this.isAppropriateForStrength(cell.metadata?.strength || 5, fullText)
+      appropriateForStrength: this.isAppropriateForStrength(cell.metadata?.strength || 5, fullText),
     };
   }
 
   private hasConcreteExamples(tech: string): boolean {
     const indicators = [
-      /`[^`]+`/,                    // Inline code
-      /\bimport\s+/,                // Import statements
-      /\bexport\s+/,                // Export statements
-      /\b\w+\(\)/,                  // Function calls
-      /\b\w+\.\w+/,                 // Property access
-      /["'][^"']+["']/,             // String literals
-      /\d+/                         // Numbers
+      /`[^`]+`/, // Inline code
+      /\bimport\s+/, // Import statements
+      /\bexport\s+/, // Export statements
+      /\b\w+\(\)/, // Function calls
+      /\b\w+\.\w+/, // Property access
+      /["'][^"']+["']/, // String literals
+      /\d+/, // Numbers
     ];
-    
-    return indicators.some(pattern => pattern.test(tech));
+
+    return indicators.some((pattern) => pattern.test(tech));
   }
 
   private countUniqueInsights(psych: string, tech: string, theme: string): number {
     let insights = 0;
-    
+
     // Psychological insights
     if (psych.match(/\b(trust|confidence|frustrat|confus|comfort|anxiety|fear)\b/i)) insights++;
     if (psych.match(/\b(mental model|cognitive|perceive|understand|think)\b/i)) insights++;
     if (psych.match(/\b(team|collaborat|communicat|review)\b/i)) insights++;
-    
+
     // Technical insights
     if (tech.match(/\b(compile|runtime|build|deploy)\b/i)) insights++;
     if (tech.match(/\b(performance|optimiz|scale|latency)\b/i)) insights++;
     if (tech.match(/\b(pattern|architecture|design|structure)\b/i)) insights++;
-    
+
     // Thematic insights
     if (theme.match(/\b(philosoph|principle|theme|narrative)\b/i)) insights++;
     if (theme.match(/\b(evolution|journey|transform|growth)\b/i)) insights++;
     if (theme.match(/\b(ecosystem|holistic|emergent|synerg)\b/i)) insights++;
-    
+
     return insights;
   }
 
   private assessTechnicalDepth(tech: string): number {
     let depth = 0;
-    
+
     // Code examples
     depth += (tech.match(/`[^`]+`/g) || []).length * 2;
-    
+
     // Technical terms
     depth += (tech.match(/\b(API|SDK|CLI|ORM|REST|GraphQL|WebSocket)\b/g) || []).length;
-    
+
     // Specific file/function references
     depth += (tech.match(/\b\w+\.(ts|js|json|yaml)\b/g) || []).length;
     depth += (tech.match(/\b(function|class|interface|type)\s+\w+\b/g) || []).length;
-    
+
     return Math.min(depth, 10); // Cap at 10
   }
 
   private calculateRepetition(text: string): number {
     const words = text.toLowerCase().split(/\s+/);
     const wordCounts = new Map<string, number>();
-    
+
     for (const word of words) {
-      if (word.length > 4) { // Ignore short words
+      if (word.length > 4) {
+        // Ignore short words
         wordCounts.set(word, (wordCounts.get(word) || 0) + 1);
       }
     }
-    
+
     let repetitionScore = 0;
     for (const [word, count] of wordCounts) {
       if (count > 3) {
         repetitionScore += (count - 3) * 2; // Penalty increases with repetition
       }
     }
-    
+
     return repetitionScore;
   }
 
@@ -205,20 +208,20 @@ class MatrixReviewInterfaceV2 {
       /in other words/i,
       /essentially/i,
       /basically/i,
-      /simply put/i
+      /simply put/i,
     ];
-    
+
     let score = 0;
     for (const phrase of genericPhrases) {
       if (phrase.test(text)) score += 5;
     }
-    
+
     return score;
   }
 
   private isAppropriateForStrength(strength: number, text: string): boolean {
     const wordCount = text.split(/\s+/).length;
-    
+
     if (strength >= 8) {
       // Strong relationships should have detailed documentation
       return wordCount >= 150;
@@ -240,27 +243,31 @@ class MatrixReviewInterfaceV2 {
 
     for (const [key, indicators] of this.qualityScores) {
       // Content Depth (0-100)
-      const depthScore = Math.min(100, 
-        (indicators.uniqueInsights * 10) + 
-        (indicators.wordCount / 10) + 
-        (indicators.appropriateForStrength ? 20 : 0)
+      const depthScore = Math.min(
+        100,
+        indicators.uniqueInsights * 10 +
+          indicators.wordCount / 10 +
+          (indicators.appropriateForStrength ? 20 : 0)
       );
-      
+
       // Technical Accuracy (0-100)
-      const accuracyScore = Math.min(100,
-        (indicators.hasConcreteExamples ? 50 : 0) +
-        (indicators.technicalDepth * 5)
+      const accuracyScore = Math.min(
+        100,
+        (indicators.hasConcreteExamples ? 50 : 0) + indicators.technicalDepth * 5
       );
-      
+
       // Uniqueness (0-100)
-      const uniquenessScore = Math.max(0, 100 - indicators.repetitionScore - indicators.genericityScore);
-      
+      const uniquenessScore = Math.max(
+        0,
+        100 - indicators.repetitionScore - indicators.genericityScore
+      );
+
       // Actionability (0-100)
-      const actionabilityScore = 
+      const actionabilityScore =
         (indicators.hasConcreteExamples ? 40 : 0) +
         (indicators.technicalDepth > 5 ? 30 : indicators.technicalDepth * 6) +
         (indicators.uniqueInsights > 3 ? 30 : indicators.uniqueInsights * 10);
-      
+
       totalDepth += depthScore;
       totalAccuracy += accuracyScore;
       totalUniqueness += uniquenessScore;
@@ -273,19 +280,22 @@ class MatrixReviewInterfaceV2 {
     const technicalAccuracy = Math.round(totalAccuracy / count);
     const uniqueness = Math.round(totalUniqueness / count);
     const actionability = Math.round(totalActionability / count);
-    
+
     // Completeness based on coverage
     const expectedRelationships = 200; // More realistic expectation
     const actualRelationships = this.contentData.relationshipCells.length;
-    const completeness = Math.min(100, Math.round((actualRelationships / expectedRelationships) * 100));
-    
+    const completeness = Math.min(
+      100,
+      Math.round((actualRelationships / expectedRelationships) * 100)
+    );
+
     // Overall score weighted by importance
     const overall = Math.round(
-      (contentDepth * 0.25) +
-      (technicalAccuracy * 0.25) +
-      (completeness * 0.20) +
-      (uniqueness * 0.15) +
-      (actionability * 0.15)
+      contentDepth * 0.25 +
+        technicalAccuracy * 0.25 +
+        completeness * 0.2 +
+        uniqueness * 0.15 +
+        actionability * 0.15
     );
 
     return {
@@ -294,7 +304,7 @@ class MatrixReviewInterfaceV2 {
       completeness,
       uniqueness,
       actionability,
-      overall
+      overall,
     };
   }
 
@@ -315,14 +325,19 @@ class MatrixReviewInterfaceV2 {
     console.log(`Overall Score:       ${formatScore(metrics.overall)}`);
 
     // Grade
-    const grade = 
-      metrics.overall >= 90 ? 'A' :
-      metrics.overall >= 80 ? 'B' :
-      metrics.overall >= 70 ? 'C' :
-      metrics.overall >= 60 ? 'D' : 'F';
+    const grade =
+      metrics.overall >= 90
+        ? 'A'
+        : metrics.overall >= 80
+          ? 'B'
+          : metrics.overall >= 70
+            ? 'C'
+            : metrics.overall >= 60
+              ? 'D'
+              : 'F';
 
     console.log(`\nMatrix Grade: ${chalk.bold(grade)}`);
-    
+
     // Interpretation
     console.log(chalk.gray('\nWhat this means:'));
     if (metrics.overall >= 70) {
@@ -338,14 +353,14 @@ class MatrixReviewInterfaceV2 {
     console.log(chalk.blue.bold('\n🎯 Specific Improvement Actions\n'));
 
     const improvements = [];
-    
+
     if (metrics.technicalAccuracy < 70) {
       improvements.push({
         area: 'Technical Accuracy',
         issue: 'Many relationships lack concrete code examples',
         action: 'Add specific imports, function calls, or configuration snippets',
         impact: 'High',
-        effort: '1-2 hours'
+        effort: '1-2 hours',
       });
     }
 
@@ -355,7 +370,7 @@ class MatrixReviewInterfaceV2 {
         issue: 'Some descriptions are too brief or generic',
         action: 'Expand with specific insights about developer experience and system behavior',
         impact: 'High',
-        effort: '2-3 hours'
+        effort: '2-3 hours',
       });
     }
 
@@ -365,7 +380,7 @@ class MatrixReviewInterfaceV2 {
         issue: 'Repetitive phrasing reduces readability',
         action: 'Vary vocabulary and sentence structure, eliminate boilerplate phrases',
         impact: 'Medium',
-        effort: '1 hour'
+        effort: '1 hour',
       });
     }
 
@@ -375,7 +390,7 @@ class MatrixReviewInterfaceV2 {
         issue: 'Developers may struggle to apply insights',
         action: 'Add "When to use" and "Common pitfalls" sections',
         impact: 'High',
-        effort: '2 hours'
+        effort: '2 hours',
       });
     }
 
@@ -403,7 +418,7 @@ class MatrixReviewInterfaceV2 {
       interpretation: this.interpretMetrics(metrics),
       topPerformers: this.findTopPerformers(),
       needsImprovement: this.findNeedsImprovement(),
-      recommendations: this.generateRecommendations(metrics)
+      recommendations: this.generateRecommendations(metrics),
     };
 
     const reportPath = join(
@@ -424,7 +439,7 @@ class MatrixReviewInterfaceV2 {
         .map(([key]) => key),
       weaknesses: Object.entries(metrics)
         .filter(([key, value]) => key !== 'overall' && value < 70)
-        .map(([key]) => key)
+        .map(([key]) => key),
     };
   }
 
@@ -432,12 +447,13 @@ class MatrixReviewInterfaceV2 {
     const scored = Array.from(this.qualityScores.entries())
       .map(([key, indicators]) => ({
         relationship: key,
-        score: (indicators.uniqueInsights * 10) + 
-               (indicators.technicalDepth * 5) + 
-               (indicators.hasConcreteExamples ? 20 : 0)
+        score:
+          indicators.uniqueInsights * 10 +
+          indicators.technicalDepth * 5 +
+          (indicators.hasConcreteExamples ? 20 : 0),
       }))
       .sort((a, b) => b.score - a.score);
-    
+
     return scored.slice(0, 5);
   }
 
@@ -449,43 +465,43 @@ class MatrixReviewInterfaceV2 {
           !indicators.hasConcreteExamples && 'No code examples',
           indicators.repetitionScore > 10 && 'Highly repetitive',
           indicators.genericityScore > 10 && 'Too generic',
-          indicators.wordCount < 50 && 'Too brief'
-        ].filter(Boolean)
+          indicators.wordCount < 50 && 'Too brief',
+        ].filter(Boolean),
       }))
-      .filter(item => item.issues.length > 0)
+      .filter((item) => item.issues.length > 0)
       .sort((a, b) => b.issues.length - a.issues.length);
-    
+
     return scored.slice(0, 5);
   }
 
   private generateRecommendations(metrics: QualityMetrics): any[] {
     const recs = [];
-    
+
     if (metrics.technicalAccuracy < 80) {
       recs.push({
         priority: 'High',
         action: 'Add code examples to all technological patterns',
         reason: 'Concrete examples make documentation actionable',
-        expectedImprovement: '+15-20% technical accuracy'
+        expectedImprovement: '+15-20% technical accuracy',
       });
     }
-    
+
     if (metrics.uniqueness < 80) {
       recs.push({
         priority: 'Medium',
         action: 'Run content through variation tool',
         reason: 'Repetitive text reduces readability',
-        expectedImprovement: '+10-15% uniqueness'
+        expectedImprovement: '+10-15% uniqueness',
       });
     }
-    
+
     recs.push({
       priority: 'Ongoing',
       action: 'Add new relationships as codebase evolves',
       reason: 'Living documentation stays valuable',
-      expectedImprovement: 'Maintain relevance'
+      expectedImprovement: 'Maintain relevance',
     });
-    
+
     return recs;
   }
 }
@@ -493,14 +509,13 @@ class MatrixReviewInterfaceV2 {
 // Main execution
 async function main() {
   const reviewer = new MatrixReviewInterfaceV2();
-  
+
   try {
     await reviewer.review();
-    
+
     console.log(chalk.blue.bold('\n\n✅ Review Complete!\n'));
     console.log(chalk.gray('This fair assessment helps identify real improvements'));
     console.log(chalk.gray('rather than just counting problems.\n'));
-    
   } catch (error) {
     console.error(chalk.red('❌ Error:'), error);
     process.exit(1);

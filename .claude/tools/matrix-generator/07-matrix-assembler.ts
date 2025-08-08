@@ -2,7 +2,7 @@
 
 /**
  * Matrix Assembler
- * 
+ *
  * Assembles the final taxonomy matrix document from generated content
  * Creates a navigable markdown document with the full relationship matrix
  */
@@ -22,12 +22,12 @@ interface DiagonalContent {
 interface CellContent {
   from: string;
   to: string;
-  semantic?: string;      // v1 compatibility
-  cognitive?: string;     // v1 compatibility
-  implementation?: string;// v1 compatibility
+  semantic?: string; // v1 compatibility
+  cognitive?: string; // v1 compatibility
+  implementation?: string; // v1 compatibility
   psychological?: string; // v2
   technological?: string; // v2
-  thematic?: string;      // v2
+  thematic?: string; // v2
   metadata?: {
     strength: number;
     types: string[];
@@ -58,34 +58,36 @@ class MatrixAssembler {
 
     // Load content data
     await this.loadContent();
-    
+
     // Prepare data structures
     this.prepareDataStructures();
-    
+
     // Generate matrix document
     const matrixDoc = await this.generateMatrixDocument();
-    
+
     // Save the matrix
     await this.saveMatrix(matrixDoc);
-    
+
     // Generate supporting documents
     await this.generateSupportingDocs();
   }
 
   private async loadContent(): Promise<void> {
     console.log(chalk.yellow('Loading generated content...'));
-    
+
     // Try v2 content first
     let contentPath = join(
       PROJECT_ROOT,
       '.claude/tools/matrix-generator/data',
       `content-v2-${new Date().toISOString().split('T')[0]}.json`
     );
-    
+
     try {
       this.contentData = JSON.parse(await readFile(contentPath, 'utf-8'));
       console.log(chalk.green(`✓ Loaded ${this.contentData!.diagonalCells.length} files`));
-      console.log(chalk.green(`✓ Loaded ${this.contentData!.relationshipCells.length} relationships`));
+      console.log(
+        chalk.green(`✓ Loaded ${this.contentData!.relationshipCells.length} relationships`)
+      );
     } catch (error) {
       console.error(chalk.red('Error loading content:'), error);
       throw error;
@@ -94,58 +96,58 @@ class MatrixAssembler {
 
   private prepareDataStructures(): void {
     console.log(chalk.yellow('\nPreparing data structures...'));
-    
+
     // Extract file order from diagonal cells
-    this.fileOrder = this.contentData!.diagonalCells.map(d => d.file);
-    
+    this.fileOrder = this.contentData!.diagonalCells.map((d) => d.file);
+
     // Create lookup maps
     for (const diagonal of this.contentData!.diagonalCells) {
       this.diagonalMap.set(diagonal.file, diagonal);
     }
-    
+
     for (const cell of this.contentData!.relationshipCells) {
       const key = `${cell.from}|${cell.to}`;
       this.cellMap.set(key, cell);
     }
-    
+
     console.log(chalk.green(`✓ Prepared ${this.fileOrder.length} files in matrix order`));
   }
 
   private async generateMatrixDocument(): Promise<string> {
     console.log(chalk.yellow('\nGenerating matrix document...'));
-    
+
     const sections: string[] = [];
-    
+
     // Header
     sections.push(this.generateHeader());
-    
+
     // Table of Contents
     sections.push(this.generateTableOfContents());
-    
+
     // Executive Summary
     sections.push(this.generateExecutiveSummary());
-    
+
     // Matrix Overview
     sections.push(this.generateMatrixOverview());
-    
+
     // File Summaries (Diagonal Cells)
     sections.push(this.generateFileSummaries());
-    
+
     // Relationship Analysis
     sections.push(this.generateRelationshipAnalysis());
-    
+
     // Navigation Guide
     sections.push(this.generateNavigationGuide());
-    
+
     // Appendices
     sections.push(this.generateAppendices());
-    
+
     return sections.join('\n\n');
   }
 
   private generateHeader(): string {
     const now = new Date().toISOString();
-    
+
     return `# ElizaOS/RegenAI Taxonomy Matrix
 
 *Generated: ${now}*  
@@ -181,22 +183,24 @@ The matrix serves as both documentation and a learning tool for understanding th
   }
 
   private generateExecutiveSummary(): string {
-    const strongCount = this.contentData!.relationshipCells.filter(c => c.metadata!.strength >= 8).length;
-    const importantCount = this.contentData!.relationshipCells.filter(c => 
-      c.metadata!.strength >= 6 && c.metadata!.strength < 8
+    const strongCount = this.contentData!.relationshipCells.filter(
+      (c) => c.metadata!.strength >= 8
     ).length;
-    
+    const importantCount = this.contentData!.relationshipCells.filter(
+      (c) => c.metadata!.strength >= 6 && c.metadata!.strength < 8
+    ).length;
+
     // Find hub files
     const connectionCounts = new Map<string, number>();
     for (const cell of this.contentData!.relationshipCells) {
       connectionCounts.set(cell.from, (connectionCounts.get(cell.from) || 0) + 1);
       connectionCounts.set(cell.to, (connectionCounts.get(cell.to) || 0) + 1);
     }
-    
+
     const hubs = Array.from(connectionCounts.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
-    
+
     return `## Executive Summary
 
 ### Key Findings
@@ -225,7 +229,7 @@ ${hubs.map(([file, count]) => `- **${file}**: ${count} connections`).join('\n')}
     const matrixSize = this.fileOrder.length;
     const cellCount = this.contentData!.relationshipCells.length;
     const density = ((cellCount / (matrixSize * matrixSize)) * 100).toFixed(1);
-    
+
     return `## Matrix Overview
 
 ### Matrix Statistics
@@ -236,41 +240,41 @@ ${hubs.map(([file, count]) => `- **${file}**: ${count} connections`).join('\n')}
 | Total Possible Cells | ${matrixSize * matrixSize} |
 | Documented Relationships | ${cellCount} |
 | Matrix Density | ${density}% |
-| Average Connections per File | ${(cellCount * 2 / matrixSize).toFixed(1)} |
+| Average Connections per File | ${((cellCount * 2) / matrixSize).toFixed(1)} |
 
 ### Relationship Distribution
 
 | Strength | Count | Description |
 |----------|-------|-------------|
-| 9-10 | ${this.contentData!.relationshipCells.filter(c => c.metadata!.strength >= 9).length} | Critical dependencies |
-| 7-8 | ${this.contentData!.relationshipCells.filter(c => c.metadata!.strength >= 7 && c.metadata!.strength < 9).length} | Strong relationships |
-| 5-6 | ${this.contentData!.relationshipCells.filter(c => c.metadata!.strength >= 5 && c.metadata!.strength < 7).length} | Important connections |
-| 3-4 | ${this.contentData!.relationshipCells.filter(c => c.metadata!.strength >= 3 && c.metadata!.strength < 5).length} | Moderate relationships |`;
+| 9-10 | ${this.contentData!.relationshipCells.filter((c) => c.metadata!.strength >= 9).length} | Critical dependencies |
+| 7-8 | ${this.contentData!.relationshipCells.filter((c) => c.metadata!.strength >= 7 && c.metadata!.strength < 9).length} | Strong relationships |
+| 5-6 | ${this.contentData!.relationshipCells.filter((c) => c.metadata!.strength >= 5 && c.metadata!.strength < 7).length} | Important connections |
+| 3-4 | ${this.contentData!.relationshipCells.filter((c) => c.metadata!.strength >= 3 && c.metadata!.strength < 5).length} | Moderate relationships |`;
   }
 
   private generateFileSummaries(): string {
     const sections: string[] = ['## File Summaries'];
     sections.push('\nThis section provides an overview of each file in the matrix.\n');
-    
+
     // Group files by category
     const filesByCategory = new Map<string, DiagonalContent[]>();
-    
+
     for (const diagonal of this.contentData!.diagonalCells) {
       // Extract category from yaml
       const categoryMatch = diagonal.yaml.match(/category: (.+)/);
       const category = categoryMatch ? categoryMatch[1] : 'other';
-      
+
       if (!filesByCategory.has(category)) {
         filesByCategory.set(category, []);
       }
       filesByCategory.get(category)!.push(diagonal);
     }
-    
+
     // Generate summaries by category
     for (const [category, files] of filesByCategory) {
       sections.push(`### ${this.formatCategoryName(category)}`);
       sections.push('');
-      
+
       for (const diagonal of files) {
         sections.push(`#### ${diagonal.file}`);
         sections.push('');
@@ -287,61 +291,62 @@ ${hubs.map(([file, count]) => `- **${file}**: ${count} connections`).join('\n')}
         sections.push('');
       }
     }
-    
+
     return sections.join('\n');
   }
 
   private generateRelationshipAnalysis(): string {
     const sections: string[] = ['## Relationship Analysis'];
-    sections.push('\nThis section details the relationships between files, organized by strength.\n');
-    
+    sections.push(
+      '\nThis section details the relationships between files, organized by strength.\n'
+    );
+
     // Group relationships by strength
-    const strong = this.contentData!.relationshipCells.filter(c => c.metadata!.strength >= 8);
-    const important = this.contentData!.relationshipCells.filter(c => 
-      c.metadata!.strength >= 6 && c.metadata!.strength < 8
+    const strong = this.contentData!.relationshipCells.filter((c) => c.metadata!.strength >= 8);
+    const important = this.contentData!.relationshipCells.filter(
+      (c) => c.metadata!.strength >= 6 && c.metadata!.strength < 8
     );
-    const notable = this.contentData!.relationshipCells.filter(c => 
-      c.metadata!.strength === 5
-    );
-    
+    const notable = this.contentData!.relationshipCells.filter((c) => c.metadata!.strength === 5);
+
     // Generate sections for each strength level
     if (strong.length > 0) {
       sections.push('### Strong Relationships (≥8)');
       sections.push('\nThese relationships form the core architecture of the system.\n');
-      
+
       for (const cell of strong) {
         sections.push(this.formatRelationshipCell(cell));
       }
     }
-    
+
     if (important.length > 0) {
       sections.push('### Important Relationships (6-7)');
       sections.push('\nThese relationships support key system integrations.\n');
-      
+
       for (const cell of important) {
         sections.push(this.formatRelationshipCell(cell));
       }
     }
-    
+
     if (notable.length > 0) {
       sections.push('### Notable Relationships (5)');
       sections.push('\nThese relationships contribute to system coherence.\n');
-      
-      for (const cell of notable.slice(0, 10)) { // Limit to 10 for brevity
+
+      for (const cell of notable.slice(0, 10)) {
+        // Limit to 10 for brevity
         sections.push(this.formatRelationshipCell(cell));
       }
-      
+
       if (notable.length > 10) {
         sections.push(`\n*... and ${notable.length - 10} more notable relationships*`);
       }
     }
-    
+
     return sections.join('\n');
   }
 
   private formatRelationshipCell(cell: CellContent): string {
-    const types = cell.metadata!.types.map(t => `\`${t}\``).join(', ');
-    
+    const types = cell.metadata!.types.map((t) => `\`${t}\``).join(', ');
+
     // Handle both v1 and v2 formats
     if (cell.psychological && cell.technological && cell.thematic) {
       // v2 format
@@ -437,38 +442,38 @@ ${this.generateCategoryList()}
 
   private generateCategoryList(): string {
     const categories = new Set<string>();
-    
+
     for (const diagonal of this.contentData!.diagonalCells) {
       const categoryMatch = diagonal.yaml.match(/category: (.+)/);
       if (categoryMatch) {
         categories.add(categoryMatch[1]);
       }
     }
-    
+
     return Array.from(categories)
       .sort()
-      .map(cat => `- **${cat}**: ${this.formatCategoryName(cat)}`)
+      .map((cat) => `- **${cat}**: ${this.formatCategoryName(cat)}`)
       .join('\n');
   }
 
   private formatCategoryName(category: string): string {
     const formatted = category
       .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
-    
+
     return formatted;
   }
 
   private async saveMatrix(content: string): Promise<void> {
     console.log(chalk.yellow('\nSaving matrix document...'));
-    
+
     const outputPath = join(
       PROJECT_ROOT,
       '.claude/tools/matrix-generator/output',
       `taxonomy-matrix-${new Date().toISOString().split('T')[0]}.md`
     );
-    
+
     // Ensure output directory exists
     const outputDir = join(PROJECT_ROOT, '.claude/tools/matrix-generator/output');
     try {
@@ -476,10 +481,10 @@ ${this.generateCategoryList()}
     } catch (error) {
       // Directory might already exist
     }
-    
+
     await writeFile(outputPath, content, 'utf-8');
     console.log(chalk.green(`✅ Matrix saved to ${outputPath}`));
-    
+
     // Also save a symlink as latest
     const latestPath = join(outputDir, 'taxonomy-matrix-latest.md');
     try {
@@ -492,13 +497,13 @@ ${this.generateCategoryList()}
 
   private async generateSupportingDocs(): Promise<void> {
     console.log(chalk.yellow('\nGenerating supporting documents...'));
-    
+
     // Generate index
     await this.generateIndex();
-    
+
     // Generate visualization data
     await this.generateVisualizationData();
-    
+
     console.log(chalk.green('✅ Supporting documents generated'));
   }
 
@@ -506,26 +511,28 @@ ${this.generateCategoryList()}
     const index = {
       generated: new Date().toISOString(),
       files: this.fileOrder,
-      relationships: this.contentData!.relationshipCells.map(cell => ({
+      relationships: this.contentData!.relationshipCells.map((cell) => ({
         from: cell.from,
         to: cell.to,
         strength: cell.metadata!.strength,
-        types: cell.metadata!.types
+        types: cell.metadata!.types,
       })),
       statistics: {
         totalFiles: this.fileOrder.length,
         totalRelationships: this.contentData!.relationshipCells.length,
         averageStrength: this.calculateAverageStrength(),
-        strongRelationships: this.contentData!.relationshipCells.filter(c => c.metadata!.strength >= 8).length
-      }
+        strongRelationships: this.contentData!.relationshipCells.filter(
+          (c) => c.metadata!.strength >= 8
+        ).length,
+      },
     };
-    
+
     const indexPath = join(
       PROJECT_ROOT,
       '.claude/tools/matrix-generator/output',
       `matrix-index-${new Date().toISOString().split('T')[0]}.json`
     );
-    
+
     await Bun.write(indexPath, JSON.stringify(index, null, 2));
     return indexPath;
   }
@@ -535,38 +542,39 @@ ${this.generateCategoryList()}
     const nodes = this.fileOrder.map((file, index) => ({
       id: file,
       group: this.getFileCategory(file),
-      index
+      index,
     }));
-    
-    const links = this.contentData!.relationshipCells.map(cell => ({
+
+    const links = this.contentData!.relationshipCells.map((cell) => ({
       source: cell.from,
       target: cell.to,
       value: cell.metadata!.strength,
-      types: cell.metadata!.types
+      types: cell.metadata!.types,
     }));
-    
+
     const graphData = { nodes, links };
-    
+
     const vizPath = join(
       PROJECT_ROOT,
       '.claude/tools/matrix-generator/output',
       `matrix-viz-data-${new Date().toISOString().split('T')[0]}.json`
     );
-    
+
     await Bun.write(vizPath, JSON.stringify(graphData, null, 2));
   }
 
   private getFileCategory(file: string): string {
     const diagonal = this.diagonalMap.get(file);
     if (!diagonal) return 'unknown';
-    
+
     const categoryMatch = diagonal.yaml.match(/category: (.+)/);
     return categoryMatch ? categoryMatch[1] : 'unknown';
   }
 
   private calculateAverageStrength(): number {
     const total = this.contentData!.relationshipCells.reduce(
-      (sum, cell) => sum + cell.metadata!.strength, 0
+      (sum, cell) => sum + cell.metadata!.strength,
+      0
     );
     return Number((total / this.contentData!.relationshipCells.length).toFixed(2));
   }
@@ -575,18 +583,21 @@ ${this.generateCategoryList()}
 // Main execution
 async function main() {
   const assembler = new MatrixAssembler();
-  
+
   try {
     await assembler.assemble();
-    
+
     console.log(chalk.blue.bold('\n🎉 Matrix Assembly Complete!\n'));
     console.log(chalk.gray('The taxonomy matrix has been generated with:'));
     console.log(chalk.gray('- Comprehensive file summaries'));
     console.log(chalk.gray('- Detailed relationship analysis'));
     console.log(chalk.gray('- Navigation guides and appendices'));
     console.log(chalk.gray('- Supporting visualization data'));
-    console.log(chalk.gray('\nView the matrix at: .claude/tools/matrix-generator/output/taxonomy-matrix-latest.md\n'));
-    
+    console.log(
+      chalk.gray(
+        '\nView the matrix at: .claude/tools/matrix-generator/output/taxonomy-matrix-latest.md\n'
+      )
+    );
   } catch (error) {
     console.error(chalk.red('❌ Error:'), error);
     process.exit(1);

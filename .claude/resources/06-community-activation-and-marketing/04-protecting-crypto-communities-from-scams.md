@@ -82,64 +82,64 @@ The trajectory toward fully automated, AI-driven scam operations in 2025 demands
 
 ## Bibliography
 
-CCN. (2024). *AI deepfake crypto scams cost victims $4.6B in 2024*. https://www.ccn.com/news/crypto/crypto-scams-ai-deepfakes-cost-victims-4b-2024/
+CCN. (2024). _AI deepfake crypto scams cost victims $4.6B in 2024_. https://www.ccn.com/news/crypto/crypto-scams-ai-deepfakes-cost-victims-4b-2024/
 
-Decrypt. (2024). *AI deepfakes drove 40% of high-value crypto fraud last year: Report*. https://decrypt.co/325152/ai-deepfakes-drove-high-value-frauds-report
+Decrypt. (2024). _AI deepfakes drove 40% of high-value crypto fraud last year: Report_. https://decrypt.co/325152/ai-deepfakes-drove-high-value-frauds-report
 
-Cointelegraph. (2025). *87 deepfake scam rings taken down across Asia in Q1 2025*. https://cointelegraph.com/news/bitget-deepfake-scam-rings-crackdown-asia-q1-2025
+Cointelegraph. (2025). _87 deepfake scam rings taken down across Asia in Q1 2025_. https://cointelegraph.com/news/bitget-deepfake-scam-rings-crackdown-asia-q1-2025
 
-Cointelegraph. (2024). *How AI and deepfakes are fueling new cryptocurrency scams*. https://cointelegraph.com/learn/articles/how-ai-and-deepfakes-are-fueling-new-cryptocurrency-scams
+Cointelegraph. (2024). _How AI and deepfakes are fueling new cryptocurrency scams_. https://cointelegraph.com/learn/articles/how-ai-and-deepfakes-are-fueling-new-cryptocurrency-scams
 
-Palo Alto Networks. (2025). *Unit 42 develops agentic AI attack framework*. https://www.paloaltonetworks.com/blog/2025/05/unit-42-develops-agentic-ai-attack-framework/
+Palo Alto Networks. (2025). _Unit 42 develops agentic AI attack framework_. https://www.paloaltonetworks.com/blog/2025/05/unit-42-develops-agentic-ai-attack-framework/
 
-The Fintech Times. (2024). *Crypto scam losses exceeded $4billion in 2024, driven by deepfake and AI tech, says Bitget*. https://thefintechtimes.com/crypto-scam-losses-exceeded-4billion-in-2024-driven-by-deepfake-and-ai-tech-says-bitget/
+The Fintech Times. (2024). _Crypto scam losses exceeded $4billion in 2024, driven by deepfake and AI tech, says Bitget_. https://thefintechtimes.com/crypto-scam-losses-exceeded-4billion-in-2024-driven-by-deepfake-and-ai-tech-says-bitget/
 
-Creditcoin Blog. (2024). *Top 8 crypto Telegram scams to watch out for | 2024 edition*. https://creditcoin.org/blog/top-crypto-telegram-scams/
+Creditcoin Blog. (2024). _Top 8 crypto Telegram scams to watch out for | 2024 edition_. https://creditcoin.org/blog/top-crypto-telegram-scams/
 
-Whop. (2024). *Telegram vs Discord: Which is best for a paid community?* https://whop.com/blog/telegram-vs-discord/
+Whop. (2024). _Telegram vs Discord: Which is best for a paid community?_ https://whop.com/blog/telegram-vs-discord/
 
-EAK Digital. (2025). *Top 5 crypto Discord servers to join in 2025*. https://eakdigital.com/top-5-crypto-discord-servers-to-join-in-2025/
+EAK Digital. (2025). _Top 5 crypto Discord servers to join in 2025_. https://eakdigital.com/top-5-crypto-discord-servers-to-join-in-2025/
 
-CryptoSlate. (2024). *Pig butchering scams top 2024 crypto fraud with $3.6 billion in losses*. https://cryptoslate.com/pig-butchering-scams-top-2024-crypto-fraud-with-3-6-billion-in-losses/
+CryptoSlate. (2024). _Pig butchering scams top 2024 crypto fraud with $3.6 billion in losses_. https://cryptoslate.com/pig-butchering-scams-top-2024-crypto-fraud-with-3-6-billion-in-losses/
 
-Nature. (2023). *Detection of Ponzi scheme on Ethereum using machine learning algorithms*. Scientific Reports. https://www.nature.com/articles/s41598-023-45275-0
+Nature. (2023). _Detection of Ponzi scheme on Ethereum using machine learning algorithms_. Scientific Reports. https://www.nature.com/articles/s41598-023-45275-0
 
-Sumsub. (2025). *8 crypto scams to be aware of in 2025: A guide for businesses and users*. https://sumsub.com/blog/crypto-scams-you-should-be-aware-of/
+Sumsub. (2025). _8 crypto scams to be aware of in 2025: A guide for businesses and users_. https://sumsub.com/blog/crypto-scams-you-should-be-aware-of/
 
-Reuters. (2025). *Crypto scams likely set new record in 2024 helped by AI, Chainalysis says*. https://www.reuters.com/technology/crypto-scams-likely-set-new-record-2024-helped-by-ai-chainalysis-says-2025-02-14/
+Reuters. (2025). _Crypto scams likely set new record in 2024 helped by AI, Chainalysis says_. https://www.reuters.com/technology/crypto-scams-likely-set-new-record-2024-helped-by-ai-chainalysis-says-2025-02-14/
 
-CA. (2025). *Crypto scam tracker - DFPI*. https://dfpi.ca.gov/consumers/crypto/crypto-scam-tracker/
+CA. (2025). _Crypto scam tracker - DFPI_. https://dfpi.ca.gov/consumers/crypto/crypto-scam-tracker/
 
-Cointelegraph. (2024). *Pig butchering scams stole $5.5B from crypto investors in 2024 — Cyvers*. https://cointelegraph.com/news/pig-butchering-crypto-scams-2024-losses
+Cointelegraph. (2024). _Pig butchering scams stole $5.5B from crypto investors in 2024 — Cyvers_. https://cointelegraph.com/news/pig-butchering-crypto-scams-2024-losses
 
-TRM Labs. (2024). *Pig butchering scams: What the data shows*. https://www.trmlabs.com/post/pig-butchering-scams-what-the-data-shows
+TRM Labs. (2024). _Pig butchering scams: What the data shows_. https://www.trmlabs.com/post/pig-butchering-scams-what-the-data-shows
 
-CoinGape. (2025). *Nearly 40% of all crypto scams involve deepfake technology: Bitget report*. https://coingape.com/brandtalk/research/nearly-40-of-all-crypto-scams-involve-deepfake-technology-bitget-report/
+CoinGape. (2025). _Nearly 40% of all crypto scams involve deepfake technology: Bitget report_. https://coingape.com/brandtalk/research/nearly-40-of-all-crypto-scams-involve-deepfake-technology-bitget-report/
 
-ACM. (2024). *Machine learning algorithms to detect illicit accounts on Ethereum blockchain*. https://dl.acm.org/doi/fullHtml/10.1145/3644713.3644838
+ACM. (2024). _Machine learning algorithms to detect illicit accounts on Ethereum blockchain_. https://dl.acm.org/doi/fullHtml/10.1145/3644713.3644838
 
-Discord Statistics. (2025). *Best bots for integrating Discord with Twitch and YouTube*. https://www.discordstatistics.com/blog/best-discord-bots-for-integrating-discord-with-twitch-and-youtube
+Discord Statistics. (2025). _Best bots for integrating Discord with Twitch and YouTube_. https://www.discordstatistics.com/blog/best-discord-bots-for-integrating-discord-with-twitch-and-youtube
 
-StreamScheme. (2025). *9 best Twitch bots ranked! [Complete 2025 guide]*. https://www.streamscheme.com/best-twitch-bots/
+StreamScheme. (2025). _9 best Twitch bots ranked! [Complete 2025 guide]_. https://www.streamscheme.com/best-twitch-bots/
 
-Nature. (2025). *Graph convolution network for fraud detection in bitcoin transactions*. Scientific Reports. https://www.nature.com/articles/s41598-025-95672-w
+Nature. (2025). _Graph convolution network for fraud detection in bitcoin transactions_. Scientific Reports. https://www.nature.com/articles/s41598-025-95672-w
 
-Towards Data Science. (2024). *Precision vs. recall - Evaluating model performance in credit card fraud detection*. https://towardsdatascience.com/precision-vs-recall-evaluating-model-performance-in-credit-card-fraud-detection-bb24958b2723/
+Towards Data Science. (2024). _Precision vs. recall - Evaluating model performance in credit card fraud detection_. https://towardsdatascience.com/precision-vs-recall-evaluating-model-performance-in-credit-card-fraud-detection-bb24958b2723/
 
-GitHub - umputun/tg-spam. (2025). *Anti-spam bot for Telegram and general-purpose anti-spam library and server*. https://github.com/umputun/tg-spam
+GitHub - umputun/tg-spam. (2025). _Anti-spam bot for Telegram and general-purpose anti-spam library and server_. https://github.com/umputun/tg-spam
 
-Telegram. (2025). *Page verification guidelines*. https://telegram.org/verify
+Telegram. (2025). _Page verification guidelines_. https://telegram.org/verify
 
-NCBI. (2022). *Mental states: A key point in scam compliance and warning compliance in real life*. PMC. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9317489/
+NCBI. (2022). _Mental states: A key point in scam compliance and warning compliance in real life_. PMC. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9317489/
 
-GitHub - Michael-J-Scofield/discord-anti-spam. (2025). *A simple discord anti spam node.js module to prevent spam on your discord server*. https://github.com/Michael-J-Scofield/discord-anti-spam
+GitHub - Michael-J-Scofield/discord-anti-spam. (2025). _A simple discord anti spam node.js module to prevent spam on your discord server_. https://github.com/Michael-J-Scofield/discord-anti-spam
 
-Reuters. (2024). *Losses from crypto scams grew 45% in 2023, FBI says*. https://www.reuters.com/technology/losses-crypto-scams-grew-45-2023-fbi-says-2024-09-09/
+Reuters. (2024). _Losses from crypto scams grew 45% in 2023, FBI says_. https://www.reuters.com/technology/losses-crypto-scams-grew-45-2023-fbi-says-2024-09-09/
 
-FBI. (2024). *2023 cryptocurrency fraud report released*. Federal Bureau of Investigation. https://www.fbi.gov/news/stories/2023-cryptocurrency-fraud-report-released
+FBI. (2024). _2023 cryptocurrency fraud report released_. Federal Bureau of Investigation. https://www.fbi.gov/news/stories/2023-cryptocurrency-fraud-report-released
 
-CryptoRank. (2025). *AI deepfakes plague crypto, fueling $4.6B scam surge: Report*. https://cryptorank.io/news/feed/c3737-ai-deepfakes-crypto-scams-4-6b-surge-report
+CryptoRank. (2025). _AI deepfakes plague crypto, fueling $4.6B scam surge: Report_. https://cryptorank.io/news/feed/c3737-ai-deepfakes-crypto-scams-4-6b-surge-report
 
-Cointelegraph. (2024). *Phishing scams top crypto security threat of 2024 — CertiK*. https://cointelegraph.com/news/phishing-scams-top-crypto-threat-2024-certik
+Cointelegraph. (2024). _Phishing scams top crypto security threat of 2024 — CertiK_. https://cointelegraph.com/news/phishing-scams-top-crypto-threat-2024-certik
 
-OKX. (2025). *Crypto scams on Telegram surge: Malware attacks skyrocket by 2,000% in 2025*. https://www.okx.com/learn/telegram-crypto-scams-malware-attacks
+OKX. (2025). _Crypto scams on Telegram surge: Malware attacks skyrocket by 2,000% in 2025_. https://www.okx.com/learn/telegram-crypto-scams-malware-attacks

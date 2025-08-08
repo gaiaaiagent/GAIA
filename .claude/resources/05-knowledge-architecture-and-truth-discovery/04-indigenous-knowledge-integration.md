@@ -120,274 +120,274 @@ The path forward requires humility from Western institutions, recognizing that i
 
 ## Bibliography
 
-Alliance Canada. (2024). *Local contexts: Tools to support indigenous data sovereignty and cultural authority*. Digital Research Alliance of Canada. https://alliancecan.ca/en/latest/events/local-contexts-tools-support-indigenous-data-sovereignty-and-cultural-authority
+Alliance Canada. (2024). _Local contexts: Tools to support indigenous data sovereignty and cultural authority_. Digital Research Alliance of Canada. https://alliancecan.ca/en/latest/events/local-contexts-tools-support-indigenous-data-sovereignty-and-cultural-authority
 
-ANU Press. (2024). *Indigenous data sovereignty*. Australian National University. https://press.anu.edu.au/publications/series/caepr/indigenous-data-sovereignty
+ANU Press. (2024). _Indigenous data sovereignty_. Australian National University. https://press.anu.edu.au/publications/series/caepr/indigenous-data-sovereignty
 
-ARCUS. (2011). *Linking Inuit knowledge and scientific understanding of sea ice*. Arctic Research Consortium of the United States. https://www.arcus.org/witness-the-arctic/2011/2/article/1661
+ARCUS. (2011). _Linking Inuit knowledge and scientific understanding of sea ice_. Arctic Research Consortium of the United States. https://www.arcus.org/witness-the-arctic/2011/2/article/1661
 
-ArXiv. (2023). *Māori algorithmic sovereignty: Idea, principles, and use*. Cornell University. https://arxiv.org/abs/2311.15473
+ArXiv. (2023). _Māori algorithmic sovereignty: Idea, principles, and use_. Cornell University. https://arxiv.org/abs/2311.15473
 
-Australian Human Rights Commission. (2024). *Participation in decision making*. https://humanrights.gov.au/our-work/aboriginal-and-torres-strait-islander-social-justice/participation-decision-making
+Australian Human Rights Commission. (2024). _Participation in decision making_. https://humanrights.gov.au/our-work/aboriginal-and-torres-strait-islander-social-justice/participation-decision-making
 
-Australian Jewish News. (2024). *Cultural artwork protected by blockchain*. https://www.australianjewishnews.com/cultural-artwork-protected-by-blockchain/
+Australian Jewish News. (2024). _Cultural artwork protected by blockchain_. https://www.australianjewishnews.com/cultural-artwork-protected-by-blockchain/
 
-BMC Medical Ethics. (2016). *Seeking consent for research with indigenous communities: A systematic review*. BioMed Central. https://bmcmedethics.biomedcentral.com/articles/10.1186/s12910-016-0139-8
+BMC Medical Ethics. (2016). _Seeking consent for research with indigenous communities: A systematic review_. BioMed Central. https://bmcmedethics.biomedcentral.com/articles/10.1186/s12910-016-0139-8
 
-British Ecological Society. (2024). *Sharing indigenous values, practices and priorities as guidance for transforming human-environment relationships*. People and Nature. https://besjournals.onlinelibrary.wiley.com/doi/full/10.1002/pan3.10707
+British Ecological Society. (2024). _Sharing indigenous values, practices and priorities as guidance for transforming human-environment relationships_. People and Nature. https://besjournals.onlinelibrary.wiley.com/doi/full/10.1002/pan3.10707
 
-Canada.ca. (2024a). *Convention on biological diversity*. Government of Canada. https://www.canada.ca/en/environment-climate-change/services/environmental-indicators/convention-biological-diversity.html
+Canada.ca. (2024a). _Convention on biological diversity_. Government of Canada. https://www.canada.ca/en/environment-climate-change/services/environmental-indicators/convention-biological-diversity.html
 
-Canada.ca. (2024b). *Indigenous knowledge policy framework for project reviews and regulatory decisions*. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/programs/aboriginal-consultation-federal-environmental-assessment/indigenous-knowledge-policy-framework-initiative/indigenous-knowledge-policy-framework-project-reviews-regulatory-decisions.html
+Canada.ca. (2024b). _Indigenous knowledge policy framework for project reviews and regulatory decisions_. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/programs/aboriginal-consultation-federal-environmental-assessment/indigenous-knowledge-policy-framework-initiative/indigenous-knowledge-policy-framework-project-reviews-regulatory-decisions.html
 
-Canada.ca. (2024c). *Indigenous knowledge*. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/programs/aboriginal-consultation-federal-environmental-assessment/indigenous-knowledge-policy-framework-initiative.html
+Canada.ca. (2024c). _Indigenous knowledge_. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/programs/aboriginal-consultation-federal-environmental-assessment/indigenous-knowledge-policy-framework-initiative.html
 
-Canada.ca. (2024d). *Indigenous knowledge under the Impact Assessment Act*. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/services/policy-guidance/practitioners-guide-impact-assessment-act/indigenous-knowledge-under-the-impact-assessment-act.html
+Canada.ca. (2024d). _Indigenous knowledge under the Impact Assessment Act_. Government of Canada. https://www.canada.ca/en/impact-assessment-agency/services/policy-guidance/practitioners-guide-impact-assessment-act/indigenous-knowledge-under-the-impact-assessment-act.html
 
-Canadian Ethics. (2022). *Tri-Council policy statement: Ethical conduct for research involving humans – TCPS 2 (2022) – Chapter 9: Research involving the First Nations, Inuit, and Métis peoples of Canada*. Panel on Research Ethics. https://ethics.gc.ca/eng/tcps2-eptc2_2022_chapter9-chapitre9.html
+Canadian Ethics. (2022). _Tri-Council policy statement: Ethical conduct for research involving humans – TCPS 2 (2022) – Chapter 9: Research involving the First Nations, Inuit, and Métis peoples of Canada_. Panel on Research Ethics. https://ethics.gc.ca/eng/tcps2-eptc2_2022_chapter9-chapitre9.html
 
-Carmién Tea. (2024). *The Rooibos access and benefit sharing agreement*. https://carmientea.co.za/the-rooibos-access-and-benefit-sharing-agreement/
+Carmién Tea. (2024). _The Rooibos access and benefit sharing agreement_. https://carmientea.co.za/the-rooibos-access-and-benefit-sharing-agreement/
 
-Chaikuni Institute. (2024). *Traditional knowledge of the Amazon: The world of medicinal plants*. https://chaikuni.org/news/traditional-knowledge-of-the-amazon-the-world-of-medicinal-plants
+Chaikuni Institute. (2024). _Traditional knowledge of the Amazon: The world of medicinal plants_. https://chaikuni.org/news/traditional-knowledge-of-the-amazon-the-world-of-medicinal-plants
 
-Computer.org. (2024). *The intersection of traditional knowledge and modern tech: Indigenous approaches to sustainability*. IEEE Computer Society. https://www.computer.org/publications/tech-news/trends/indigenous-sustainability
+Computer.org. (2024). _The intersection of traditional knowledge and modern tech: Indigenous approaches to sustainability_. IEEE Computer Society. https://www.computer.org/publications/tech-news/trends/indigenous-sustainability
 
-Concordia University. (2024). *Indigenous protocol and artificial intelligence position paper*. Spectrum: Concordia University Research Repository. https://spectrum.library.concordia.ca/986506/
+Concordia University. (2024). _Indigenous protocol and artificial intelligence position paper_. Spectrum: Concordia University Research Repository. https://spectrum.library.concordia.ca/986506/
 
-Conservation News. (2015). *Amazon tribe creates 500-page traditional medicine encyclopedia*. Mongabay. https://news.mongabay.com/2015/06/amazon-tribe-creates-500-page-traditional-medicine-encyclopedia/
+Conservation News. (2015). _Amazon tribe creates 500-page traditional medicine encyclopedia_. Mongabay. https://news.mongabay.com/2015/06/amazon-tribe-creates-500-page-traditional-medicine-encyclopedia/
 
-Conservation News. (2019). *Failure in conservation projects: Everyone experiences it, few record it*. Mongabay. https://news.mongabay.com/2019/10/failure-in-conservation-projects-everyone-experiences-it-few-record-it/
+Conservation News. (2019). _Failure in conservation projects: Everyone experiences it, few record it_. Mongabay. https://news.mongabay.com/2019/10/failure-in-conservation-projects-everyone-experiences-it-few-record-it/
 
-Covington & Burling. (2024). *The Nagoya Protocol at its 10th anniversary: Lessons learned and new challenges from 'Access and Benefit-Sharing'*. https://www.cov.com/en/news-and-insights/insights/2024/10/the-nagoya-protocol-at-its-10th-anniversary-lessons-learned-and-new-challenges-from-access-and-benefit-sharing
+Covington & Burling. (2024). _The Nagoya Protocol at its 10th anniversary: Lessons learned and new challenges from 'Access and Benefit-Sharing'_. https://www.cov.com/en/news-and-insights/insights/2024/10/the-nagoya-protocol-at-its-10th-anniversary-lessons-learned-and-new-challenges-from-access-and-benefit-sharing
 
-CSIR. (2024). *Traditional Knowledge Digital Library Unit (TKDL)*. Council of Scientific & Industrial Research. https://www.csir.res.in/documents/tkdl
+CSIR. (2024). _Traditional Knowledge Digital Library Unit (TKDL)_. Council of Scientific & Industrial Research. https://www.csir.res.in/documents/tkdl
 
-Cultural Survival. (2024). *Sharing the secrets of the Hoodia: San to reap financial benefits of traditional knowledge*. https://www.culturalsurvival.org/news/sharing-secrets-hoodia-san-reap-financial-benefits-traditional-knowledge
+Cultural Survival. (2024). _Sharing the secrets of the Hoodia: San to reap financial benefits of traditional knowledge_. https://www.culturalsurvival.org/news/sharing-secrets-hoodia-san-reap-financial-benefits-traditional-knowledge
 
-Dalhousie LibGuides. (2024). *OCAP principles - Indigenous data sovereignty*. Dalhousie University. https://dal.ca.libguides.com/c.php?g=732340&p=5265693
+Dalhousie LibGuides. (2024). _OCAP principles - Indigenous data sovereignty_. Dalhousie University. https://dal.ca.libguides.com/c.php?g=732340&p=5265693
 
-Data Science Journal. (2020). *The CARE principles for indigenous data governance*. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2020-043
+Data Science Journal. (2020). _The CARE principles for indigenous data governance_. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2020-043
 
-Data Science Journal. (2024a). *Māori algorithmic sovereignty: Idea, principles, and use*. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-015
+Data Science Journal. (2024a). _Māori algorithmic sovereignty: Idea, principles, and use_. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-015
 
-Data Science Journal. (2024b). *Māori algorithmic sovereignty: Idea, principles, and use*. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-015
+Data Science Journal. (2024b). _Māori algorithmic sovereignty: Idea, principles, and use_. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-015
 
-Data Science Journal. (2024c). *Centering relationality and CARE for stewardship of indigenous research data*. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-032
+Data Science Journal. (2024c). _Centering relationality and CARE for stewardship of indigenous research data_. CODATA. https://datascience.codata.org/articles/10.5334/dsj-2024-032
 
-Deadly Story. (2024). *Songlines*. https://deadlystory.com/page/culture/Life_Lore/Songlines
+Deadly Story. (2024). _Songlines_. https://deadlystory.com/page/culture/Life_Lore/Songlines
 
-DivSeek International. (2024). *TK/BC labels initiative*. https://divseekintl.org/tk_bc_labels/
+DivSeek International. (2024). _TK/BC labels initiative_. https://divseekintl.org/tk_bc_labels/
 
-Dragonfly Data Science. (2024). *Indigenous protocol and artificial intelligence position paper*. https://www.dragonfly.co.nz/publications/lewis_indigenous_2020.html
+Dragonfly Data Science. (2024). _Indigenous protocol and artificial intelligence position paper_. https://www.dragonfly.co.nz/publications/lewis_indigenous_2020.html
 
-Eco-Business. (2019). *Failure in conservation projects are rarely recorded, new study finds*. https://www.eco-business.com/news/failure-in-conservation-projects-are-rarely-recorded-new-study-finds/
+Eco-Business. (2019). _Failure in conservation projects are rarely recorded, new study finds_. https://www.eco-business.com/news/failure-in-conservation-projects-are-rarely-recorded-new-study-finds/
 
-Ecology and Society. (2020). *Indigenous fire management: A conceptual model from literature*. https://www.ecologyandsociety.org/vol25/iss4/art11/
+Ecology and Society. (2020). _Indigenous fire management: A conceptual model from literature_. https://www.ecologyandsociety.org/vol25/iss4/art11/
 
-FACETS Journal. (2021). *The right to burn: Barriers and opportunities for indigenous-led fire stewardship in Canada*. https://www.facetsjournal.com/doi/10.1139/facets-2021-0062
+FACETS Journal. (2021). _The right to burn: Barriers and opportunities for indigenous-led fire stewardship in Canada_. https://www.facetsjournal.com/doi/10.1139/facets-2021-0062
 
-FNIGC. (2024). *The First Nations principles of OCAP*. First Nations Information Governance Centre. https://fnigc.ca/ocap-training/
+FNIGC. (2024). _The First Nations principles of OCAP_. First Nations Information Governance Centre. https://fnigc.ca/ocap-training/
 
-Fondation Biodiversité. (2024). *Focus on ABS (Access and Benefit-Sharing)*. https://www.fondationbiodiversite.fr/en/biodiversity-challenges/biodiversity-and-regulation/acess-benefit-sharing/
+Fondation Biodiversité. (2024). _Focus on ABS (Access and Benefit-Sharing)_. https://www.fondationbiodiversite.fr/en/biodiversity-challenges/biodiversity-and-regulation/acess-benefit-sharing/
 
-Frontiers. (2021). *Indigenous traditional ecological knowledge and ocean observing: A review of successful partnerships*. https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2021.703938/full
+Frontiers. (2021). _Indigenous traditional ecological knowledge and ocean observing: A review of successful partnerships_. https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2021.703938/full
 
-GENRES. (2024). *What is access and benefit sharing*. Federal Office for Agriculture and Food. https://www.genres.de/en/access-and-benefit-sharing/what-is-access-and-benefit-sharing
+GENRES. (2024). _What is access and benefit sharing_. Federal Office for Agriculture and Food. https://www.genres.de/en/access-and-benefit-sharing/what-is-access-and-benefit-sharing
 
-GIDA. (2024a). *CARE principles*. Global Indigenous Data Alliance. https://www.gida-global.org/care
+GIDA. (2024a). _CARE principles_. Global Indigenous Data Alliance. https://www.gida-global.org/care
 
-GIDA. (2024b). *CARE principles*. Global Indigenous Data Alliance. https://www.gida-global.org/care
+GIDA. (2024b). _CARE principles_. Global Indigenous Data Alliance. https://www.gida-global.org/care
 
-GIDA. (2024c). *CARE principles*. Global Indigenous Data Alliance. https://www.gida-global.org/care
+GIDA. (2024c). _CARE principles_. Global Indigenous Data Alliance. https://www.gida-global.org/care
 
-Government of Canada. (2024). *United Nations Declaration on the Rights of Indigenous Peoples Act*. Justice Laws. https://laws-lois.justice.gc.ca/eng/acts/u-2.2/FullText.html
+Government of Canada. (2024). _United Nations Declaration on the Rights of Indigenous Peoples Act_. Justice Laws. https://laws-lois.justice.gc.ca/eng/acts/u-2.2/FullText.html
 
-Harvard Law Review. (2024). *Rethinking protections for indigenous sacred sites*. https://harvardlawreview.org/print/vol-134/rethinking-protections-for-indigenous-sacred-sites/
+Harvard Law Review. (2024). _Rethinking protections for indigenous sacred sites_. https://harvardlawreview.org/print/vol-134/rethinking-protections-for-indigenous-sacred-sites/
 
-IAM Media. (2024). *India: Balancing innovation and traditional knowledge under the Biological Diversity Act*. https://www.iam-media.com/guide/global-life-sciences/2024/article/india-balancing-innovation-and-traditional-knowledge-under-the-biological-diversity-act
+IAM Media. (2024). _India: Balancing innovation and traditional knowledge under the Biological Diversity Act_. https://www.iam-media.com/guide/global-life-sciences/2024/article/india-balancing-innovation-and-traditional-knowledge-under-the-biological-diversity-act
 
-IAWF. (2024). *Indigenous impacts and solutions: Fire, floods, and climate change*. International Association of Wildland Fire. https://www.iawfonline.org/article/indigenous-impacts-and-solutions-fire-floods-and-climate-change/
+IAWF. (2024). _Indigenous impacts and solutions: Fire, floods, and climate change_. International Association of Wildland Fire. https://www.iawfonline.org/article/indigenous-impacts-and-solutions-fire-floods-and-climate-change/
 
-ICTINC. (2024a). *What does traditional consensus decision making mean?* Indigenous Corporate Training Inc. https://www.ictinc.ca/blog/what-does-traditional-consensus-decision-making-mean
+ICTINC. (2024a). _What does traditional consensus decision making mean?_ Indigenous Corporate Training Inc. https://www.ictinc.ca/blog/what-does-traditional-consensus-decision-making-mean
 
-ICTINC. (2024b). *Indigenous worldviews vs Western worldviews*. Indigenous Corporate Training Inc. https://www.ictinc.ca/blog/indigenous-worldviews-vs-western-worldviews
+ICTINC. (2024b). _Indigenous worldviews vs Western worldviews_. Indigenous Corporate Training Inc. https://www.ictinc.ca/blog/indigenous-worldviews-vs-western-worldviews
 
-IIED. (2024). *UN Declaration on the Rights of Indigenous Peoples*. International Institute for Environment and Development. https://biocultural.iied.org/un-declaration-rights-indigenous-peoples
+IIED. (2024). _UN Declaration on the Rights of Indigenous Peoples_. International Institute for Environment and Development. https://biocultural.iied.org/un-declaration-rights-indigenous-peoples
 
-IIED. (2024a). *National and local policy and law for protecting biocultural heritage*. International Institute for Environment and Development. https://biocultural.iied.org/national-and-local-policy-and-law-protecting-biocultural-heritage
+IIED. (2024a). _National and local policy and law for protecting biocultural heritage_. International Institute for Environment and Development. https://biocultural.iied.org/national-and-local-policy-and-law-protecting-biocultural-heritage
 
-IIED. (2024b). *National and local policy and law for protecting biocultural heritage*. International Institute for Environment and Development. https://biocultural.iied.org/national-and-local-policy-and-law-protecting-biocultural-heritage
+IIED. (2024b). _National and local policy and law for protecting biocultural heritage_. International Institute for Environment and Development. https://biocultural.iied.org/national-and-local-policy-and-law-protecting-biocultural-heritage
 
-IIED. (2024c). *Regional laws on traditional knowledge and access to genetic resources*. International Institute for Environment and Development. https://biocultural.iied.org/regional-laws-traditional-knowledge-and-access-genetic-resources
+IIED. (2024c). _Regional laws on traditional knowledge and access to genetic resources_. International Institute for Environment and Development. https://biocultural.iied.org/regional-laws-traditional-knowledge-and-access-genetic-resources
 
-IISD. (2024). *Indigenous peoples: Defending an environment for all*. International Institute for Sustainable Development. https://www.iisd.org/articles/deep-dive/indigenous-peoples-defending-environment-all
+IISD. (2024). _Indigenous peoples: Defending an environment for all_. International Institute for Sustainable Development. https://www.iisd.org/articles/deep-dive/indigenous-peoples-defending-environment-all
 
-Indigenous AI. (2024). *Position paper*. https://www.indigenous-ai.net/position-paper/
+Indigenous AI. (2024). _Position paper_. https://www.indigenous-ai.net/position-paper/
 
-IPCA Knowledge Basket. (2024). *Beyond conservation: Working respectfully with indigenous people and their knowledge systems*. https://ipcaknowledgebasket.ca/resources/working-respectfully-with-indigenous-people-and-their-knowledge-systems/
+IPCA Knowledge Basket. (2024). _Beyond conservation: Working respectfully with indigenous people and their knowledge systems_. https://ipcaknowledgebasket.ca/resources/working-respectfully-with-indigenous-people-and-their-knowledge-systems/
 
-IPR Commission. (2024). *Overview*. http://www.iprcommission.org/papers/text/final_report/chapter4htmfinal.htm
+IPR Commission. (2024). _Overview_. http://www.iprcommission.org/papers/text/final_report/chapter4htmfinal.htm
 
-Japingka Aboriginal Art. (2024). *Why songlines are important in Aboriginal art*. https://japingkaaboriginalart.com/articles/songlines-important-aboriginal-art/
+Japingka Aboriginal Art. (2024). _Why songlines are important in Aboriginal art_. https://japingkaaboriginalart.com/articles/songlines-important-aboriginal-art/
 
-Law.asia. (2024). *The challenge of respecting traditional knowledge of indigenous peoples*. https://law.asia/traditional-knowledge-indigenous-peoples/
+Law.asia. (2024). _The challenge of respecting traditional knowledge of indigenous peoples_. https://law.asia/traditional-knowledge-indigenous-peoples/
 
-Local Contexts. (2024a). *TK labels*. https://localcontexts.org/labels/traditional-knowledge-labels/
+Local Contexts. (2024a). _TK labels_. https://localcontexts.org/labels/traditional-knowledge-labels/
 
-Local Contexts. (2024b). *Indigenous data sovereignty*. https://localcontexts.org/indigenous-data-sovereignty/
+Local Contexts. (2024b). _Indigenous data sovereignty_. https://localcontexts.org/indigenous-data-sovereignty/
 
-Local Contexts. (2024). *Grounding indigenous rights*. https://localcontexts.org/
+Local Contexts. (2024). _Grounding indigenous rights_. https://localcontexts.org/
 
-Mila Quebec. (2024). *First Languages AI reality*. https://mila.quebec/en/ai4humanity/applied-projects/first-languages-ai-reality
+Mila Quebec. (2024). _First Languages AI reality_. https://mila.quebec/en/ai4humanity/applied-projects/first-languages-ai-reality
 
-Mondaq. (2017). *Traditional knowledge and patent issues: An overview of turmeric, basmati, neem cases*. https://www.mondaq.com/india/patent/586384/traditional-knowledge-and-patent-issues-an-overview-of-turmeric-basmati-neem-cases
+Mondaq. (2017). _Traditional knowledge and patent issues: An overview of turmeric, basmati, neem cases_. https://www.mondaq.com/india/patent/586384/traditional-knowledge-and-patent-issues-an-overview-of-turmeric-basmati-neem-cases
 
-Native Nations Institute. (2024). *Indigenous data sovereignty and governance*. University of Arizona. https://nni.arizona.edu/our-work/research-policy-analysis/indigenous-data-sovereignty-governance
+Native Nations Institute. (2024). _Indigenous data sovereignty and governance_. University of Arizona. https://nni.arizona.edu/our-work/research-policy-analysis/indigenous-data-sovereignty-governance
 
-Native Tribe Info. (2024). *Aboriginal land management: Traditional ecological knowledge systems*. https://nativetribe.info/aboriginal-land-management-traditional-ecological-knowledge-systems/
+Native Tribe Info. (2024). _Aboriginal land management: Traditional ecological knowledge systems_. https://nativetribe.info/aboriginal-land-management-traditional-ecological-knowledge-systems/
 
-Natural Justice. (2024). *The Rooibos access and benefit-sharing agreement*. https://naturaljustice.org/the-rooibos-access-and-benefit-sharing-agreement/
+Natural Justice. (2024). _The Rooibos access and benefit-sharing agreement_. https://naturaljustice.org/the-rooibos-access-and-benefit-sharing-agreement/
 
-Nature. (2022). *Federated learning and indigenous genomic data sovereignty*. Nature Machine Intelligence. https://www.nature.com/articles/s42256-022-00551-y
+Nature. (2022). _Federated learning and indigenous genomic data sovereignty_. Nature Machine Intelligence. https://www.nature.com/articles/s42256-022-00551-y
 
-NCBI. (2011). *Ethnobotanical study of indigenous knowledge on medicinal plant use by traditional healers in Oshikoto region, Namibia*. National Center for Biotechnology Information. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3062575/
+NCBI. (2011). _Ethnobotanical study of indigenous knowledge on medicinal plant use by traditional healers in Oshikoto region, Namibia_. National Center for Biotechnology Information. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3062575/
 
-NIH. (2012). *Integrating biodiversity management and indigenous biopiracy protection to promote environmental justice and global health*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC3483946/
+NIH. (2012). _Integrating biodiversity management and indigenous biopiracy protection to promote environmental justice and global health_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC3483946/
 
-NIH. (2016). *Seeking consent for research with indigenous communities: A systematic review*. National Institutes of Health. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5075161/
+NIH. (2016). _Seeking consent for research with indigenous communities: A systematic review_. National Institutes of Health. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5075161/
 
-NIH. (2017). *Applying indigenous community-based participatory research principles to partnership development in health disparities research*. National Institutes of Health. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5443618/
+NIH. (2017). _Applying indigenous community-based participatory research principles to partnership development in health disparities research_. National Institutes of Health. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5443618/
 
-NIH. (2018a). *Community-based participatory research (CBPR): Towards equitable involvement of community in psychology research*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC6054913/
+NIH. (2018a). _Community-based participatory research (CBPR): Towards equitable involvement of community in psychology research_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC6054913/
 
-NIH. (2020a). *The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
+NIH. (2020a). _The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
 
-NIH. (2020b). *The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
+NIH. (2020b). _The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
 
-NIH. (2020c). *The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
+NIH. (2020c). _The Rooibos benefit sharing agreement–Breaking new ground with respect, honesty, fairness, and care_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC7065993/
 
-NIH. (2022). *Federated learning and indigenous genomic data sovereignty*. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC9731328/
+NIH. (2022). _Federated learning and indigenous genomic data sovereignty_. National Institutes of Health. https://pmc.ncbi.nlm.nih.gov/articles/PMC9731328/
 
-NIRAKN. (2024). *Research methodologies and methods*. National Indigenous Research and Knowledges Network. https://www.nirakn.edu.au/dashboard/research-methodologies-and-methods/
+NIRAKN. (2024). _Research methodologies and methods_. National Indigenous Research and Knowledges Network. https://www.nirakn.edu.au/dashboard/research-methodologies-and-methods/
 
-NPS. (2024). *Research methodologies & challenges - Indigenous knowledge and traditional ecological knowledge*. U.S. National Park Service. https://www.nps.gov/subjects/tek/research-methodologies-challenges.htm
+NPS. (2024). _Research methodologies & challenges - Indigenous knowledge and traditional ecological knowledge_. U.S. National Park Service. https://www.nps.gov/subjects/tek/research-methodologies-challenges.htm
 
-NPR. (2023). *How one man fought a patent war over turmeric*. Planet Money. https://www.npr.org/2023/09/01/1197321273/turmeric-india-biopiracy-patent-tkdl
+NPR. (2023). _How one man fought a patent war over turmeric_. Planet Money. https://www.npr.org/2023/09/01/1197321273/turmeric-india-biopiracy-patent-tkdl
 
-OHCHR. (2024). *Consultation and free, prior and informed consent (FPIC)*. Office of the High Commissioner for Human Rights. https://www.ohchr.org/en/indigenous-peoples/consultation-and-free-prior-and-informed-consent-fpic
+OHCHR. (2024). _Consultation and free, prior and informed consent (FPIC)_. Office of the High Commissioner for Human Rights. https://www.ohchr.org/en/indigenous-peoples/consultation-and-free-prior-and-informed-consent-fpic
 
-OHCHR. (2024a). *Consultation and free, prior and informed consent (FPIC)*. Office of the High Commissioner for Human Rights. https://www.ohchr.org/en/indigenous-peoples/consultation-and-free-prior-and-informed-consent-fpic
+OHCHR. (2024a). _Consultation and free, prior and informed consent (FPIC)_. Office of the High Commissioner for Human Rights. https://www.ohchr.org/en/indigenous-peoples/consultation-and-free-prior-and-informed-consent-fpic
 
-Open Government Partnership. (2024). *Indigenous representation in local legislative councils*. https://www.opengovpartnership.org/members/philippines/commitments/PH0065/
+Open Government Partnership. (2024). _Indigenous representation in local legislative councils_. https://www.opengovpartnership.org/members/philippines/commitments/PH0065/
 
-OpenTextBC. (2024). *Indigenous epistemologies and pedagogies*. Pulling Together: A Guide for Curriculum Developers. https://opentextbc.ca/indigenizationcurriculumdevelopers/chapter/indigenous-epistemologies-and-pedagogies/
+OpenTextBC. (2024). _Indigenous epistemologies and pedagogies_. Pulling Together: A Guide for Curriculum Developers. https://opentextbc.ca/indigenizationcurriculumdevelopers/chapter/indigenous-epistemologies-and-pedagogies/
 
-Organiser. (2022). *Challenges in safeguarding traditional knowledge: Legal implications*. https://organiser.org/2022/12/16/101842/bharat/challenges-in-safeguarding-traditional-knowledge-legal-implications/
+Organiser. (2022). _Challenges in safeguarding traditional knowledge: Legal implications_. https://organiser.org/2022/12/16/101842/bharat/challenges-in-safeguarding-traditional-knowledge-legal-implications/
 
-Plant & Food Research. (2024). *Principles for working with Taonga and Mātauranga Māori*. https://www.plantandfood.com/en-nz/principles-for-working-with-taonga-and-matauranga-maori
+Plant & Food Research. (2024). _Principles for working with Taonga and Mātauranga Māori_. https://www.plantandfood.com/en-nz/principles-for-working-with-taonga-and-matauranga-maori
 
-ResearchGate. (2016). *Indigenous peoples, consent and benefit sharing, lessons from the San-Hoodia case*. https://www.researchgate.net/publication/293148873_Indigenous_Peoples_consent_and_benefit_sharing_Lessons_from_the_san-Hoodia_case
+ResearchGate. (2016). _Indigenous peoples, consent and benefit sharing, lessons from the San-Hoodia case_. https://www.researchgate.net/publication/293148873_Indigenous_Peoples_consent_and_benefit_sharing_Lessons_from_the_san-Hoodia_case
 
-Resource Africa. (2024). *How biocultural rights to Rooibos opens the way for equitable access and benefit sharing in Southern Africa*. https://www.resourceafrica.net/how-biocultural-rights-to-rooibos-opens-the-way-for-equitable-access-and-benefit-sharing-in-southern-africa/
+Resource Africa. (2024). _How biocultural rights to Rooibos opens the way for equitable access and benefit sharing in Southern Africa_. https://www.resourceafrica.net/how-biocultural-rights-to-rooibos-opens-the-way-for-equitable-access-and-benefit-sharing-in-southern-africa/
 
-Rooibos Council. (2024). *Khoi and San receive first cycle of benefit-sharing funds from Rooibos industry*. https://sarooibos.co.za/khoi-and-san-receive-first-cycle-of-benefit-sharing-funds-from-rooibos-industry/
+Rooibos Council. (2024). _Khoi and San receive first cycle of benefit-sharing funds from Rooibos industry_. https://sarooibos.co.za/khoi-and-san-receive-first-cycle-of-benefit-sharing-funds-from-rooibos-industry/
 
-Sage Journals. (2021). *A new era of indigenous research: Community-based indigenous research ethics protocols in Canada*. https://journals.sagepub.com/doi/full/10.1177/15562646211023705
+Sage Journals. (2021). _A new era of indigenous research: Community-based indigenous research ethics protocols in Canada_. https://journals.sagepub.com/doi/full/10.1177/15562646211023705
 
-Scnat. (2024a). *Access to genetic resources and associated traditional knowledge and sharing the benefits arising from their utilization (ABS)*. Swiss Biodiversity Forum. https://biodiversity.scnat.ch/activities_and_projects/abs
+Scnat. (2024a). _Access to genetic resources and associated traditional knowledge and sharing the benefits arising from their utilization (ABS)_. Swiss Biodiversity Forum. https://biodiversity.scnat.ch/activities_and_projects/abs
 
-ScienceDirect. (2018). *Traditional ecological knowledge and medicinal plant diversity in Ecuadorian Amazon home gardens*. https://www.sciencedirect.com/science/article/pii/S2351989418303524
+ScienceDirect. (2018). _Traditional ecological knowledge and medicinal plant diversity in Ecuadorian Amazon home gardens_. https://www.sciencedirect.com/science/article/pii/S2351989418303524
 
-ScienceDirect. (2021). *Indigenous community participation in resource development decision-making: Practitioner perceptions of legal and voluntary arrangements*. https://www.sciencedirect.com/science/article/abs/pii/S0301479720318478
+ScienceDirect. (2021). _Indigenous community participation in resource development decision-making: Practitioner perceptions of legal and voluntary arrangements_. https://www.sciencedirect.com/science/article/abs/pii/S0301479720318478
 
-ScienceDirect. (2024d). *Bioprospecting - An overview*. https://www.sciencedirect.com/topics/medicine-and-dentistry/bioprospecting
+ScienceDirect. (2024d). _Bioprospecting - An overview_. https://www.sciencedirect.com/topics/medicine-and-dentistry/bioprospecting
 
-Scientific American. (2024). *Ancient indigenous 'Songlines' match long-sunken landscape off Australia*. https://www.scientificamerican.com/article/ancient-indigenous-songlines-match-long-sunken-landscape-off-australia1/
+Scientific American. (2024). _Ancient indigenous 'Songlines' match long-sunken landscape off Australia_. https://www.scientificamerican.com/article/ancient-indigenous-songlines-match-long-sunken-landscape-off-australia1/
 
-Scientific American. (2024a). *How indigenous groups are leading the way on data privacy*. https://www.scientificamerican.com/article/how-indigenous-groups-are-leading-the-way-on-data-privacy/
+Scientific American. (2024a). _How indigenous groups are leading the way on data privacy_. https://www.scientificamerican.com/article/how-indigenous-groups-are-leading-the-way-on-data-privacy/
 
-SFU Library. (2024). *Indigenous data sovereignty*. Simon Fraser University. https://www.lib.sfu.ca/help/publish/research-data-management/indigenous-data-sovereignty
+SFU Library. (2024). _Indigenous data sovereignty_. Simon Fraser University. https://www.lib.sfu.ca/help/publish/research-data-management/indigenous-data-sovereignty
 
-SlideShare. (2024). *Case study on Neem, Turmeric and Basmati rice*. https://www.slideshare.net/slideshow/case-study-on-neem-turmeric-and-basmati-rice/241131204
+SlideShare. (2024). _Case study on Neem, Turmeric and Basmati rice_. https://www.slideshare.net/slideshow/case-study-on-neem-turmeric-and-basmati-rice/241131204
 
-SpringerLink. (2010). *Green diamonds of the South: An overview of the San-Hoodia case*. https://link.springer.com/chapter/10.1007/978-90-481-3123-5_6
+SpringerLink. (2010). _Green diamonds of the South: An overview of the San-Hoodia case_. https://link.springer.com/chapter/10.1007/978-90-481-3123-5_6
 
-SpringerLink. (2020). *A multi-perspective reflection on how indigenous knowledge and related ideas can improve science education for sustainability*. Science & Education. https://link.springer.com/article/10.1007/s11191-019-00100-x
+SpringerLink. (2020). _A multi-perspective reflection on how indigenous knowledge and related ideas can improve science education for sustainability_. Science & Education. https://link.springer.com/article/10.1007/s11191-019-00100-x
 
-SpringerOpen. (2013). *On the role of traditional ecological knowledge as a collaborative concept: A philosophical study*. Ecological Processes. https://ecologicalprocesses.springeropen.com/articles/10.1186/2192-1709-2-7
+SpringerOpen. (2013). _On the role of traditional ecological knowledge as a collaborative concept: A philosophical study_. Ecological Processes. https://ecologicalprocesses.springeropen.com/articles/10.1186/2192-1709-2-7
 
-SPREP. (2024). *Pacific regional framework for the protection of traditional knowledge and expressions of culture*. Pacific Environment Data Portal. https://pacific-data.sprep.org/dataset/pacific-regional-framework-protection-traditional-knowledge-and-expressions-culture
+SPREP. (2024). _Pacific regional framework for the protection of traditional knowledge and expressions of culture_. Pacific Environment Data Portal. https://pacific-data.sprep.org/dataset/pacific-regional-framework-protection-traditional-knowledge-and-expressions-culture
 
-SSHRC-CRSH. (2024). *Indigenous-led AI: How indigenous knowledge systems could push AI to be more inclusive*. Social Sciences and Humanities Research Council. https://www.sshrc-crsh.gc.ca/funding-financement/nfrf-fnfr/stories-histoires/2023/inclusive_artificial_intelligence-intelligence_artificielle_inclusive-eng.aspx
+SSHRC-CRSH. (2024). _Indigenous-led AI: How indigenous knowledge systems could push AI to be more inclusive_. Social Sciences and Humanities Research Council. https://www.sshrc-crsh.gc.ca/funding-financement/nfrf-fnfr/stories-histoires/2023/inclusive_artificial_intelligence-intelligence_artificielle_inclusive-eng.aspx
 
-Taylor & Francis. (2023). *Considerations for relational research methods for use in indigenous contexts: Implications for sustainable development*. https://www.tandfonline.com/doi/full/10.1080/13645579.2023.2185345
+Taylor & Francis. (2023). _Considerations for relational research methods for use in indigenous contexts: Implications for sustainable development_. https://www.tandfonline.com/doi/full/10.1080/13645579.2023.2185345
 
-Taylor & Francis. (2024a). *Māori data sovereignty: Contributions to data cultures in the government sector in New Zealand*. https://www.tandfonline.com/doi/full/10.1080/1369118X.2024.2302987
+Taylor & Francis. (2024a). _Māori data sovereignty: Contributions to data cultures in the government sector in New Zealand_. https://www.tandfonline.com/doi/full/10.1080/1369118X.2024.2302987
 
-TEC. (2024). *Māori data sovereignty*. Tertiary Education Commission. https://www.tec.govt.nz/teo/working-with-teos/analysing-student-data/key-components/community-perspectives/maori-data-sovereignty
+TEC. (2024). _Māori data sovereignty_. Tertiary Education Commission. https://www.tec.govt.nz/teo/working-with-teos/analysing-student-data/key-components/community-perspectives/maori-data-sovereignty
 
-The Conversation. (2016). *Biopiracy: When indigenous knowledge is patented for profit*. https://theconversation.com/biopiracy-when-indigenous-knowledge-is-patented-for-profit-55589
+The Conversation. (2016). _Biopiracy: When indigenous knowledge is patented for profit_. https://theconversation.com/biopiracy-when-indigenous-knowledge-is-patented-for-profit-55589
 
-The Conversation. (2018). *Why Native Americans struggle to protect their sacred places*. https://theconversation.com/why-native-americans-struggle-to-protect-their-sacred-places-101300
+The Conversation. (2018). _Why Native Americans struggle to protect their sacred places_. https://theconversation.com/why-native-americans-struggle-to-protect-their-sacred-places-101300
 
-UBC Library. (2024). *Home - Indigenous research methodologies*. University of British Columbia. https://guides.library.ubc.ca/IndigResearch
+UBC Library. (2024). _Home - Indigenous research methodologies_. University of British Columbia. https://guides.library.ubc.ca/IndigResearch
 
-UCL. (2024). *Access and benefit sharing: The Nagoya Protocol*. University College London. https://www.ucl.ac.uk/research-innovation-services/compliance-and-assurance/access-and-benefit-sharing-nagoya-protocol
+UCL. (2024). _Access and benefit sharing: The Nagoya Protocol_. University College London. https://www.ucl.ac.uk/research-innovation-services/compliance-and-assurance/access-and-benefit-sharing-nagoya-protocol
 
-UN Development. (2016). *Free prior and informed consent – An indigenous peoples' right and a good practice for local communities – FAO*. United Nations For Indigenous Peoples. https://www.un.org/development/desa/indigenouspeoples/publications/2016/10/free-prior-and-informed-consent-an-indigenous-peoples-right-and-a-good-practice-for-local-communities-fao/
+UN Development. (2016). _Free prior and informed consent – An indigenous peoples' right and a good practice for local communities – FAO_. United Nations For Indigenous Peoples. https://www.un.org/development/desa/indigenouspeoples/publications/2016/10/free-prior-and-informed-consent-an-indigenous-peoples-right-and-a-good-practice-for-local-communities-fao/
 
-UN Partnerships. (2024). *Pacific traditional knowledge action plan*. United Nations Partnerships for SDGs platform. https://sustainabledevelopment.un.org/partnership/?p=7690
+UN Partnerships. (2024). _Pacific traditional knowledge action plan_. United Nations Partnerships for SDGs platform. https://sustainabledevelopment.un.org/partnership/?p=7690
 
-UNDP Climate Promise. (2024). *Indigenous knowledge is crucial in the fight against climate change – here's why*. United Nations Development Programme. https://climatepromise.undp.org/news-and-stories/indigenous-knowledge-crucial-fight-against-climate-change-heres-why
+UNDP Climate Promise. (2024). _Indigenous knowledge is crucial in the fight against climate change – here's why_. United Nations Development Programme. https://climatepromise.undp.org/news-and-stories/indigenous-knowledge-crucial-fight-against-climate-change-heres-why
 
-UNESCO. (2024). *Convention on Biological Diversity (CBD)*. https://en.unesco.org/links/biodiversity/cbd
+UNESCO. (2024). _Convention on Biological Diversity (CBD)_. https://en.unesco.org/links/biodiversity/cbd
 
-United Nations. (2024). *United Nations Declaration on the Rights of Indigenous Peoples*. https://www.un.org/development/desa/indigenouspeoples/declaration-on-the-rights-of-indigenous-peoples.html
+United Nations. (2024). _United Nations Declaration on the Rights of Indigenous Peoples_. https://www.un.org/development/desa/indigenouspeoples/declaration-on-the-rights-of-indigenous-peoples.html
 
-University of Arizona. (2024). *Indigenous women and the development, application, preservation and transmission of scientific and technical knowledge*. United Nations Special Rapporteur on the rights of indigenous people. https://un.arizona.edu/search-database/indigenous-women-and-development-application-preservation-and-transmission
+University of Arizona. (2024). _Indigenous women and the development, application, preservation and transmission of scientific and technical knowledge_. United Nations Special Rapporteur on the rights of indigenous people. https://un.arizona.edu/search-database/indigenous-women-and-development-application-preservation-and-transmission
 
-University of Calgary. (2024). *Indigenous data sovereignty*. Research at UCalgary. https://research.ucalgary.ca/engage-research/indigenous-research-support-team/irst-resources/indigenous-data-sovereignty
+University of Calgary. (2024). _Indigenous data sovereignty_. Research at UCalgary. https://research.ucalgary.ca/engage-research/indigenous-research-support-team/irst-resources/indigenous-data-sovereignty
 
-University of Calgary. (2024a). *Indigenous data sovereignty*. Research at UCalgary. https://research.ucalgary.ca/engage-research/indigenous-research-support-team/irst-resources/indigenous-data-sovereignty
+University of Calgary. (2024a). _Indigenous data sovereignty_. Research at UCalgary. https://research.ucalgary.ca/engage-research/indigenous-research-support-team/irst-resources/indigenous-data-sovereignty
 
-Utrecht Journal. (2015). *Intellectual property rights in traditional knowledge: Enabler of sustainable development*. Utrecht Journal of International and European Law. https://utrechtjournal.org/articles/10.5334/ujiel.283
+Utrecht Journal. (2015). _Intellectual property rights in traditional knowledge: Enabler of sustainable development_. Utrecht Journal of International and European Law. https://utrechtjournal.org/articles/10.5334/ujiel.283
 
-Wiley Online Library. (2024). *Reconciling guardianship with ownership: Protecting taonga plants, Māori knowledge, and plant variety rights in Aotearoa New Zealand*. The Journal of World Intellectual Property. https://onlinelibrary.wiley.com/doi/10.1111/jwip.12292
+Wiley Online Library. (2024). _Reconciling guardianship with ownership: Protecting taonga plants, Māori knowledge, and plant variety rights in Aotearoa New Zealand_. The Journal of World Intellectual Property. https://onlinelibrary.wiley.com/doi/10.1111/jwip.12292
 
-Wikipedia. (2024a). *Free, prior and informed consent*. https://en.wikipedia.org/wiki/Free,_prior_and_informed_consent
+Wikipedia. (2024a). _Free, prior and informed consent_. https://en.wikipedia.org/wiki/Free,_prior_and_informed_consent
 
-Wikipedia. (2024b). *First Nations principles of OCAP*. https://en.wikipedia.org/wiki/First_Nations_principles_of_OCAP
+Wikipedia. (2024b). _First Nations principles of OCAP_. https://en.wikipedia.org/wiki/First_Nations_principles_of_OCAP
 
-Wikipedia. (2024c). *Traditional knowledge*. https://en.wikipedia.org/wiki/Traditional_knowledge
+Wikipedia. (2024c). _Traditional knowledge_. https://en.wikipedia.org/wiki/Traditional_knowledge
 
-Wikipedia. (2024d). *Access and Benefit Sharing Agreement*. https://en.wikipedia.org/wiki/Access_and_Benefit_Sharing_Agreement
+Wikipedia. (2024d). _Access and Benefit Sharing Agreement_. https://en.wikipedia.org/wiki/Access_and_Benefit_Sharing_Agreement
 
-Wikipedia. (2024e). *Songline*. https://en.wikipedia.org/wiki/Songline
+Wikipedia. (2024e). _Songline_. https://en.wikipedia.org/wiki/Songline
 
-Wikipedia. (2024f). *Biopiracy*. https://en.wikipedia.org/wiki/Biopiracy
+Wikipedia. (2024f). _Biopiracy_. https://en.wikipedia.org/wiki/Biopiracy
 
-Wikipedia. (2024g). *Bioprospecting*. https://en.wikipedia.org/wiki/Bioprospecting
+Wikipedia. (2024g). _Bioprospecting_. https://en.wikipedia.org/wiki/Bioprospecting
 
-Wikipedia. (2024h). *Traditional knowledge*. https://en.wikipedia.org/wiki/Traditional_knowledge
+Wikipedia. (2024h). _Traditional knowledge_. https://en.wikipedia.org/wiki/Traditional_knowledge
 
-Wikipedia. (2024i). *Nagoya Protocol*. https://en.wikipedia.org/wiki/Nagoya_Protocol
+Wikipedia. (2024i). _Nagoya Protocol_. https://en.wikipedia.org/wiki/Nagoya_Protocol
 
-Wikipedia. (2024j). *Traditional Knowledge Digital Library*. https://en.wikipedia.org/wiki/Traditional_Knowledge_Digital_Library
+Wikipedia. (2024j). _Traditional Knowledge Digital Library_. https://en.wikipedia.org/wiki/Traditional_Knowledge_Digital_Library
 
-Wikipedia. (2024k). *Biological Diversity Act, 2002*. https://en.wikipedia.org/wiki/Biological_Diversity_Act,_2002
+Wikipedia. (2024k). _Biological Diversity Act, 2002_. https://en.wikipedia.org/wiki/Biological_Diversity_Act,_2002
 
-Wikipedia. (2024l). *Indigenous Peoples' Rights Act of 1997*. https://en.wikipedia.org/wiki/Indigenous_Peoples'_Rights_Act_of_1997
+Wikipedia. (2024l). _Indigenous Peoples' Rights Act of 1997_. https://en.wikipedia.org/wiki/Indigenous_Peoples'_Rights_Act_of_1997
 
-Wikipedia. (2024m). *CARE Principles for Indigenous Data Governance*. https://en.wikipedia.org/wiki/CARE_Principles_for_Indigenous_Data_Governance
+Wikipedia. (2024m). _CARE Principles for Indigenous Data Governance_. https://en.wikipedia.org/wiki/CARE_Principles_for_Indigenous_Data_Governance
 
-WIPO. (2024). *WIPO member states adopt historic new treaty on intellectual property, genetic resources and associated traditional knowledge*. World Intellectual Property Organization. https://www.wipo.int/pressroom/en/articles/2024/article_0007.html
+WIPO. (2024). _WIPO member states adopt historic new treaty on intellectual property, genetic resources and associated traditional knowledge_. World Intellectual Property Organization. https://www.wipo.int/pressroom/en/articles/2024/article_0007.html
 
-WIPO WIPOLEX. (2024a). *Law No. 27811 of 24 July 2002, introducing a Protection Regime for the Collective Knowledge of Indigenous Peoples derived from Biological Resources*. https://www.wipo.int/tk/en/databases/tklaws/articles/article_0016.html
+WIPO WIPOLEX. (2024a). _Law No. 27811 of 24 July 2002, introducing a Protection Regime for the Collective Knowledge of Indigenous Peoples derived from Biological Resources_. https://www.wipo.int/tk/en/databases/tklaws/articles/article_0016.html
 
-WIPO WIPOLEX. (2024b). *Law No. 27811 Introducing the Protection Regime for the Collective Knowledge of Indigenous Peoples derived from Biological Resources, Peru*. https://www.wipo.int/wipolex/en/legislation/details/3420
+WIPO WIPOLEX. (2024b). _Law No. 27811 Introducing the Protection Regime for the Collective Knowledge of Indigenous Peoples derived from Biological Resources, Peru_. https://www.wipo.int/wipolex/en/legislation/details/3420
 
-WUSTL. (2004). *The protection of traditional knowledge in Peru: A comparative perspective*. Washington University Global Studies Law Review. https://openscholarship.wustl.edu/law_globalstudies/vol3/iss3/3/
+WUSTL. (2004). _The protection of traditional knowledge in Peru: A comparative perspective_. Washington University Global Studies Law Review. https://openscholarship.wustl.edu/law_globalstudies/vol3/iss3/3/
 
-WUSTL Journal. (2004). *Clark: The protection of traditional knowledge in Peru: A comparative perspective*. Washington University Global Studies Law Review. https://journals.library.wustl.edu/globalstudies/article/id/329/
+WUSTL Journal. (2004). _Clark: The protection of traditional knowledge in Peru: A comparative perspective_. Washington University Global Studies Law Review. https://journals.library.wustl.edu/globalstudies/article/id/329/
 
-WWF Arctic. (2024). *Blending indigenous knowledge and artificial intelligence to enable adaptation*. https://www.arcticwwf.org/the-circle/stories/blending-indigenous-knowledge-and-artificial-intelligence-to-enable-adaptation/
+WWF Arctic. (2024). _Blending indigenous knowledge and artificial intelligence to enable adaptation_. https://www.arcticwwf.org/the-circle/stories/blending-indigenous-knowledge-and-artificial-intelligence-to-enable-adaptation/

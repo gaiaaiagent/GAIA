@@ -1,10 +1,11 @@
 # RegenAI Infrastructure Overview
 
-*Complete inventory of systems, tools, and frameworks created*
+_Complete inventory of systems, tools, and frameworks created_
 
 ## 🏗️ Core Infrastructure Stack
 
 ### 1. ElizaOS Agent Runtime
+
 - **Location**: Running on localhost:3001 (when active)
 - **Database**: PGLite at `packages/cli/.eliza/pglite/`
 - **Agent**: RegenAI Facilitator (character loaded)
@@ -12,6 +13,7 @@
 - **Status**: ✅ Fully operational
 
 ### 2. Django Admin Interface
+
 - **URL**: http://localhost:8000/
 - **Login**: admin / admin123
 - **Purpose**: Database visibility and contract compliance tracking
@@ -23,6 +25,7 @@
   - Agent performance monitoring
 
 ### 3. Database Schema Inspector
+
 - **File**: `inspect-schema.js`
 - **Usage**: `bun run inspect-schema.js [options]`
 - **Features**:
@@ -35,6 +38,7 @@
 ## 🧪 Testing Infrastructure
 
 ### TDD Test Suite
+
 - **File**: `tests/facilitator-agent-real.test.ts`
 - **Status**: 2 passing / 10 failing (database ✅, API communication ❌)
 - **Coverage**:
@@ -45,6 +49,7 @@
   - Error handling validation
 
 ### Semantic Testing Framework (Planned)
+
 - **Design**: `tests/semantic-testing-framework.md`
 - **Focus**: Response accuracy, knowledge grounding, citation validation
 - **Status**: 🚧 Framework designed, implementation needed
@@ -52,13 +57,15 @@
 ## 📊 Contract Compliance System
 
 ### Tracking Models (Django)
+
 ```python
 InteractionMetric  # Track 100k interactions target
-DocumentMetric     # Track 15k documents target  
+DocumentMetric     # Track 15k documents target
 AgentMetric        # Track 5 agents target
 ```
 
 ### Compliance Dashboard
+
 - **URL**: http://localhost:8000/admin/ (custom view needed)
 - **Metrics**: Progress bars, completion percentages
 - **Real-time**: Connected to live ElizaOS database
@@ -67,6 +74,7 @@ AgentMetric        # Track 5 agents target
 ## 🤖 Agent Architecture
 
 ### Current Agents
+
 1. **RegenAI Facilitator** ✅
    - Character file: `characters/facilitator.character.json`
    - Role: Partnership orchestrator
@@ -74,14 +82,18 @@ AgentMetric        # Track 5 agents target
    - Status: Deployed and tested
 
 ### Planned Agents (TDD Ready)
+
 2. **Narrative Agent** 🚧
+
    - Character file: `characters/narrative.character.json` (partial)
    - Role: Story translation and communication
 
 3. **Politician Agent** 📋
+
    - Role: Governance and policy coordination
 
-4. **Advocate Agent** 📋  
+4. **Advocate Agent** 📋
+
    - Role: Community mobilization
 
 5. **Voice of Nature** 📋
@@ -90,12 +102,14 @@ AgentMetric        # Track 5 agents target
 ## 🗃️ Knowledge Management
 
 ### KOI Integration
+
 - **Framework**: Knowledge Organization Infrastructure (BlockScience)
 - **Status**: 69 documents converted to KOI format
 - **Storage**: `.claude/resources/` directory
 - **Integration**: Agent knowledge loading system
 
 ### Document Processing
+
 - **Pipeline**: KOI conversion → ElizaOS knowledge plugin → Agent memory
 - **Tracking**: Document metrics for contract compliance
 - **Validation**: Citation verification (planned)
@@ -103,19 +117,22 @@ AgentMetric        # Track 5 agents target
 ## 🔧 Development Tools
 
 ### Code Quality
+
 - **Linting**: ESLint + Prettier (ElizaOS standards)
 - **Testing**: Bun test runner with TDD approach
 - **Build**: Turbo monorepo build system
 - **Package Manager**: Bun (required, not npm/pnpm)
 
 ### Database Tools
+
 1. **Schema Inspector**: `inspect-schema.js`
 2. **Django Admin**: Full CRUD interface
 3. **Direct PGLite Access**: For debugging and validation
 
 ### Monitoring & Debugging
+
 - **ElizaOS Logs**: Real-time agent activity
-- **Django Admin**: Database state visualization  
+- **Django Admin**: Database state visualization
 - **Test Reports**: TDD validation results
 - **Contract Dashboard**: Progress tracking
 
@@ -157,6 +174,7 @@ GAIA/
 ## 🎯 Current Capabilities
 
 ### ✅ Working Systems
+
 - ElizaOS agent runtime with facilitator character
 - Complete database schema mapping (17 tables)
 - Django admin interface for data visualization
@@ -165,11 +183,13 @@ GAIA/
 - Contract compliance tracking infrastructure
 
 ### 🚧 In Progress
+
 - Agent API communication (TDD tests failing but framework ready)
 - Semantic testing implementation
 - Additional agent character development
 
 ### 📋 Next Priority
+
 1. Fix agent API communication for TDD tests
 2. Implement semantic testing validation
 3. Create interaction tracking hooks

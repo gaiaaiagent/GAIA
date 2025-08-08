@@ -5,6 +5,7 @@
 When working on this project, use `claude -p` (Claude's pattern analysis) for more efficient development:
 
 ### 1. Analyzing Relationships
+
 ```bash
 # Instead of reading files individually
 claude -p "What relationships exist between these core files?" packages/core/src/{runtime,types,database}.ts
@@ -14,6 +15,7 @@ claude -p "Find psychological patterns in server-client communication" packages/
 ```
 
 ### 2. Quality Assessment
+
 ```bash
 # Review generated content quality
 claude -p "Assess the quality of psychological insights" .claude/tools/matrix-generator/data/content-v2-*.json
@@ -23,6 +25,7 @@ claude -p "Which relationships lack concrete examples?" output/taxonomy-matrix-l
 ```
 
 ### 3. Tool Enhancement
+
 ```bash
 # Suggest improvements to existing tools
 claude -p "How can we improve the relationship detection algorithm?" 03-relationship-analyzer-v2.ts
@@ -32,6 +35,7 @@ claude -p "Does this follow TypeScript best practices?" .claude/tools/matrix-gen
 ```
 
 ### 4. Documentation Generation
+
 ```bash
 # Generate comprehensive summaries
 claude -p "Create a technical guide for using these tools" *.ts README.md
@@ -41,6 +45,7 @@ claude -p "What did we learn from this iteration?" output/review-report-*.json
 ```
 
 ### 5. Continuous Improvement
+
 ```bash
 # Identify patterns across iterations
 claude -p "How has our approach evolved?" .claude/journal/*.md output/review-report-*.md

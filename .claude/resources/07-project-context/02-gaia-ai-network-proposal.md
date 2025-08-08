@@ -16,6 +16,7 @@ accuracy-concerns:
 ---
 
 # Gaia AI & Regen Network Partnership Proposal
+
 ## Building the Future of Regenerative AI
 
 ### Executive Summary
@@ -62,17 +63,20 @@ The partnership structure reflects our shared commitment to long-term value crea
 #### Initial Investment Requirements
 
 **Phase 1 (0-30 days): $25,000 USDC**
+
 - Team allocation: $20,000 (supporting 4 core developers)
 - Infrastructure: $5,000 (compute, APIs, integration tools)
 - Deliverables: Prototype agents, knowledge base, KOI integration
 
 **Phase 2 (30-90 days): $60,000 USDC + 1.5% circulating $REGEN**
+
 - Development: $45,000 (expanded team effort)
 - Marketing campaigns: $10,000 (content creation, promotion)
 - Infrastructure scaling: $5,000
 - Deliverables: Full agent deployment, cross-chain integration, governance framework
 
 **Phase 3 (90-180 days): $120,000 USDC + additional 1.5% $REGEN**
+
 - Sustained operations: $20,000/month
 - Deliverables: Autonomous systems, treasury agents, API access, open-source components
 
@@ -87,7 +91,7 @@ Our team commits to not launching a competing Gaia token, instead building all v
 Post-deployment, the system transitions to sustainable revenue models:
 
 1. **Subscription Services**: $10-50k/month depending on support level
-2. **Transaction Fees**: 0.5% of DEX volume, 2% of facilitated governance funding  
+2. **Transaction Fees**: 0.5% of DEX volume, 2% of facilitated governance funding
 3. **Ecosystem Services**: White-label deployments for other regenerative projects
 
 ### Strategic Value Creation
@@ -111,12 +115,14 @@ Each successful agent deployment makes the next one easier. As the knowledge bas
 While we're fully committed to Regen's success, maintaining appropriate boundaries ensures both parties can thrive:
 
 **Gaia AI Retains:**
+
 - Core agent framework architecture
-- Training methodologies and algorithms  
+- Training methodologies and algorithms
 - Base templates and orchestration systems
 - Rights to deploy for non-competing projects
 
 **Regen Network Receives:**
+
 - Perpetual license to all deployed agents
 - Co-ownership of Regen-specific implementations
 - Modification and extension rights within ecosystem
@@ -142,7 +148,7 @@ This partnership represents more than a technical collaboration - it's a chance 
 Immediate next steps:
 
 1. **Content Indexing** begins immediately (1-2 days)
-2. **Technical Architecture** document delivered (3-5 days)  
+2. **Technical Architecture** document delivered (3-5 days)
 3. **Legal Agreements** formalized with both teams
 4. **Kickoff Meeting** for deep technical alignment
 

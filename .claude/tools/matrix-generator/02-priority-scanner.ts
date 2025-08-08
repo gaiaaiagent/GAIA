@@ -2,7 +2,7 @@
 
 /**
  * Priority File Scanner for Initial Matrix
- * 
+ *
  * Scans only the priority files to create a manageable initial matrix
  */
 
@@ -36,7 +36,9 @@ class PriorityScanner {
   }
 
   async init(): Promise<void> {
-    const configFile = Bun.file(join(PROJECT_ROOT, '.claude/tools/matrix-generator/priority-files.json'));
+    const configFile = Bun.file(
+      join(PROJECT_ROOT, '.claude/tools/matrix-generator/priority-files.json')
+    );
     const configText = await configFile.text();
     this.config = JSON.parse(configText);
   }
@@ -47,7 +49,7 @@ class PriorityScanner {
 
     for (const [category, files] of Object.entries(this.config.categories)) {
       console.log(chalk.yellow(`\n📁 ${category}:`));
-      
+
       for (const file of files) {
         await this.scanFile(file, category);
       }
@@ -64,13 +66,13 @@ class PriorityScanner {
       exists: false,
       imports: [],
       exports: [],
-      references: []
+      references: [],
     };
 
     try {
       const file = Bun.file(fullPath);
       const exists = await file.exists();
-      
+
       if (!exists) {
         console.log(chalk.red(`  ✗ ${relativePath}`));
         this.scans.set(relativePath, scan);
@@ -84,9 +86,10 @@ class PriorityScanner {
       const content = await file.text();
       this.analyzeContent(content, scan);
 
-      console.log(chalk.green(`  ✓ ${relativePath}`) + chalk.gray(` (${this.formatSize(scan.size)})`));
+      console.log(
+        chalk.green(`  ✓ ${relativePath}`) + chalk.gray(` (${this.formatSize(scan.size)})`)
+      );
       this.scans.set(relativePath, scan);
-
     } catch (error) {
       console.log(chalk.red(`  ✗ ${relativePath} - ${error.message}`));
       this.scans.set(relativePath, scan);
@@ -120,7 +123,8 @@ class PriorityScanner {
     }
 
     // Extract exports
-    const exportRegex = /export\s+(?:default\s+)?(?:class|interface|type|function|const|let|var)\s+(\w+)/g;
+    const exportRegex =
+      /export\s+(?:default\s+)?(?:class|interface|type|function|const|let|var)\s+(\w+)/g;
     while ((match = exportRegex.exec(content)) !== null) {
       scan.exports.push(match[1]);
     }
@@ -177,9 +181,9 @@ class PriorityScanner {
     if (typeof obj === 'string' && obj.match(/^[./][\w./\-]+\.\w+$/)) {
       references.push(obj);
     } else if (Array.isArray(obj)) {
-      obj.forEach(item => this.findFileReferences(item, references, visited));
+      obj.forEach((item) => this.findFileReferences(item, references, visited));
     } else if (typeof obj === 'object') {
-      Object.values(obj).forEach(value => this.findFileReferences(value, references, visited));
+      Object.values(obj).forEach((value) => this.findFileReferences(value, references, visited));
     }
   }
 
@@ -191,9 +195,9 @@ class PriorityScanner {
 
   private analyzeRelationships(): void {
     console.log(chalk.blue('\n\n🔗 Relationship Analysis:'));
-    
-    const relationships: Array<{from: string, to: string, type: string}> = [];
-    
+
+    const relationships: Array<{ from: string; to: string; type: string }> = [];
+
     for (const [path, scan] of this.scans) {
       if (!scan.exists) continue;
 
@@ -201,7 +205,7 @@ class PriorityScanner {
       for (const imp of scan.imports) {
         const resolved = this.resolveImport(path, imp);
         if (resolved && this.scans.has(resolved)) {
-          relationships.push({from: path, to: resolved, type: 'import'});
+          relationships.push({ from: path, to: resolved, type: 'import' });
         }
       }
 
@@ -209,13 +213,13 @@ class PriorityScanner {
       for (const ref of scan.references) {
         const resolved = this.resolveReference(path, ref);
         if (resolved && this.scans.has(resolved)) {
-          relationships.push({from: path, to: resolved, type: 'reference'});
+          relationships.push({ from: path, to: resolved, type: 'reference' });
         }
       }
     }
 
     console.log(chalk.gray(`Found ${relationships.length} relationships between priority files`));
-    
+
     // Show top relationships
     const top = relationships.slice(0, 10);
     for (const rel of top) {
@@ -227,12 +231,8 @@ class PriorityScanner {
     // Handle @elizaos/* imports
     if (importPath.startsWith('@elizaos/')) {
       const pkg = importPath.replace('@elizaos/', 'packages/');
-      const candidates = [
-        `${pkg}/src/index.ts`,
-        `${pkg}/src/index.js`,
-        `${pkg}.ts`
-      ];
-      
+      const candidates = [`${pkg}/src/index.ts`, `${pkg}/src/index.js`, `${pkg}.ts`];
+
       for (const candidate of candidates) {
         if (this.scans.has(candidate)) {
           return candidate;
@@ -244,15 +244,10 @@ class PriorityScanner {
     if (importPath.startsWith('.')) {
       const dir = fromPath.substring(0, fromPath.lastIndexOf('/'));
       const resolved = join(dir, importPath);
-      
+
       // Try with extensions
-      const candidates = [
-        resolved,
-        `${resolved}.ts`,
-        `${resolved}.tsx`,
-        `${resolved}/index.ts`
-      ];
-      
+      const candidates = [resolved, `${resolved}.ts`, `${resolved}.tsx`, `${resolved}/index.ts`];
+
       for (const candidate of candidates) {
         if (this.scans.has(candidate)) {
           return candidate;
@@ -284,13 +279,13 @@ class PriorityScanner {
       metadata: {
         scanDate: new Date().toISOString(),
         totalFiles: this.config.total,
-        foundFiles: Array.from(this.scans.values()).filter(s => s.exists).length,
-        categories: Object.keys(this.config.categories)
+        foundFiles: Array.from(this.scans.values()).filter((s) => s.exists).length,
+        categories: Object.keys(this.config.categories),
       },
       files: Array.from(this.scans.entries()).map(([path, scan]) => ({
         path,
-        ...scan
-      }))
+        ...scan,
+      })),
     };
 
     const outputPath = join(

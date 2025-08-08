@@ -27,7 +27,9 @@ We need to transform 15,000+ heterogeneous documents (registry methodologies, go
 ## Design Philosophy
 
 ### 1. Native Pattern Extension
+
 We discovered ElizaOS has sophisticated built-in capabilities:
+
 - `FragmentMetadata` with required `documentId` and `position` fields
 - Multi-dimensional embedding support (6 different sizes)
 - Provider caching and state composition
@@ -36,11 +38,13 @@ We discovered ElizaOS has sophisticated built-in capabilities:
 **Design Decision**: Extend these patterns rather than build parallel systems.
 
 ### 2. Trust Through Traceability
+
 Every piece of knowledge must be traceable to its source through KOI (Knowledge Organization Infrastructure) RIDs.
 
 **Design Decision**: Embed RIDs in memory metadata for unbreakable citation chains.
 
 ### 3. Performance by Design
+
 Sub-2-second responses for 100,000+ interactions requires careful optimization.
 
 **Design Decision**: Multi-dimensional embeddings, native caching, and batch processing.
@@ -56,54 +60,54 @@ graph TB
         FOR[Forum Posts<br/>Governance Discussions]
         POD[Podcasts<br/>Narrative Content]
     end
-    
+
     subgraph "Knowledge System Core"
         KS[RegenKnowledgeService<br/>Service Pattern]
         KL[Knowledge Loader<br/>Source Adapters]
         KP[Knowledge Processor<br/>Pipeline]
         KM[Knowledge Manager<br/>Storage & Retrieval]
     end
-    
+
     subgraph "Processing Pipeline"
         PARSE[Document Parser<br/>Structure Extraction]
         CHUNK[Semantic Chunker<br/>Context Preservation]
         EMBED[Embedding Generator<br/>Multi-Dimensional]
         ENRICH[Metadata Enricher<br/>RID & Keywords]
     end
-    
+
     subgraph "Storage Layer"
         MEM[Memory System<br/>Native ElizaOS]
         VEC[Vector Store<br/>pgvector]
         META[Metadata<br/>JSONB]
         CACHE[Query Cache<br/>Redis Pattern]
     end
-    
+
     subgraph "Agent Interface"
         PROV[Knowledge Provider<br/>Position 0]
         SCOPE[Scope Filter<br/>Agent Boundaries]
         CIT[Citation Formatter<br/>User-Friendly]
     end
-    
+
     REG --> KL
     DOC --> KL
     DISC --> KL
     FOR --> KL
     POD --> KL
-    
+
     KL --> PARSE
     PARSE --> CHUNK
     CHUNK --> EMBED
     EMBED --> ENRICH
     ENRICH --> KM
-    
+
     KM --> MEM
     MEM --> VEC
     MEM --> META
-    
+
     KS --> KL
     KS --> KP
     KS --> KM
-    
+
     PROV --> CACHE
     CACHE --> KM
     KM --> SCOPE
@@ -117,25 +121,27 @@ graph TB
 **Purpose**: Central orchestrator implementing ElizaOS Service pattern
 
 **Key Design Elements**:
+
 - Implements `Service` interface for lifecycle management
 - Manages document processing pipeline
 - Coordinates batch operations
 - Provides monitoring and metrics
 
 **Interface Design**:
+
 ```typescript
 interface RegenKnowledgeService extends Service {
   // Service lifecycle
   start(runtime: IAgentRuntime): Promise<RegenKnowledgeService>;
   stop(): Promise<void>;
-  
+
   // Document processing
   processDocuments(sources: DocumentSource[]): Promise<ProcessingResult>;
-  
+
   // Knowledge operations
   searchKnowledge(query: string, options: SearchOptions): Promise<KnowledgeResult[]>;
   validateKnowledge(fragmentId: UUID): Promise<ValidationResult>;
-  
+
   // Monitoring
   getMetrics(): KnowledgeMetrics;
   getProgress(): ProcessingProgress;
@@ -147,6 +153,7 @@ interface RegenKnowledgeService extends Service {
 **Purpose**: Transform heterogeneous sources into structured knowledge
 
 **Pipeline Stages**:
+
 1. **Source Extraction**: Specialized adapters for each source type
 2. **Document Parsing**: Structure extraction preserving hierarchy
 3. **Semantic Chunking**: Context-aware splitting with overlap
@@ -154,6 +161,7 @@ interface RegenKnowledgeService extends Service {
 5. **Metadata Enrichment**: RID generation, keyword extraction
 
 **Key Innovation**: Content-aware dimension selection
+
 ```
 Factual content → 384d embeddings (fast retrieval)
 Technical docs → 512d embeddings (balanced)
@@ -166,32 +174,34 @@ Governance docs → 1024d embeddings (complex relationships)
 **Purpose**: Efficient storage using native ElizaOS patterns
 
 **Storage Strategy**:
+
 - Primary: ElizaOS Memory system with FragmentMetadata
 - Embeddings: Multi-dimensional vectors in pgvector
 - Metadata: JSONB for flexible querying
 - Relationships: Graph-like navigation through fragment links
 
 **Memory Schema Extension**:
+
 ```typescript
 interface KnowledgeMemory extends Memory {
   // Standard Memory fields
   id: UUID;
   content: { text: string; source: string; url?: string };
   embedding: number[];
-  
+
   // FragmentMetadata (required)
   metadata: {
     type: 'fragment';
     documentId: UUID;
     position: number;
-    
+
     // Knowledge extensions
-    rid: string;                  // KOI reference
-    confidence: number;           // 0-1 score
-    knowledgeDomain: string;      // Classification
-    keywords: string[];           // Search optimization
-    entities: string[];           // Named entities
-    
+    rid: string; // KOI reference
+    confidence: number; // 0-1 score
+    knowledgeDomain: string; // Classification
+    keywords: string[]; // Search optimization
+    entities: string[]; // Named entities
+
     // Navigation
     parentFragment?: UUID;
     childFragments?: UUID[];
@@ -205,12 +215,14 @@ interface KnowledgeMemory extends Memory {
 **Purpose**: Integrate knowledge into agent runtime
 
 **Provider Characteristics**:
+
 - **Position 0**: Executes first to provide foundational context
 - **Dynamic**: Auto-discoverable by agents
 - **Cached**: Results cached per message ID
 - **Scoped**: Respects agent knowledge boundaries
 
 **Provider Flow**:
+
 ```mermaid
 sequenceDiagram
     participant Agent
@@ -218,7 +230,7 @@ sequenceDiagram
     participant Cache
     participant Manager
     participant Memory
-    
+
     Agent->>Provider: Query context
     Provider->>Cache: Check cache
     alt Cache hit
@@ -248,31 +260,31 @@ graph LR
         S2[Markdown Docs]
         S3[Discord Export]
     end
-    
+
     subgraph "Processing Workers"
         W1[Worker 1]
         W2[Worker 2]
         W3[Worker 3]
     end
-    
+
     subgraph "Storage"
         Q[Queue]
         B[Batch Buffer]
         D[Database]
     end
-    
+
     S1 -->|Stream| Q
     S2 -->|Stream| Q
     S3 -->|Stream| Q
-    
+
     Q -->|Assign| W1
     Q -->|Assign| W2
     Q -->|Assign| W3
-    
+
     W1 -->|Fragments| B
     W2 -->|Fragments| B
     W3 -->|Fragments| B
-    
+
     B -->|Batch Insert| D
 ```
 
@@ -296,6 +308,7 @@ graph LR
 **Rationale**: Different content types have different semantic complexity
 
 **Implementation**:
+
 - Analyze content characteristics (technical density, structure, narrative)
 - Select optimal dimension for balance of speed and accuracy
 - Store dimension used in metadata for query optimization
@@ -303,6 +316,7 @@ graph LR
 ### Caching Architecture
 
 **Three-Level Cache**:
+
 1. **Message Cache**: Per-message results (immediate)
 2. **Query Cache**: Common queries (5-minute TTL)
 3. **Embedding Cache**: Permanent storage
@@ -310,6 +324,7 @@ graph LR
 ### Batch Processing
 
 **Design Decisions**:
+
 - Batch size: 100 documents (optimal for memory)
 - Concurrency: 5 workers (respects API limits)
 - Transaction size: 1000 fragments (database efficiency)
@@ -328,13 +343,13 @@ graph TB
         A[Advocate<br/>Registry & Projects]
         V[Voice of Nature<br/>Philosophy & Indigenous]
     end
-    
+
     S --> F
     S --> N
     S --> P
     S --> A
     S --> V
-    
+
     N -.->|Private| N
     P -.->|Private| P
     A -.->|Private| A
@@ -342,6 +357,7 @@ graph TB
 ```
 
 ### Access Control
+
 - Shared: Core Regen Network facts
 - Agent-specific: Specialized domain knowledge
 - Private: Agent learning and adaptations
@@ -356,6 +372,7 @@ graph TB
 4. **Circuit Breaker**: Protect external APIs
 
 ### Error Categories
+
 - **Recoverable**: Rate limits, timeouts
 - **Degradable**: Parsing errors, partial content
 - **Fatal**: Invalid sources, corrupted data
@@ -363,12 +380,14 @@ graph TB
 ## Monitoring & Observability
 
 ### Key Metrics
+
 - **Processing**: docs/minute, fragments/doc
 - **Storage**: total fragments, size growth
 - **Performance**: query latency (p50, p95, p99)
 - **Quality**: citation accuracy, validation failures
 
 ### Dashboards
+
 - Real-time processing status
 - Knowledge coverage heatmap
 - Agent query patterns
@@ -377,12 +396,14 @@ graph TB
 ## Security Considerations
 
 ### Data Protection
+
 - Scope-based access control
 - Audit logging for all queries
 - PII detection and masking
 - Encryption at rest
 
 ### API Security
+
 - Rate limiting per source
 - Authentication for external APIs
 - Secure credential storage
@@ -390,12 +411,14 @@ graph TB
 ## Future Extensibility
 
 ### Phase 2 Considerations
+
 - Dynamic knowledge updates
 - Inter-agent knowledge sharing
 - User feedback integration
 - Advanced reasoning chains
 
 ### API Design
+
 - RESTful endpoints for external access
 - GraphQL for complex queries
 - WebSocket for real-time updates
@@ -403,11 +426,13 @@ graph TB
 ## Success Criteria
 
 1. **Functional Success**
+
    - 15,000+ documents processed
    - All 5 agents accessing knowledge
    - Citations working end-to-end
 
 2. **Performance Success**
+
    - Sub-2-second query response
    - 100 concurrent queries supported
    - <8GB memory usage
@@ -419,4 +444,4 @@ graph TB
 
 ---
 
-*This design establishes the vision and approach for transforming ElizaOS into a knowledge-driven platform that serves the regenerative mission with precision and trust.*
+_This design establishes the vision and approach for transforming ElizaOS into a knowledge-driven platform that serves the regenerative mission with precision and trust._

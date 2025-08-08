@@ -2,7 +2,7 @@
 
 /**
  * Review Interface for Taxonomy Matrix
- * 
+ *
  * Provides tools for human review, curation, and improvement of the matrix
  * Includes validation, editing suggestions, and quality metrics
  */
@@ -71,7 +71,9 @@ class MatrixReviewInterface {
 
     // Load matrix document
     this.matrixContent = await readFile(this.matrixPath, 'utf-8');
-    console.log(chalk.green(`✓ Loaded matrix (${(this.matrixContent.length / 1024).toFixed(1)} KB)`));
+    console.log(
+      chalk.green(`✓ Loaded matrix (${(this.matrixContent.length / 1024).toFixed(1)} KB)`)
+    );
 
     // Load content data - try v2 first
     let contentPath = join(
@@ -116,16 +118,18 @@ class MatrixReviewInterface {
     for (const cell of this.contentData.relationshipCells) {
       // Handle both v1 and v2 formats
       const isV2 = cell.psychological && cell.technological && cell.thematic;
-      
-      const lengths = isV2 ? {
-        psychological: cell.psychological.split(' ').length,
-        technological: cell.technological.split(' ').length,
-        thematic: cell.thematic.split(' ').length
-      } : {
-        semantic: cell.semantic.split(' ').length,
-        cognitive: cell.cognitive.split(' ').length,
-        implementation: cell.implementation.split(' ').length
-      };
+
+      const lengths = isV2
+        ? {
+            psychological: cell.psychological.split(' ').length,
+            technological: cell.technological.split(' ').length,
+            thematic: cell.thematic.split(' ').length,
+          }
+        : {
+            semantic: cell.semantic.split(' ').length,
+            cognitive: cell.cognitive.split(' ').length,
+            implementation: cell.implementation.split(' ').length,
+          };
 
       // Check if paragraphs are too short
       if (isV2) {
@@ -135,10 +139,10 @@ class MatrixReviewInterface {
             severity: 'warning',
             location: `${cell.from} → ${cell.to} (psychological)`,
             message: `Psychological paragraph too short (${lengths.psychological} words)`,
-            suggestion: 'Expand with more developer psychology and trust patterns'
+            suggestion: 'Expand with more developer psychology and trust patterns',
           });
         }
-        
+
         // Check for concrete examples in technological pattern
         if (!cell.technological.includes('`') && !cell.technological.includes('import')) {
           this.reviewItems.push({
@@ -146,7 +150,7 @@ class MatrixReviewInterface {
             severity: 'warning',
             location: `${cell.from} → ${cell.to} (technological)`,
             message: 'Technological pattern lacks concrete code examples',
-            suggestion: 'Add specific imports, function calls, or system references'
+            suggestion: 'Add specific imports, function calls, or system references',
           });
         }
       } else if (lengths.semantic < 30) {
@@ -155,30 +159,32 @@ class MatrixReviewInterface {
           severity: 'warning',
           location: `${cell.from} → ${cell.to} (semantic)`,
           message: `Semantic paragraph too short (${lengths.semantic} words)`,
-          suggestion: 'Expand with more context about the conceptual relationship'
+          suggestion: 'Expand with more context about the conceptual relationship',
         });
       }
 
       // Check for repetitive language
-      const textToCheck = isV2 ? 
-        `${cell.psychological} ${cell.technological} ${cell.thematic}` : 
-        cell.semantic;
+      const textToCheck = isV2
+        ? `${cell.psychological} ${cell.technological} ${cell.thematic}`
+        : cell.semantic;
       const words = textToCheck.toLowerCase().split(' ');
       const wordCounts = new Map<string, number>();
       for (const word of words) {
-        if (word.length > 4) { // Skip short words
+        if (word.length > 4) {
+          // Skip short words
           wordCounts.set(word, (wordCounts.get(word) || 0) + 1);
         }
       }
 
       for (const [word, count] of wordCounts) {
-        if (count > 5) { // Increased threshold for combined text
+        if (count > 5) {
+          // Increased threshold for combined text
           this.reviewItems.push({
             type: 'content',
             severity: 'suggestion',
             location: `${cell.from} → ${cell.to}`,
             message: `Word "${word}" appears ${count} times`,
-            suggestion: 'Consider using synonyms for variety'
+            suggestion: 'Consider using synonyms for variety',
           });
         }
       }
@@ -192,7 +198,7 @@ class MatrixReviewInterface {
           severity: 'warning',
           location: diagonal.file,
           message: 'File summary missing connection count',
-          suggestion: 'Add information about how many files connect to this one'
+          suggestion: 'Add information about how many files connect to this one',
         });
       }
     }
@@ -203,14 +209,14 @@ class MatrixReviewInterface {
 
     // Check for missing high-priority relationships
     const documentedPairs = new Set(
-      this.contentData.relationshipCells.map(c => `${c.from}|${c.to}`)
+      this.contentData.relationshipCells.map((c) => `${c.from}|${c.to}`)
     );
 
     // Critical pairs that should be documented
     const criticalPairs = [
       'packages/core/src/runtime.ts|packages/core/src/types/index.ts',
       'packages/server/src/index.ts|packages/server/src/api/index.ts',
-      'README.md|package.json'
+      'README.md|package.json',
     ];
 
     for (const pair of criticalPairs) {
@@ -221,7 +227,7 @@ class MatrixReviewInterface {
           severity: 'error',
           location: `${from} → ${to}`,
           message: 'Critical relationship not documented',
-          suggestion: 'This is likely a strong relationship that should be analyzed'
+          suggestion: 'This is likely a strong relationship that should be analyzed',
         });
       }
     }
@@ -240,7 +246,7 @@ class MatrixReviewInterface {
           severity: 'warning',
           location: diagonal.file,
           message: 'File has no documented relationships',
-          suggestion: 'Consider if this file truly has no connections or if analysis missed some'
+          suggestion: 'Consider if this file truly has no connections or if analysis missed some',
         });
       }
     }
@@ -257,14 +263,14 @@ class MatrixReviewInterface {
 
     for (const cell of this.contentData.relationshipCells) {
       const reverse = relationships.get(`${cell.to}|${cell.from}`);
-      
+
       if (reverse && Math.abs(cell.metadata.strength - reverse.metadata.strength) > 2) {
         this.reviewItems.push({
           type: 'quality',
           severity: 'warning',
           location: `${cell.from} ↔ ${cell.to}`,
           message: `Asymmetric strength: ${cell.metadata.strength} vs ${reverse.metadata.strength}`,
-          suggestion: 'Review if this asymmetry is intentional'
+          suggestion: 'Review if this asymmetry is intentional',
         });
       }
     }
@@ -282,7 +288,7 @@ class MatrixReviewInterface {
             severity: 'suggestion',
             location: 'Document-wide',
             message: `Inconsistent term: "${variant}" should be "${canonical}"`,
-            suggestion: 'Standardize terminology throughout the document'
+            suggestion: 'Standardize terminology throughout the document',
           });
         }
       }
@@ -294,7 +300,7 @@ class MatrixReviewInterface {
 
     // Check for placeholder text
     const placeholders = ['TODO', 'FIXME', 'XXX', '[INSERT', '[PLACEHOLDER'];
-    
+
     for (const placeholder of placeholders) {
       if (this.matrixContent.includes(placeholder)) {
         this.reviewItems.push({
@@ -302,7 +308,7 @@ class MatrixReviewInterface {
           severity: 'error',
           location: 'Document search needed',
           message: `Found placeholder text: "${placeholder}"`,
-          suggestion: 'Replace with actual content'
+          suggestion: 'Replace with actual content',
         });
       }
     }
@@ -315,20 +321,21 @@ class MatrixReviewInterface {
         severity: 'error',
         location: 'Document structure',
         message: 'Unmatched code block markers',
-        suggestion: 'Check for unclosed code blocks'
+        suggestion: 'Check for unclosed code blocks',
       });
     }
 
     // Check for very long lines
     const lines = this.matrixContent.split('\n');
     lines.forEach((line, index) => {
-      if (line.length > 200 && !line.startsWith('|')) { // Exclude tables
+      if (line.length > 200 && !line.startsWith('|')) {
+        // Exclude tables
         this.reviewItems.push({
           type: 'quality',
           severity: 'suggestion',
           location: `Line ${index + 1}`,
           message: `Very long line (${line.length} characters)`,
-          suggestion: 'Consider breaking into multiple sentences'
+          suggestion: 'Consider breaking into multiple sentences',
         });
       }
     });
@@ -336,11 +343,11 @@ class MatrixReviewInterface {
 
   private calculateQualityMetrics(): QualityMetrics {
     const totalItems = this.reviewItems.length;
-    const errors = this.reviewItems.filter(i => i.severity === 'error').length;
-    const warnings = this.reviewItems.filter(i => i.severity === 'warning').length;
+    const errors = this.reviewItems.filter((i) => i.severity === 'error').length;
+    const warnings = this.reviewItems.filter((i) => i.severity === 'warning').length;
 
     // Content quality (based on issues found)
-    const contentQuality = Math.max(0, 100 - (errors * 10) - (warnings * 5));
+    const contentQuality = Math.max(0, 100 - errors * 10 - warnings * 5);
 
     // Completeness (based on documented relationships vs expected)
     // Updated expectation based on v2 detection capabilities
@@ -349,10 +356,10 @@ class MatrixReviewInterface {
     const completeness = Math.min(100, (actualRelationships / expectedRelationships) * 100);
 
     // Consistency (based on consistency checks)
-    const consistencyIssues = this.reviewItems.filter(i => 
-      i.message.includes('consistency') || i.message.includes('Inconsistent')
+    const consistencyIssues = this.reviewItems.filter(
+      (i) => i.message.includes('consistency') || i.message.includes('Inconsistent')
     ).length;
-    const consistency = Math.max(0, 100 - (consistencyIssues * 10));
+    const consistency = Math.max(0, 100 - consistencyIssues * 10);
 
     // Accuracy (placeholder - would need manual verification)
     const accuracy = 90; // Assumed high accuracy from automated generation
@@ -365,7 +372,7 @@ class MatrixReviewInterface {
       completeness,
       consistency,
       accuracy,
-      overall
+      overall,
     };
   }
 
@@ -385,11 +392,16 @@ class MatrixReviewInterface {
     console.log(`Overall Score:    ${formatScore(metrics.overall)}`);
 
     // Grade
-    const grade = 
-      metrics.overall >= 90 ? 'A' :
-      metrics.overall >= 80 ? 'B' :
-      metrics.overall >= 70 ? 'C' :
-      metrics.overall >= 60 ? 'D' : 'F';
+    const grade =
+      metrics.overall >= 90
+        ? 'A'
+        : metrics.overall >= 80
+          ? 'B'
+          : metrics.overall >= 70
+            ? 'C'
+            : metrics.overall >= 60
+              ? 'D'
+              : 'F';
 
     console.log(`\nMatrix Grade: ${chalk.bold(grade)}`);
   }
@@ -398,9 +410,9 @@ class MatrixReviewInterface {
     console.log(chalk.blue.bold('\n📋 Review Items\n'));
 
     // Group by severity
-    const errors = this.reviewItems.filter(i => i.severity === 'error');
-    const warnings = this.reviewItems.filter(i => i.severity === 'warning');
-    const suggestions = this.reviewItems.filter(i => i.severity === 'suggestion');
+    const errors = this.reviewItems.filter((i) => i.severity === 'error');
+    const warnings = this.reviewItems.filter((i) => i.severity === 'warning');
+    const suggestions = this.reviewItems.filter((i) => i.severity === 'suggestion');
 
     if (errors.length > 0) {
       console.log(chalk.red.bold(`\nErrors (${errors.length}):`));
@@ -453,38 +465,42 @@ class MatrixReviewInterface {
         priority: 'High',
         task: 'Add Missing Critical Relationships',
         description: 'Document relationships between core runtime files',
-        effort: '30 minutes'
+        effort: '30 minutes',
       },
       {
         priority: 'High',
         task: 'Enhance Psychological Patterns',
         description: 'Add more developer trust and collaboration insights',
-        effort: '1-2 hours'
+        effort: '1-2 hours',
       },
       {
         priority: 'High',
         task: 'Include More Code Examples',
         description: 'Add concrete code references to technological patterns',
-        effort: '1-2 hours'
+        effort: '1-2 hours',
       },
       {
         priority: 'Medium',
         task: 'Create Interactive Viewer',
         description: 'Build web interface for easier navigation',
-        effort: '8-12 hours'
+        effort: '8-12 hours',
       },
       {
         priority: 'Low',
         task: 'Add Cross-References',
         description: 'Link related patterns across different relationships',
-        effort: '2-3 hours'
-      }
+        effort: '2-3 hours',
+      },
     ];
 
     for (const rec of recommendations) {
-      const color = rec.priority === 'High' ? chalk.red : 
-                    rec.priority === 'Medium' ? chalk.yellow : chalk.green;
-      
+      const color =
+        rec.priority === 'High'
+          ? chalk.red
+          : rec.priority === 'Medium'
+            ? chalk.yellow
+            : chalk.green;
+
       console.log(color(`\n[${rec.priority}] ${rec.task}`));
       console.log(chalk.white(`  ${rec.description}`));
       console.log(chalk.gray(`  Estimated effort: ${rec.effort}`));
@@ -499,12 +515,12 @@ class MatrixReviewInterface {
       metrics,
       summary: {
         totalIssues: this.reviewItems.length,
-        errors: this.reviewItems.filter(i => i.severity === 'error').length,
-        warnings: this.reviewItems.filter(i => i.severity === 'warning').length,
-        suggestions: this.reviewItems.filter(i => i.severity === 'suggestion').length
+        errors: this.reviewItems.filter((i) => i.severity === 'error').length,
+        warnings: this.reviewItems.filter((i) => i.severity === 'warning').length,
+        suggestions: this.reviewItems.filter((i) => i.severity === 'suggestion').length,
       },
       items: this.reviewItems,
-      recommendations: this.generateRecommendations()
+      recommendations: this.generateRecommendations(),
     };
 
     const reportPath = join(
@@ -524,19 +540,19 @@ class MatrixReviewInterface {
     return [
       {
         action: 'Document missing relationships',
-        items: this.reviewItems.filter(i => i.type === 'missing').length,
-        priority: 'high'
+        items: this.reviewItems.filter((i) => i.type === 'missing').length,
+        priority: 'high',
       },
       {
         action: 'Fix content quality issues',
-        items: this.reviewItems.filter(i => i.type === 'content').length,
-        priority: 'medium'
+        items: this.reviewItems.filter((i) => i.type === 'content').length,
+        priority: 'medium',
       },
       {
         action: 'Address consistency problems',
-        items: this.reviewItems.filter(i => i.type === 'quality').length,
-        priority: 'low'
-      }
+        items: this.reviewItems.filter((i) => i.type === 'quality').length,
+        priority: 'low',
+      },
     ];
   }
 
@@ -564,9 +580,9 @@ class MatrixReviewInterface {
 
 ## Top Priority Actions
 
-${report.recommendations.map(rec => 
-  `1. **${rec.action}** (${rec.items} items) - Priority: ${rec.priority}`
-).join('\n')}
+${report.recommendations
+  .map((rec) => `1. **${rec.action}** (${rec.items} items) - Priority: ${rec.priority}`)
+  .join('\n')}
 
 ## Detailed Review Items
 
@@ -592,9 +608,9 @@ ${this.formatReviewItemsMarkdown(report.items)}
   }
 
   private formatReviewItemsMarkdown(items: ReviewItem[]): string {
-    const errors = items.filter(i => i.severity === 'error');
-    const warnings = items.filter(i => i.severity === 'warning');
-    const suggestions = items.filter(i => i.severity === 'suggestion');
+    const errors = items.filter((i) => i.severity === 'error');
+    const warnings = items.filter((i) => i.severity === 'warning');
+    const suggestions = items.filter((i) => i.severity === 'suggestion');
 
     let markdown = '';
 
@@ -625,15 +641,14 @@ ${this.formatReviewItemsMarkdown(report.items)}
 // Main execution
 async function main() {
   const reviewer = new MatrixReviewInterface();
-  
+
   try {
     await reviewer.review();
-    
+
     console.log(chalk.blue.bold('\n\n✅ Review Complete!\n'));
     console.log(chalk.gray('The review has identified areas for improvement and generated'));
     console.log(chalk.gray('actionable recommendations. Use the review report to guide'));
     console.log(chalk.gray('future iterations of the matrix.\n'));
-    
   } catch (error) {
     console.error(chalk.red('❌ Error:'), error);
     process.exit(1);

@@ -90,58 +90,58 @@ The convergence of KOI frameworks, vector embeddings, blockchain registries, and
 
 ## Bibliography
 
-AICompetence. (2024). *Audit trails for black-box AI: Challenges and solutions*. https://aicompetence.org/audit-trails-for-black-box-ai/
+AICompetence. (2024). _Audit trails for black-box AI: Challenges and solutions_. https://aicompetence.org/audit-trails-for-black-box-ai/
 
-Algomox. (2024). *AI model audit trail*. https://algomox.com/usecases/gitops/ai-model-audit-trail/
+Algomox. (2024). _AI model audit trail_. https://algomox.com/usecases/gitops/ai-model-audit-trail/
 
-C2PA. (2025). *Providing origins of media content*. https://c2pa.org/
+C2PA. (2025). _Providing origins of media content_. https://c2pa.org/
 
-ClickUp. (2024). *Audit trail AI agent*. https://clickup.com/p/ai-agents/audit-trail
+ClickUp. (2024). _Audit trail AI agent_. https://clickup.com/p/ai-agents/audit-trail
 
-Content Authenticity Initiative. (2025). *Content Authenticity Initiative*. https://contentauthenticity.org/faq
+Content Authenticity Initiative. (2025). _Content Authenticity Initiative_. https://contentauthenticity.org/faq
 
-Crypto Altruism. (2024). *INFOGRAPHIC: Web3 innovations in public goods funding*. https://www.cryptoaltruism.org/blog/infographic-web3-innovations-in-public-goods-funding
+Crypto Altruism. (2024). _INFOGRAPHIC: Web3 innovations in public goods funding_. https://www.cryptoaltruism.org/blog/infographic-web3-innovations-in-public-goods-funding
 
-Elastic. (2024). *Vector database vs. graph database: Understanding the differences*. https://www.elastic.co/blog/vector-database-vs-graph-database
+Elastic. (2024). _Vector database vs. graph database: Understanding the differences_. https://www.elastic.co/blog/vector-database-vs-graph-database
 
-Fact Protocol. (2025). *Employing blockchain to combat fake news & disinformation*. https://fact.technology/
+Fact Protocol. (2025). _Employing blockchain to combat fake news & disinformation_. https://fact.technology/
 
-Gitcoin. (2024). *Gitcoin grants – Quadratic funding for the world*. https://www.gitcoin.co/blog/gitcoin-grants-quadratic-funding-for-the-world
+Gitcoin. (2024). _Gitcoin grants – Quadratic funding for the world_. https://www.gitcoin.co/blog/gitcoin-grants-quadratic-funding-for-the-world
 
-HackerNoon. (2024). *What are hypercerts & how can they transform impact certification?*. https://hackernoon.com/what-are-hypercerts-and-how-can-they-transform-impact-certification-carbon-credits-example
+HackerNoon. (2024). _What are hypercerts & how can they transform impact certification?_. https://hackernoon.com/what-are-hypercerts-and-how-can-they-transform-impact-certification-carbon-credits-example
 
-HTX. (2025). *REGEN price index, live chart and what is REGEN*. https://www.htx.com/price/REGEN/
+HTX. (2025). _REGEN price index, live chart and what is REGEN_. https://www.htx.com/price/REGEN/
 
-IBM. (2024). *What is data synchronization?*. https://www.ibm.com/think/topics/data-synchronization
+IBM. (2024). _What is data synchronization?_. https://www.ibm.com/think/topics/data-synchronization
 
-Investopedia. (2024). *Blockchain facts: What is it, how it works, and how it can be used*. https://www.investopedia.com/terms/b/blockchain.asp
+Investopedia. (2024). _Blockchain facts: What is it, how it works, and how it can be used_. https://www.investopedia.com/terms/b/blockchain.asp
 
-MIT Press. (2023). *Provenance documentation to enable explainable and trustworthy AI: A literature review*. https://direct.mit.edu/dint/article/5/1/139/109494/Provenance-documentation-to-enable-explainable-and
+MIT Press. (2023). _Provenance documentation to enable explainable and trustworthy AI: A literature review_. https://direct.mit.edu/dint/article/5/1/139/109494/Provenance-documentation-to-enable-explainable-and
 
-National Telecommunications and Information Administration. (2024). *AI output disclosures: Use, provenance, adverse incidents*. https://www.ntia.gov/issues/artificial-intelligence/ai-accountability-policy-report/developing-accountability-inputs-a-deeper-dive/information-flow/ai-output-disclosures
+National Telecommunications and Information Administration. (2024). _AI output disclosures: Use, provenance, adverse incidents_. https://www.ntia.gov/issues/artificial-intelligence/ai-accountability-policy-report/developing-accountability-inputs-a-deeper-dive/information-flow/ai-output-disclosures
 
-Neo4j. (2024). *Knowledge graph vs. vector database for grounding your LLM*. https://neo4j.com/blog/genai/knowledge-graph-vs-vectordb-for-retrieval-augmented-generation/
+Neo4j. (2024). _Knowledge graph vs. vector database for grounding your LLM_. https://neo4j.com/blog/genai/knowledge-graph-vs-vectordb-for-retrieval-augmented-generation/
 
-P2P Foundation. (2023). *Regen Network*. https://wiki.p2pfoundation.net/Regen_Network
+P2P Foundation. (2023). _Regen Network_. https://wiki.p2pfoundation.net/Regen_Network
 
-Paragon. (2024). *Vector databases vs. knowledge graphs for RAG*. https://www.useparagon.com/blog/vector-database-vs-knowledge-graphs-for-rag
+Paragon. (2024). _Vector databases vs. knowledge graphs for RAG_. https://www.useparagon.com/blog/vector-database-vs-knowledge-graphs-for-rag
 
-Protocol Labs. (2024). *Hypercerts: A new primitive for public goods funding*. https://www.protocol.ai/blog/hypercert-new-primitive/
+Protocol Labs. (2024). _Hypercerts: A new primitive for public goods funding_. https://www.protocol.ai/blog/hypercert-new-primitive/
 
-Redpanda. (2024). *Vector databases vs. knowledge graphs for streaming data applications*. https://www.redpanda.com/blog/vector-databases-vs-knowledge-graphs
+Redpanda. (2024). _Vector databases vs. knowledge graphs for streaming data applications_. https://www.redpanda.com/blog/vector-databases-vs-knowledge-graphs
 
-Regen Network. (2025). *Invest in high-integrity carbon credits*. https://www.regen.network/
+Regen Network. (2025). _Invest in high-integrity carbon credits_. https://www.regen.network/
 
-Regen Registry. (2025). *Regen data stream: Revolutionizing environmental project tracking*. https://www.registry.regen.network/learning-center/regen-data-stream-revolutionizing-environmental-project-tracking
+Regen Registry. (2025). _Regen data stream: Revolutionizing environmental project tracking_. https://www.registry.regen.network/learning-center/regen-data-stream-revolutionizing-environmental-project-tracking
 
-Scite. (2025). *AI for research*. https://scite.ai
+Scite. (2025). _AI for research_. https://scite.ai
 
-The Graph. (2025). *The Graph*. https://thegraph.com/
+The Graph. (2025). _The Graph_. https://thegraph.com/
 
-Token Dispatch. (2024). *Public goods & Web3*. https://www.thetokendispatch.com/p/public-goods-and-web3
+Token Dispatch. (2024). _Public goods & Web3_. https://www.thetokendispatch.com/p/public-goods-and-web3
 
-Token Engineering. (2025). *Token Engineering Academy*. https://www.tokenengineering.net/
+Token Engineering. (2025). _Token Engineering Academy_. https://www.tokenengineering.net/
 
-University of Maryland Libraries. (2024). *How do I cite AI correctly? - Artificial intelligence (AI) and information literacy*. https://lib.guides.umd.edu/c.php?g=1340355&p=9896961
+University of Maryland Libraries. (2024). _How do I cite AI correctly? - Artificial intelligence (AI) and information literacy_. https://lib.guides.umd.edu/c.php?g=1340355&p=9896961
 
-VentureBeat. (2024). *The case for embedding audit trails in AI systems before scaling*. https://venturebeat.com/ai/the-case-for-embedding-audit-trails-in-ai-systems-before-scaling/
+VentureBeat. (2024). _The case for embedding audit trails in AI systems before scaling_. https://venturebeat.com/ai/the-case-for-embedding-audit-trails-in-ai-systems-before-scaling/

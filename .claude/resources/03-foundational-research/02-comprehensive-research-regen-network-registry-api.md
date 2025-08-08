@@ -110,30 +110,30 @@ Robust error handling proves essential given blockchain infrastructure variabili
 
 ```javascript
 class RegenAPICircuitBreaker {
-    constructor(failureThreshold = 5, resetTimeout = 30000) {
-        this.failureCount = 0;
-        this.failureThreshold = failureThreshold;
-        this.resetTimeout = resetTimeout;
-        this.state = 'CLOSED';
+  constructor(failureThreshold = 5, resetTimeout = 30000) {
+    this.failureCount = 0;
+    this.failureThreshold = failureThreshold;
+    this.resetTimeout = resetTimeout;
+    this.state = 'CLOSED';
+  }
+
+  async call(apiFunction) {
+    if (this.state === 'OPEN') {
+      if (Date.now() < this.nextAttempt) {
+        throw new Error('Circuit breaker is OPEN');
+      }
+      this.state = 'HALF_OPEN';
     }
 
-    async call(apiFunction) {
-        if (this.state === 'OPEN') {
-            if (Date.now() < this.nextAttempt) {
-                throw new Error('Circuit breaker is OPEN');
-            }
-            this.state = 'HALF_OPEN';
-        }
-
-        try {
-            const result = await apiFunction();
-            this.onSuccess();
-            return result;
-        } catch (error) {
-            this.onFailure();
-            throw error;
-        }
+    try {
+      const result = await apiFunction();
+      this.onSuccess();
+      return result;
+    } catch (error) {
+      this.onFailure();
+      throw error;
     }
+  }
 }
 ```
 

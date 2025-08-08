@@ -334,7 +334,7 @@ The movement's core linguistic innovation involves "turning degens into regens,"
 
 The platform has facilitated over $4 million in loans to smallholder farmers in Latin America, demonstrating how ReFi narratives can mobilize capital for regenerative agriculture (Economía Finanzas, 2023; Chain for Good, 2023). The ReFi narrative succeeds by wrapping impact in financial incentives, using bridge language like "digital rails for climate finance" and "money legos for carbon" (Toucan Protocol Blog, 2023). This positions environmental action as technological innovation rather than sacrifice, appealing to the crypto community's first-mover mentality and countering environmental criticism of blockchain technology.
 
-### Climate Activists and Systemic Transformation  
+### Climate Activists and Systemic Transformation
 
 Climate activists frame regeneration as fundamental system transformation beyond traditional conservation. Research on youth climate movements reveals that participants increasingly identify capitalism and neo-colonialism as root causes requiring replacement, not reform (Han & Ahn, 2020). Extinction Rebellion pioneered "regenerative cultures" within activism itself, recognizing movements must embody the values they seek to create (Wikipedia, 2024).
 
@@ -394,7 +394,7 @@ Inuit communities use traditional legends for climate adaptation, while Aborigin
 
 The tension between global frameworks and indigenous knowledge requires "Two-Eyed Seeing" methodology honoring both traditional knowledge and Western science (Climate Atlas of Canada, 2024b; Whyte, 2013). Successful integration occurs through complementary rather than competitive framing, recognizing traditional knowledge provides extended temporal perspectives and holistic ecosystem understanding that enriches scientific approaches.
 
-### Bioregional Identity and Local Narratives  
+### Bioregional Identity and Local Narratives
 
 Bioregions create "terrain of consciousness" where communities develop identity through watershed understanding and seasonal patterns (Earth.org, 2024). Cascadia's cross-border identity around shared ecosystems and European agricultural communities maintaining local ecological knowledge demonstrate bioregional narrative power.
 
@@ -433,6 +433,7 @@ Social media platforms play crucial roles in community activation (FasterCapital
 The research reveals regenerative narratives succeed through authenticity alignment between story and action, evidence-based impact measurement, community ownership with local adaptation, long-term commitment building trust, and positive framing emphasizing solutions over crisis (Cointelegraph, 2024; CoinGecko, 2024). Cross-community success requires narratives operating simultaneously across emotional, economic, social, and technical dimensions.
 
 **Key strategic recommendations** include:
+
 1. Design narratives for community cross-over while maintaining core regenerative messages
 2. Use mixed-methods testing combining A/B optimization with qualitative research (Convert, 2024; UserTesting, 2024)
 3. Leverage positive emotions of hope, humor, and empowerment over fear (Message Testing Methods, 2024; The Commons, 2024)
@@ -446,197 +447,197 @@ The most powerful regenerative narratives create hyperstitions - self-fulfilling
 
 ## Bibliography
 
-Investopedia. (2023). *What is regenerative finance (ReFi)?* https://www.investopedia.com/what-is-regenerative-finance-refi-7098179
+Investopedia. (2023). _What is regenerative finance (ReFi)?_ https://www.investopedia.com/what-is-regenerative-finance-refi-7098179
 
-CoinGecko. (2024). *What is regenerative finance (ReFi)?: A sustainable approach to finance*. https://www.coingecko.com/learn/what-is-regenerative-finance-refi-crypto
+CoinGecko. (2024). _What is regenerative finance (ReFi)?: A sustainable approach to finance_. https://www.coingecko.com/learn/what-is-regenerative-finance-refi-crypto
 
-Toucan Protocol. (2024). *Carbon credit market infrastructure | Scaling CDR space*. https://toucan.earth
+Toucan Protocol. (2024). _Carbon credit market infrastructure | Scaling CDR space_. https://toucan.earth
 
-Schulz, P., Borghoff, T., & Kücklich, L. (2024). Tokenized carbon credits in voluntary carbon markets: The case of KlimaDAO. *Frontiers in Blockchain*. https://www.frontiersin.org/journals/blockchain/articles/10.3389/fbloc.2024.1474540/full
+Schulz, P., Borghoff, T., & Kücklich, L. (2024). Tokenized carbon credits in voluntary carbon markets: The case of KlimaDAO. _Frontiers in Blockchain_. https://www.frontiersin.org/journals/blockchain/articles/10.3389/fbloc.2024.1474540/full
 
-World Economic Forum. (2022). *How a carbon-backed cryptocurrency is tackling climate change*. https://www.weforum.org/stories/2022/07/carbon-backed-cryptocurrency-tackling-climate-change/
+World Economic Forum. (2022). _How a carbon-backed cryptocurrency is tackling climate change_. https://www.weforum.org/stories/2022/07/carbon-backed-cryptocurrency-tackling-climate-change/
 
-CoinCentral. (2023). *Regenerative finance 101: A guide to crypto's ReFi movement*. https://coincentral.com/regenerative-finance-101/
+CoinCentral. (2023). _Regenerative finance 101: A guide to crypto's ReFi movement_. https://coincentral.com/regenerative-finance-101/
 
-EthicHub. (2024). *What is EthicHub?* https://docs-ethix.ethichub.com/v/english/introduction/what-is-ethichub
+EthicHub. (2024). _What is EthicHub?_ https://docs-ethix.ethichub.com/v/english/introduction/what-is-ethichub
 
-Hogan Lovells. (2023). *Where finance, digital, sustainability and impact meet: What is regenerative finance (ReFi)?* https://www.hoganlovells.com/en/publications/where-finance-digital-sustainability-and-impact-meet-what-is-regenerative-finance-refi
+Hogan Lovells. (2023). _Where finance, digital, sustainability and impact meet: What is regenerative finance (ReFi)?_ https://www.hoganlovells.com/en/publications/where-finance-digital-sustainability-and-impact-meet-what-is-regenerative-finance-refi
 
-Economía Finanzas. (2023). *EthicHub: Financial innovation and the regenerative finance revolution*. https://www.economiafinanzas.com/en/ethichub/
+Economía Finanzas. (2023). _EthicHub: Financial innovation and the regenerative finance revolution_. https://www.economiafinanzas.com/en/ethichub/
 
-Chain for Good. (2023). *Real talk case study: EthicHub – Revolutionizing agricultural finance through blockchain*. https://chainforgood.org/news/detail/0f2e51d7-316b-4770-a3c0-bae3a56c4ad2
+Chain for Good. (2023). _Real talk case study: EthicHub – Revolutionizing agricultural finance through blockchain_. https://chainforgood.org/news/detail/0f2e51d7-316b-4770-a3c0-bae3a56c4ad2
 
-Toucan Protocol Blog. (2023). *What is ReFi | Regenerative finance explained*. https://blog.toucan.earth/what-is-refi-regenerative-finance/
+Toucan Protocol Blog. (2023). _What is ReFi | Regenerative finance explained_. https://blog.toucan.earth/what-is-refi-regenerative-finance/
 
-Wikipedia. (2024). *Extinction Rebellion*. https://en.wikipedia.org/wiki/Extinction_Rebellion
+Wikipedia. (2024). _Extinction Rebellion_. https://en.wikipedia.org/wiki/Extinction_Rebellion
 
-Han, H., & Ahn, S. W. (2020). Youth mobilization to stop global climate change: Narratives and impact. *Sustainability*, 12(10), 4127. https://www.mdpi.com/2071-1050/12/10/4127
+Han, H., & Ahn, S. W. (2020). Youth mobilization to stop global climate change: Narratives and impact. _Sustainability_, 12(10), 4127. https://www.mdpi.com/2071-1050/12/10/4127
 
-Jacobin. (2020). *To force climate action, we need more than just protests*. https://jacobin.com/2020/12/climate-change-protest-strategy-electoral-politics-sunrise-extinction-rebellion
+Jacobin. (2020). _To force climate action, we need more than just protests_. https://jacobin.com/2020/12/climate-change-protest-strategy-electoral-politics-sunrise-extinction-rebellion
 
-350.org. (2024). *350.org: A global campaign to confront the climate crisis*. https://350.org/
+350.org. (2024). _350.org: A global campaign to confront the climate crisis_. https://350.org/
 
-Wikipedia. (2024). *350.org*. https://en.wikipedia.org/wiki/350.org
+Wikipedia. (2024). _350.org_. https://en.wikipedia.org/wiki/350.org
 
-Galli, N., & Losch, A. (2019). Understanding the outcomes of climate change campaigns in the Australian environmental movement. *Case Studies in the Environment*, 3(1), 1-15. https://online.ucpress.edu/cse/article/3/1/1/108728/Understanding-the-Outcomes-of-Climate-Change
+Galli, N., & Losch, A. (2019). Understanding the outcomes of climate change campaigns in the Australian environmental movement. _Case Studies in the Environment_, 3(1), 1-15. https://online.ucpress.edu/cse/article/3/1/1/108728/Understanding-the-Outcomes-of-Climate-Change
 
-Agri-TechE. (2024). *Task Force on Climate-related Financial Disclosures (TCFD)*. https://www.agri-tech-e.co.uk/task-force-on-climate-related-financial-disclosures-tcfd/
+Agri-TechE. (2024). _Task Force on Climate-related Financial Disclosures (TCFD)_. https://www.agri-tech-e.co.uk/task-force-on-climate-related-financial-disclosures-tcfd/
 
-CoinMetro. (2024). *Tokenized carbon credits: Blockchain's role in carbon trading*. https://coinmetro.com/learning-lab/tokenized-carbon-credits
+CoinMetro. (2024). _Tokenized carbon credits: Blockchain's role in carbon trading_. https://coinmetro.com/learning-lab/tokenized-carbon-credits
 
-Tokeny. (2024). *Real world asset (RWA) tokenization ecosystem map*. https://tokeny.com/real-world-asset-rwa-tokenization-ecosystem-map/
+Tokeny. (2024). _Real world asset (RWA) tokenization ecosystem map_. https://tokeny.com/real-world-asset-rwa-tokenization-ecosystem-map/
 
-Wikipedia. (2024). *Task Force on Climate-related Financial Disclosures*. https://en.wikipedia.org/wiki/Task_Force_on_Climate-related_Financial_Disclosures
+Wikipedia. (2024). _Task Force on Climate-related Financial Disclosures_. https://en.wikipedia.org/wiki/Task_Force_on_Climate-related_Financial_Disclosures
 
-SEI. (2024a). *Framework for decentralized energy and enhanced resilience on islands*. https://www.sei.org/publications/framework-decentralized-energy-resilience-islands/
+SEI. (2024a). _Framework for decentralized energy and enhanced resilience on islands_. https://www.sei.org/publications/framework-decentralized-energy-resilience-islands/
 
-SEI. (2024b). *Framework for decentralized energy and enhanced resilience on islands*. https://www.sei.org/publications/framework-decentralized-energy-resilience-islands/
+SEI. (2024b). _Framework for decentralized energy and enhanced resilience on islands_. https://www.sei.org/publications/framework-decentralized-energy-resilience-islands/
 
-Sustainability Directory. (2024). *Decentralized sustainability*. https://sustainability-directory.com/area/decentralized-sustainability/
+Sustainability Directory. (2024). _Decentralized sustainability_. https://sustainability-directory.com/area/decentralized-sustainability/
 
-Cavallaro, M., Lepore, F., Micheletti, S., & Zanut, E. (2024). Community resilience through bottom-up participation: When civil society drives urban transformation processes. *Community Development Journal*. https://academic.oup.com/cdj/advance-article/doi/10.1093/cdj/bsae031/7698226
+Cavallaro, M., Lepore, F., Micheletti, S., & Zanut, E. (2024). Community resilience through bottom-up participation: When civil society drives urban transformation processes. _Community Development Journal_. https://academic.oup.com/cdj/advance-article/doi/10.1093/cdj/bsae031/7698226
 
-Jänicke, S., Aigner, C. J., & Reif, J. (2022). Behavioral experience-sampling methods in neuroimaging studies with movie and narrative stimuli. *Frontiers in Human Neuroscience*. https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2022.813684/full
+Jänicke, S., Aigner, C. J., & Reif, J. (2022). Behavioral experience-sampling methods in neuroimaging studies with movie and narrative stimuli. _Frontiers in Human Neuroscience_. https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2022.813684/full
 
-Braddock, K., & Dillard, J. P. (2018). On the usefulness of narratives: An interdisciplinary review and theoretical model. *Annals of Behavioral Medicine*, 52(5), 429-442. https://academic.oup.com/abm/article/52/5/429/4921125
+Braddock, K., & Dillard, J. P. (2018). On the usefulness of narratives: An interdisciplinary review and theoretical model. _Annals of Behavioral Medicine_, 52(5), 429-442. https://academic.oup.com/abm/article/52/5/429/4921125
 
-McCormack, N., Mistry, P., & Menon, S. (2021). The full story: Understanding how films affect environmental change through the lens of narrative persuasion. *People and Nature*, 3(6), 1193-1204. https://besjournals.onlinelibrary.wiley.com/doi/full/10.1002/pan3.10259
+McCormack, N., Mistry, P., & Menon, S. (2021). The full story: Understanding how films affect environmental change through the lens of narrative persuasion. _People and Nature_, 3(6), 1193-1204. https://besjournals.onlinelibrary.wiley.com/doi/full/10.1002/pan3.10259
 
-Spencer, R. C., & Gilden, R. C. (2020). Narrative intervention: Principles to practice. *Language, Speech, and Hearing Services in Schools*, 51(4), 995-1010. https://pubs.asha.org/doi/10.1044/2020_LSHSS-20-00015
+Spencer, R. C., & Gilden, R. C. (2020). Narrative intervention: Principles to practice. _Language, Speech, and Hearing Services in Schools_, 51(4), 995-1010. https://pubs.asha.org/doi/10.1044/2020_LSHSS-20-00015
 
-Ross, A. S., & Rivers, D. J. (2022). Tracking memes in the wild: Visual rhetoric and image circulation in environmental communication. *Frontiers in Communication*. https://www.frontiersin.org/journals/communication/articles/10.3389/fcomm.2022.883278/full
+Ross, A. S., & Rivers, D. J. (2022). Tracking memes in the wild: Visual rhetoric and image circulation in environmental communication. _Frontiers in Communication_. https://www.frontiersin.org/journals/communication/articles/10.3389/fcomm.2022.883278/full
 
-Word-gate. (2024). *Memetics: The science of cultural evolution*. https://memetics.word-gate.com/
+Word-gate. (2024). _Memetics: The science of cultural evolution_. https://memetics.word-gate.com/
 
-Morris, B. S., Chrysochou, P., Christensen, J. D., et al. (2019). Stories vs. facts: Triggering emotion and action-taking on climate change. *Climatic Change*, 154, 19-36. https://link.springer.com/article/10.1007/s10584-019-02425-6
+Morris, B. S., Chrysochou, P., Christensen, J. D., et al. (2019). Stories vs. facts: Triggering emotion and action-taking on climate change. _Climatic Change_, 154, 19-36. https://link.springer.com/article/10.1007/s10584-019-02425-6
 
-Pearce, W., Niederer, S., Özkula, S. M., & Sánchez Querubín, N. (2020). Testing the impact of images in environmental campaigns. *Journal of Environmental Psychology*, 71, 101468. https://www.sciencedirect.com/science/article/abs/pii/S0272494419308448
+Pearce, W., Niederer, S., Özkula, S. M., & Sánchez Querubín, N. (2020). Testing the impact of images in environmental campaigns. _Journal of Environmental Psychology_, 71, 101468. https://www.sciencedirect.com/science/article/abs/pii/S0272494419308448
 
-Dahlstrom, M. F., Rosenthal, S., & Panter, A. T. (2022). Narrative-based environmental education improves environmental awareness and environmental attitudes in children aged 6-8. *Environmental Education Research*, 28(6), 868-884. https://www.researchgate.net/publication/360893088_Narrative-Based_Environmental_Education_Improves_Environmental_Awareness_and_Environmental_Attitudes_in_Children_Aged_6-8
+Dahlstrom, M. F., Rosenthal, S., & Panter, A. T. (2022). Narrative-based environmental education improves environmental awareness and environmental attitudes in children aged 6-8. _Environmental Education Research_, 28(6), 868-884. https://www.researchgate.net/publication/360893088_Narrative-Based_Environmental_Education_Improves_Environmental_Awareness_and_Environmental_Attitudes_in_Children_Aged_6-8
 
-Wang, Y., Shen, H., Gao, W., & Cai, S. (2022). Narrative-based environmental education improves environmental awareness and environmental attitudes in children aged 6-8. *Environmental Education Research*, 28(6), 868-884. https://www.researchgate.net/publication/360893088_Narrative-Based_Environmental_Education_Improves_Environmental_Awareness_and_Environmental_Attitudes_in_Children_Aged_6-8
+Wang, Y., Shen, H., Gao, W., & Cai, S. (2022). Narrative-based environmental education improves environmental awareness and environmental attitudes in children aged 6-8. _Environmental Education Research_, 28(6), 868-884. https://www.researchgate.net/publication/360893088_Narrative-Based_Environmental_Education_Improves_Environmental_Awareness_and_Environmental_Attitudes_in_Children_Aged_6-8
 
-Carfora, V., Biella, M., & Catellani, P. (2023). When narratives speak louder than numbers: The effects of narrative persuasion across the stages of behavioural change to reduce air pollution. *Frontiers in Psychology*. https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2023.1072187/full
+Carfora, V., Biella, M., & Catellani, P. (2023). When narratives speak louder than numbers: The effects of narrative persuasion across the stages of behavioural change to reduce air pollution. _Frontiers in Psychology_. https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2023.1072187/full
 
-Liu, J., Wang, X., Zhang, Y., et al. (2025). Crafting the messages for environmental NGOs: How narrative medium and mode shape different engagement levels. *Humanities and Social Sciences Communications*, 12, Article 4470. https://www.nature.com/articles/s41599-025-04470-2
+Liu, J., Wang, X., Zhang, Y., et al. (2025). Crafting the messages for environmental NGOs: How narrative medium and mode shape different engagement levels. _Humanities and Social Sciences Communications_, 12, Article 4470. https://www.nature.com/articles/s41599-025-04470-2
 
-Global Energy Alliance. (2024). *The power of storytelling in climate action*. https://energyalliance.org/the-power-of-storytelling-communicators-as-catalysts-for-climate-action/
+Global Energy Alliance. (2024). _The power of storytelling in climate action_. https://energyalliance.org/the-power-of-storytelling-communicators-as-catalysts-for-climate-action/
 
-Onchain. (2024). *What is regenerative finance (ReFi) and how to navigate this new financial frontier?* https://onchain.org/magazine/what-is-regenerative-finance-refi-and-how-to-navigate-this-new-financial-frontier/
+Onchain. (2024). _What is regenerative finance (ReFi) and how to navigate this new financial frontier?_ https://onchain.org/magazine/what-is-regenerative-finance-refi-and-how-to-navigate-this-new-financial-frontier/
 
-RFSI Forum. (2024). *Terra Regenerative Capital launches fund with unique missing middle strategy*. https://rfsi-forum.com/terra-regenerative-capital-launches-fund-with-unique-missing-middle-strategy/
+RFSI Forum. (2024). _Terra Regenerative Capital launches fund with unique missing middle strategy_. https://rfsi-forum.com/terra-regenerative-capital-launches-fund-with-unique-missing-middle-strategy/
 
-The Solutions Project. (2024). *Sustainable environmental grants: Educational project funding*. https://thesolutionsproject.org/info/environment/
+The Solutions Project. (2024). _Sustainable environmental grants: Educational project funding_. https://thesolutionsproject.org/info/environment/
 
-World Economic Forum. (2023). *The world's biggest problem solvers need to craft better narratives*. https://www.weforum.org/stories/2023/01/narratives-leaders-climate-change-wef23/
+World Economic Forum. (2023). _The world's biggest problem solvers need to craft better narratives_. https://www.weforum.org/stories/2023/01/narratives-leaders-climate-change-wef23/
 
-Wikipedia. (2024). *Hyperreality*. https://en.wikipedia.org/wiki/Hyperreality
+Wikipedia. (2024). _Hyperreality_. https://en.wikipedia.org/wiki/Hyperreality
 
-0rphan Drift Archive. (2024). *Hyperstition*. https://www.orphandriftarchive.com/articles/hyperstition/
+0rphan Drift Archive. (2024). _Hyperstition_. https://www.orphandriftarchive.com/articles/hyperstition/
 
-Phelan, P. (2020). Performativity. *Oxford Research Encyclopedia of Literature*. https://oxfordre.com/literature/display/10.1093/acrefore/9780190201098.001.0001/acrefore-9780190201098-e-1079
+Phelan, P. (2020). Performativity. _Oxford Research Encyclopedia of Literature_. https://oxfordre.com/literature/display/10.1093/acrefore/9780190201098.001.0001/acrefore-9780190201098-e-1079
 
-Institute of Sustainability Studies. (2024). *Green marketing campaigns: How to measure their effectiveness*. https://instituteofsustainabilitystudies.com/insights/guides/measuring-the-effectiveness-of-green-marketing-campaigns/
+Institute of Sustainability Studies. (2024). _Green marketing campaigns: How to measure their effectiveness_. https://instituteofsustainabilitystudies.com/insights/guides/measuring-the-effectiveness-of-green-marketing-campaigns/
 
-Ptengine. (2024). *Sustainable success: Patagonia's unique approach to digital marketing*. https://www.ptengine.com/blog/business-strategy/sustainable-success-patagonias-unique-approach-to-digital-marketing/
+Ptengine. (2024). _Sustainable success: Patagonia's unique approach to digital marketing_. https://www.ptengine.com/blog/business-strategy/sustainable-success-patagonias-unique-approach-to-digital-marketing/
 
-Bigblue. (2024). *How Patagonia leads the way in global sustainability*. https://www.bigblue.co/blog/how-patagonia-leads-the-way-in-global-sustainability
+Bigblue. (2024). _How Patagonia leads the way in global sustainability_. https://www.bigblue.co/blog/how-patagonia-leads-the-way-in-global-sustainability
 
-Jessen, N., Ban, N. C., Claxton, N. X., & Darimont, C. T. (2022). Contributions of Indigenous knowledge to ecological and evolutionary understanding. *Frontiers in Ecology and the Environment*, 20(2), 102-109. https://esajournals.onlinelibrary.wiley.com/doi/10.1002/fee.2435
+Jessen, N., Ban, N. C., Claxton, N. X., & Darimont, C. T. (2022). Contributions of Indigenous knowledge to ecological and evolutionary understanding. _Frontiers in Ecology and the Environment_, 20(2), 102-109. https://esajournals.onlinelibrary.wiley.com/doi/10.1002/fee.2435
 
-UNDP Climate Promise. (2024). *Indigenous knowledge is crucial in the fight against climate change – here's why*. https://climatepromise.undp.org/news-and-stories/indigenous-knowledge-crucial-fight-against-climate-change-heres-why
+UNDP Climate Promise. (2024). _Indigenous knowledge is crucial in the fight against climate change – here's why_. https://climatepromise.undp.org/news-and-stories/indigenous-knowledge-crucial-fight-against-climate-change-heres-why
 
-SSIR. (2024). *An Indigenous systems approach to the climate crisis*. https://ssir.org/articles/entry/an_indigenous_systems_approach_to_the_climate_crisis
+SSIR. (2024). _An Indigenous systems approach to the climate crisis_. https://ssir.org/articles/entry/an_indigenous_systems_approach_to_the_climate_crisis
 
-Brill. (2021). *Chapter 11 Storytelling, culture, and Indigenous methodology*. In *Discourses, dialogue and diversity in biographical research*. https://brill.com/display/book/9789004465916/BP000023.xml?language=en
+Brill. (2021). _Chapter 11 Storytelling, culture, and Indigenous methodology_. In _Discourses, dialogue and diversity in biographical research_. https://brill.com/display/book/9789004465916/BP000023.xml?language=en
 
-Climate Atlas of Canada. (2024a). *Indigenous knowledges and climate change*. https://climateatlas.ca/indigenous-knowledges-and-climate-change
+Climate Atlas of Canada. (2024a). _Indigenous knowledges and climate change_. https://climateatlas.ca/indigenous-knowledges-and-climate-change
 
-Fernández-Llamazares, Á., & Cabeza, M. (2018). Rediscovering the potential of Indigenous storytelling for conservation practice. *Conservation Letters*, 11(3), e12398. https://conbio.onlinelibrary.wiley.com/doi/10.1111/conl.12398
+Fernández-Llamazares, Á., & Cabeza, M. (2018). Rediscovering the potential of Indigenous storytelling for conservation practice. _Conservation Letters_, 11(3), e12398. https://conbio.onlinelibrary.wiley.com/doi/10.1111/conl.12398
 
-Climate Atlas of Canada. (2024b). *Indigenous knowledges and climate change*. https://climateatlas.ca/indigenous-knowledges-and-climate-change
+Climate Atlas of Canada. (2024b). _Indigenous knowledges and climate change_. https://climateatlas.ca/indigenous-knowledges-and-climate-change
 
-Whyte, K. (2013). On the role of traditional ecological knowledge as a collaborative concept: A philosophical study. *Ecological Processes*, 2(1), 1-12. https://ecologicalprocesses.springeropen.com/articles/10.1186/2192-1709-2-7
+Whyte, K. (2013). On the role of traditional ecological knowledge as a collaborative concept: A philosophical study. _Ecological Processes_, 2(1), 1-12. https://ecologicalprocesses.springeropen.com/articles/10.1186/2192-1709-2-7
 
-Earth.org. (2024). *Bioregionalism: A model for a self-sufficient and democratic economy*. https://earth.org/bioregionalism/
+Earth.org. (2024). _Bioregionalism: A model for a self-sufficient and democratic economy_. https://earth.org/bioregionalism/
 
-Paschen, J. A., & Ison, R. (2014). Narrative research in climate change adaptation—Exploring a complementary paradigm for research and governance. *Research Policy*, 43(6), 1083-1092. https://www.sciencedirect.com/science/article/abs/pii/S0048733313002254
+Paschen, J. A., & Ison, R. (2014). Narrative research in climate change adaptation—Exploring a complementary paradigm for research and governance. _Research Policy_, 43(6), 1083-1092. https://www.sciencedirect.com/science/article/abs/pii/S0048733313002254
 
-Planet Forward. (2024). *5 approaches to better environmental storytelling*. https://planetforward.org/story/5-approaches-to-better-environmental-storytelling/
+Planet Forward. (2024). _5 approaches to better environmental storytelling_. https://planetforward.org/story/5-approaches-to-better-environmental-storytelling/
 
-Larkey, L. K., & Hecht, M. (2010). The Community Narration (CN) approach: Understanding a group's identity and cognitive constructs through personal and community narratives. *Journal of Community & Applied Social Psychology*, 20(4), 294-305. https://pmc.ncbi.nlm.nih.gov/articles/PMC3821795/
+Larkey, L. K., & Hecht, M. (2010). The Community Narration (CN) approach: Understanding a group's identity and cognitive constructs through personal and community narratives. _Journal of Community & Applied Social Psychology_, 20(4), 294-305. https://pmc.ncbi.nlm.nih.gov/articles/PMC3821795/
 
-Sunderland, T., Achdiawan, R., Angelsen, A., et al. (2018). Rethinking communication: Integrating storytelling for increased stakeholder engagement in environmental evidence synthesis. *Environmental Evidence*, 7, Article 6. https://environmentalevidencejournal.biomedcentral.com/articles/10.1186/s13750-018-0116-4
+Sunderland, T., Achdiawan, R., Angelsen, A., et al. (2018). Rethinking communication: Integrating storytelling for increased stakeholder engagement in environmental evidence synthesis. _Environmental Evidence_, 7, Article 6. https://environmentalevidencejournal.biomedcentral.com/articles/10.1186/s13750-018-0116-4
 
-De Weger, E., Van Vooren, N., Luijkx, K. G., Baan, C. A., & Drewes, H. W. (2018). Narratives of community engagement: A systematic review-derived conceptual framework for public health interventions. *BMC Public Health*, 18, Article 1392. https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-017-4958-4
+De Weger, E., Van Vooren, N., Luijkx, K. G., Baan, C. A., & Drewes, H. W. (2018). Narratives of community engagement: A systematic review-derived conceptual framework for public health interventions. _BMC Public Health_, 18, Article 1392. https://bmcpublichealth.biomedcentral.com/articles/10.1186/s12889-017-4958-4
 
-CDA Collaborative. (2024). *Can storytelling fuel community-led development?* https://www.cdacollaborative.org/blog/can-storytelling-fuel-community-led-development/
+CDA Collaborative. (2024). _Can storytelling fuel community-led development?_ https://www.cdacollaborative.org/blog/can-storytelling-fuel-community-led-development/
 
-Hinyard, L. J., & Kreuter, M. W. (2007). Using narrative communication as a tool for health behavior change: A conceptual, theoretical, and empirical overview. *Health Education & Behavior*, 34(5), 777-792. https://journals.sagepub.com/doi/abs/10.1177/1090198106291963
+Hinyard, L. J., & Kreuter, M. W. (2007). Using narrative communication as a tool for health behavior change: A conceptual, theoretical, and empirical overview. _Health Education & Behavior_, 34(5), 777-792. https://journals.sagepub.com/doi/abs/10.1177/1090198106291963
 
-Gustafson, A., Rosenthal, S. A., Ballew, M. T., et al. (2022). Stories of intentional action mobilise climate policy support and action intentions. *Scientific Reports*, 12, Article 1179. https://www.nature.com/articles/s41598-021-04392-4
+Gustafson, A., Rosenthal, S. A., Ballew, M. T., et al. (2022). Stories of intentional action mobilise climate policy support and action intentions. _Scientific Reports_, 12, Article 1179. https://www.nature.com/articles/s41598-021-04392-4
 
-Green, M. C., Fitzgerald, K., & Paravati, E. (2024). Narrative transportation: How stories shape how we see ourselves and the world. In *Advances in Experimental Social Psychology* (Vol. 69, pp. 135-200). https://www.sciencedirect.com/science/article/abs/pii/S0065260124000145
+Green, M. C., Fitzgerald, K., & Paravati, E. (2024). Narrative transportation: How stories shape how we see ourselves and the world. In _Advances in Experimental Social Psychology_ (Vol. 69, pp. 135-200). https://www.sciencedirect.com/science/article/abs/pii/S0065260124000145
 
-Busselle, R., & Bilandzic, H. (2009). Measuring narrative engagement. *Media Psychology*, 12(4), 321-347. https://www.tandfonline.com/doi/abs/10.1080/15213260903287259
+Busselle, R., & Bilandzic, H. (2009). Measuring narrative engagement. _Media Psychology_, 12(4), 321-347. https://www.tandfonline.com/doi/abs/10.1080/15213260903287259
 
-Optimizely. (2024). *What is A/B testing? With examples*. https://www.optimizely.com/optimization-glossary/ab-testing/
+Optimizely. (2024). _What is A/B testing? With examples_. https://www.optimizely.com/optimization-glossary/ab-testing/
 
-The Decision Lab. (2024). *EAST framework*. https://thedecisionlab.com/reference-guide/management/east-framework
+The Decision Lab. (2024). _EAST framework_. https://thedecisionlab.com/reference-guide/management/east-framework
 
-HubSpot. (2024a). *15 of the best A/B testing tools*. https://blog.hubspot.com/marketing/a-b-testing-tools
+HubSpot. (2024a). _15 of the best A/B testing tools_. https://blog.hubspot.com/marketing/a-b-testing-tools
 
-VWO. (2024a). *15 best A/B testing tools & software in 2025*. https://vwo.com/blog/ab-testing-tools/
+VWO. (2024a). _15 best A/B testing tools & software in 2025_. https://vwo.com/blog/ab-testing-tools/
 
-Convert. (2024). *How to use qualitative data & quantitative data in A/B testing*. https://www.convert.com/blog/a-b-testing/how-to-use-data-in-ab-tests/
+Convert. (2024). _How to use qualitative data & quantitative data in A/B testing_. https://www.convert.com/blog/a-b-testing/how-to-use-data-in-ab-tests/
 
-UserTesting. (2024). *How to enhance A/B test results with qualitative data*. https://www.usertesting.com/blog/enhance-ab-test-results-with-qualitative-data
+UserTesting. (2024). _How to enhance A/B test results with qualitative data_. https://www.usertesting.com/blog/enhance-ab-test-results-with-qualitative-data
 
-VWO. (2024b). *What is A/B testing? A practical guide with examples*. https://vwo.com/ab-testing/
+VWO. (2024b). _What is A/B testing? A practical guide with examples_. https://vwo.com/ab-testing/
 
-Maibach, E., Roser-Renouf, C., & Leiserowitz, A. (2011). Identifying like-minded audiences for global warming public engagement campaigns: An audience segmentation analysis and tool development. *PLOS ONE*, 6(3), e17571. https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0017571
+Maibach, E., Roser-Renouf, C., & Leiserowitz, A. (2011). Identifying like-minded audiences for global warming public engagement campaigns: An audience segmentation analysis and tool development. _PLOS ONE_, 6(3), e17571. https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0017571
 
-Mailchimp. (2024). *Audience segmentation: Basics of audience segmentation*. https://mailchimp.com/marketing-glossary/audience-segmentation/
+Mailchimp. (2024). _Audience segmentation: Basics of audience segmentation_. https://mailchimp.com/marketing-glossary/audience-segmentation/
 
-Fielding Graduate University. (2024). *How memes and media are crafting the way we see war*. https://www.fielding.edu/how-memes-and-media-are-crafting-the-way-we-see-war/
+Fielding Graduate University. (2024). _How memes and media are crafting the way we see war_. https://www.fielding.edu/how-memes-and-media-are-crafting-the-way-we-see-war/
 
-Pearce, J., Özkula, S. M., Greene, A. K., et al. (2023). "My goal is to make sustainability mainstream": Emerging visual narratives on the environmental crisis on Instagram. *Frontiers in Communication*. https://www.frontiersin.org/journals/communication/articles/10.3389/fcomm.2023.1265466/full
+Pearce, J., Özkula, S. M., Greene, A. K., et al. (2023). "My goal is to make sustainability mainstream": Emerging visual narratives on the environmental crisis on Instagram. _Frontiers in Communication_. https://www.frontiersin.org/journals/communication/articles/10.3389/fcomm.2023.1265466/full
 
-Psychology Today. (2024). *What memes reveal about our brains*. https://www.psychologytoday.com/us/blog/silicon-psyche/202409/what-memes-reveal-about-our-brains
+Psychology Today. (2024). _What memes reveal about our brains_. https://www.psychologytoday.com/us/blog/silicon-psyche/202409/what-memes-reveal-about-our-brains
 
-Wikipedia. (2024). *Internet meme*. https://en.wikipedia.org/wiki/Internet_meme
+Wikipedia. (2024). _Internet meme_. https://en.wikipedia.org/wiki/Internet_meme
 
-Innovations for Energy. (2024). *Environment memes*. https://innovationsforenergy.com/environment-memes/
+Innovations for Energy. (2024). _Environment memes_. https://innovationsforenergy.com/environment-memes/
 
-One Earth One Chance. (2024). *Climate change memes*. https://www.oneearthonechance.com/climate-change-memes.html
+One Earth One Chance. (2024). _Climate change memes_. https://www.oneearthonechance.com/climate-change-memes.html
 
-Shout Learning. (2024). *Creating environmental awareness on TikTok: Tips and strategies to gain more followers*. https://shoutlearning.org/creating-environmental-awareness-on-tiktok-tips-and-strategies-to-gain-more-followers.html
+Shout Learning. (2024). _Creating environmental awareness on TikTok: Tips and strategies to gain more followers_. https://shoutlearning.org/creating-environmental-awareness-on-tiktok-tips-and-strategies-to-gain-more-followers.html
 
-Murphy, K., & Pearson, M. (2022). Beyond individualized responsibility attributions? How eco influencers communicate sustainability on TikTok. *Environmental Communication*, 16(7), 879-893. https://www.tandfonline.com/doi/full/10.1080/17524032.2022.2131868
+Murphy, K., & Pearson, M. (2022). Beyond individualized responsibility attributions? How eco influencers communicate sustainability on TikTok. _Environmental Communication_, 16(7), 879-893. https://www.tandfonline.com/doi/full/10.1080/17524032.2022.2131868
 
-FasterCapital. (2024a). *Viral content: Viral phenomena: Analyzing viral phenomena: The science behind the spread*. https://www.fastercapital.com/content/Viral-content--Viral-Phenomena--Analyzing-Viral-Phenomena--The-Science-Behind-the-Spread.html
+FasterCapital. (2024a). _Viral content: Viral phenomena: Analyzing viral phenomena: The science behind the spread_. https://www.fastercapital.com/content/Viral-content--Viral-Phenomena--Analyzing-Viral-Phenomena--The-Science-Behind-the-Spread.html
 
-Dimond, J. P., Dye, M., LaRose, D., & Bruckman, A. S. (2013). Hollaback!: The role of collective storytelling online in a social movement organization. In *Proceedings of the 2013 Conference on Computer Supported Cooperative Work* (pp. 477-490). https://www.academia.edu/30425302/Hollaback_The_Role_of_Collective_Storytelling_Online_in_a_Social_Movement_Organization
+Dimond, J. P., Dye, M., LaRose, D., & Bruckman, A. S. (2013). Hollaback!: The role of collective storytelling online in a social movement organization. In _Proceedings of the 2013 Conference on Computer Supported Cooperative Work_ (pp. 477-490). https://www.academia.edu/30425302/Hollaback_The_Role_of_Collective_Storytelling_Online_in_a_Social_Movement_Organization
 
-FasterCapital. (2024b). *Community activation: The role of social media in community activation: Leveraging platforms for success*. https://fastercapital.com/content/Community-activation--The-Role-of-Social-Media-in-Community-Activation--Leveraging-Platforms-for-Success.html
+FasterCapital. (2024b). _Community activation: The role of social media in community activation: Leveraging platforms for success_. https://fastercapital.com/content/Community-activation--The-Role-of-Social-Media-in-Community-Activation--Leveraging-Platforms-for-Success.html
 
-Aunger, R. (2001). The trouble with memes. *Human Nature*, 12(4), 365-381. https://link.springer.com/article/10.1007/s12110-001-1003-0
+Aunger, R. (2001). The trouble with memes. _Human Nature_, 12(4), 365-381. https://link.springer.com/article/10.1007/s12110-001-1003-0
 
-Cointelegraph. (2024). *What is regenerative finance (ReFi)? A beginner's guide*. https://cointelegraph.com/learn/articles/what-is-regenerative-finance-refi
+Cointelegraph. (2024). _What is regenerative finance (ReFi)? A beginner's guide_. https://cointelegraph.com/learn/articles/what-is-regenerative-finance-refi
 
-Message Testing Methods. (2024). *Message testing methods for narrative change*. https://www.narrativechange.org/message-testing-methods
+Message Testing Methods. (2024). _Message testing methods for narrative change_. https://www.narrativechange.org/message-testing-methods
 
-The Commons. (2024). *Message testing methods for narrative change*. https://commonslibrary.org/message-testing-methods-for-narrative-change/
+The Commons. (2024). _Message testing methods for narrative change_. https://commonslibrary.org/message-testing-methods-for-narrative-change/
 
-HubSpot. (2024b). *How to do A/B testing: 15 steps for the perfect split test*. https://blog.hubspot.com/marketing/how-to-do-a-b-testing
+HubSpot. (2024b). _How to do A/B testing: 15 steps for the perfect split test_. https://blog.hubspot.com/marketing/how-to-do-a-b-testing
 
-Kameleoon. (2024). *What is A/B testing? The complete guide for 2025*. https://www.kameleoon.com/ab-testing
+Kameleoon. (2024). _What is A/B testing? The complete guide for 2025_. https://www.kameleoon.com/ab-testing
 
-Kelly, A., Hurst, K., & Roche, J. (2024). Incorporating lived experience narratives into interdisciplinary environmental communication projects: A technique for better environmental communication. *Environmental Communication*, 18(7), 925-940. https://www.sciencedirect.com/science/article/abs/pii/S1462901124001898
+Kelly, A., Hurst, K., & Roche, J. (2024). Incorporating lived experience narratives into interdisciplinary environmental communication projects: A technique for better environmental communication. _Environmental Communication_, 18(7), 925-940. https://www.sciencedirect.com/science/article/abs/pii/S1462901124001898
 
-LinkedIn. (2024). *Hyperstition and the current state of the web: Navigating reality in a digital age*. https://www.linkedin.com/pulse/hyperstition-current-state-web-navigating-reality-digital-jc-gaal-spzqe
+LinkedIn. (2024). _Hyperstition and the current state of the web: Navigating reality in a digital age_. https://www.linkedin.com/pulse/hyperstition-current-state-web-navigating-reality-digital-jc-gaal-spzqe
 
-Costanza, R., de Groot, R., Sutton, P., van der Ploeg, S., Anderson, S. J., Kubiszewski, I., ... & Turner, R. K. (2014). Changes in the global value of ecosystem services. *Global Environmental Change*, 26, 152-158.
+Costanza, R., de Groot, R., Sutton, P., van der Ploeg, S., Anderson, S. J., Kubiszewski, I., ... & Turner, R. K. (2014). Changes in the global value of ecosystem services. _Global Environmental Change_, 26, 152-158.
 
 # Strategic Framework for GAIA-Regen Partnership Announcement: Orchestrating Impact in the Symbiocene
 
@@ -828,64 +829,64 @@ The trajectory toward fully automated, AI-driven scam operations in 2025 demands
 
 ## Bibliography
 
-CCN. (2024). *AI deepfake crypto scams cost victims $4.6B in 2024*. https://www.ccn.com/news/crypto/crypto-scams-ai-deepfakes-cost-victims-4b-2024/
+CCN. (2024). _AI deepfake crypto scams cost victims $4.6B in 2024_. https://www.ccn.com/news/crypto/crypto-scams-ai-deepfakes-cost-victims-4b-2024/
 
-Decrypt. (2024). *AI deepfakes drove 40% of high-value crypto fraud last year: Report*. https://decrypt.co/325152/ai-deepfakes-drove-high-value-frauds-report
+Decrypt. (2024). _AI deepfakes drove 40% of high-value crypto fraud last year: Report_. https://decrypt.co/325152/ai-deepfakes-drove-high-value-frauds-report
 
-Cointelegraph. (2025). *87 deepfake scam rings taken down across Asia in Q1 2025*. https://cointelegraph.com/news/bitget-deepfake-scam-rings-crackdown-asia-q1-2025
+Cointelegraph. (2025). _87 deepfake scam rings taken down across Asia in Q1 2025_. https://cointelegraph.com/news/bitget-deepfake-scam-rings-crackdown-asia-q1-2025
 
-Cointelegraph. (2024). *How AI and deepfakes are fueling new cryptocurrency scams*. https://cointelegraph.com/learn/articles/how-ai-and-deepfakes-are-fueling-new-cryptocurrency-scams
+Cointelegraph. (2024). _How AI and deepfakes are fueling new cryptocurrency scams_. https://cointelegraph.com/learn/articles/how-ai-and-deepfakes-are-fueling-new-cryptocurrency-scams
 
-Palo Alto Networks. (2025). *Unit 42 develops agentic AI attack framework*. https://www.paloaltonetworks.com/blog/2025/05/unit-42-develops-agentic-ai-attack-framework/
+Palo Alto Networks. (2025). _Unit 42 develops agentic AI attack framework_. https://www.paloaltonetworks.com/blog/2025/05/unit-42-develops-agentic-ai-attack-framework/
 
-The Fintech Times. (2024). *Crypto scam losses exceeded $4billion in 2024, driven by deepfake and AI tech, says Bitget*. https://thefintechtimes.com/crypto-scam-losses-exceeded-4billion-in-2024-driven-by-deepfake-and-ai-tech-says-bitget/
+The Fintech Times. (2024). _Crypto scam losses exceeded $4billion in 2024, driven by deepfake and AI tech, says Bitget_. https://thefintechtimes.com/crypto-scam-losses-exceeded-4billion-in-2024-driven-by-deepfake-and-ai-tech-says-bitget/
 
-Creditcoin Blog. (2024). *Top 8 crypto Telegram scams to watch out for | 2024 edition*. https://creditcoin.org/blog/top-crypto-telegram-scams/
+Creditcoin Blog. (2024). _Top 8 crypto Telegram scams to watch out for | 2024 edition_. https://creditcoin.org/blog/top-crypto-telegram-scams/
 
-Whop. (2024). *Telegram vs Discord: Which is best for a paid community?* https://whop.com/blog/telegram-vs-discord/
+Whop. (2024). _Telegram vs Discord: Which is best for a paid community?_ https://whop.com/blog/telegram-vs-discord/
 
-EAK Digital. (2025). *Top 5 crypto Discord servers to join in 2025*. https://eakdigital.com/top-5-crypto-discord-servers-to-join-in-2025/
+EAK Digital. (2025). _Top 5 crypto Discord servers to join in 2025_. https://eakdigital.com/top-5-crypto-discord-servers-to-join-in-2025/
 
-CryptoSlate. (2024). *Pig butchering scams top 2024 crypto fraud with $3.6 billion in losses*. https://cryptoslate.com/pig-butchering-scams-top-2024-crypto-fraud-with-3-6-billion-in-losses/
+CryptoSlate. (2024). _Pig butchering scams top 2024 crypto fraud with $3.6 billion in losses_. https://cryptoslate.com/pig-butchering-scams-top-2024-crypto-fraud-with-3-6-billion-in-losses/
 
-Nature. (2023). *Detection of Ponzi scheme on Ethereum using machine learning algorithms*. Scientific Reports. https://www.nature.com/articles/s41598-023-45275-0
+Nature. (2023). _Detection of Ponzi scheme on Ethereum using machine learning algorithms_. Scientific Reports. https://www.nature.com/articles/s41598-023-45275-0
 
-Sumsub. (2025). *8 crypto scams to be aware of in 2025: A guide for businesses and users*. https://sumsub.com/blog/crypto-scams-you-should-be-aware-of/
+Sumsub. (2025). _8 crypto scams to be aware of in 2025: A guide for businesses and users_. https://sumsub.com/blog/crypto-scams-you-should-be-aware-of/
 
-Reuters. (2025). *Crypto scams likely set new record in 2024 helped by AI, Chainalysis says*. https://www.reuters.com/technology/crypto-scams-likely-set-new-record-2024-helped-by-ai-chainalysis-says-2025-02-14/
+Reuters. (2025). _Crypto scams likely set new record in 2024 helped by AI, Chainalysis says_. https://www.reuters.com/technology/crypto-scams-likely-set-new-record-2024-helped-by-ai-chainalysis-says-2025-02-14/
 
-CA. (2025). *Crypto scam tracker - DFPI*. https://dfpi.ca.gov/consumers/crypto/crypto-scam-tracker/
+CA. (2025). _Crypto scam tracker - DFPI_. https://dfpi.ca.gov/consumers/crypto/crypto-scam-tracker/
 
-Cointelegraph. (2024). *Pig butchering scams stole $5.5B from crypto investors in 2024 — Cyvers*. https://cointelegraph.com/news/pig-butchering-crypto-scams-2024-losses
+Cointelegraph. (2024). _Pig butchering scams stole $5.5B from crypto investors in 2024 — Cyvers_. https://cointelegraph.com/news/pig-butchering-crypto-scams-2024-losses
 
-TRM Labs. (2024). *Pig butchering scams: What the data shows*. https://www.trmlabs.com/post/pig-butchering-scams-what-the-data-shows
+TRM Labs. (2024). _Pig butchering scams: What the data shows_. https://www.trmlabs.com/post/pig-butchering-scams-what-the-data-shows
 
-CoinGape. (2025). *Nearly 40% of all crypto scams involve deepfake technology: Bitget report*. https://coingape.com/brandtalk/research/nearly-40-of-all-crypto-scams-involve-deepfake-technology-bitget-report/
+CoinGape. (2025). _Nearly 40% of all crypto scams involve deepfake technology: Bitget report_. https://coingape.com/brandtalk/research/nearly-40-of-all-crypto-scams-involve-deepfake-technology-bitget-report/
 
-ACM. (2024). *Machine learning algorithms to detect illicit accounts on Ethereum blockchain*. https://dl.acm.org/doi/fullHtml/10.1145/3644713.3644838
+ACM. (2024). _Machine learning algorithms to detect illicit accounts on Ethereum blockchain_. https://dl.acm.org/doi/fullHtml/10.1145/3644713.3644838
 
-Discord Statistics. (2025). *Best bots for integrating Discord with Twitch and YouTube*. https://www.discordstatistics.com/blog/best-discord-bots-for-integrating-discord-with-twitch-and-youtube
+Discord Statistics. (2025). _Best bots for integrating Discord with Twitch and YouTube_. https://www.discordstatistics.com/blog/best-discord-bots-for-integrating-discord-with-twitch-and-youtube
 
-StreamScheme. (2025). *9 best Twitch bots ranked! [Complete 2025 guide]*. https://www.streamscheme.com/best-twitch-bots/
+StreamScheme. (2025). _9 best Twitch bots ranked! [Complete 2025 guide]_. https://www.streamscheme.com/best-twitch-bots/
 
-Nature. (2025). *Graph convolution network for fraud detection in bitcoin transactions*. Scientific Reports. https://www.nature.com/articles/s41598-025-95672-w
+Nature. (2025). _Graph convolution network for fraud detection in bitcoin transactions_. Scientific Reports. https://www.nature.com/articles/s41598-025-95672-w
 
-Towards Data Science. (2024). *Precision vs. recall - Evaluating model performance in credit card fraud detection*. https://towardsdatascience.com/precision-vs-recall-evaluating-model-performance-in-credit-card-fraud-detection-bb24958b2723/
+Towards Data Science. (2024). _Precision vs. recall - Evaluating model performance in credit card fraud detection_. https://towardsdatascience.com/precision-vs-recall-evaluating-model-performance-in-credit-card-fraud-detection-bb24958b2723/
 
-GitHub - umputun/tg-spam. (2025). *Anti-spam bot for Telegram and general-purpose anti-spam library and server*. https://github.com/umputun/tg-spam
+GitHub - umputun/tg-spam. (2025). _Anti-spam bot for Telegram and general-purpose anti-spam library and server_. https://github.com/umputun/tg-spam
 
-Telegram. (2025). *Page verification guidelines*. https://telegram.org/verify
+Telegram. (2025). _Page verification guidelines_. https://telegram.org/verify
 
-NCBI. (2022). *Mental states: A key point in scam compliance and warning compliance in real life*. PMC. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9317489/
+NCBI. (2022). _Mental states: A key point in scam compliance and warning compliance in real life_. PMC. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9317489/
 
-GitHub - Michael-J-Scofield/discord-anti-spam. (2025). *A simple discord anti spam node.js module to prevent spam on your discord server*. https://github.com/Michael-J-Scofield/discord-anti-spam
+GitHub - Michael-J-Scofield/discord-anti-spam. (2025). _A simple discord anti spam node.js module to prevent spam on your discord server_. https://github.com/Michael-J-Scofield/discord-anti-spam
 
-Reuters. (2024). *Losses from crypto scams grew 45% in 2023, FBI says*. https://www.reuters.com/technology/losses-crypto-scams-grew-45-2023-fbi-says-2024-09-09/
+Reuters. (2024). _Losses from crypto scams grew 45% in 2023, FBI says_. https://www.reuters.com/technology/losses-crypto-scams-grew-45-2023-fbi-says-2024-09-09/
 
-FBI. (2024). *2023 cryptocurrency fraud report released*. Federal Bureau of Investigation. https://www.fbi.gov/news/stories/2023-cryptocurrency-fraud-report-released
+FBI. (2024). _2023 cryptocurrency fraud report released_. Federal Bureau of Investigation. https://www.fbi.gov/news/stories/2023-cryptocurrency-fraud-report-released
 
-CryptoRank. (2025). *AI deepfakes plague crypto, fueling $4.6B scam surge: Report*. https://cryptorank.io/news/feed/c3737-ai-deepfakes-crypto-scams-4-6b-surge-report
+CryptoRank. (2025). _AI deepfakes plague crypto, fueling $4.6B scam surge: Report_. https://cryptorank.io/news/feed/c3737-ai-deepfakes-crypto-scams-4-6b-surge-report
 
-Cointelegraph. (2024). *Phishing scams top crypto security threat of 2024 — CertiK*. https://cointelegraph.com/news/phishing-scams-top-crypto-threat-2024-certik
+Cointelegraph. (2024). _Phishing scams top crypto security threat of 2024 — CertiK_. https://cointelegraph.com/news/phishing-scams-top-crypto-threat-2024-certik
 
-OKX. (2025). *Crypto scams on Telegram surge: Malware attacks skyrocket by 2,000% in 2025*. https://www.okx.com/learn/telegram-crypto-scams-malware-attacks
+OKX. (2025). _Crypto scams on Telegram surge: Malware attacks skyrocket by 2,000% in 2025_. https://www.okx.com/learn/telegram-crypto-scams-malware-attacks
