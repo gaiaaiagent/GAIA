@@ -189,7 +189,7 @@ class Relationship(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     source_entity_id = models.UUIDField(db_column='sourceEntityId')
     target_entity_id = models.UUIDField(db_column='targetEntityId')
-    agent_id = models.UUIDField()
+    agent_id = models.UUIDField(db_column='agentId')
     tags = ArrayField(models.TextField(), default=list, blank=True, null=True)  # PostgreSQL ARRAY type
     metadata = models.JSONField(null=True, blank=True)
     
