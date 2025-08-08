@@ -319,5 +319,35 @@ class CacheAdmin(admin.ModelAdmin):
 
 @admin.register(ServerAgent)
 class ServerAgentAdmin(admin.ModelAdmin):
-    list_display = ['server_id', 'agent_id']
-    readonly_fields = ['server_id', 'agent_id']
+    list_display = ['server_link', 'agent_link']
+    search_fields = ['server_id', 'agent_id']
+    list_display_links = None  # No clickable rows
+    
+    def has_add_permission(self, request):
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def server_link(self, obj):
+        from django.urls import reverse
+        from django.utils.html import format_html
+        try:
+            url = reverse('admin:elizaos_messageserver_change', args=[obj.server_id])
+            return format_html('<a href="{}">{}</a>', url, str(obj.server_id)[:8] + '...')
+        except:
+            return str(obj.server_id)[:8] + '...'
+    server_link.short_description = 'Server'
+    
+    def agent_link(self, obj):
+        from django.urls import reverse
+        from django.utils.html import format_html
+        try:
+            url = reverse('admin:elizaos_agent_change', args=[obj.agent_id])
+            return format_html('<a href="{}">{}</a>', url, str(obj.agent_id)[:8] + '...')
+        except:
+            return str(obj.agent_id)[:8] + '...'
+    agent_link.short_description = 'Agent'

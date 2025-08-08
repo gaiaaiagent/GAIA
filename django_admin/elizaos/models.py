@@ -227,12 +227,13 @@ class Cache(models.Model):
 
 class ServerAgent(models.Model):
     """Server-agent associations - matches actual schema"""
-    server_id = models.UUIDField(primary_key=True)
+    server_id = models.UUIDField(primary_key=True)  # Not unique but Django needs a PK
     agent_id = models.UUIDField()
     
     class Meta:
         managed = False
         db_table = 'server_agents'
+        unique_together = ['server_id', 'agent_id']
 
 class World(models.Model):
     """Worlds - higher level grouping of servers/rooms"""
