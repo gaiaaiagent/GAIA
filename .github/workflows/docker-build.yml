@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - regen
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch: # Allow manual trigger
 
 env:
   REGISTRY: ghcr.io
@@ -20,7 +20,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    
+
     strategy:
       matrix:
         include:
