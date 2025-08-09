@@ -58,7 +58,7 @@ services:
 
   # RegenAI Application
   regenai:
-    image: ghcr.io/gaiaaiagent/gaia/regenai:latest
+    image: ghcr.io/gaiaaiagent/gaia/regen:regen-latest
     container_name: regenai
     command: sh -c "cd packages/cli && bun dist/index.js start --character /app/characters/regenai.character.json --character /app/characters/advocate.character.json --character /app/characters/governor.character.json --character /app/characters/narrative.character.json --character /app/characters/voiceofnature.character.json"
     volumes:

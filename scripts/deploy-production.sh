@@ -17,7 +17,7 @@ echo "====================================="
 # Configuration - matches production reality
 COMPOSE_FILE="docker-compose-ssl.yaml"
 IMAGES=(
-    "ghcr.io/gaiaaiagent/gaia/regenai:latest"
+    "ghcr.io/gaiaaiagent/gaia/regen:regen-latest"
     "ghcr.io/gaiaaiagent/gaia/django-admin:regen-latest"
     "ghcr.io/gaiaaiagent/gaia/nginx:regen-latest"
 )
