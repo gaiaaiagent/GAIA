@@ -14,11 +14,11 @@ NC='\033[0m'
 echo -e "${BLUE}🚀 Smart Deployment for RegenAI${NC}"
 echo "===================================="
 
-# Configuration
+# Configuration - matches production reality
 IMAGES=(
-    "ghcr.io/gaiaaiagent/gaia/regen:latest"
-    "ghcr.io/gaiaaiagent/gaia/django-admin:latest"
-    "ghcr.io/gaiaaiagent/gaia/nginx:latest"
+    "ghcr.io/gaiaaiagent/gaia/regenai:latest"
+    "ghcr.io/gaiaaiagent/gaia/django-admin:regen-latest"
+    "ghcr.io/gaiaaiagent/gaia/nginx:regen-latest"
 )
 
 # Function to check if image has changed
@@ -137,7 +137,7 @@ BACKUP_FILE="$BACKUP_DIR/quick_$(date +%Y%m%d_%H%M%S).sql"
 mkdir -p "$BACKUP_DIR"
 
 echo -e "${YELLOW}Creating database backup...${NC}"
-docker exec postgres pg_dump -U postgres eliza > "$BACKUP_FILE" 2>/dev/null || {
+docker exec gaia-postgres-1 pg_dump -U postgres eliza > "$BACKUP_FILE" 2>/dev/null || {
     echo -e "${YELLOW}  ⚠️  Backup failed (container might be down)${NC}"
 }
 
@@ -146,21 +146,22 @@ echo -e "${BLUE}Step 4: Rolling deployment${NC}"
 echo "---------------------------"
 
 # Check if we should use production compose file
-COMPOSE_FILE="docker-compose.yaml"
-if [ -f "docker-compose.production.yaml" ]; then
-    COMPOSE_FILE="docker-compose.production.yaml"
-    echo -e "${YELLOW}Using production compose file${NC}"
+COMPOSE_FILE="docker-compose-ssl.yaml"
+if [ ! -f "$COMPOSE_FILE" ]; then
+    # Fallback to standard compose file if SSL version doesn't exist
+    COMPOSE_FILE="docker-compose.yaml"
 fi
+echo -e "${YELLOW}Using compose file: $COMPOSE_FILE${NC}"
 
 # For critical services, do rolling update
-if docker ps --format '{{.Names}}' | grep -q "^regen$"; then
+if docker ps --format '{{.Names}}' | grep -q "^regenai$"; then
     echo -e "${YELLOW}Performing rolling update...${NC}"
     
     # Start new container alongside old one
-    docker compose -f "$COMPOSE_FILE" up -d --no-deps --scale regen=2 regen 2>/dev/null || {
+    docker compose -f "$COMPOSE_FILE" up -d --no-deps --scale regenai=2 regenai 2>/dev/null || {
         # If scaling doesn't work, do regular restart
         echo -e "${YELLOW}  Scaling not supported, doing regular restart${NC}"
-        docker compose -f "$COMPOSE_FILE" up -d --no-deps regen
+        docker compose -f "$COMPOSE_FILE" up -d --no-deps regenai
     }
     
     # Update other services
@@ -179,7 +180,7 @@ DEPLOY_SUCCESS=true
 
 wait_for_health "RegenAI" "http://localhost:3000/health" || {
     # Fallback to checking if container is running
-    if docker ps --format '{{.Names}}' | grep -q "^regen$"; then
+    if docker ps --format '{{.Names}}' | grep -q "^regenai$"; then
         echo -e "${YELLOW}  Container is running (no health endpoint)${NC}"
     else
         DEPLOY_SUCCESS=false
@@ -195,9 +196,9 @@ wait_for_health "Django Admin" "http://localhost:8000/admin/login/" || {
 }
 
 # Clean up any duplicate containers from rolling update
-if docker ps --format '{{.Names}}' | grep -q "^regen-1$"; then
+if docker ps --format '{{.Names}}' | grep -q "^regenai-1$"; then
     echo -e "${YELLOW}Cleaning up old containers...${NC}"
-    docker compose -f "$COMPOSE_FILE" up -d --no-recreate --scale regen=1
+    docker compose -f "$COMPOSE_FILE" up -d --no-recreate --scale regenai=1
 fi
 
 END_TIME=$(date +%s)

@@ -45,16 +45,16 @@ jobs:
                 echo "❌ Smart deployment failed, falling back to standard deployment"
                 
                 # Fallback to standard deployment
-                docker pull ghcr.io/gaiaaiagent/gaia/regen:latest
-                docker pull ghcr.io/gaiaaiagent/gaia/django-admin:latest
-                docker pull ghcr.io/gaiaaiagent/gaia/nginx:latest
+                docker pull ghcr.io/gaiaaiagent/gaia/regenai:latest
+                docker pull ghcr.io/gaiaaiagent/gaia/django-admin:regen-latest
+                docker pull ghcr.io/gaiaaiagent/gaia/nginx:regen-latest
                 
-                docker compose down
-                docker compose up -d
+                docker compose -f docker-compose-ssl.yaml down
+                docker compose -f docker-compose-ssl.yaml up -d
                 
                 sleep 15
                 
-                if ! docker ps | grep -q "regen"; then
+                if ! docker ps | grep -q "regenai"; then
                     echo "❌ Deployment failed!"
                     exit 1
                 fi
