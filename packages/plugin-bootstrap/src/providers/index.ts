@@ -8,6 +8,7 @@ export { choiceProvider } from './choice';
 export { entitiesProvider } from './entities';
 export { evaluatorsProvider } from './evaluators';
 export { factsProvider } from './facts';
+export { knowledgeProvider } from './knowledge';
 export { providersProvider } from './providers';
 export { recentMessagesProvider } from './recentMessages';
 export { relationshipsProvider } from './relationships';

@@ -512,6 +512,12 @@ export class AgentRuntime implements IAgentRuntime {
   registerProvider(provider: Provider) {
     this.providers.push(provider);
     this.logger.debug(`Success: Provider ${provider.name} registered successfully.`);
+    this.logger.debug(`[KNOWLEDGE-DEBUG] Provider ${provider.name} details:`, {
+      name: provider.name,
+      dynamic: provider.dynamic,
+      private: provider.private,
+      description: provider.description
+    });
   }
 
   registerAction(action: Action) {
@@ -1407,6 +1413,25 @@ export class AgentRuntime implements IAgentRuntime {
     const providersToGet = Array.from(
       new Set(this.providers.filter((p) => providerNames.has(p.name)))
     ).sort((a, b) => (a.position || 0) - (b.position || 0));
+    
+    if (providerNames.size > 0) {
+      this.logger.debug(
+        `[Runtime] Requested providers: ${Array.from(providerNames).join(', ')}`
+      );
+      this.logger.debug(
+        `[Runtime] Providers to get: ${providersToGet.map(p => p.name).join(', ')}`
+      );
+    }
+    
+    this.logger.debug(`[KNOWLEDGE-DEBUG] composeState called with:`, {
+      includeList,
+      onlyInclude,
+      filterList,
+      totalProviders: this.providers.length,
+      allProviderNames: this.providers.map(p => `${p.name} (dynamic: ${p.dynamic}, private: ${p.private})`),
+      providerNamesToInclude: Array.from(providerNames),
+      actualProvidersToCall: providersToGet.map(p => p.name)
+    });
     const providerData = await Promise.all(
       providersToGet.map(async (provider) => {
         const start = Date.now();
