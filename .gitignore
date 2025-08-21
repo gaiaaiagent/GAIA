@@ -300,6 +300,19 @@ django_admin/db.sqlite3
 /.kiro
 .env.docker-test
 
-# Security - Never commit credentials
+# Security - Never commit credentials or sensitive legal documents
 CREDENTIALS.md
 auth/.htpasswd
+docs/CONTRACT-JDA.md
+docs/*-CONTRACT-*.md
+docs/*-AGREEMENT-*.md
+docs/*-NDA-*.md
+docs/*-CONFIDENTIAL-*.md
+
+# Knowledge base content - large files
+knowledge/
+plugin-knowledge/
+backups/
+data-v34/
+certbot-conf/
+venv-dedup/
