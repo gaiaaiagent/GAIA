@@ -20,19 +20,19 @@ Each agent requires a unique Telegram bot token to avoid 409 Conflict errors.
 **Environment Variables (in `/opt/projects/GAIA-direct/.env`):**
 ```bash
 # Primary RegenAI bot
-TELEGRAM_BOT_TOKEN=8058793609:AAE63KMIa2Rc36NXapru7uHpGyytembWwug
+TELEGRAM_BOT_TOKEN=<your-regenai-bot-token>
 
 # Facilitator bot  
-TELEGRAM_BOT_TOKEN_ADVOCATE=8280814835:AAFHeomcNuk3kwUKa3senaRU-bf8lK-LOjY
+TELEGRAM_BOT_TOKEN_ADVOCATE=<your-facilitator-bot-token>
 
 # Narrative bot
-TELEGRAM_BOT_TOKEN_NARRATIVE=7413348697:AAGoaawG6RIr8Q6aV_NXavNM99wqSyE0KcY
+TELEGRAM_BOT_TOKEN_NARRATIVE=<your-narrative-bot-token>
 
 # Voice of Nature bot
-TELEGRAM_BOT_TOKEN_VOICEOFNATURE=8258974878:AAE_rEkaTtIsaIfxZdkYTumLP7wCzlxv-tk
+TELEGRAM_BOT_TOKEN_VOICEOFNATURE=<your-voiceofnature-bot-token>
 
-# Governor bot (needs token)
-TELEGRAM_BOT_TOKEN_GOVERNOR=<TOKEN_NEEDED>
+# Governor bot
+TELEGRAM_BOT_TOKEN_GOVERNOR=<your-governor-bot-token>
 ```
 
 ## Character Configuration

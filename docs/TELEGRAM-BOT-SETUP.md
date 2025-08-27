@@ -127,11 +127,11 @@ Each bot has a unique personality - lean into their strengths:
 
 **Bot Tokens (Environment Variables):**
 ```bash
-TELEGRAM_BOT_TOKEN=8058793609:AAE63KMIa2Rc36NXapru7uHpGyytembWwug  # RegenAI
-TELEGRAM_BOT_TOKEN_ADVOCATE=8280814835:AAFHeomcNuk3kwUKa3senaRU-bf8lK-LOjY  # Facilitator  
-TELEGRAM_BOT_TOKEN_NARRATIVE=7413348697:AAGoaawG6RIr8Q6aV_NXavNM99wqSyE0KcY  # Narrative
-TELEGRAM_BOT_TOKEN_VOICEOFNATURE=8258974878:AAE_rEkaTtIsaIfxZdkYTumLP7wCzlxv-tk  # Voice of Nature
-# Governor token to be added
+TELEGRAM_BOT_TOKEN=<your-regenai-token>  # RegenAI
+TELEGRAM_BOT_TOKEN_ADVOCATE=<your-facilitator-token>  # Facilitator  
+TELEGRAM_BOT_TOKEN_NARRATIVE=<your-narrative-token>  # Narrative
+TELEGRAM_BOT_TOKEN_VOICEOFNATURE=<your-voiceofnature-token>  # Voice of Nature
+TELEGRAM_BOT_TOKEN_GOVERNOR=<your-governor-token>  # Governor
 ```
 
 ## Group Integration
