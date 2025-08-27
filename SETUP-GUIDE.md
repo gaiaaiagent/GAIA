@@ -16,6 +16,9 @@ This guide helps you get the RegenAI agents running locally after cloning this r
 git clone https://github.com/gaiaaiagent/GAIA.git -b regen-knowledge-rag
 cd GAIA
 bun install
+
+# Build the project (required for first run)
+bun run build
 ```
 
 ### 2. Start Database
@@ -79,7 +82,8 @@ GAIA/
 
 ## Troubleshooting
 
-- **Agents won't start**: Check `bun install` completed successfully
+- **Build errors**: If `bun run build` fails, ensure `build-utils.ts` symlink exists at repository root
+- **Agents won't start**: Check `bun install` and `bun run build` completed successfully
 - **Database errors**: Ensure PostgreSQL is running on port 5433
 - **API key errors**: Verify `.env` file has valid OpenAI key
 
