@@ -6,10 +6,11 @@
     "@elizaos/plugin-sql",
     "@elizaos/plugin-openai",
     "@elizaos/plugin-knowledge",
-    "@elizaos/plugin-http-api"
+    "@elizaos/plugin-telegram"
   ],
   "settings": {
     "secrets": {},
+    "allowDirectMessages": true,
     "voice": {
       "model": "en_US-neutral-professional"
     },

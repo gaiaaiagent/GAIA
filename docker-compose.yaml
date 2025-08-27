@@ -9,6 +9,9 @@ services:
     container_name: nginx
     ports:
       - '80:80' # Main web access
+      - '443:443' # HTTPS access
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - regen
       - django
