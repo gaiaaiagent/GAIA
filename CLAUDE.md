@@ -197,6 +197,145 @@ docker exec -it gaia-postgres-1 psql -U postgres -d eliza
 docker exec gaia-postgres-1 psql -U postgres -c "SELECT pg_database_size('eliza') / 1024 / 1024 AS size_mb;"
 ```
 
+---
+
+## CRITICAL RULES (From upstream ElizaOS)
+
+### Package Management
+
+- **NEVER USE `npm` OR `pnpm`**
+- **ALWAYS USE `bun` FOR ALL PACKAGE MANAGEMENT AND SCRIPT EXECUTION**
+- **IF A COMMAND DOESN'T WORK:** Check `package.json` in the relevant package directory for correct script names
+- Use `bun` for global installs: `bun install -g @elizaos/cli`
+
+### Workspace Dependencies
+
+- **ALWAYS USE `workspace:*` FOR ALL `@elizaos/` PACKAGE DEPENDENCIES**
+- **NEVER USE HARDCODED VERSIONS** for internal monorepo packages
+- **Example of CORRECT usage:**
+  ```json
+  {
+    "dependencies": {
+      "@elizaos/core": "workspace:*",
+      "@elizaos/plugin-sql": "workspace:*",
+      "@elizaos/server": "workspace:*"
+    }
+  }
+  ```
+- **Example of INCORRECT usage:**
+  ```json
+  {
+    "dependencies": {
+      "@elizaos/core": "1.4.2", // ❌ Don't use hardcoded versions
+      "@elizaos/plugin-sql": "^1.4.0", // ❌ Don't use version ranges
+      "@elizaos/server": "latest" // ❌ Don't use version tags
+    }
+  }
+  ```
+- **RATIONALE:** Workspace references ensure proper monorepo dependency resolution and prevent version conflicts
+
+### Process Execution
+
+- **NEVER USE `execa` OR OTHER PROCESS EXECUTION LIBRARIES**
+- **NEVER USE NODE.JS APIS LIKE `execSync`, `spawnSync`, `exec`, `spawn` FROM `child_process`**
+- **ALWAYS USE `Bun.spawn()` FOR SPAWNING PROCESSES**
+- **USE THE EXISTING `bun-exec` UTILITY:** Located at `packages/cli/src/utils/bun-exec.ts` which provides:
+  - `bunExec()` - Main execution function with full control
+  - `bunExecSimple()` - For simple command execution
+  - `bunExecInherit()` - For interactive commands
+  - `commandExists()` - To check if commands exist
+- **Example usage:**
+
+  ```typescript
+  import { bunExec, bunExecSimple } from '@/utils/bun-exec';
+
+  // Simple command
+  const output = await bunExecSimple('git status');
+
+  // Full control
+  const result = await bunExec('bun', ['test'], { cwd: '/path/to/dir' });
+  ```
+
+  **IMPORTANT:** Even in test files, avoid using Node.js `execSync` or other child_process APIs. Use the bun-exec utilities or Bun.spawn directly.
+
+### Event Handling
+
+- **NEVER USE `EventEmitter` FROM NODE.JS**
+- **EventEmitter has compatibility issues with Bun and should be avoided**
+- **ALWAYS USE BUN'S NATIVE `EventTarget` API INSTEAD**
+- **When migrating from EventEmitter:**
+  - Extend `EventTarget` instead of `EventEmitter`
+  - Use `dispatchEvent(new CustomEvent(name, { detail: data }))` instead of `emit(name, data)`
+  - Wrap handlers to extract data from `CustomEvent.detail`
+  - Maintain backward-compatible API when possible
+- **Example migration:**
+
+  ```typescript
+  // ❌ WRONG - Don't use EventEmitter
+  import { EventEmitter } from 'events';
+  class MyClass extends EventEmitter {
+    doSomething() {
+      this.emit('event', { data: 'value' });
+    }
+  }
+
+  // ✅ CORRECT - Use EventTarget
+  class MyClass extends EventTarget {
+    private handlers = new Map<string, Map<Function, EventListener>>();
+
+    emit(event: string, data: any) {
+      this.dispatchEvent(new CustomEvent(event, { detail: data }));
+    }
+
+    on(event: string, handler: (data: any) => void) {
+      const wrappedHandler = ((e: CustomEvent) => handler(e.detail)) as EventListener;
+      if (!this.handlers.has(event)) {
+        this.handlers.set(event, new Map());
+      }
+      this.handlers.get(event)!.set(handler, wrappedHandler);
+      this.addEventListener(event, wrappedHandler);
+    }
+  }
+  ```
+
+### Git & GitHub
+
+- **ALWAYS USE `gh` CLI FOR GIT AND GITHUB OPERATIONS**
+- Use `gh` commands for creating PRs, issues, releases, etc.
+- **WHEN USER PROVIDES GITHUB WORKFLOW RUN LINK:** Use `gh run view <run-id>` and `gh run view <run-id> --log` to get workflow details and failure logs
+- **NEVER ADD CO-AUTHOR CREDITS:** Do not include "Co-Authored-By: Claude" or similar co-authoring credits in commit messages or PR descriptions
+
+### Development Branch Strategy
+
+- **Base Branch:** `develop` (NOT `main`)
+- **Create PRs against `develop` branch**
+- **Main branch is used for releases only**
+
+### ElizaOS CLI Usage
+
+- **The `elizaos` CLI** is built from `packages/cli`
+- **INTENDED FOR:** Production use by developers/users of the project
+- **DO NOT USE THE `elizaos` CLI WITHIN THE `eliza` MONOREPO ITSELF**
+- **The `elizaos` CLI is for external consumers, NOT internal monorepo development**
+- **For monorepo development:** Use `bun` commands directly
+
+### ElizaOS Test Command
+
+The `elizaos test` command runs tests for ElizaOS projects and plugins:
+
+```bash
+# Run tests in current project
+elizaos test
+
+# Run specific test files
+elizaos test src/**/*.test.ts
+
+# Run with coverage
+elizaos test --coverage
+```
+
+---
+
 ### Knowledge Updates
 ```bash
 # Add new content to:
@@ -244,6 +383,20 @@ Each agent has a unique character file in `/opt/projects/GAIA/characters/`:
 - **Collaborative Intelligence**: Work with existing patterns
 
 ## Quick Troubleshooting
+
+### Django Admin Issues?
+See [Django Admin Troubleshooting Guide](docs/DJANGO-ADMIN-TROUBLESHOOTING.md) for:
+- Template variable rendering issues
+- Docker build cache problems  
+- Worker timeout errors
+- URL routing confusion
+
+**Quick Fix for Template Issues:**
+```bash
+# The /regenai/ URL is served by reporting app, not eliza_tables!
+# Edit: django_admin/reporting/templates/reporting/dashboard.html
+# Then rebuild: docker-compose build --no-cache django
+```
 
 ### Agents not responding?
 1. Check if running: `ps aux | grep bun.*packages/cli`

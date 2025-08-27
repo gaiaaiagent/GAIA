@@ -1,5 +1,9 @@
-{% extends "admin/base_site.html" %} {% load static %} {% block title %}Interaction Report{%
-endblock %} {% block extrastyle %}
+{% extends "admin/base_site.html" %}
+{% load static dict_extras %}
+
+{% block title %}Interaction Report{% endblock %}
+
+{% block extrastyle %}
 <style>
   /* Fix text colors */
   table {
@@ -52,22 +56,26 @@ endblock %} {% block extrastyle %}
     }
   }
 </style>
-{% endblock %} {% block breadcrumbs %}
+{% endblock %}
+
+{% block breadcrumbs %}
 <div class="breadcrumbs">
   <a href="{% url 'admin:index' %}">Home</a>
   &rsaquo; <a href="{% url 'reporting:dashboard' %}">Dashboard</a>
   &rsaquo; Interaction Report
 </div>
-{% endblock %} {% block content %}
+{% endblock %}
+
+{% block content %}
 <h1>Interaction Report</h1>
 
 <form method="get" style="margin-bottom: 20px">
   <label for="days">Time Period:</label>
   <select name="days" id="days" onchange="this.form.submit()">
-    <option value="1" {% if days="" ="1" %}selected{% endif %}>Last 24 hours</option>
-    <option value="7" {% if days="" ="7" %}selected{% endif %}>Last 7 days</option>
-    <option value="14" {% if days="" ="14" %}selected{% endif %}>Last 14 days</option>
-    <option value="30" {% if days="" ="30" %}selected{% endif %}>Last 30 days</option>
+    <option value="1" {% if days == 1 %}selected{% endif %}>Last 24 hours</option>
+    <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 days</option>
+    <option value="14" {% if days == 14 %}selected{% endif %}>Last 14 days</option>
+    <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 days</option>
   </select>
 </form>
 
@@ -153,8 +161,7 @@ endblock %} {% block extrastyle %}
       </td>
       <td style="padding: 10px; border-bottom: 1px solid #ddd">{{ memory.type }}</td>
       <td style="padding: 10px; border-bottom: 1px solid #ddd">
-        {% if memory.content.text %} {{ memory.content.text|truncatewords:20 }} {% else %} {{
-        memory.content|truncatewords:20 }} {% endif %}
+        {{ memory.content|truncatewords:20 }}
       </td>
       <td style="padding: 10px; border-bottom: 1px solid #ddd">
         {{ memory.agent_id|slice:":8" }}...

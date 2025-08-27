@@ -20,9 +20,11 @@ echo "from django.contrib.auth import get_user_model; User = get_user_model(); U
 echo "Starting Gunicorn server..."
 # Use Gunicorn for better performance even in development
 # 3 workers, reload on code changes for development
+# Increased timeout from default 30s to 60s for development stability
 exec gunicorn eliza_admin.wsgi:application \
     --bind 0.0.0.0:8000 \
     --workers 3 \
+    --timeout 60 \
     --reload \
     --access-logfile - \
     --error-logfile -

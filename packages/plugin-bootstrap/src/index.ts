@@ -40,6 +40,7 @@ import * as evaluators from './evaluators/index.ts';
 import * as providers from './providers/index.ts';
 
 import { TaskService } from './services/task.ts';
+import { EmbeddingGenerationService } from './services/embedding.ts';
 
 export * from './actions/index.ts';
 export * from './evaluators/index.ts';
@@ -190,16 +191,34 @@ export async function processAttachments(
             // Parse XML response
             const parsedXml = parseKeyValueXml(response);
 
-            if (parsedXml?.description && parsedXml?.text) {
-              processedAttachment.description = parsedXml.description;
+            if (parsedXml && (parsedXml.description || parsedXml.text)) {
+              processedAttachment.description = parsedXml.description || '';
               processedAttachment.title = parsedXml.title || 'Image';
-              processedAttachment.text = parsedXml.text;
+              processedAttachment.text = parsedXml.text || parsedXml.description || '';
 
               runtime.logger.debug(
                 `[Bootstrap] Generated description: ${processedAttachment.description?.substring(0, 100)}...`
               );
             } else {
-              runtime.logger.warn(`[Bootstrap] Failed to parse XML response for image description`);
+              // Fallback: Try simple regex parsing if parseKeyValueXml fails
+              const responseStr = response as string;
+              const titleMatch = responseStr.match(/<title>([^<]+)<\/title>/);
+              const descMatch = responseStr.match(/<description>([^<]+)<\/description>/);
+              const textMatch = responseStr.match(/<text>([^<]+)<\/text>/);
+
+              if (titleMatch || descMatch || textMatch) {
+                processedAttachment.title = titleMatch?.[1] || 'Image';
+                processedAttachment.description = descMatch?.[1] || '';
+                processedAttachment.text = textMatch?.[1] || descMatch?.[1] || '';
+
+                runtime.logger.debug(
+                  `[Bootstrap] Used fallback XML parsing - description: ${processedAttachment.description?.substring(0, 100)}...`
+                );
+              } else {
+                runtime.logger.warn(
+                  `[Bootstrap] Failed to parse XML response for image description`
+                );
+              }
             }
           } else if (response && typeof response === 'object' && 'description' in response) {
             // Handle object responses for backwards compatibility
@@ -396,28 +415,32 @@ const messageReceivedHandler = async ({
         );
 
         // First, save the incoming message
-        runtime.logger.debug('[Bootstrap] Saving message to memory and embeddings');
+        runtime.logger.debug('[Bootstrap] Saving message to memory and queueing embeddings');
 
         // Check if memory already exists (it might have been created by MessageBusService)
+        let memoryToQueue: Memory;
+
         if (message.id) {
           const existingMemory = await runtime.getMemoryById(message.id);
           if (existingMemory) {
             runtime.logger.debug('[Bootstrap] Memory already exists, skipping creation');
-            // Still add embedding if needed
-            await runtime.addEmbeddingToMemory(message);
+            memoryToQueue = existingMemory;
           } else {
-            // Create memory if it doesn't exist
-            await Promise.all([
-              runtime.addEmbeddingToMemory(message),
-              runtime.createMemory(message, 'messages'),
-            ]);
+            // Create memory with the existing ID (preserving external IDs)
+            const createdMemoryId = await runtime.createMemory(message, 'messages');
+            // Use the created memory with the actual ID returned by the database
+            memoryToQueue = { ...message, id: createdMemoryId };
           }
+          // Queue with high priority for messages with pre-existing IDs
+          await runtime.queueEmbeddingGeneration(memoryToQueue, 'high');
         } else {
-          // No ID, create new memory
-          await Promise.all([
-            runtime.addEmbeddingToMemory(message),
-            runtime.createMemory(message, 'messages'),
-          ]);
+          // No ID, create new memory and queue embedding
+          const memoryId = await runtime.createMemory(message, 'messages');
+          // Set the ID on the message for downstream processing
+          message.id = memoryId;
+          // Create a memory object with the new ID for queuing
+          memoryToQueue = { ...message, id: memoryId };
+          await runtime.queueEmbeddingGeneration(memoryToQueue, 'normal');
         }
 
         const agentUserState = await runtime.getParticipantUserState(
@@ -1628,7 +1651,7 @@ const events = {
           `[Bootstrap] User ${payload.entityId} left world ${payload.worldId}`
         );
       } catch (error: any) {
-        payload.runtime.logger.error(`[Bootstrap] Error handling user left: ${error.message}`);
+        payload.runtime.logger.error('[Bootstrap] Error handling user left:', error instanceof Error ? error.message : String(error));
       }
     },
   ],
@@ -1698,7 +1721,8 @@ export const bootstrapPlugin: Plugin = {
     providers.knowledgeProvider,
     providers.roleProvider,
     providers.settingsProvider,
-    providers.capabilitiesProvider,
+    // there is given no reason for this - odi
+    //providers.capabilitiesProvider,
     providers.attachmentsProvider,
     providers.providersProvider,
     providers.actionsProvider,
@@ -1707,7 +1731,7 @@ export const bootstrapPlugin: Plugin = {
     providers.recentMessagesProvider,
     providers.worldProvider,
   ],
-  services: [TaskService],
+  services: [TaskService, EmbeddingGenerationService],
 };
 
 export default bootstrapPlugin;

@@ -3,8 +3,9 @@ from . import views
 
 app_name = 'eliza_tables'
 
+# All views redirect to the reporting app to avoid duplication
 urlpatterns = [
-    path('', views.DashboardView.as_view(), name='dashboard'),
-    path('interactions/', views.InteractionReportView.as_view(), name='interaction_report'),
-    path('agent/<uuid:agent_id>/', views.AgentDetailView.as_view(), name='agent_detail'),
+    path('', views.dashboard_redirect, name='dashboard'),
+    path('interactions/', views.interaction_redirect, name='interaction_report'),
+    path('agent/<uuid:agent_id>/', views.agent_detail_redirect, name='agent_detail'),
 ]

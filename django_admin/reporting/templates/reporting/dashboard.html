@@ -141,8 +141,7 @@ Dashboard{% endblock %} {% block extrastyle %}
     <h3>Milestone {{ milestone_id }}: {{ milestone.name }}</h3>
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px">
       <div>
-        <strong>Progress:</strong> {{ milestone.current|floatformat:0 }} / {{
-        milestone.target|floatformat:0 }}
+        <strong>Progress:</strong> {{ milestone.current|floatformat:0 }} / {{ milestone.target|floatformat:0 }}
         <div style="background: #ddd; height: 20px; border-radius: 10px; margin-top: 5px">
           <div
             style="background: {% if milestone.percentage >= 100 %}#28a745{% else %}#ffc107{% endif %}; height: 100%; width: {{ milestone.percentage }}%; border-radius: 10px;"
@@ -177,20 +176,14 @@ Dashboard{% endblock %} {% block extrastyle %}
     </tr>
   </thead>
   <tbody>
-    {% for agent in agents %}
+    {% for stat in agent_stats %}
     <tr>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd">{{ agent.name }}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd">{{ stat.agent.name }}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd">{{ stat.memories }}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd">{{ stat.recent }}</td>
       <td style="padding: 10px; border-bottom: 1px solid #ddd">
-        {% with agent_interactions|get_item:agent.name as agent_data %} {{
-        agent_data.memories|default:0 }} {% endwith %}
-      </td>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd">
-        {% with agent_interactions|get_item:agent.name as agent_data %} {{
-        agent_data.recent|default:0 }} {% endwith %}
-      </td>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd">
-        <a href="{% url 'reporting:agent_detail' agent.id %}">View Details</a> |
-        <a href="{% url 'admin:elizaos_agent_change' agent.id %}">Edit</a>
+        <a href="{% url 'reporting:agent_detail' stat.agent.id %}">View Details</a> |
+        <a href="{% url 'admin:elizaos_agent_change' stat.agent.id %}">Edit</a>
       </td>
     </tr>
     {% endfor %}

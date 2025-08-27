@@ -33,17 +33,37 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             created_at__gte=yesterday
         ).count()
         
-        # Get interaction breakdown by agent
+        # Get interaction breakdown by agent - optimized to reduce queries
+        from django.db.models import Count, Q
+        
+        # Get all counts in a single query per model
+        memory_counts = Memory.objects.values('agent_id').annotate(
+            total=Count('id'),
+            recent=Count('id', filter=Q(created_at__gte=yesterday))
+        )
+        
+        # Build lookup dictionary
+        memory_by_agent = {m['agent_id']: m for m in memory_counts}
+        
         agent_interactions = {}
         for agent in context['agents']:
+            agent_data = memory_by_agent.get(str(agent.id), {})
             agent_interactions[agent.name] = {
-                'memories': Memory.objects.filter(agent_id=agent.id).count(),
-                'recent': Memory.objects.filter(
-                    agent_id=agent.id,
-                    created_at__gte=yesterday
-                ).count()
+                'memories': agent_data.get('total', 0),
+                'recent': agent_data.get('recent', 0)
             }
         context['agent_interactions'] = agent_interactions
+        
+        # Also provide a simpler structure for the template
+        agent_stats = []
+        for agent in context['agents']:
+            stats = agent_interactions.get(agent.name, {'memories': 0, 'recent': 0})
+            agent_stats.append({
+                'agent': agent,
+                'memories': stats['memories'],
+                'recent': stats['recent']
+            })
+        context['agent_stats'] = agent_stats
         
         # Milestone tracking
         context['milestone_progress'] = self.calculate_milestone_progress()
