@@ -282,4 +282,158 @@ The consolidation transformed scattered observations into a coherent story: from
 
 ---
 
+## August 27, 2025 - Django Dashboard Consolidation & Production Updates
+
+### Dashboard Refactoring Journey
+
+Today's work began with addressing technical debt in the Django admin system. We discovered duplicate dashboard implementations that were causing maintenance headaches and confusion.
+
+#### The Problem
+- Two nearly identical dashboard implementations existed
+- `eliza_tables/templates/eliza_tables/dashboard.html` 
+- `reporting/templates/reporting/dashboard.html`
+- 90% identical code with minor CSS differences
+- Template rendering issues showing raw Django variables like `{{ agent_data.memories|default:0 }}`
+
+#### The Solution
+Consolidated all dashboard functionality into the `reporting` app as the single source of truth:
+- Replaced eliza_tables views with redirect functions
+- Updated URL routing to maintain backward compatibility
+- Fixed Django template syntax errors (unclosed blocks, multi-line tags)
+- Eliminated ~200 lines of duplicate code
+
+#### Technical Challenges Overcome
+1. **Template Syntax Errors**: Django tags split across lines were rendering as literal text
+2. **Docker Build Caching**: Changes weren't appearing due to layer reuse
+3. **Wrong File Identification**: Initially edited wrong app's templates before discovering URL mapping
+4. **Memory Content Display**: JSON objects displaying raw instead of formatted content
+
+### Critical Production Updates Analysis
+
+While working on the dashboard, we pulled significant operational updates from the remote repository. These revealed critical discoveries about the production environment:
+
+#### 📊 Complete Analysis of Merged Updates
+
+##### 🚨 Critical Operational Changes
+
+**1. Database Authentication Fix** (Most Important)
+- **Previous Issue**: Agents were failing with "client password must be a string" error
+- **Root Cause**: Empty password in PostgreSQL connection string
+- **Solution**: Must use `postgresql://postgres:postgres@localhost:5433/eliza` (with password)
+- **Impact**: All agents now start successfully
+
+**2. Deployment Architecture Clarification**
+- **Key Discovery**: Agents MUST run as native bun processes, NOT in Docker
+- **Current Architecture**:
+  - ✅ Docker: PostgreSQL, Nginx, Django
+  - ✅ Native Bun: All 5 agents (RegenAI, Facilitator, Voice of Nature, Governor, Narrative)
+- **Why This Matters**: Docker-based agent deployment breaks nginx proxy configuration
+
+**3. New Agent Startup Script** (`start-all-agents.sh`)
+- **Purpose**: Standardized way to start all agents with correct configuration
+- **Features**:
+  - Kills existing agents before starting
+  - Sets proper PostgreSQL connection string
+  - Starts 5 agents on ports 3000-3004
+  - Creates individual log files for each agent
+  - Shows status and access URLs
+- **Critical Setting**: `LOAD_DOCS_ON_STARTUP=false` (prevents memory issues)
+
+##### 🔐 Security & Access Updates
+
+**4. HTTPS/SSL Configuration**
+- **SSL Certificates**: Must be mounted from `/etc/letsencrypt`
+- **Basic Auth**: `regenai:regen2025` for web access
+- **Domain Structure**:
+  - `regen.gaiaai.xyz` - Main dashboard
+  - `admin.regen.gaiaai.xyz` - Django admin
+  - `agents.regen.gaiaai.xyz` - Agent interfaces
+- **Nginx Proxy**: Points to host IP `172.17.0.1:3000` (not container networking)
+
+##### 🤖 Telegram Integration
+
+**5. Character File Updates**
+- **Change**: Added Telegram bot token configuration
+- **Each Agent**: Gets unique `TELEGRAM_BOT_TOKEN_[NAME]` environment variable
+- **Purpose**: Enable Telegram bot functionality for each agent
+
+**6. New Documentation Suite**
+- **User-Facing Guide**: `TELEGRAM-BOT-SETUP.md` - How to interact with bots
+- **Technical Reference**: `TELEGRAM-TECHNICAL-REFERENCE.md` - Developer setup
+- **Plugin Troubleshooting**: `TROUBLESHOOTING-PLUGINS.md` - Common issues
+- **Knowledge Issues**: `ELIZA_KNOWLEDGE_PLUGIN_ISSUES.md` - Known problems
+
+##### 📦 Infrastructure Changes
+
+**7. Docker Compose Updates**
+- **Regen Container**: Still defined but NOT USED (agents run natively)
+- **Port Mapping**: 5433 for PostgreSQL (avoids local conflicts)
+- **Health Checks**: Added for PostgreSQL readiness
+
+**8. Nginx Configuration**
+- **Multiple Subdomains**: Proper routing for agents, admin, dashboard
+- **Upstream Definition**: `server 172.17.0.1:3000` for host-based agents
+- **Security Headers**: Added X-Frame-Options, X-XSS-Protection, etc.
+
+### Deployment Requirements & Next Steps
+
+Based on this analysis, to deploy our consolidated dashboard changes along with these updates:
+
+#### Prerequisites
+- ✅ PostgreSQL must be running on port 5433 with password "postgres"
+- ✅ SSL certificates must exist at `/etc/letsencrypt/live/regen.gaiaai.xyz/`
+- ✅ Basic auth file at `/etc/nginx/auth/.htpasswd` with regenai:regen2025
+
+#### Deployment Process
+```bash
+# 1. Push our changes
+git push origin regen-knowledge-rag
+
+# 2. On production server, pull updates
+git pull origin regen-knowledge-rag
+
+# 3. Restart Django for dashboard changes
+docker-compose build django --no-cache
+docker-compose up -d django
+
+# 4. Use new startup script for agents
+bash /opt/projects/GAIA/start-all-agents.sh
+
+# 5. Restart nginx to ensure proper routing
+docker-compose restart nginx
+```
+
+#### Key Benefits of These Updates
+- **Reliability**: Fixed PostgreSQL authentication issues that were causing agent failures
+- **Clarity**: Clear separation between Docker services and native agent processes
+- **Security**: Proper HTTPS/SSL with basic authentication
+- **Monitoring**: Individual log files for each agent
+- **Integration**: Telegram bot support for direct agent interaction
+
+#### What Changed for Our Dashboard
+Our dashboard consolidation work fits perfectly with these updates:
+- Django admin runs in Docker (as confirmed in architecture)
+- Dashboard accessible at `https://admin.regen.gaiaai.xyz/`
+- Our consolidated reporting app is the single source of truth
+- URL redirects ensure backward compatibility
+
+The merged updates primarily focused on **operational stability** and **Telegram integration**, while our work focused on **code quality** and **maintainability**. Together, they create a more robust system.
+
+### Version Control Summary
+
+Completed version control with comprehensive commits:
+- `87722b9b1a` - Dashboard consolidation refactoring
+- `6e1d9fb05d` - Updated ElizaOS version documentation from 1.2.0 to 1.4.4
+- Merged remote operational updates including startup scripts and SSL configuration
+
+### Lessons Learned
+
+1. **Always verify URL routing** - Django's URL dispatch can be deceptive
+2. **Docker caching is aggressive** - Use `--no-cache` when testing template changes
+3. **Template syntax is strict** - Django template tags must be on single lines
+4. **Production architecture matters** - Understanding that agents run natively, not in Docker, is critical
+5. **Documentation as discovery** - The CLAUDE.md updates revealed crucial operational knowledge
+
+---
+
 *"In consolidation, we discovered that less is more when less contains everything that matters. The journey of organizing knowledge became a journey of understanding itself."*
