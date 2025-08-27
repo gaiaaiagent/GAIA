@@ -24,7 +24,7 @@ Our agents serve as bridges between complex ecological data and human understand
 
 ```bash
 # Clone repository
-git clone https://github.com/gaiaaiagent/GAIA.git -b regen
+git clone https://github.com/gaiaaiagent/GAIA.git -b regen-knowledge-rag
 cd GAIA
 
 # Start with Docker
