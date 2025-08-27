@@ -1,44 +1,52 @@
 ---
-rid: koi:planning:directory-overview
-created: 2025-01-15
-last-modified: 2025-07-15
-confidence: high
-verification-status: directory-structure-documentation
-source-type: project-organization-guide
-related:
-  - koi:planning:planning-structure-analysis
-  - koi:planning:living-documentation-workflow
-  - koi:planning:feature-development-template
-  - koi:planning:sprint-development-template
-accuracy-concerns:
-  - directory-structure-may-evolve-with-project-growth
-  - planning-methodologies-subject-to-team-preferences
+rid: koi:planning:directory-guide
+created: 2025-08-27
+last-modified: 2025-08-27T17:15:00-08:00
 ---
 
-# Planning Directory
+# RegenAI Planning Directory
 
-This directory contains planning documents, roadmaps, and strategic planning materials for the RegenAI project.
+**Current Status**: Phase 1 Day 57/60 - Completion Sprint  
+**One Source of Truth**: [`MASTER-CHECKLIST.md`](./MASTER-CHECKLIST.md)
 
-## Structure
+## 📋 Essential Documents
 
-- `roadmaps/` - Development roadmaps and timelines
-- `features/` - Feature planning and specifications
-- `architecture/` - Architectural decisions and diagrams
-- `sprints/` - Sprint planning and retrospectives
-- `priorities/` - Priority tracking and backlog management
+### Active Planning
+- **[MASTER-CHECKLIST.md](./MASTER-CHECKLIST.md)** - Complete project checklist with live status updates
 
-## Usage
+### Strategic Reference  
+- **[contract.md](./roadmaps/contract.md)** - Joint Development Agreement with payment milestones
+- **[regen_ai_roadmap.md](./roadmaps/regen_ai_roadmap.md)** - 12-month vision from Regen team
+- **[regen_ai_agent_phase_1_scope.md](./roadmaps/regen_ai_agent_phase_1_scope.md)** - Original scope document
+- **[milestone-1-core-agent-framework.md](./roadmaps/milestone-1-core-agent-framework.md)** - Detailed milestone breakdown
 
-Use this directory to:
+## 🎯 How to Use
 
-1. Document planned features and enhancements
-2. Track architectural decisions
-3. Organize sprint planning materials
-4. Maintain project roadmaps
-5. Store design documents and specifications
+1. **Daily Work**: Check MASTER-CHECKLIST.md for current tasks
+2. **Contract Questions**: Reference contract.md for milestone details  
+3. **Long-term Vision**: Review 12-month roadmap
+4. **Task Updates**: Update checkboxes in MASTER-CHECKLIST.md only
 
-## File Naming Convention
+## 📁 Directory Structure
 
-- Use descriptive names with dates when relevant
-- Format: `YYYY-MM-DD-description.md` for time-sensitive plans
-- Keep filenames lowercase with hyphens for spaces
+```
+planning/
+├── MASTER-CHECKLIST.md     [LIVE STATUS - Update daily]
+├── README.md              [This file]
+├── roadmaps/              [Strategic reference documents]
+│   ├── contract.md
+│   ├── regen_ai_roadmap.md
+│   └── regen_ai_agent_phase_1_scope.md
+└── tasks/                 [Individual task detail pages]
+```
+
+## ✅ Update Protocol
+
+- **Who**: Team members update their assigned tasks
+- **When**: As tasks complete (real-time)
+- **Where**: MASTER-CHECKLIST.md checkboxes only
+- **Format**: Mark [x] and add completion date/notes
+
+---
+
+*Clean, focused planning. One checklist, real progress.*
