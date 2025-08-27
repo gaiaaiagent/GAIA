@@ -12,6 +12,7 @@ services:
       - '443:443' # HTTPS access
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
+      - django-static:/app/staticfiles:ro
     depends_on:
       - regen
       - django
@@ -92,7 +93,8 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
-      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,admin.localhost,agents.localhost
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,admin.localhost,agents.localhost,admin.regen.gaiaai.xyz
+      - CSRF_TRUSTED_ORIGINS=http://localhost,http://admin.localhost,http://agents.localhost,https://admin.regen.gaiaai.xyz
     volumes:
       - ./django_admin/eliza_admin:/app/eliza_admin:ro
       - ./django_admin/elizaos:/app/elizaos:ro

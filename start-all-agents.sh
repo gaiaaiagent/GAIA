@@ -3,7 +3,7 @@
 # Start All RegenAI Agents with Knowledge Plugin (Local Execution)
 # Sets knowledge path to /opt/projects/GAIA/knowledge and uses OpenAI text-embedding-3-small
 
-GAIA_DIR="/opt/projects/GAIA-direct"
+GAIA_DIR="/opt/projects/GAIA"
 KNOWLEDGE_PATH="/opt/projects/GAIA/knowledge"
 CHARACTERS_PATH="/opt/projects/GAIA/characters"
 
