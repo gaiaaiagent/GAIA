@@ -9,8 +9,9 @@
     "@elizaos/plugin-telegram"
   ],
   "settings": {
-    "secrets": {},
-    "allowDirectMessages": true,
+    "secrets": {
+      "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN_GOVERNOR}"
+    },
     "voice": {
       "model": "en_US-neutral-professional"
     },

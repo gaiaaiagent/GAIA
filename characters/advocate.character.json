@@ -9,7 +9,9 @@
     "@elizaos/plugin-telegram"
   ],
   "settings": {
-    "secrets": {},
+    "secrets": {
+      "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN_ADVOCATE}"
+    },
     "voice": {
       "model": "en_US-female-warm"
     },
