@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  regenai:
+    image: zaldarren/gaia-regen-knowledge:complete-fix-v6
+    container_name: regenai
+    command: start --character /app/characters/regenai.character.json --character /app/characters/advocate.character.json --character /app/characters/governor.character.json --character /app/characters/narrative.character.json --character /app/characters/voiceofnature.character.json
+    volumes:
+      - ./characters:/app/characters:ro
+      - ./knowledge:/app/knowledge:ro
+    environment:
+      - POSTGRES_URL=postgresql://postgres:postgres@gaia-postgres-1:5432/eliza
+      - OPENAI_API_KEY=
+      - KNOWLEDGE_PATH=/app/knowledge
+      - LOAD_DOCS_ON_STARTUP=true
+      - CTX_KNOWLEDGE_ENABLED=true
+      - LOG_LEVEL=debug
+      - SERVER_PORT=3000
+      - SERVER_HOST=0.0.0.0
+    ports:
+      - '3000:3000'
+    networks:
+      - gaia_eliza-network
+
+networks:
+  gaia_eliza-network:
+    external: true

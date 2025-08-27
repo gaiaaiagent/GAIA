@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  regen:
+    image: zaldarren/gaia-regen-knowledge:production-v9
+    container_name: regenai
+    command: start --character /app/characters/regenai.character.json --character /app/characters/advocate.character.json --character /app/characters/governor.character.json --character /app/characters/narrative.character.json --character /app/characters/voiceofnature.character.json
+    volumes:
+      - ./characters:/app/characters:ro
+      - ./.env:/app/.env:ro
+      - ./knowledge:/app/knowledge:ro
+    environment:
+      - NODE_ENV=production
+      - ELIZA_UI_ENABLE=true
+      - POSTGRES_URL=postgresql://postgres:postgres@postgres:5432/eliza
+      - ELIZA_SKIP_PLUGIN_VERIFY=true
+      - DISABLE_PLUGIN_REGISTRY=true
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - SERVER_PORT=3000
+      - SERVER_HOST=0.0.0.0
+      # Knowledge plugin settings
+      - LOAD_DOCS_ON_STARTUP=true
+      - KNOWLEDGE_PATH=/app/knowledge
+      - CTX_KNOWLEDGE_ENABLED=true
+      - ELIZA_SKIP_PLUGIN_VERIFY=true
+    ports:
+      - '3000:3000'
+      - '50000-50100:50000-50100/udp'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - eliza-network

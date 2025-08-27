@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  regenai:
+    image: zaldarren/gaia-regen-knowledge:production-v2
+    container_name: regenai
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # Don't mount characters directory - use the ones in the image with wrapper
+      # - ./characters:/app/characters:ro
+      - ./knowledge:/app/knowledge:ro
+    environment:
+      - NODE_ENV=production
+      - ELIZA_SKIP_BUILD=true
+      - DISABLE_BUILD=true
+      - ELIZA_SKIP_PLUGIN_VERIFY=true
+      - DISABLE_PLUGIN_REGISTRY=true
+      - LOG_LEVEL=debug
+      - LOAD_DOCS_ON_STARTUP=true
+      - CTX_KNOWLEDGE_ENABLED=true
+    ports:
+      - "3000:3000"
+    networks:
+      - regen-network
+
+networks:
+  regen-network:
+    driver: bridge

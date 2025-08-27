@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - /var/log/letsencrypt:/var/log/letsencrypt
+    command: certonly --standalone --email darren@regenai.xyz --agree-tos --no-eff-email -d regen.gaiaai.xyz -d admin.regen.gaiaai.xyz --expand --non-interactive
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: "no"

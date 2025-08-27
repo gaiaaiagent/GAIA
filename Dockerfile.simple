@@ -1,0 +1,44 @@
+# Simple Dockerfile for Eliza with Knowledge Plugin
+FROM node:20-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl \
+    ffmpeg \
+    git \
+    python3 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install bun globally
+RUN npm install -g bun@latest
+
+# Copy package files
+COPY package.json ./
+COPY tsconfig.json ./
+
+# Create a simple package.json if needed for the CLI
+RUN mkdir -p packages/cli && \
+    echo '{"name": "@elizaos/cli", "version": "1.0.0", "dependencies": {"@elizaos/plugin-knowledge": "^1.2.0"}}' > packages/cli/package.json
+
+# Install only what we need
+RUN cd packages/cli && npm install
+
+# Copy the rest of the application
+COPY packages ./packages
+COPY scripts ./scripts
+
+# Create knowledge directory
+RUN mkdir -p /app/knowledge
+
+ENV NODE_ENV=production
+ENV ELIZA_UI_ENABLE=true
+
+EXPOSE 3000
+EXPOSE 50000-50100/udp
+
+# Run the application
+CMD ["sh", "-c", "cd packages/cli && bun dist/index.js start --character /app/characters/regenai.character.json --character /app/characters/advocate.character.json --character /app/characters/governor.character.json --character /app/characters/narrative.character.json --character /app/characters/voiceofnature.character.json"]

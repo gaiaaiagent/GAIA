@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaia AI x Regen Network REGEN IRL Grant Competition</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gaia AI x Regen Network</h1>
+            <h2>REGEN IRL Grant Competition Application</h2>
+            <p class="subtitle">Apply for the REGEN IRL Grant to fund your on-the-ground project focused on Planetary Return on Investment (PROI). The winner receives $888 USDC, and all qualifying applicants receive $10 in $REGEN.</p>
+        </header>
+
+        <div class="main-content">
+            <div class="chat-section">
+                <div class="chat-header">
+                    <h3>🤖 AI Assistant</h3>
+                    <p>I'm here to help you complete your grant application. Ask me anything!</p>
+                </div>
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-message agent-message">
+                        <div class="message-content">
+                            Hi! I'm your AI assistant for the REGEN IRL Grant application. I can help you understand the requirements, fill out the form, and ensure your application is complete. What would you like to know first?
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="chatInput" placeholder="Ask me about the grant or get help with the form...">
+                    <button id="sendBtn">Send</button>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <form id="grantApplication">
+                    <div class="form-group">
+                        <label for="projectTitle">Project Title *</label>
+                        <input type="text" id="projectTitle" name="projectTitle" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectSummary">Please provide a brief summary of your project (2-3 sentences) *</label>
+                        <textarea id="projectSummary" name="projectSummary" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectCategory">Which category best describes your project's primary focus? *</label>
+                        <select id="projectCategory" name="projectCategory" required>
+                            <option value="">Select a category</option>
+                            <option value="carbon-sequestration">Carbon Sequestration</option>
+                            <option value="biodiversity">Biodiversity Conservation</option>
+                            <option value="regenerative-agriculture">Regenerative Agriculture</option>
+                            <option value="water-conservation">Water Conservation</option>
+                            <option value="soil-health">Soil Health</option>
+                            <option value="renewable-energy">Renewable Energy</option>
+                            <option value="waste-reduction">Waste Reduction</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="otherCategoryGroup" style="display: none;">
+                        <label for="otherCategory">If you selected 'Other' above, please specify your project's primary focus.</label>
+                        <input type="text" id="otherCategory" name="otherCategory">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="proiGeneration">How does your project generate Planetary Return on Investment (PROI)? (e.g., carbon sequestration, habitat creation, soil health improvement) *</label>
+                        <textarea id="proiGeneration" name="proiGeneration" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectStage">What is the current stage of your project? *</label>
+                        <select id="projectStage" name="projectStage" required>
+                            <option value="">Select project stage</option>
+                            <option value="idea">Idea/Concept</option>
+                            <option value="planning">Planning/Development</option>
+                            <option value="pilot">Pilot Project</option>
+                            <option value="ongoing">Ongoing Implementation</option>
+                            <option value="scaling">Scaling Up</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timeline">What is the estimated timeline for your project's key milestones? *</label>
+                        <textarea id="timeline" name="timeline" rows="4" required placeholder="Please describe key milestones and their estimated dates"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="supportingDocs">Please upload any supporting documents (e.g., project proposal, photos, videos) that demonstrate your project's impact.</label>
+                        <input type="file" id="supportingDocs" name="supportingDocs" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4,.mov" multiple>
+                        <small>Upload up to 5 files. Max 10 MB each.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="grantImportance">How important is this grant to the success of your project? *</label>
+                        <div class="rating-scale">
+                            <span>Not important</span>
+                            <div class="rating-inputs">
+                                <input type="radio" id="importance1" name="grantImportance" value="1" required>
+                                <label for="importance1">1</label>
+                                <input type="radio" id="importance2" name="grantImportance" value="2" required>
+                                <label for="importance2">2</label>
+                                <input type="radio" id="importance3" name="grantImportance" value="3" required>
+                                <label for="importance3">3</label>
+                                <input type="radio" id="importance4" name="grantImportance" value="4" required>
+                                <label for="importance4">4</label>
+                                <input type="radio" id="importance5" name="grantImportance" value="5" required>
+                                <label for="importance5">5</label>
+                            </div>
+                            <span>Very important</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confidence">On a scale of 1 to 10, how confident are you in your project's ability to achieve its stated PROI goals? *</label>
+                        <div class="rating-scale">
+                            <span>Not at all confident</span>
+                            <div class="rating-inputs">
+                                <input type="radio" id="conf1" name="confidence" value="1" required>
+                                <label for="conf1">1</label>
+                                <input type="radio" id="conf2" name="confidence" value="2" required>
+                                <label for="conf2">2</label>
+                                <input type="radio" id="conf3" name="confidence" value="3" required>
+                                <label for="conf3">3</label>
+                                <input type="radio" id="conf4" name="confidence" value="4" required>
+                                <label for="conf4">4</label>
+                                <input type="radio" id="conf5" name="confidence" value="5" required>
+                                <label for="conf5">5</label>
+                                <input type="radio" id="conf6" name="confidence" value="6" required>
+                                <label for="conf6">6</label>
+                                <input type="radio" id="conf7" name="confidence" value="7" required>
+                                <label for="conf7">7</label>
+                                <input type="radio" id="conf8" name="confidence" value="8" required>
+                                <label for="conf8">8</label>
+                                <input type="radio" id="conf9" name="confidence" value="9" required>
+                                <label for="conf9">9</label>
+                                <input type="radio" id="conf10" name="confidence" value="10" required>
+                                <label for="conf10">10</label>
+                            </div>
+                            <span>Extremely confident</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Please provide your email address for communication regarding your application *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="walletAddress">Please provide your EVM USDC wallet address for grant distribution (Mainnet/Base/Celo) *</label>
+                        <input type="text" id="walletAddress" name="walletAddress" required placeholder="0x...">
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
