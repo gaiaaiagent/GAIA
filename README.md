@@ -27,12 +27,24 @@ Our agents serve as bridges between complex ecological data and human understand
 git clone https://github.com/gaiaaiagent/GAIA.git -b regen-knowledge-rag
 cd GAIA
 
-# Start with Docker
-docker compose up -d
+# Install dependencies
+bun install
 
-# Visit locally
-open http://agents.localhost
+# Start database
+docker compose up -d postgres
+
+# Add your OpenAI API key to .env
+echo "OPENAI_API_KEY=your-key-here" > .env
+echo "POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza" >> .env
+
+# Start agents (will run without knowledge base)
+bash start-all-agents.sh
+
+# Visit locally  
+open http://localhost:3000
 ```
+
+> **Note**: The `knowledge/` directory contains sensitive data and is not included in the repository. Agents will run without the knowledge base for testing purposes.
 
 ## The Agents
 

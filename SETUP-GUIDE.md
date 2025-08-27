@@ -38,14 +38,26 @@ ANTHROPIC_API_KEY=your-anthropic-key
 TELEGRAM_BOT_TOKEN=your-telegram-token
 ```
 
-### 4. Start Agents
+### 4. Add Knowledge Base (Optional)
+
+The `knowledge/` directory is not included in the repository (contains sensitive data). For testing:
+
+```bash
+# Create empty knowledge directory - agents will run without knowledge
+mkdir -p knowledge
+
+# OR: Add your own knowledge files
+# Place .md, .txt, or .pdf files in knowledge/ directory
+```
+
+### 5. Start Agents
 
 ```bash
 # Start all 5 agents
 bash start-all-agents.sh
 ```
 
-### 5. Verify Setup
+### 6. Verify Setup
 
 - **API Check**: `curl http://localhost:3000/api/agents`
 - **Web UI**: Visit `http://localhost:3000` (RegenAI)
