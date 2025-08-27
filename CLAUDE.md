@@ -378,7 +378,7 @@ elizaos test --coverage
 /opt/projects/GAIA/knowledge/
 
 # Then restart agents:
-bash /opt/projects/GAIA/start-all-agents.sh
+bash /opt/projects/GAIA/scripts/start-all-agents.sh
 ```
 
 ## COMPLETE OPERATIONS GUIDE
@@ -407,7 +407,7 @@ ls -la /opt/projects/GAIA/characters/*.character.json
 pkill -f 'packages/cli/dist/index.js start' 2>/dev/null || true
 
 # 2. Start all 5 agents using the startup script
-bash /opt/projects/GAIA/start-all-agents.sh
+bash /opt/projects/GAIA/scripts/start-all-agents.sh
 
 # 3. Verify all agents started
 ps aux | grep -E "bun.*packages/cli/dist/index.js start" | grep -v grep
@@ -454,7 +454,7 @@ docker compose build nginx --no-cache
 **1. "Client password must be a string" Error**
 ```bash
 # Fix: Update startup script with correct PostgreSQL password
-grep POSTGRES_URL /opt/projects/GAIA/start-all-agents.sh
+grep POSTGRES_URL /opt/projects/GAIA/scripts/start-all-agents.sh
 # Should show: postgresql://postgres:postgres@localhost:5433/eliza
 ```
 
@@ -500,7 +500,7 @@ docker compose stop nginx
 docker ps | grep postgres
 
 # 3. Start agents
-bash /opt/projects/GAIA/start-all-agents.sh
+bash /opt/projects/GAIA/scripts/start-all-agents.sh
 
 # 4. Start nginx
 docker compose up -d nginx --no-deps
@@ -512,11 +512,11 @@ curl -u regenai:regen2025 https://regen.gaiaai.xyz/
 #### Key File Locations
 
 **Startup Configuration:**
-- `/opt/projects/GAIA/start-all-agents.sh` - Agent startup script with database config
+- `/opt/projects/GAIA/scripts/start-all-agents.sh` - Agent startup script with database config
 - `/opt/projects/GAIA-direct/.env` - Environment variables
 
 **Nginx Configuration:**
-- `/opt/projects/GAIA/nginx-ssl.conf` - HTTPS config (production) 
+- `/opt/projects/GAIA/config/nginx-ssl.conf` - HTTPS config (production) 
 - `/opt/projects/GAIA/nginx.Dockerfile` - Builds nginx with basic auth
 - `/opt/projects/GAIA/docker-compose.yaml` - Services configuration
 

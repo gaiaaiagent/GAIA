@@ -192,7 +192,7 @@ echo "TELEGRAM_BOT_TOKEN_NEWAGENT=your-new-token" >> /opt/projects/GAIA-direct/.
 
 # 4. Restart specific agent
 pkill -f "character-name.character.json"
-bash /opt/projects/GAIA/start-all-agents.sh
+bash /opt/projects/GAIA/scripts/start-all-agents.sh
 
 # 5. Test integration
 tail -f /opt/projects/GAIA-direct/logs/agent.log
@@ -281,7 +281,7 @@ curl "https://api.telegram.org/bot<TOKEN>/getMe"
 tail -f /opt/projects/GAIA-direct/logs/agentname.log
 
 # Restart agent
-pkill -f "agentname.character.json" && bash /opt/projects/GAIA/start-all-agents.sh
+pkill -f "agentname.character.json" && bash /opt/projects/GAIA/scripts/start-all-agents.sh
 ```
 
 ---

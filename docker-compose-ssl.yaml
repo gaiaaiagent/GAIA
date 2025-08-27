@@ -9,7 +9,7 @@ services:
       - '80:80'    # HTTP (for redirect and Let's Encrypt challenge)
       - '443:443'  # HTTPS
     volumes:
-      - ./nginx-ssl.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx-ssl.conf:/etc/nginx/nginx.conf:ro
       - ./auth:/etc/nginx/auth:ro
       - ./certbot-conf:/etc/letsencrypt:ro
       - ./certbot-www:/var/www/certbot
