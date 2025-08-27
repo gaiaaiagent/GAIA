@@ -164,7 +164,7 @@ Features:
 - **Indexing**: `/home/regenai/project/indexing` (Notion crawler)
 
 ### Technology Stack
-- **Framework**: ElizaOS 1.2.0
+- **Framework**: ElizaOS 1.4.4
 - **Runtime**: Bun (NOT npm/pnpm)
 - **Language**: TypeScript
 - **Database**: PostgreSQL with pgvector extension
