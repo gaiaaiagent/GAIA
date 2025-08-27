@@ -42,12 +42,13 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             recent=Count('id', filter=Q(created_at__gte=yesterday))
         )
         
-        # Build lookup dictionary
+        # Build lookup dictionary - ensure keys are UUIDs not strings
         memory_by_agent = {m['agent_id']: m for m in memory_counts}
         
         agent_interactions = {}
         for agent in context['agents']:
-            agent_data = memory_by_agent.get(str(agent.id), {})
+            # Look up by UUID directly, not string
+            agent_data = memory_by_agent.get(agent.id, {})
             agent_interactions[agent.name] = {
                 'memories': agent_data.get('total', 0),
                 'recent': agent_data.get('recent', 0)
