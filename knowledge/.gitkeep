@@ -1,0 +1,2 @@
+# This file ensures the knowledge/ directory is tracked in git while ignoring all content files.
+# Users need this folder to exist for the agents' KNOWLEDGE_PATH to work properly.

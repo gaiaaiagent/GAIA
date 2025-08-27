@@ -306,8 +306,9 @@ docs/*-AGREEMENT-*.md
 docs/*-NDA-*.md
 docs/*-CONFIDENTIAL-*.md
 
-# Knowledge base content - large files
-knowledge/
+# Knowledge base content - large files (keep folder structure)
+knowledge/*
+!knowledge/.gitkeep
 plugin-knowledge/
 backups/
 data-v34/
