@@ -5,8 +5,7 @@
     "@elizaos/plugin-bootstrap",
     "@elizaos/plugin-sql",
     "@elizaos/plugin-openai",
-    "@elizaos/plugin-knowledge",
-    "@elizaos/plugin-telegram"
+    "@elizaos/plugin-knowledge"
   ],
   "settings": {
     "secrets": {
