@@ -13,7 +13,7 @@ RUN mkdir -p /etc/nginx/auth
 RUN htpasswd -cbB /etc/nginx/auth/.htpasswd regenai regen2025
 
 # Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx-ssl.conf /etc/nginx/nginx.conf
 
 # Note: In production, you should:
 # 1. Change the password

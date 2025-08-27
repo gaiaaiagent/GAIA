@@ -4,7 +4,38 @@ https://github.com/gaiaaiagent/GAIA/tree/regen
 
 Essential configuration for Claude Code when working with the RegenAI/GAIA codebase.
 
-## 🚨 CRITICAL DISCOVERIES
+## 🚨 CRITICAL DISCOVERIES & LESSONS LEARNED
+
+### Database Configuration (August 27, 2025)
+
+**MOST COMMON FAILURE:** PostgreSQL authentication errors
+
+**Problem:** Agents fail with "client password must be a string" or "password authentication failed"
+
+**Solution:** Use correct PostgreSQL connection string in startup script:
+```bash
+# CORRECT (with password "postgres"):
+POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza
+
+# WRONG (empty password causes SASL errors):
+POSTGRES_URL=postgresql://postgres:@localhost:5433/eliza
+```
+
+### Agent Deployment Architecture (August 27, 2025)
+
+**CRITICAL:** Agents run as native bun processes, NOT Docker containers!
+
+- ✅ **PostgreSQL, Nginx, Django:** Run in Docker
+- ✅ **Agents (5 instances):** Run as native bun processes on host
+- ❌ **Never run agents in Docker** - this breaks the proxy configuration
+
+### Web Server Configuration (August 27, 2025)
+
+**HTTPS/SSL Setup Requirements:**
+- SSL certificates must be mounted: `/etc/letsencrypt:/etc/letsencrypt:ro`
+- Nginx proxy must point to host IP: `server 172.17.0.1:3000;`
+- Basic auth credentials: `regenai:regen2025`
+- Ports: HTTP (80) redirects to HTTPS (443)
 
 ### Plugin Loading Issue (Found Aug 2024)
 
@@ -29,18 +60,23 @@ cp -f /opt/projects/GAIA-direct/packages/plugin-knowledge/dist/index.js \
 # Are agents running?
 ps aux | grep -E "bun.*packages/cli/dist/index.js start" | grep -v grep
 
-# View logs
-tail -f /opt/projects/GAIA-direct/logs/all-agents-hybrid.log
+# View individual agent logs
+tail -f /opt/projects/GAIA-direct/logs/regenai.log
+tail -f /opt/projects/GAIA-direct/logs/facilitator.log
+tail -f /opt/projects/GAIA-direct/logs/voiceofnature.log
+tail -f /opt/projects/GAIA-direct/logs/governor.log
+tail -f /opt/projects/GAIA-direct/logs/narrative.log
 
-# Restart agents (to load new knowledge)
-bash /opt/projects/GAIA/start-agents-hybrid.sh
+# Check web access
+curl -u regenai:regen2025 https://regen.gaiaai.xyz/
 ```
 
 ### Key Paths
 - **Agents run from**: `/opt/projects/GAIA-direct`
 - **Knowledge loaded from**: `/opt/projects/GAIA/knowledge`
 - **Characters**: `/opt/projects/GAIA/characters`
-- **Web UI**: https://regen.gaiaai.xyz/
+- **Web UI**: https://regen.gaiaai.xyz/ (Username: `regenai`, Password: `regen2025`)
+- **Admin Panel**: https://admin.regen.gaiaai.xyz/admin/
 
 ## Project Context
 
@@ -342,8 +378,153 @@ elizaos test --coverage
 /opt/projects/GAIA/knowledge/
 
 # Then restart agents:
-bash /opt/projects/GAIA/start-agents-hybrid.sh
+bash /opt/projects/GAIA/start-all-agents.sh
 ```
+
+## COMPLETE OPERATIONS GUIDE
+
+### Agent Management (CRITICAL PROCEDURES)
+
+#### Prerequisites Check
+```bash
+# 1. PostgreSQL must be running in Docker
+docker ps | grep postgres
+# Should show: gaia-postgres-1 running on port 5433
+
+# 2. Check database connectivity
+docker exec gaia-postgres-1 psql -U postgres -d eliza -c '\l'
+
+# 3. Verify character files exist
+ls -la /opt/projects/GAIA/characters/*.character.json
+```
+
+#### Starting All Agents (CORRECT PROCEDURE)
+
+**CRITICAL: Agents run as native bun processes, NOT Docker containers!**
+
+```bash
+# 1. Stop any existing agents first
+pkill -f 'packages/cli/dist/index.js start' 2>/dev/null || true
+
+# 2. Start all 5 agents using the startup script
+bash /opt/projects/GAIA/start-all-agents.sh
+
+# 3. Verify all agents started
+ps aux | grep -E "bun.*packages/cli/dist/index.js start" | grep -v grep
+```
+
+**Expected:** 5 processes for regenai, facilitator, voiceofnature, governor, narrative
+
+#### Database Configuration (MOST COMMON ERROR)
+
+**CORRECT PostgreSQL URL (in startup script):**
+```bash
+POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza
+```
+
+**WRONG configurations that cause failures:**
+```bash
+POSTGRES_URL=postgresql://postgres:@localhost:5433/eliza  # Empty password
+PGLITE_DATA_DIR=/some/path  # Wrong database type
+```
+
+#### Web Server Management
+
+**Nginx Configuration:**
+```bash
+# Check nginx status
+docker ps | grep nginx
+
+# Restart nginx if needed
+docker compose stop nginx && docker compose up -d nginx --no-deps
+
+# Test HTTPS access with basic auth
+curl -u regenai:regen2025 https://regen.gaiaai.xyz/
+
+# Rebuild nginx if configuration changed
+docker compose build nginx --no-cache
+```
+
+**Web Access URLs:**
+- **Main Dashboard:** https://regen.gaiaai.xyz/ (Username: `regenai`, Password: `regen2025`)
+- **Admin Panel:** https://admin.regen.gaiaai.xyz/admin/
+
+#### Troubleshooting Guide
+
+**1. "Client password must be a string" Error**
+```bash
+# Fix: Update startup script with correct PostgreSQL password
+grep POSTGRES_URL /opt/projects/GAIA/start-all-agents.sh
+# Should show: postgresql://postgres:postgres@localhost:5433/eliza
+```
+
+**2. Agents Not Appearing on Dashboard**
+```bash
+# Check individual agent logs
+tail -f /opt/projects/GAIA-direct/logs/regenai.log
+tail -f /opt/projects/GAIA-direct/logs/facilitator.log
+# Look for "Database connection verified" message
+```
+
+**3. HTTPS Not Working**
+```bash
+# Check SSL certificates are mounted
+docker exec nginx ls -la /etc/letsencrypt/live/regen.gaiaai.xyz/
+
+# Check nginx configuration
+docker exec nginx nginx -t
+
+# View nginx error logs
+docker logs nginx --tail 20
+```
+
+**4. Nginx Proxy Issues**
+```bash
+# Verify nginx is pointing to host agents
+docker exec nginx grep -A 3 "upstream regen_app" /etc/nginx/nginx.conf
+# Should show: server 172.17.0.1:3000;
+
+# Check agents are listening on correct ports
+netstat -tlnp | grep -E ":(3000|3001|3002|3003|3004)"
+```
+
+#### Complete Restart Procedure
+
+**Use this when troubleshooting or making changes:**
+```bash
+# 1. Stop everything
+pkill -f 'packages/cli/dist/index.js start' 2>/dev/null || true
+docker compose stop nginx
+
+# 2. Verify PostgreSQL still running
+docker ps | grep postgres
+
+# 3. Start agents
+bash /opt/projects/GAIA/start-all-agents.sh
+
+# 4. Start nginx
+docker compose up -d nginx --no-deps
+
+# 5. Test access
+curl -u regenai:regen2025 https://regen.gaiaai.xyz/
+```
+
+#### Key File Locations
+
+**Startup Configuration:**
+- `/opt/projects/GAIA/start-all-agents.sh` - Agent startup script with database config
+- `/opt/projects/GAIA-direct/.env` - Environment variables
+
+**Nginx Configuration:**
+- `/opt/projects/GAIA/nginx-ssl.conf` - HTTPS config (production) 
+- `/opt/projects/GAIA/nginx.Dockerfile` - Builds nginx with basic auth
+- `/opt/projects/GAIA/docker-compose.yaml` - Services configuration
+
+**Character Files:**
+- `/opt/projects/GAIA/characters/` - Agent character definitions
+
+**Log Files:**
+- `/opt/projects/GAIA-direct/logs/[agent-name].log` - Individual agent logs
 
 ## Character Development
 
@@ -358,6 +539,8 @@ Each agent has a unique character file in `/opt/projects/GAIA/characters/`:
 
 ### Essential Docs
 - **This file** - Critical config and commands
+- `/opt/projects/GAIA/docs/TELEGRAM-BOT-SETUP.md` - **User guide for Regen team to interact with Telegram bots**
+- `/opt/projects/GAIA/docs/TELEGRAM-TECHNICAL-REFERENCE.md` - Technical setup and troubleshooting for developers
 - `/opt/projects/GAIA/docs/AGENT-OPERATIONS.md` - Detailed operations guide
 - `/opt/projects/GAIA/docs/CONTRACT-JDA.md` - Full partnership agreement
 - `/opt/projects/GAIA/docs/NOTION-INTEGRATION.md` - Notion knowledge integration

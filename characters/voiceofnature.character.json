@@ -6,10 +6,12 @@
     "@elizaos/plugin-sql",
     "@elizaos/plugin-openai",
     "@elizaos/plugin-knowledge",
-    "@elizaos/plugin-http-api"
+    "@elizaos/plugin-telegram"
   ],
   "settings": {
-    "secrets": {},
+    "secrets": {
+      "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN_VOICEOFNATURE}"
+    },
     "voice": {
       "model": "en_US-male-deep"
     },
