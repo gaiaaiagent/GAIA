@@ -37,19 +37,41 @@ POSTGRES_URL=postgresql://postgres:@localhost:5433/eliza
 - Basic auth credentials: `regenai:regen2025`
 - Ports: HTTP (80) redirects to HTTPS (443)
 
-### Plugin Loading Issue (Found Aug 2024)
+### Plugin-Knowledge Configuration (Updated Aug 28, 2025)
 
-**Plugins are loaded from EXTERNAL directory**, not the monorepo:
-- **Actual Runtime Location**: `/opt/projects/plugin-knowledge/`
-- **Development Location**: `/opt/projects/GAIA-direct/packages/plugin-knowledge/`
+**CRITICAL:** We use a custom fork of plugin-knowledge with deduplication fixes!
 
-**You MUST copy built plugins to external directory for changes to take effect!**
-
-```bash
-# After building plugin in monorepo
-cp -f /opt/projects/GAIA-direct/packages/plugin-knowledge/dist/index.js \
-      /opt/projects/plugin-knowledge/dist/index.js
+**Correct package.json configuration:**
+```json
+"dependencies": {
+  "@elizaos/plugin-knowledge": "https://github.com/gaiaaiagent/plugin-knowledge.git#regenai-unified-fixes",
+  // ... other dependencies
+}
 ```
+
+**Setup Process:**
+```bash
+# 1. Ensure correct ownership (as server owner)
+sudo chown -R darren:gaia-devs /opt/projects/GAIA
+sudo chmod -R g+rws /opt/projects/GAIA
+
+# 2. Clean install dependencies
+rm -rf node_modules bun.lock bun.lockb
+rm -rf ~/.bun/install/cache/*
+bun install
+
+# 3. Build the plugin-knowledge from source (REQUIRED!)
+cd /opt/projects/GAIA/node_modules/@elizaos/plugin-knowledge
+bun run build
+
+# 4. Restart agents
+bash /opt/projects/GAIA/start-all-agents.sh
+```
+
+**Common Issues:**
+- **"Cannot find module './dist/index.js'"**: Plugin needs to be built first
+- **Permission denied errors**: Fix ownership with sudo commands above
+- **Agents reprocessing all documents**: Ensure using our fork with deduplication
 
 ### How Agents Actually Run
 
@@ -61,20 +83,21 @@ cp -f /opt/projects/GAIA-direct/packages/plugin-knowledge/dist/index.js \
 ps aux | grep -E "bun.*packages/cli/dist/index.js start" | grep -v grep
 
 # View individual agent logs
-tail -f /opt/projects/GAIA-direct/logs/regenai.log
-tail -f /opt/projects/GAIA-direct/logs/facilitator.log
-tail -f /opt/projects/GAIA-direct/logs/voiceofnature.log
-tail -f /opt/projects/GAIA-direct/logs/governor.log
-tail -f /opt/projects/GAIA-direct/logs/narrative.log
+tail -f /opt/projects/GAIA/logs/regenai.log
+tail -f /opt/projects/GAIA/logs/advocate.log
+tail -f /opt/projects/GAIA/logs/voiceofnature.log
+tail -f /opt/projects/GAIA/logs/governor.log
+tail -f /opt/projects/GAIA/logs/narrative.log
 
 # Check web access
 curl -u regenai:regen2025 https://regen.gaiaai.xyz/
 ```
 
 ### Key Paths
-- **Agents run from**: `/opt/projects/GAIA-direct`
+- **Agents run from**: `/opt/projects/GAIA` (symlinked to `/opt/projects/GAIA-direct`)
 - **Knowledge loaded from**: `/opt/projects/GAIA/knowledge`
 - **Characters**: `/opt/projects/GAIA/characters`
+- **Logs**: `/opt/projects/GAIA/logs/`
 - **Web UI**: https://regen.gaiaai.xyz/ (Username: `regenai`, Password: `regen2025`)
 - **Admin Panel**: https://admin.regen.gaiaai.xyz/admin/
 
@@ -86,11 +109,11 @@ curl -u regenai:regen2025 https://regen.gaiaai.xyz/
 - **Phase 1 Goal**: 5 agents, 15,000+ docs, 100,000+ interactions in 60 days
 
 ### Current Setup
-- **5 AI Agents**: RegenAI, Facilitator, Voice of Nature, Governor, Narrative
+- **5 AI Agents**: RegenAI, Advocate, Voice of Nature, Governor, Narrative
 - **Database**: PostgreSQL with pgvector (Docker container on port 5433)
-- **Knowledge Base**: 606 Notion pages + Regen Network docs
+- **Knowledge Base**: 13,000+ documents (Notion pages, Regen Network docs, governance, technical docs)
 - **Model**: GPT-5 Nano 2025-08-07 (chat) + OpenAI text-embedding-3-small (embeddings)
-- **KOI System**: Knowledge Organization Infrastructure with RID-based agent tracking
+- **Plugin-Knowledge**: Custom fork with deduplication and enhanced processing
 
 ## 🌿 KOI Node System (Knowledge Organization Infrastructure)
 
@@ -192,11 +215,31 @@ Features:
 - Interactive knowledge query interface
 - Agent status monitoring with proper name mapping
 
+## Knowledge Configuration
+
+### Agent Knowledge Settings
+Each agent character file should have these settings for proper knowledge access:
+```json
+"plugins": [
+  "@elizaos/plugin-bootstrap",
+  "@elizaos/plugin-sql",
+  "@elizaos/plugin-openai",
+  "@elizaos/plugin-knowledge",  // Required for knowledge access
+  "@elizaos/plugin-http-api"
+],
+"settings": {
+  "LOAD_DOCS_ON_STARTUP": true,  // Set to true for immediate knowledge access
+  "KNOWLEDGE_PATH": "./knowledge"  // Points to /opt/projects/GAIA/knowledge
+}
+```
+
+**Note:** With 32GB RAM, all agents can have `LOAD_DOCS_ON_STARTUP: true` for best performance.
+
 ## Development Environment
 
 ### Working Directory
 - **Main**: `/opt/projects/GAIA` (Docker configs, characters, knowledge)
-- **Runtime**: `/opt/projects/GAIA-direct` (where agents actually run)
+- **Runtime**: `/opt/projects/GAIA` (symlinked from GAIA-direct)
 - **Indexing**: `/home/regenai/project/indexing` (Notion crawler)
 
 ### Technology Stack
