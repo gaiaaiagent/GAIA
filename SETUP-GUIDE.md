@@ -114,5 +114,15 @@ GAIA/
 - **Agents won't start**: Check `bun install` and `bun run build` completed successfully
 - **Database errors**: Ensure PostgreSQL is running on port 5433
 - **API key errors**: Verify `.env` file has valid OpenAI key
+- **Can't stop agents**: If started by another user, use `sudo pkill -f "bun.*packages/cli/dist/index.js start"`
 
-For detailed information, see `CLAUDE.md`.
+## Team Development Notes
+
+If multiple developers work on the same server:
+- Agents run as the user who started them
+- Other developers need `sudo pkill` to stop agents started by others
+- Consider using a shared service user or systemd for production
+
+For detailed multi-developer process management, see `docs/AGENT-OPERATIONS.md`.
+
+For complete information, see `CLAUDE.md`.

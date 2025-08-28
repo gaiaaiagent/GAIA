@@ -9,6 +9,77 @@ The GAIA agents are deployed in a **hybrid architecture**:
 - **Web Proxy**: Nginx in Docker
 - **Admin Panel**: Django in Docker
 
+## Multi-Developer Process Management
+
+### Problem
+In a multi-developer environment, when one developer starts agents, other developers cannot stop them due to process ownership permissions:
+
+```bash
+# This fails if another developer started the agents
+pkill -f "bun.*packages/cli/dist/index.js start"
+# Result: "Operation not permitted"
+```
+
+### Solutions
+
+#### 1. Quick Fix - Use sudo (Current approach)
+```bash
+# Any developer can stop all agent processes
+sudo pkill -f "bun.*packages/cli/dist/index.js start"
+
+# Then restart normally
+bash /opt/projects/GAIA/start-all-agents.sh
+```
+
+#### 2. Shared Service User (Recommended for development)
+```bash
+# Setup (one time)
+sudo useradd -r -s /bin/bash gaia-service
+sudo usermod -aG gaia-devs gaia-service
+
+# Usage by any developer
+sudo -u gaia-service pkill -f "bun.*packages/cli"
+sudo -u gaia-service bash /opt/projects/GAIA/start-all-agents.sh
+```
+
+#### 3. Systemd Service (Best for production)
+Create `/etc/systemd/system/gaia-agents.service`:
+
+```ini
+[Unit]
+Description=GAIA AI Agents
+After=docker.service postgresql.service
+
+[Service]
+Type=forking
+User=gaia-service
+WorkingDirectory=/opt/projects/GAIA
+ExecStart=/opt/projects/GAIA/start-all-agents.sh
+ExecStop=/usr/bin/pkill -f "bun.*packages/cli/dist/index.js start"
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then any developer can manage:
+```bash
+sudo systemctl start gaia-agents
+sudo systemctl stop gaia-agents
+sudo systemctl restart gaia-agents
+sudo systemctl status gaia-agents
+```
+
+#### 4. Docker Container Approach
+- Run agents in Docker containers
+- Any developer can manage containers
+- Requires configuration updates for volume mounts and networking
+
+### Recommendation
+For development: Use **sudo pkill** (current approach) for simplicity.
+For production: Implement **systemd service** for proper process management.
+
 ## Agent Process Details
 
 ### Location
