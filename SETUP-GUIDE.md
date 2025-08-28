@@ -41,7 +41,35 @@ ANTHROPIC_API_KEY=your-anthropic-key
 TELEGRAM_BOT_TOKEN=your-telegram-token
 ```
 
-### 4. Add Knowledge Base (Optional)
+### 4. Model Configuration (Default: OpenAI GPT-3.5 Turbo)
+
+The agents are configured to use:
+- **Chat Model**: GPT-3.5 Turbo (`gpt-3.5-turbo`)
+- **Embeddings**: OpenAI text-embedding-3-small
+- **Provider**: OpenAI
+
+To use different models, add to your `.env`:
+
+```bash
+# Use GPT-4 (more expensive, better quality)
+TEXT_MODEL=gpt-4o-mini
+TEXT_PROVIDER=openai
+
+# Use Claude (requires ANTHROPIC_API_KEY)
+TEXT_MODEL=claude-3-haiku-20240307
+TEXT_PROVIDER=anthropic
+
+# Use different embeddings
+TEXT_EMBEDDING_MODEL=text-embedding-3-large  # Better quality, more expensive
+```
+
+**Cost Considerations:**
+- GPT-3.5 Turbo: ~$0.002/1K tokens (cheapest)
+- GPT-4o-mini: ~$0.15/1M tokens (good balance)  
+- Claude Haiku: ~$0.25/1M tokens
+- Embeddings: text-embedding-3-small is most cost-effective
+
+### 5. Add Knowledge Base (Optional)
 
 The `knowledge/` directory is not included in the repository (contains sensitive data). For testing:
 
@@ -53,14 +81,14 @@ mkdir -p knowledge
 # Place .md, .txt, or .pdf files in knowledge/ directory
 ```
 
-### 5. Start Agents
+### 6. Start Agents
 
 ```bash
 # Start all 5 agents
 bash start-all-agents.sh
 ```
 
-### 6. Verify Setup
+### 7. Verify Setup
 
 - **API Check**: `curl http://localhost:3000/api/agents`
 - **Web UI**: Visit `http://localhost:3000` (RegenAI)
