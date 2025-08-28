@@ -1,4 +1,4 @@
-{% extends "admin/base_site.html" %} {% load static dict_extras %} {% block title %}ElizaOS
+{% extends "admin/base_site.html" %} {% load static dict_extras %} {% block title %}RegenAI
 Dashboard{% endblock %} {% block extrastyle %}
 <style>
   /* Fix text colors for dark mode compatibility */
@@ -95,10 +95,10 @@ Dashboard{% endblock %} {% block extrastyle %}
 {% endblock %} {% block breadcrumbs %}
 <div class="breadcrumbs">
   <a href="{% url 'admin:index' %}">Home</a>
-  &rsaquo; <a href="{% url 'reporting:dashboard' %}">Dashboard</a>
+  &rsaquo; RegenAI Dashboard
 </div>
 {% endblock %} {% block content %}
-<h1>ElizaOS RegenAI Dashboard</h1>
+<h1>RegenAI Dashboard</h1>
 
 <div
   class="dashboard-stats"
@@ -116,9 +116,9 @@ Dashboard{% endblock %} {% block extrastyle %}
 
   <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px">
     <h3>Total Interactions</h3>
-    <p style="font-size: 2em; margin: 0">{{ total_interactions|add:total_messages }}</p>
+    <p style="font-size: 2em; margin: 0">{{ total_interactions }}</p>
     <p style="font-size: 0.9em; color: #666">
-      Chat: {{ total_interactions }} | Messages: {{ total_messages }}
+      All agent and user messages
     </p>
   </div>
 
@@ -132,9 +132,9 @@ Dashboard{% endblock %} {% block extrastyle %}
 
   <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px">
     <h3>24h Activity</h3>
-    <p style="font-size: 2em; margin: 0">{{ recent_interactions|add:recent_messages }}</p>
+    <p style="font-size: 2em; margin: 0">{{ recent_interactions }}</p>
     <p style="font-size: 0.9em; color: #666">
-      Chat: {{ recent_interactions }} | Messages: {{ recent_messages }}
+      Messages from last 24 hours
     </p>
   </div>
 </div>
@@ -161,33 +161,353 @@ Dashboard{% endblock %} {% block extrastyle %}
 </div>
 
 <h2>Agent Performance</h2>
-<table style="width: 100%; border-collapse: collapse">
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 0.9em">
   <thead>
     <tr style="background: #f0f0f0">
-      <th style="padding: 10px; text-align: left">Agent Name</th>
-      <th style="padding: 10px; text-align: left">Total Memories</th>
-      <th style="padding: 10px; text-align: left">24h Activity</th>
-      <th style="padding: 10px; text-align: left">Actions</th>
+      <th rowspan="2" style="padding: 10px; text-align: left; border-right: 2px solid #ddd">Agent</th>
+      {% for platform in platform_list %}
+      <th colspan="4" style="padding: 5px; text-align: center; border-right: 1px solid #ddd">{{ platform|title }}</th>
+      {% endfor %}
+      <th colspan="4" style="padding: 5px; text-align: center; border-right: 1px solid #ddd">Direct</th>
+      <th colspan="4" style="padding: 5px; text-align: center"><strong>Total</strong></th>
+    </tr>
+    <tr style="background: #f0f0f0">
+      <!-- Platform columns -->
+      {% for platform in platform_list %}
+      <th style="padding: 5px; text-align: center; font-size: 0.85em">24H</th>
+      <th style="padding: 5px; text-align: center; font-size: 0.85em">7D</th>
+      <th style="padding: 5px; text-align: center; font-size: 0.85em">30D</th>
+      <th style="padding: 5px; text-align: center; font-size: 0.85em; border-right: 1px solid #ddd"><strong>Total</strong></th>
+      {% endfor %}
+      
+      <!-- Direct columns -->
+      <th style="padding: 5px; text-align: center; font-size: 0.85em">24H</th>
+      <th style="padding: 5px; text-align: center; font-size: 0.85em">7D</th>
+      <th style="padding: 5px; text-align: center; font-size: 0.85em">30D</th>
+      <th style="padding: 5px; text-align: center; font-size: 0.85em; border-right: 1px solid #ddd"><strong>Total</strong></th>
+      
+      <!-- Total columns -->
+      <th style="padding: 5px; text-align: center; font-size: 0.85em">24H</th>
+      <th style="padding: 5px; text-align: center; font-size: 0.85em">7D</th>
+      <th style="padding: 5px; text-align: center; font-size: 0.85em">30D</th>
+      <th style="padding: 5px; text-align: center; font-size: 0.85em"><strong>Total</strong></th>
     </tr>
   </thead>
   <tbody>
     {% for stat in agent_stats %}
     <tr>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd">{{ stat.agent.name }}</td>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd">{{ stat.memories }}</td>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd">{{ stat.recent }}</td>
-      <td style="padding: 10px; border-bottom: 1px solid #ddd">
-        <a href="{% url 'reporting:agent_detail' stat.agent.id %}">View Details</a> |
-        <a href="{% url 'admin:elizaos_agent_change' stat.agent.id %}">Edit</a>
+      <td style="padding: 8px; border-bottom: 1px solid #ddd; border-right: 2px solid #ddd">
+        <a href="{% url 'admin:elizaos_agent_change' stat.agent.id %}" title="Edit {{ stat.agent.name }}">{{ stat.agent.name }}</a>
+      </td>
+      
+      <!-- Platform data -->
+      {% for platform in platform_list %}
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.platform_24h|get_item:platform|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.platform_7d|get_item:platform|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.platform_30d|get_item:platform|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; border-right: 1px solid #ddd">
+        <strong>{{ stat.platform_total|get_item:platform|default:"0" }}</strong>
+      </td>
+      {% endfor %}
+      
+      <!-- Direct data -->
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.direct_24h|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.direct_7d|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.direct_30d|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; border-right: 1px solid #ddd">
+        <strong>{{ stat.direct_total|default:"0" }}</strong>
+      </td>
+      
+      <!-- Total data -->
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ stat.last_24h }}</strong>
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ stat.last_7d }}</strong>
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ stat.last_30d }}</strong>
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ stat.total }}</strong>
       </td>
     </tr>
     {% endfor %}
+    
+    
+    <!-- Total row -->
+    <tr style="background: #f0f0f0; font-weight: bold">
+      <td style="padding: 8px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; border-right: 2px solid #ddd">
+        Total
+      </td>
+      
+      <!-- Platform totals -->
+      {% for platform in platform_list %}
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {% with platform_key=platform|concat_key:"_24h" %}{{ totals|get_item:platform_key }}{% endwith %}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {% with platform_key=platform|concat_key:"_7d" %}{{ totals|get_item:platform_key }}{% endwith %}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {% with platform_key=platform|concat_key:"_30d" %}{{ totals|get_item:platform_key }}{% endwith %}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center; border-right: 1px solid #ddd">
+        {% with platform_key=platform|concat_key:"_total" %}{{ totals|get_item:platform_key }}{% endwith %}
+      </td>
+      {% endfor %}
+      
+      <!-- Direct totals -->
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {{ totals.direct_24h }}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {{ totals.direct_7d }}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {{ totals.direct_30d }}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center; border-right: 1px solid #ddd">
+        {{ totals.direct_total }}
+      </td>
+      
+      <!-- Grand totals -->
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ totals.total_24h }}</strong>
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ totals.total_7d }}</strong>
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ totals.total_30d }}</strong>
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ totals.total_all }}</strong>
+      </td>
+    </tr>
   </tbody>
 </table>
 
+<h2>Active Users</h2>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 0.9em">
+  <thead>
+    <tr>
+      <th style="padding: 10px; text-align: left; background: #f0f0f0; border-bottom: 2px solid #333; border-right: 2px solid #ddd">User</th>
+      
+      <!-- Platform headers -->
+      {% for platform in platform_list %}
+      <th colspan="4" style="padding: 5px; text-align: center; background: #f0f0f0; border-bottom: 2px solid #333">{{ platform }}</th>
+      {% endfor %}
+      
+      <!-- Direct headers -->
+      <th colspan="4" style="padding: 5px; text-align: center; background: #f0f0f0; border-bottom: 2px solid #333; border-right: 1px solid #ddd">Direct</th>
+      
+      <!-- Total headers -->
+      <th colspan="4" style="padding: 5px; text-align: center; background: #f0f0f0; border-bottom: 2px solid #333">Total</th>
+    </tr>
+    <tr>
+      <th style="padding: 5px; background: #f0f0f0; border-bottom: 1px solid #333; border-right: 2px solid #ddd"></th>
+      
+      <!-- Platform sub-headers -->
+      {% for platform in platform_list %}
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; font-size: 0.8em">24h</th>
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; font-size: 0.8em">7d</th>
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; font-size: 0.8em">30d</th>
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; border-right: 1px solid #ddd; font-size: 0.8em">All</th>
+      {% endfor %}
+      
+      <!-- Direct sub-headers -->
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; font-size: 0.8em">24h</th>
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; font-size: 0.8em">7d</th>
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; font-size: 0.8em">30d</th>
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; border-right: 1px solid #ddd; font-size: 0.8em">All</th>
+      
+      <!-- Total sub-headers -->
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; font-size: 0.8em">24h</th>
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; font-size: 0.8em">7d</th>
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; font-size: 0.8em">30d</th>
+      <th style="padding: 3px; text-align: center; background: #f0f0f0; border-bottom: 1px solid #333; font-size: 0.8em">All</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for stat in user_stats %}
+    <tr>
+      <td style="padding: 8px; border-bottom: 1px solid #ddd; border-right: 2px solid #ddd">
+        <a href="{% url 'admin:elizaos_entity_change' stat.user_id %}" title="Edit {{ stat.user_name }}">{{ stat.user_name }}</a>
+      </td>
+      
+      <!-- Platform data -->
+      {% for platform in platform_list %}
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.platform_24h|get_item:platform|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.platform_7d|get_item:platform|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.platform_30d|get_item:platform|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; border-right: 1px solid #ddd">
+        <strong>{{ stat.platform_total|get_item:platform|default:"0" }}</strong>
+      </td>
+      {% endfor %}
+      
+      <!-- Direct data -->
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.direct_24h|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.direct_7d|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; color: #666">
+        {{ stat.direct_30d|default:"0" }}
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center; border-right: 1px solid #ddd">
+        <strong>{{ stat.direct_total|default:"0" }}</strong>
+      </td>
+      
+      <!-- Total data -->
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ stat.last_24h }}</strong>
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ stat.last_7d }}</strong>
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ stat.last_30d }}</strong>
+      </td>
+      <td style="padding: 5px; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ stat.total }}</strong>
+      </td>
+    </tr>
+    {% endfor %}
+    
+    <!-- Total row -->
+    <tr style="background: #f0f0f0; font-weight: bold">
+      <td style="padding: 8px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; border-right: 2px solid #ddd">
+        Total
+      </td>
+      
+      <!-- Platform totals -->
+      {% for platform in platform_list %}
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {% with platform_key=platform|concat_key:"_24h" %}{{ user_totals|get_item:platform_key }}{% endwith %}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {% with platform_key=platform|concat_key:"_7d" %}{{ user_totals|get_item:platform_key }}{% endwith %}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {% with platform_key=platform|concat_key:"_30d" %}{{ user_totals|get_item:platform_key }}{% endwith %}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center; border-right: 1px solid #ddd">
+        {% with platform_key=platform|concat_key:"_total" %}{{ user_totals|get_item:platform_key }}{% endwith %}
+      </td>
+      {% endfor %}
+      
+      <!-- Direct totals -->
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {{ user_totals.direct_24h }}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {{ user_totals.direct_7d }}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        {{ user_totals.direct_30d }}
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center; border-right: 1px solid #ddd">
+        {{ user_totals.direct_total }}
+      </td>
+      
+      <!-- Grand totals -->
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ user_totals.total_24h }}</strong>
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ user_totals.total_7d }}</strong>
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ user_totals.total_30d }}</strong>
+      </td>
+      <td style="padding: 5px; border-top: 2px solid #333; border-bottom: 1px solid #ddd; text-align: center">
+        <strong>{{ user_totals.total_all }}</strong>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Recent Interactions</h2>
+<div style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 30px">
+  <table style="width: 100%; border-collapse: collapse">
+    <thead style="position: sticky; top: 0; background: #f0f0f0; z-index: 10">
+      <tr>
+        <th style="padding: 10px; text-align: center">#</th>
+        <th style="padding: 10px; text-align: left">Time</th>
+        <th style="padding: 10px; text-align: left">Platform</th>
+        <th style="padding: 10px; text-align: left">Room</th>
+        <th style="padding: 10px; text-align: left">Entity</th>
+        <th style="padding: 10px; text-align: left; width: 40%">Content</th>
+        <th style="padding: 10px; text-align: left">Interaction ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for interaction in recent_interactions_list %}
+      <tr>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em; text-align: center; color: #888; font-weight: bold">
+          {{ interaction.interaction_number }}
+        </td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em; white-space: nowrap">
+          {{ interaction.created_at|date:"m/d H:i" }}
+        </td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em">
+          <span style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px">{{ interaction.platform|title }}</span>
+        </td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em">
+          {% if interaction.room_id %}
+            <a href="/admin/elizaos/channel/{{ interaction.room_id }}/change/" style="color: #0066cc; text-decoration: none">{{ interaction.room_name }}</a>
+          {% else %}
+            {{ interaction.room_name }}
+          {% endif %}
+        </td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em">
+          {% if interaction.entity_type == 'agent' %}
+            <a href="/admin/elizaos/agent/{{ interaction.entity_id }}/change/" style="color: #0066cc; text-decoration: none">{{ interaction.entity_name }}</a>
+          {% else %}
+            <a href="/admin/elizaos/entity/{{ interaction.entity_id }}/change/" style="color: #0066cc; text-decoration: none">{{ interaction.entity_name }}</a>
+          {% endif %}
+        </td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em; color: #333; max-width: 350px; word-wrap: break-word">
+          {{ interaction.content|truncatechars:140 }}
+        </td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.8em; font-family: monospace">
+          <a href="/admin/elizaos/centralmessage/{{ interaction.interaction_id }}/change/" style="color: #0066cc; text-decoration: none">{{ interaction.interaction_id|truncatechars:12 }}</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" style="padding: 20px; text-align: center; color: #666">
+          No recent interactions
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
 <div style="margin-top: 30px">
   <a
-    href="{% url 'reporting:interactions' %}"
+    href="{% url 'admin:index' %}"
     class="button"
     style="
       padding: 10px 20px;
@@ -196,20 +516,7 @@ Dashboard{% endblock %} {% block extrastyle %}
       text-decoration: none;
       border-radius: 4px;
     "
-    >View Interaction Report</a
-  >
-  <a
-    href="{% url 'admin:index' %}"
-    class="button"
-    style="
-      padding: 10px 20px;
-      background: #666;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      margin-left: 10px;
-    "
-    >Back to Admin</a
+    >← Back to Admin</a
   >
 </div>
 

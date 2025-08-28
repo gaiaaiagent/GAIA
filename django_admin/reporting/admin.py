@@ -11,25 +11,13 @@ class RegenAIAdminSite(AdminSite):
         
         # Add our custom dashboards section at the beginning
         dashboards = {
-            'name': 'RegenAI Dashboards',
+            'name': 'RegenAI',
             'app_label': 'reporting',
             'models': [
                 {
-                    'name': '🤖 AI Agents Interface',
-                    'object_name': 'AgentsInterface',
-                    'admin_url': 'http://agents.localhost/',
-                    'view_only': True,
-                },
-                {
-                    'name': 'RegenAI Dashboard',
+                    'name': '📊 RegenAI Dashboard',
                     'object_name': 'Dashboard',
                     'admin_url': '/regenai/',
-                    'view_only': True,
-                },
-                {
-                    'name': 'Interaction Report',
-                    'object_name': 'InteractionReport',
-                    'admin_url': '/regenai/interactions/',
                     'view_only': True,
                 }
             ]
