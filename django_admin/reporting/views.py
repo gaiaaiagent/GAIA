@@ -6,6 +6,8 @@ from django.utils import timezone
 from datetime import timedelta
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import connection
+from django.core.paginator import Paginator
 from elizaos.models import Agent, Memory, Room, CentralMessage, Embedding
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -22,8 +24,29 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         # Get current agent IDs as strings for filtering (calculated once)
         current_agent_ids = [str(agent.id) for agent in context['agents']]
         
-        # Separate knowledge from interactions for consistent counting
-        context['total_knowledge'] = Embedding.objects.count()
+        # Knowledge metrics: Count document vs message embeddings
+        with connection.cursor() as cursor:
+            # Count embeddings from knowledge documents (non-message memories)
+            cursor.execute("""
+                SELECT COUNT(e.id) 
+                FROM embeddings e 
+                JOIN memories m ON e.memory_id = m.id 
+                WHERE m.type != 'messages'
+            """)
+            document_embeddings = cursor.fetchone()[0]
+            
+            # Count embeddings from messages  
+            cursor.execute("""
+                SELECT COUNT(e.id) 
+                FROM embeddings e 
+                JOIN memories m ON e.memory_id = m.id 
+                WHERE m.type = 'messages'
+            """)
+            message_embeddings = cursor.fetchone()[0]
+        
+        context['total_embeddings'] = Embedding.objects.count()
+        context['document_embeddings'] = document_embeddings
+        context['message_embeddings'] = message_embeddings
         
         # GROUND TRUTH: CentralMessage contains all actual interactions
         # - Agent responses (20 from current agents)  
@@ -58,9 +81,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         )
         central_by_agent = {c['author_id']: c for c in central_message_counts}
         
-        # Get all unique platforms first
+        # Get all unique platforms first (excluding agent_response which is not a platform)
         all_platforms = Room.objects.values_list('source', flat=True).distinct()
-        platform_list = sorted(list(filter(None, all_platforms)))
+        # Filter out None values and 'agent_response' (which is a message type, not a platform)
+        platform_list = sorted([p for p in all_platforms if p and p != 'agent_response'])
         
         # Build agent stats using only CentralMessage data (ground truth)
         agent_stats = []
@@ -74,40 +98,45 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             platform_30d = {}
             platform_total = {}
             
-            # Calculate platform counts from CentralMessage source_type
+            # Pre-calculate channel types to avoid repeated queries
+            chat_channels = list(CentralMessage.objects.filter(
+                source_type='client_chat'
+            ).values_list('channel_id', flat=True).distinct())
+            
+            group_channels = list(CentralMessage.objects.filter(
+                source_type='client_group_chat'
+            ).values_list('channel_id', flat=True).distinct())
+            
+            # Calculate platform counts with channel awareness for agent responses
             for platform in platform_list:
-                # Map platform names to CentralMessage source_types
-                source_type_mapping = {
-                    'client_chat': ['client_chat', 'agent_response'],  # Both user messages and agent responses
-                    'client_group_chat': ['client_group_chat'],
-                    'elizaos': ['elizaos'],
-                    'socketio': ['socketio']
-                }
+                if platform == 'client_chat':
+                    # Count agent responses in regular chat channels
+                    base_query = Q(author_id=str(agent.id), source_type='client_chat') | \
+                                Q(author_id=str(agent.id), source_type='agent_response', channel_id__in=chat_channels)
+                    
+                elif platform == 'client_group_chat':
+                    # Count agent responses in group chat channels  
+                    base_query = Q(author_id=str(agent.id), source_type='agent_response', channel_id__in=group_channels)
+                    
+                else:
+                    # For other platforms, use simple source_type matching
+                    base_query = Q(author_id=str(agent.id), source_type=platform)
                 
-                source_types = source_type_mapping.get(platform, [platform])
-                
-                # Count CentralMessages for this agent and platform
+                # Apply the same query logic to all time periods
                 platform_24h[platform] = CentralMessage.objects.filter(
-                    author_id=str(agent.id),
-                    source_type__in=source_types,
-                    created_at__gte=day_ago
+                    base_query, created_at__gte=day_ago
                 ).count()
                 
                 platform_7d[platform] = CentralMessage.objects.filter(
-                    author_id=str(agent.id),
-                    source_type__in=source_types,
-                    created_at__gte=week_ago
+                    base_query, created_at__gte=week_ago
                 ).count()
                 
                 platform_30d[platform] = CentralMessage.objects.filter(
-                    author_id=str(agent.id),
-                    source_type__in=source_types,
-                    created_at__gte=month_ago
+                    base_query, created_at__gte=month_ago
                 ).count()
                 
                 platform_total[platform] = CentralMessage.objects.filter(
-                    author_id=str(agent.id),
-                    source_type__in=source_types
+                    base_query
                 ).count()
             
             agent_stats.append({
@@ -257,16 +286,22 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         
         # Get recent interactions from CentralMessage only (no duplication)
         # CentralMessage contains the actual platform interactions without internal duplicates
-        # Note: This shows ALL CentralMessages (30 total) including 10 from inactive/past agents
-        # Top metrics only count 20 from current agents for consistency with agent performance
-        recent_centrals = CentralMessage.objects.order_by('-created_at')[:50]
+        # Get ALL interactions for pagination
+        all_centrals = CentralMessage.objects.order_by('-created_at')
+        
+        # Add pagination (100 items per page)
+        page_number = self.request.GET.get('page', 1)
+        paginator = Paginator(all_centrals, 100)  # 100 items per page
+        page_obj = paginator.get_page(page_number)
+        recent_centrals = page_obj.object_list
         
         # Get agent names lookup
         agents_dict = {str(agent.id): agent.name for agent in context['agents']}
         
         # Format for display using actual database field names
         recent_interactions_list = []
-        total_records = len(recent_centrals)
+        # Calculate the starting number for this page
+        start_num = (page_obj.number - 1) * 100
         
         for idx, central in enumerate(recent_centrals):
             # Determine if this is from an agent or user
@@ -283,13 +318,26 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 entity_id = central.author_id
                 entity_type = 'user'
             
-            # Map CentralMessage source_type to platform names that match Agent Performance
-            platform_mapping = {
-                'client_chat': 'client_chat',
-                'agent_response': 'client_chat',  # Agent responses go to same platform as user messages
-                'client_group_chat': 'client_group_chat'
-            }
-            platform = platform_mapping.get(central.source_type, central.source_type or 'unknown')
+            # Map CentralMessage source_type to platform names with channel awareness
+            if central.source_type == 'agent_response':
+                # For agent responses, determine platform based on channel context
+                # Check if this channel has group chat messages
+                has_group_messages = CentralMessage.objects.filter(
+                    channel_id=central.channel_id,
+                    source_type='client_group_chat'
+                ).exists()
+                
+                if has_group_messages:
+                    platform = 'client_group_chat'
+                else:
+                    platform = 'client_chat'
+            else:
+                # For other message types, use direct mapping
+                platform_mapping = {
+                    'client_chat': 'client_chat',
+                    'client_group_chat': 'client_group_chat'
+                }
+                platform = platform_mapping.get(central.source_type, central.source_type or 'unknown')
             
             recent_interactions_list.append({
                 'created_at': central.created_at,
@@ -300,11 +348,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 'room_id': central.channel_id,  # Always include for linking to Channel admin
                 'platform': platform,
                 'content': central.content[:200] if central.content else '',
-                'interaction_number': total_records - idx,  # Reverse numbering (30, 29, 28...)
+                'interaction_number': paginator.count - start_num - idx,  # Global interaction number
                 'interaction_id': central.id
             })
         
         context['recent_interactions_list'] = recent_interactions_list
+        context['page_obj'] = page_obj
+        context['paginator'] = paginator
+        context['total_interactions_count'] = paginator.count
         
         return context
     

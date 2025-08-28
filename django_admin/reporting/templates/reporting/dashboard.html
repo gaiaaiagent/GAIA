@@ -118,15 +118,15 @@ Dashboard{% endblock %} {% block extrastyle %}
     <h3>Total Interactions</h3>
     <p style="font-size: 2em; margin: 0">{{ total_interactions }}</p>
     <p style="font-size: 0.9em; color: #666">
-      All agent and user messages
+      Agent Messages: {{ totals.total_all }} | User Messages: {{ user_totals.total_all }}
     </p>
   </div>
 
   <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px">
     <h3>Knowledge Base</h3>
-    <p style="font-size: 2em; margin: 0">{{ total_knowledge }}</p>
+    <p style="font-size: 2em; margin: 0">{{ document_embeddings }}</p>
     <p style="font-size: 0.9em; color: #666">
-      Indexed documents and embeddings
+      Document Embeddings: {{ document_embeddings }} | Message Embeddings: {{ message_embeddings }} | Total Embeddings: {{ total_embeddings }}
     </p>
   </div>
 
@@ -134,7 +134,7 @@ Dashboard{% endblock %} {% block extrastyle %}
     <h3>24h Activity</h3>
     <p style="font-size: 2em; margin: 0">{{ recent_interactions }}</p>
     <p style="font-size: 0.9em; color: #666">
-      Messages from last 24 hours
+      Agent Messages: {{ totals.total_24h }} | User Messages: {{ user_totals.total_24h }}
     </p>
   </div>
 </div>
@@ -447,7 +447,7 @@ Dashboard{% endblock %} {% block extrastyle %}
   </tbody>
 </table>
 
-<h2>Recent Interactions</h2>
+<h2>Recent Interactions ({{ total_interactions_count }} Total)</h2>
 <div style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 30px">
   <table style="width: 100%; border-collapse: collapse">
     <thead style="position: sticky; top: 0; background: #f0f0f0; z-index: 10">
@@ -504,6 +504,36 @@ Dashboard{% endblock %} {% block extrastyle %}
     </tbody>
   </table>
 </div>
+
+<!-- Pagination controls -->
+{% if paginator.num_pages > 1 %}
+<div style="text-align: center; margin: 20px 0;">
+  <span style="display: inline-block; padding: 10px;">
+    Page {{ page_obj.number }} of {{ paginator.num_pages }}
+  </span>
+  
+  <div style="display: inline-block; margin-left: 20px;">
+    {% if page_obj.has_previous %}
+      <a href="?page=1" style="padding: 5px 10px; background: #417690; color: white; text-decoration: none; border-radius: 3px; margin: 0 2px;">First</a>
+      <a href="?page={{ page_obj.previous_page_number }}" style="padding: 5px 10px; background: #417690; color: white; text-decoration: none; border-radius: 3px; margin: 0 2px;">Previous</a>
+    {% endif %}
+    
+    <!-- Page numbers -->
+    {% for num in paginator.page_range %}
+      {% if num == page_obj.number %}
+        <span style="padding: 5px 10px; background: #333; color: white; border-radius: 3px; margin: 0 2px;">{{ num }}</span>
+      {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+        <a href="?page={{ num }}" style="padding: 5px 10px; background: #417690; color: white; text-decoration: none; border-radius: 3px; margin: 0 2px;">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+    
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" style="padding: 5px 10px; background: #417690; color: white; text-decoration: none; border-radius: 3px; margin: 0 2px;">Next</a>
+      <a href="?page={{ paginator.num_pages }}" style="padding: 5px 10px; background: #417690; color: white; text-decoration: none; border-radius: 3px; margin: 0 2px;">Last</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
 
 <div style="margin-top: 30px">
   <a
