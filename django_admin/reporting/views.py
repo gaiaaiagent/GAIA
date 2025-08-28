@@ -24,9 +24,18 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         # Get current agent IDs as strings for filtering (calculated once)
         current_agent_ids = [str(agent.id) for agent in context['agents']]
         
-        # Knowledge metrics: Count document vs message embeddings
+        # Knowledge metrics: Count unique documents and embeddings
         with connection.cursor() as cursor:
-            # Count embeddings from knowledge documents (non-message memories)
+            # Count unique documents that have embeddings (non-message memories)
+            cursor.execute("""
+                SELECT COUNT(DISTINCT m.id) 
+                FROM memories m 
+                JOIN embeddings e ON e.memory_id = m.id
+                WHERE m.type != 'messages'
+            """)
+            documents_count = cursor.fetchone()[0]
+            
+            # Count embeddings from knowledge documents
             cursor.execute("""
                 SELECT COUNT(e.id) 
                 FROM embeddings e 
@@ -45,6 +54,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             message_embeddings = cursor.fetchone()[0]
         
         context['total_embeddings'] = Embedding.objects.count()
+        context['documents_count'] = documents_count  # Count of documents with embeddings
         context['document_embeddings'] = document_embeddings
         context['message_embeddings'] = message_embeddings
         
@@ -378,14 +388,15 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         # Use CentralMessage as ground truth for all actual interactions
         total_interactions = CentralMessage.objects.count()
         
-        # Count unique documents (document embeddings)
+        # Count documents that have embeddings (same query as above)
         with connection.cursor() as cursor:
             cursor.execute("""
                 SELECT COUNT(DISTINCT m.id) 
                 FROM memories m 
+                JOIN embeddings e ON e.memory_id = m.id
                 WHERE m.type != 'messages'
             """)
-            total_documents = cursor.fetchone()[0]
+            documents_total = cursor.fetchone()[0]
         
         milestones = {
             'interactions': {
@@ -406,14 +417,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 'phase1': {
                     'name': 'Initial Target',
                     'target': 15000,
-                    'current': total_documents,
-                    'percentage': min(100, (total_documents / 15000) * 100)
+                    'current': documents_total,
+                    'percentage': min(100, (documents_total / 15000) * 100)
                 },
                 'phase2': {
                     'name': 'Scale Target',
                     'target': 15000,
-                    'current': total_documents,
-                    'percentage': min(100, (total_documents / 15000) * 100)
+                    'current': documents_total,
+                    'percentage': min(100, (documents_total / 15000) * 100)
                 }
             }
         }
