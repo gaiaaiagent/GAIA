@@ -374,22 +374,47 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         return context
     
     def calculate_milestone_progress(self, current_agent_ids):
-        """Calculate progress towards interaction milestones"""
+        """Calculate progress towards interaction and document milestones"""
         # Use CentralMessage as ground truth for all actual interactions
         total_interactions = CentralMessage.objects.count()
         
+        # Count unique documents (document embeddings)
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT COUNT(DISTINCT m.id) 
+                FROM memories m 
+                WHERE m.type != 'messages'
+            """)
+            total_documents = cursor.fetchone()[0]
+        
         milestones = {
-            'phase1': {
-                'name': 'Initial Target',
-                'target': 30000,
-                'current': total_interactions,
-                'percentage': min(100, (total_interactions / 30000) * 100)
+            'interactions': {
+                'phase1': {
+                    'name': 'Initial Target',
+                    'target': 30000,
+                    'current': total_interactions,
+                    'percentage': min(100, (total_interactions / 30000) * 100)
+                },
+                'phase2': {
+                    'name': 'Scale Target',
+                    'target': 100000,
+                    'current': total_interactions,
+                    'percentage': min(100, (total_interactions / 100000) * 100)
+                }
             },
-            'phase2': {
-                'name': 'Scale Target',
-                'target': 100000,
-                'current': total_interactions,
-                'percentage': min(100, (total_interactions / 100000) * 100)
+            'documents': {
+                'phase1': {
+                    'name': 'Initial Target',
+                    'target': 15000,
+                    'current': total_documents,
+                    'percentage': min(100, (total_documents / 15000) * 100)
+                },
+                'phase2': {
+                    'name': 'Scale Target',
+                    'target': 15000,
+                    'current': total_documents,
+                    'percentage': min(100, (total_documents / 15000) * 100)
+                }
             }
         }
         

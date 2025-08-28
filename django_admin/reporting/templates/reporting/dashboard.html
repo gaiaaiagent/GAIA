@@ -115,14 +115,6 @@ Dashboard{% endblock %} {% block extrastyle %}
   </div>
 
   <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px">
-    <h3>Total Interactions</h3>
-    <p style="font-size: 2em; margin: 0">{{ total_interactions }}</p>
-    <p style="font-size: 0.9em; color: #666">
-      Agent Messages: {{ totals.total_all }} | User Messages: {{ user_totals.total_all }} | Unique Users: {{ unique_users_total }}
-    </p>
-  </div>
-
-  <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px">
     <h3>Knowledge Base</h3>
     <p style="font-size: 2em; margin: 0">{{ document_embeddings }}</p>
     <p style="font-size: 0.9em; color: #666">
@@ -137,27 +129,55 @@ Dashboard{% endblock %} {% block extrastyle %}
       Agent Messages: {{ totals.total_24h }} | User Messages: {{ user_totals.total_24h }} | Unique Users: {{ unique_users_24h }}
     </p>
   </div>
+
+  <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px">
+    <h3>Total Interactions</h3>
+    <p style="font-size: 2em; margin: 0">{{ total_interactions }}</p>
+    <p style="font-size: 0.9em; color: #666">
+      Agent Messages: {{ totals.total_all }} | User Messages: {{ user_totals.total_all }} | Unique Users: {{ unique_users_total }}
+    </p>
+  </div>
 </div>
 
-<h2>Interaction Milestones</h2>
+<h2>Milestone Tracking</h2>
 <div class="milestones" style="margin-bottom: 30px">
-  {% for milestone_id, milestone in milestone_progress.items %}
   <div
     class="milestone"
-    style="background: #f9f9f9; padding: 20px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid {% if milestone.percentage >= 100 %}#28a745{% else %}#ffc107{% endif %};"
+    style="background: #f9f9f9; padding: 20px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid #ffc107;"
   >
-    <h3>{{ milestone.name }}</h3>
-    <div>
-      <strong>Progress:</strong> {{ milestone.current|floatformat:0 }} / {{ milestone.target|floatformat:0 }}
+    <!-- Document Progress -->
+    <div style="margin-bottom: 15px">
+      <strong>Document Progress:</strong> {{ milestone_progress.documents.phase1.current|floatformat:0 }} / {{ milestone_progress.documents.phase1.target|floatformat:0 }}
       <div style="background: #ddd; height: 20px; border-radius: 10px; margin-top: 5px">
         <div
-          style="background: {% if milestone.percentage >= 100 %}#28a745{% else %}#ffc107{% endif %}; height: 100%; width: {{ milestone.percentage }}%; border-radius: 10px;"
+          style="background: {% if milestone_progress.documents.phase1.percentage >= 100 %}#28a745{% else %}#007bff{% endif %}; height: 100%; width: {{ milestone_progress.documents.phase1.percentage }}%; border-radius: 10px;"
         ></div>
       </div>
-      <p style="margin: 5px 0 0 0">{{ milestone.percentage|floatformat:1 }}% Complete</p>
+      <p style="margin: 5px 0 0 0">{{ milestone_progress.documents.phase1.percentage|floatformat:1 }}% Complete</p>
+    </div>
+    
+    <!-- Interaction Progress - Initial Target -->
+    <div style="margin-bottom: 15px">
+      <strong>Interaction Progress (Initial Target):</strong> {{ milestone_progress.interactions.phase1.current|floatformat:0 }} / {{ milestone_progress.interactions.phase1.target|floatformat:0 }}
+      <div style="background: #ddd; height: 20px; border-radius: 10px; margin-top: 5px">
+        <div
+          style="background: {% if milestone_progress.interactions.phase1.percentage >= 100 %}#28a745{% else %}#ffc107{% endif %}; height: 100%; width: {{ milestone_progress.interactions.phase1.percentage }}%; border-radius: 10px;"
+        ></div>
+      </div>
+      <p style="margin: 5px 0 0 0">{{ milestone_progress.interactions.phase1.percentage|floatformat:1 }}% Complete</p>
+    </div>
+    
+    <!-- Interaction Progress - Scale Target -->
+    <div>
+      <strong>Interaction Progress (Scale Target):</strong> {{ milestone_progress.interactions.phase2.current|floatformat:0 }} / {{ milestone_progress.interactions.phase2.target|floatformat:0 }}
+      <div style="background: #ddd; height: 20px; border-radius: 10px; margin-top: 5px">
+        <div
+          style="background: {% if milestone_progress.interactions.phase2.percentage >= 100 %}#28a745{% else %}#ffc107{% endif %}; height: 100%; width: {{ milestone_progress.interactions.phase2.percentage }}%; border-radius: 10px;"
+        ></div>
+      </div>
+      <p style="margin: 5px 0 0 0">{{ milestone_progress.interactions.phase2.percentage|floatformat:1 }}% Complete</p>
     </div>
   </div>
-  {% endfor %}
 </div>
 
 <h2>Agent Performance</h2>
@@ -457,8 +477,7 @@ Dashboard{% endblock %} {% block extrastyle %}
         <th style="padding: 10px; text-align: left">Platform</th>
         <th style="padding: 10px; text-align: left">Room</th>
         <th style="padding: 10px; text-align: left">Entity</th>
-        <th style="padding: 10px; text-align: left; width: 40%">Content</th>
-        <th style="padding: 10px; text-align: left">Interaction ID</th>
+        <th style="padding: 10px; text-align: left; width: 50%">Content</th>
       </tr>
     </thead>
     <tbody>
@@ -487,16 +506,15 @@ Dashboard{% endblock %} {% block extrastyle %}
             <a href="/admin/elizaos/entity/{{ interaction.entity_id }}/change/" style="color: #0066cc; text-decoration: none">{{ interaction.entity_name }}</a>
           {% endif %}
         </td>
-        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em; color: #333; max-width: 350px; word-wrap: break-word">
-          {{ interaction.content|truncatechars:140 }}
-        </td>
-        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.8em; font-family: monospace">
-          <a href="/admin/elizaos/centralmessage/{{ interaction.interaction_id }}/change/" style="color: #0066cc; text-decoration: none">{{ interaction.interaction_id|truncatechars:12 }}</a>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em; color: #333; max-width: 400px; word-wrap: break-word">
+          <a href="/admin/elizaos/centralmessage/{{ interaction.interaction_id }}/change/" style="color: #333; text-decoration: none; display: block">
+            {{ interaction.content }}
+          </a>
         </td>
       </tr>
       {% empty %}
       <tr>
-        <td colspan="7" style="padding: 20px; text-align: center; color: #666">
+        <td colspan="6" style="padding: 20px; text-align: center; color: #666">
           No recent interactions
         </td>
       </tr>
