@@ -77,7 +77,6 @@
     "@elizaos/plugin-bootstrap": "1.4.5",
     "@elizaos/plugin-coinbase": "^1.0.2",
     "@elizaos/plugin-e2b": "1.2.0",
-    "@elizaos/plugin-knowledge": "1.2.2",
     "@elizaos/plugin-openai": "^1.0.9",
     "chalk": "^5.4.1",
     "helmet": "^8.1.0",
