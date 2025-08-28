@@ -9,6 +9,20 @@ def get_item(dictionary, key):
     return dictionary.get(key)
 
 @register.filter
+def concat_key(platform, suffix):
+    """Concatenate platform name with suffix for key lookup."""
+    return f"{platform}{suffix}"
+
+@register.filter
+def get_platform_total(totals, platform_and_suffix):
+    """Get platform total from totals dict using platform_suffix key."""
+    if not isinstance(totals, dict):
+        return 0
+    platform, suffix = platform_and_suffix.split(':')
+    key = f"{platform}{suffix}"
+    return totals.get(key, 0)
+
+@register.filter
 def smart_content(content):
     """Extract readable content from memory content object."""
     if isinstance(content, str):
