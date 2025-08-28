@@ -118,7 +118,7 @@ Dashboard{% endblock %} {% block extrastyle %}
     <h3>Total Interactions</h3>
     <p style="font-size: 2em; margin: 0">{{ total_interactions }}</p>
     <p style="font-size: 0.9em; color: #666">
-      Agent Messages: {{ totals.total_all }} | User Messages: {{ user_totals.total_all }}
+      Agent Messages: {{ totals.total_all }} | User Messages: {{ user_totals.total_all }} | Unique Users: {{ unique_users_total }}
     </p>
   </div>
 
@@ -134,7 +134,7 @@ Dashboard{% endblock %} {% block extrastyle %}
     <h3>24h Activity</h3>
     <p style="font-size: 2em; margin: 0">{{ recent_interactions }}</p>
     <p style="font-size: 0.9em; color: #666">
-      Agent Messages: {{ totals.total_24h }} | User Messages: {{ user_totals.total_24h }}
+      Agent Messages: {{ totals.total_24h }} | User Messages: {{ user_totals.total_24h }} | Unique Users: {{ unique_users_24h }}
     </p>
   </div>
 </div>

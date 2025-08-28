@@ -13,7 +13,7 @@
     "voice": {
       "model": "en_US-neutral-medium"
     },
-    "LOAD_DOCS_ON_STARTUP": false,
+    "LOAD_DOCS_ON_STARTUP": true,
     "KNOWLEDGE_PATH": "./knowledge",
     "avatar": "/images/agents/agent1.png"
   },

@@ -15,7 +15,7 @@ class RegenAIAdminSite(AdminSite):
             'app_label': 'reporting',
             'models': [
                 {
-                    'name': '📊 RegenAI Dashboard',
+                    'name': 'RegenAI Dashboard',
                     'object_name': 'Dashboard',
                     'admin_url': '/regenai/',
                     'view_only': True,

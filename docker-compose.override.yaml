@@ -23,7 +23,6 @@ services:
       - LOAD_DOCS_ON_STARTUP=true
       - KNOWLEDGE_PATH=/app/knowledge
       - CTX_KNOWLEDGE_ENABLED=true
-      - ELIZA_SKIP_PLUGIN_VERIFY=true
     ports:
       - '3000:3000'
       - '50000-50100:50000-50100/udp'

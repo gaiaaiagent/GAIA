@@ -61,6 +61,20 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             created_at__gte=yesterday
         ).count()
         
+        # Count unique users (excluding agents)
+        all_unique_users = CentralMessage.objects.exclude(
+            author_id__in=current_agent_ids
+        ).values('author_id').distinct().count()
+        
+        unique_users_24h = CentralMessage.objects.filter(
+            created_at__gte=yesterday
+        ).exclude(
+            author_id__in=current_agent_ids
+        ).values('author_id').distinct().count()
+        
+        context['unique_users_total'] = all_unique_users
+        context['unique_users_24h'] = unique_users_24h
+        
         # Get interaction breakdown by agent with multiple time periods
         from django.db.models import Count, Q
         
