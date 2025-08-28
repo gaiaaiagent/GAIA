@@ -89,7 +89,7 @@ curl -u regenai:regen2025 https://regen.gaiaai.xyz/
 - **5 AI Agents**: RegenAI, Facilitator, Voice of Nature, Governor, Narrative
 - **Database**: PostgreSQL with pgvector (Docker container on port 5433)
 - **Knowledge Base**: 606 Notion pages + Regen Network docs
-- **Model**: GPT-3.5 Turbo (chat) + OpenAI text-embedding-3-small (embeddings)
+- **Model**: GPT-5 Nano 2025-08-07 (chat) + OpenAI text-embedding-3-small (embeddings)
 - **KOI System**: Knowledge Organization Infrastructure with RID-based agent tracking
 
 ## 🌿 KOI Node System (Knowledge Organization Infrastructure)

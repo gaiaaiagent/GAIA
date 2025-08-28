@@ -41,10 +41,10 @@ ANTHROPIC_API_KEY=your-anthropic-key
 TELEGRAM_BOT_TOKEN=your-telegram-token
 ```
 
-### 4. Model Configuration (Default: OpenAI GPT-3.5 Turbo)
+### 4. Model Configuration (Default: OpenAI GPT-5 Nano)
 
 The agents are configured to use:
-- **Chat Model**: GPT-3.5 Turbo (`gpt-3.5-turbo`)
+- **Chat Model**: GPT-5 Nano (`gpt-5-nano-2025-08-07`)
 - **Embeddings**: OpenAI text-embedding-3-small
 - **Provider**: OpenAI
 

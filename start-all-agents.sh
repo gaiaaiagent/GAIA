@@ -9,8 +9,8 @@ GAIA_DIR="$SCRIPT_DIR"
 KNOWLEDGE_PATH="$SCRIPT_DIR/knowledge"
 CHARACTERS_PATH="$SCRIPT_DIR/characters"
 
-# Common environment variables for all agents
-BASE_ENV="LOG_LEVEL=debug TEXT_PROVIDER=openai TEXT_MODEL=gpt-3.5-turbo TEXT_EMBEDDING_MODEL=text-embedding-3-small POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza KNOWLEDGE_PATH=$KNOWLEDGE_PATH LOAD_DOCS_ON_STARTUP=false"
+# Common environment variables for all agents (models now read from .env file)
+BASE_ENV="LOG_LEVEL=debug POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza KNOWLEDGE_PATH=$KNOWLEDGE_PATH LOAD_DOCS_ON_STARTUP=false TEXT_PROVIDER=openai TEXT_MODEL=gpt-5-nano-2025-08-07 TEXT_EMBEDDING_MODEL=text-embedding-3-small"
 
 echo "🚀 Starting All RegenAI Agents..."
 
