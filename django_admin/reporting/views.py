@@ -7,7 +7,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from elizaos.models import Agent, Memory, Room, CentralMessage, MessageServer
+from elizaos.models import Agent, Memory, Room, CentralMessage, MessageServer, Embedding
 import json
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -20,13 +20,23 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['agents'] = Agent.objects.all()
         context['agent_count'] = context['agents'].count()
         
-        # Get interaction counts
-        context['total_memories'] = Memory.objects.count()
+        # Separate knowledge from interactions
+        # Knowledge is stored in embeddings table, interactions are in memories
+        context['total_knowledge'] = Embedding.objects.count()
+        
+        # Get actual interaction counts (memories that are chat/messages)
+        # Exclude any that might be knowledge-related based on content
+        interaction_memories = Memory.objects.exclude(
+            content__has_key='embedding'  # Exclude if has embedding field
+        ).exclude(
+            content__source='knowledge'  # Exclude if source is knowledge
+        )
+        context['total_interactions'] = interaction_memories.count()
         context['total_messages'] = CentralMessage.objects.count()
         
         # Get interactions in last 24 hours
         yesterday = timezone.now() - timedelta(days=1)
-        context['recent_memories'] = Memory.objects.filter(
+        context['recent_interactions'] = interaction_memories.filter(
             created_at__gte=yesterday
         ).count()
         context['recent_messages'] = CentralMessage.objects.filter(
@@ -66,41 +76,33 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             })
         context['agent_stats'] = agent_stats
         
-        # Milestone tracking
+        # Simple milestone tracking without payment details
         context['milestone_progress'] = self.calculate_milestone_progress()
         
         return context
     
     def calculate_milestone_progress(self):
-        """Calculate progress towards contract milestones"""
-        # Milestone 1.3: 30,000 interactions by Day 35
-        # Milestone 1.6: 100,000 interactions by Day 60
-        
-        total_interactions = Memory.objects.count() + CentralMessage.objects.count()
-        
-        # Contract started July 16, 2025
-        contract_start = datetime(2025, 7, 16).date()
-        today = timezone.now().date()
-        days_elapsed = (today - contract_start).days
+        """Calculate progress towards interaction milestones"""
+        # Get actual interactions (excluding knowledge)
+        interaction_memories = Memory.objects.exclude(
+            content__has_key='embedding'
+        ).exclude(
+            content__source='knowledge'
+        )
+        total_interactions = interaction_memories.count() + CentralMessage.objects.count()
         
         milestones = {
-            '1.3': {
-                'name': 'Scale Testing & Performance',
+            'phase1': {
+                'name': 'Initial Target',
                 'target': 30000,
-                'deadline_days': 35,
-                'payment': 6250,
                 'current': total_interactions,
-                'percentage': min(100, (total_interactions / 30000) * 100),
-                'days_remaining': max(0, 35 - days_elapsed)
+                'percentage': min(100, (total_interactions / 30000) * 100)
             },
-            '1.6': {
-                'name': 'Full Handoff',
+            'phase2': {
+                'name': 'Scale Target',
                 'target': 100000,
-                'deadline_days': 60,
-                'payment': 6250,
                 'current': total_interactions,
-                'percentage': min(100, (total_interactions / 100000) * 100),
-                'days_remaining': max(0, 60 - days_elapsed)
+                'percentage': min(100, (total_interactions / 100000) * 100)
             }
         }
         

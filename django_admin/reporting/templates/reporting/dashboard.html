@@ -116,50 +116,45 @@ Dashboard{% endblock %} {% block extrastyle %}
 
   <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px">
     <h3>Total Interactions</h3>
-    <p style="font-size: 2em; margin: 0">{{ total_memories|add:total_messages }}</p>
+    <p style="font-size: 2em; margin: 0">{{ total_interactions|add:total_messages }}</p>
     <p style="font-size: 0.9em; color: #666">
-      Memories: {{ total_memories }} | Messages: {{ total_messages }}
+      Chat: {{ total_interactions }} | Messages: {{ total_messages }}
+    </p>
+  </div>
+
+  <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px">
+    <h3>Knowledge Base</h3>
+    <p style="font-size: 2em; margin: 0">{{ total_knowledge }}</p>
+    <p style="font-size: 0.9em; color: #666">
+      Indexed documents and embeddings
     </p>
   </div>
 
   <div class="stat-card" style="background: #f0f0f0; padding: 20px; border-radius: 8px">
     <h3>24h Activity</h3>
-    <p style="font-size: 2em; margin: 0">{{ recent_memories|add:recent_messages }}</p>
+    <p style="font-size: 2em; margin: 0">{{ recent_interactions|add:recent_messages }}</p>
     <p style="font-size: 0.9em; color: #666">
-      Memories: {{ recent_memories }} | Messages: {{ recent_messages }}
+      Chat: {{ recent_interactions }} | Messages: {{ recent_messages }}
     </p>
   </div>
 </div>
 
-<h2>Contract Milestone Progress</h2>
+<h2>Interaction Milestones</h2>
 <div class="milestones" style="margin-bottom: 30px">
   {% for milestone_id, milestone in milestone_progress.items %}
   <div
     class="milestone"
     style="background: #f9f9f9; padding: 20px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid {% if milestone.percentage >= 100 %}#28a745{% else %}#ffc107{% endif %};"
   >
-    <h3>Milestone {{ milestone_id }}: {{ milestone.name }}</h3>
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px">
-      <div>
-        <strong>Progress:</strong> {{ milestone.current|floatformat:0 }} / {{ milestone.target|floatformat:0 }}
-        <div style="background: #ddd; height: 20px; border-radius: 10px; margin-top: 5px">
-          <div
-            style="background: {% if milestone.percentage >= 100 %}#28a745{% else %}#ffc107{% endif %}; height: 100%; width: {{ milestone.percentage }}%; border-radius: 10px;"
-          ></div>
-        </div>
-        <p style="margin: 5px 0 0 0">{{ milestone.percentage|floatformat:1 }}%</p>
+    <h3>{{ milestone.name }}</h3>
+    <div>
+      <strong>Progress:</strong> {{ milestone.current|floatformat:0 }} / {{ milestone.target|floatformat:0 }}
+      <div style="background: #ddd; height: 20px; border-radius: 10px; margin-top: 5px">
+        <div
+          style="background: {% if milestone.percentage >= 100 %}#28a745{% else %}#ffc107{% endif %}; height: 100%; width: {{ milestone.percentage }}%; border-radius: 10px;"
+        ></div>
       </div>
-      <div>
-        <strong>Payment:</strong> ${{ milestone.payment|floatformat:0 }}<br />
-        <strong>Deadline:</strong> Day {{ milestone.deadline_days }}
-      </div>
-      <div>
-        <strong>Days Remaining:</strong> {{ milestone.days_remaining }}<br />
-        <strong>Status:</strong> {% if milestone.percentage >= 100 %}<span style="color: #28a745"
-          >✓ Complete</span
-        >{% elif milestone.days_remaining == 0 %}<span style="color: #dc3545">⚠ Overdue</span>{%
-        else %}<span style="color: #ffc107">In Progress</span>{% endif %}
-      </div>
+      <p style="margin: 5px 0 0 0">{{ milestone.percentage|floatformat:1 }}% Complete</p>
     </div>
   </div>
   {% endfor %}
