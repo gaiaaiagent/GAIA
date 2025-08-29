@@ -74,6 +74,7 @@
     "utf-8-validate"
   ],
   "dependencies": {
+    "@elizaos/plugin-anthropic": "^1.0.6",
     "@elizaos/plugin-bootstrap": "1.4.5",
     "@elizaos/plugin-coinbase": "^1.0.2",
     "@elizaos/plugin-e2b": "1.2.0",

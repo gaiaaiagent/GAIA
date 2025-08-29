@@ -5,6 +5,7 @@
     "@elizaos/plugin-bootstrap",
     "@elizaos/plugin-sql",
     "@elizaos/plugin-openai",
+    "@elizaos/plugin-anthropic",
     "@elizaos/plugin-knowledge",
     "@elizaos/plugin-telegram"
   ],
