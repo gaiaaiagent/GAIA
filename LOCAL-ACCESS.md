@@ -1,90 +1,202 @@
 # Local Access Guide for RegenAI
 
-## Current Working Setup
+## Production Access
 
-### Subdomain Access (via nginx on port 80)
+### Web Interfaces (HTTPS with Auth)
 
-**ElizaOS WebUI - All 5 Agents:**
-
-- http://agents.localhost
+**ElizaOS Web UI - All 5 Agents:**
+- https://regen.gaiaai.xyz/
 - **Basic Auth**: regenai / regen2025
+- Chat with all 5 agents via dropdown selector
 
 **Django Admin Dashboard:**
+- https://admin.regen.gaiaai.xyz/admin/
+- **Django Login**: Contact admin for credentials
 
-- http://admin.localhost
-- **Django Login**: admin / admin123
+**KOI Knowledge Dashboard:**
+- https://regen.gaiaai.xyz/koi/
+- Real-time agent statistics and knowledge queries
 
-### Direct Port Access (backup if subdomains don't work)
+### Telegram Bots
 
-**ElizaOS WebUI:**
+- **@RegenAdvocacyBot** - Educational specialist
+- **@RegenVoiceOfNatureBot** - Philosophical voice
+- **@RegenGovernBot** - Governance facilitator
+- **@RegenNarrativeBot** - Storyteller
 
-- http://localhost:3000
+> **Note:** RegenAI itself is web-only, no Telegram bot
+
+## Local Development Access
+
+### Direct Port Access
+
+**ElizaOS Web UI:**
+- http://localhost:3000 (when agents running)
+- All agents available via dropdown
 
 **Django Admin:**
+- http://localhost:8000/admin (if running locally)
 
-- http://localhost:8000/admin
+**KOI Services:**
+- http://localhost:8001 - KOI Node API
+- http://localhost:8100 - KOI Query Server
 
-### Services Running
+### Services Architecture
 
-All services run via Docker Compose:
+**Native Processes (NOT Docker):**
+- ElizaOS Agents - Run via bun on port 3000
+- KOI Node - Python service on port 8001
+- KOI Query - Bun service on port 8100
 
+**Docker Services:**
+- PostgreSQL - Port 5433
+- Nginx - Ports 80/443 (reverse proxy)
+- Django Admin - Port 8000
+
+## Starting Services
+
+### Quick Start (All Agents)
 ```bash
-# Start all services
-docker compose up -d
+# Single command to start everything
+./scripts/agent-control.sh start-single
 
-# Stop all services
-docker compose down
-
-# View logs
-docker compose logs -f eliza    # Agent logs
-docker compose logs -f django   # Admin logs
-docker compose logs -f nginx    # Proxy logs
+# Check status
+./scripts/agent-control.sh status
 ```
 
-### What Each Port Does
+### Manual Control
 
-- **Port 80**: Nginx reverse proxy (routes subdomains)
-- **Port 3000**: ElizaOS direct access (backup)
-- **Port 8000**: Django direct access (backup)
-- **Port 5433**: PostgreSQL database (shared by both services)
+**Start Agents:**
+```bash
+# Recommended: Single-process mode
+bash start-all-agents-single-process.sh
 
-### For Team Members
+# Alternative: Multi-process mode
+bash start-all-agents-telegram.sh
+```
 
-1. Make sure Docker is installed and running
-2. Clone the repository
-3. Copy `.env.example` to `.env` and add API keys
-4. Run `docker compose up -d`
-5. Access services at the subdomain URLs above
+**Start Docker Services:**
+```bash
+# Database (required)
+docker compose up -d postgres
 
-### Troubleshooting
+# Web proxy and admin (optional)
+docker compose up -d nginx django-admin
+```
 
-**If subdomains don't work:**
+**Start KOI Services:**
+```bash
+# KOI Node
+cd /home/regenai/project/koi-infrastructure/koi-regen-node
+source venv/bin/activate && python -m node &
 
-- Some systems need hosts file entries:
-  ```
-  # Add to /etc/hosts (Mac/Linux) or C:\Windows\System32\drivers\etc\hosts (Windows)
-  127.0.0.1 agents.localhost
-  127.0.0.1 admin.localhost
-  ```
-- Or use direct ports (3000 and 8000) as fallback
+# KOI Query Server
+cd /opt/projects/plugin-knowledge-gaia
+bun scripts/koi-query-server.ts &
+```
 
-**Brave Browser:**
+## Checking Service Status
 
-- May need to use 127.0.0.1 instead of localhost
+### Agents Status
+```bash
+# Are agents running?
+ps aux | grep "bun.*packages/cli" | grep -v grep
 
-**First startup:**
+# Check specific agent logs
+tail -f logs/regenai.log
+tail -f logs/advocate.log
+```
 
-- Takes a few minutes for agents to initialize
+### Docker Services Status
+```bash
+# View all containers
+docker ps
 
-### Future Improvements
+# Check specific service
+docker logs nginx --tail 20
+docker logs gaia-postgres-1 --tail 20
+```
 
-When deployed to production:
+### KOI Services Status
+```bash
+# Check processes
+ps aux | grep -E "(python.*node|bun.*koi)" | grep -v grep
 
-- `agents.regen.gaiaai.xyz` - ElizaOS WebUI
-- `admin.regen.gaiaai.xyz` - Django Admin
-- SSL/HTTPS enabled
-- Proper authentication
+# Test endpoints
+curl http://localhost:8001/regen/health
+curl http://localhost:8100/stats
+```
+
+## Port Reference
+
+| Port | Service | Type | Purpose |
+|------|---------|------|---------|
+| 80 | Nginx | Docker | HTTP redirect to HTTPS |
+| 443 | Nginx | Docker | HTTPS reverse proxy |
+| 3000 | ElizaOS | Native | Agent web UI & API |
+| 5433 | PostgreSQL | Docker | Database with pgvector |
+| 8000 | Django | Docker | Admin dashboard |
+| 8001 | KOI Node | Native | Agent RID management |
+| 8100 | KOI Query | Native | Knowledge queries |
+
+## Troubleshooting
+
+### Can't Access Web UI
+```bash
+# Check agents are running
+./scripts/agent-control.sh status
+
+# Restart if needed
+./scripts/agent-control.sh restart
+```
+
+### 502 Bad Gateway
+```bash
+# Usually means agents aren't running
+bash start-all-agents-single-process.sh
+
+# Or nginx misconfigured
+docker compose restart nginx
+```
+
+### Telegram Bots Not Responding
+```bash
+# Check bot tokens in character files
+grep "TELEGRAM_BOT_TOKEN" characters/*.json
+
+# Verify mention-only mode settings
+grep "TELEGRAM_ONLY_RESPOND" characters/*.json
+```
+
+## Quick Commands
+
+```bash
+# Start everything
+./scripts/agent-control.sh start-single
+
+# Stop everything
+./scripts/agent-control.sh stop
+
+# Check status
+./scripts/agent-control.sh status
+
+# View all logs
+./scripts/agent-control.sh logs
+
+# Test web access
+curl -u regenai:regen2025 https://regen.gaiaai.xyz/
+
+# Test API
+curl http://localhost:3000/api/agents
+```
+
+## Related Documentation
+
+- [SETUP-GUIDE.md](SETUP-GUIDE.md) - Initial setup instructions
+- [docs/AGENT-STARTUP-GUIDE.md](docs/AGENT-STARTUP-GUIDE.md) - Detailed startup procedures
+- [docs/TELEGRAM-BOT-SETUP.md](docs/TELEGRAM-BOT-SETUP.md) - Telegram user guide
+- [CLAUDE.md](CLAUDE.md) - Critical configuration and known issues
 
 ---
 
-_Last updated: August 6, 2025_
+*Last Updated: August 29, 2025*

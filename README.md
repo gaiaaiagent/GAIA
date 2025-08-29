@@ -20,29 +20,62 @@ Our agents serve as bridges between complex ecological data and human understand
 - **Admin Dashboard**: https://admin.regen.gaiaai.xyz/admin/
   - View interaction metrics and system status
 
-### Local Development
+### 🚀 Quick Start for Developers
 
 ```bash
 # Clone repository
-git clone https://github.com/gaiaaiagent/GAIA.git -b regen-knowledge-rag
+git clone https://github.com/gaiaaiagent/GAIA.git -b regen
 cd GAIA
 
-# Install dependencies
+# Install dependencies (MUST use bun, not npm/pnpm)
 bun install
 
 # Start database
 docker compose up -d postgres
 
-# Add your OpenAI API key to .env
-echo "OPENAI_API_KEY=your-key-here" > .env
-echo "POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza" >> .env
+# Configure environment
+cp .env.example .env
+# Edit .env and add your OpenAI API key
 
-# Start agents (will run without knowledge base)
-bash start-all-agents-with-telegram.sh
+# Setup character files from templates (SECURITY)
+./scripts/setup-characters.sh
+# Choose option 1 for full setup with Telegram
 
-# Visit locally  
+# Start all agents (recommended: single-process mode)
+bash start-all-agents-single-process.sh
+
+# Or use the control center
+./scripts/agent-control.sh help  # See all options
+./scripts/agent-control.sh start-single  # Start agents
+./scripts/agent-control.sh status  # Check status
+
+# Access web UI
 open http://localhost:3000
 ```
+
+### 🎮 Agent Control Center
+
+We provide a unified control script for all agent operations:
+
+```bash
+# Show all available commands
+./scripts/agent-control.sh help
+
+# Common operations
+./scripts/agent-control.sh start-single  # Start all agents (RECOMMENDED)
+./scripts/agent-control.sh stop          # Stop all agents
+./scripts/agent-control.sh restart       # Restart agents
+./scripts/agent-control.sh status        # Check agent status
+./scripts/agent-control.sh logs          # View all logs
+```
+
+### 📋 Startup Options
+
+| Script | Use Case | Web UI | Telegram |
+|--------|----------|--------|----------|
+| `start-all-agents-single-process.sh` | **RECOMMENDED** - Full functionality | ✅ All agents | ✅ All bots |
+| `start-all-agents-telegram.sh` | Independent agent control | ❌ Only RegenAI | ✅ All bots |
+| `start-all-agents-no-telegram.sh` | Testing/Development | ✅ All agents | ❌ Disabled |
 
 > **Note**: The `knowledge/` directory contains sensitive data and is not included in the repository. Agents will run without the knowledge base for testing purposes.
 

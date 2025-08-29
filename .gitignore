@@ -23,10 +23,13 @@ logs/
 tokencache/
 
 # Character configurations
+characters/*.character.json
+!characters/*.character.json.template
 characters/**/secrets.json
 characters/**/*.env
 characters/**/*.key
 characters/**/private/
+characters/*.bak
 
 cache/*
 models/*

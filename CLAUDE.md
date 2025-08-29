@@ -6,6 +6,30 @@ Essential configuration for Claude Code when working with the RegenAI/GAIA codeb
 
 ## 🚨 CRITICAL DISCOVERIES & LESSONS LEARNED
 
+### Security: Template-Based Character Configuration (August 29, 2025)
+
+**CRITICAL:** Never commit secrets to Git! Use template system for character files.
+
+**Problem:** Telegram bot tokens were being added directly to character files, risking exposure in Git.
+
+**Solution:** Template-based configuration system:
+1. **Templates in Git**: `characters/*.character.json.template` with placeholders
+2. **Actual files gitignored**: `characters/*.character.json` with real tokens
+3. **Setup script**: `./scripts/setup-characters.sh` configures from templates
+4. **Security documentation**: See `SECURITY.md` for complete guidelines
+
+**Key Files:**
+- `SECURITY.md` - Complete security guidelines
+- `scripts/setup-characters.sh` - Configuration script
+- `.gitignore` - Excludes actual character files
+
+**Usage:**
+```bash
+# Setup characters from templates
+./scripts/setup-characters.sh
+# Choose option 1 for full setup with Telegram
+```
+
 ### Database Configuration (August 27, 2025)
 
 **MOST COMMON FAILURE:** PostgreSQL authentication errors
@@ -42,13 +66,17 @@ POSTGRES_URL=postgresql://postgres:@localhost:5433/eliza
 **Solution:** Manual environment injection in startup scripts for PostgreSQL deployments:
 ```bash
 # Required for PostgreSQL (not needed for PGLite)
-CHARACTER.GOVERNOR.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true \
-CHARACTER.GOVERNOR.TELEGRAM_RANDOM_RESPONSE_RATE=0.01 \
+# NOTE: CHARACTER.* vars with dots cannot be exported in bash, must be passed inline
+CHARACTER.Governor.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true \
+CHARACTER.Governor.TELEGRAM_RANDOM_RESPONSE_RATE=0.01 \
 POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza \
 bun packages/cli/dist/index.js start --character characters/governor.character.json
 ```
 
-**Key Insight:** Code working locally (PGLite) may fail in production (PostgreSQL) due to initialization timing, requiring manual injection workaround.
+**Key Insights:** 
+1. Code working locally (PGLite) may fail in production (PostgreSQL) due to initialization timing
+2. CHARACTER.* names must match exact character "name" field (case-sensitive: Governor not GOVERNOR)
+3. Bash cannot export variables with dots - must pass inline to command
 
 ### Web Server Configuration (August 27, 2025)
 
@@ -93,6 +121,81 @@ bash /opt/projects/GAIA/start-all-agents.sh
 - **"Cannot find module './dist/index.js'"**: Plugin needs to be built first
 - **Permission denied errors**: Fix ownership with sudo commands above
 - **Agents reprocessing all documents**: Ensure using our fork with deduplication
+
+### Telegram Multi-Agent Configuration (August 29, 2025)
+
+**CRITICAL DISCOVERY:** Running multiple Telegram bots requires specific configuration approach!
+
+**Problem:** Multiple agents with different Telegram bot tokens
+- Each agent needs its own bot token (@RegenAdvocacyBot, @RegenGovernBot, etc.)
+- Environment variables with dots (CHARACTER.*) cannot be exported in bash
+- Single process vs multi-process tradeoffs
+
+**Solutions:**
+
+#### Option 1: Single Process (RECOMMENDED - Full Web UI Support)
+```bash
+# Add tokens to each character file's secrets section:
+"secrets": {
+  "TELEGRAM_BOT_TOKEN": "your-bot-token-here",
+  "TELEGRAM_BOT_USERNAME": "YourBotUsername"
+}
+
+# Run all agents in one process:
+bash /opt/projects/GAIA/start-all-agents-single-process.sh
+```
+**Pros:** All agents available in web UI, unified management
+**Cons:** All agents share same process (restart affects all)
+
+#### Option 2: Multiple Processes (Telegram-only focus)
+```bash
+# Use env command to pass variables with dots:
+env TELEGRAM_BOT_TOKEN="token" \
+    TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED="true" \
+    bun packages/cli/dist/index.js start --character character.json
+```
+**Pros:** Independent agent management
+**Cons:** Web UI only shows agents in same process
+
+### Port Assignment and Nginx Configuration (August 29, 2025)
+
+**PROBLEM:** Agents don't always get requested ports, causing 502 errors
+
+**Root Cause:** ElizaOS assigns alternate ports when requested ports are busy
+- Requested: 3000, 3001, 3002, 3003, 3004
+- Actual: May get 3000, 3002, 3004, 3005, etc.
+
+**Solution:** 
+1. Always check actual port assignments:
+```bash
+grep "AgentServer is listening" /opt/projects/GAIA/logs/*.log
+```
+
+2. Update nginx to proxy to correct port:
+```nginx
+upstream regen_app {
+    server 172.17.0.1:3000;  # Update to actual port
+}
+```
+
+3. Restart nginx without Docker conflicts:
+```bash
+docker compose up -d nginx --no-deps
+```
+
+### Telegram Bot Token Issues (August 29, 2025)
+
+**PROBLEM:** "401: Unauthorized" errors with Telegram bots
+
+**Common Causes:**
+1. Invalid or expired bot tokens
+2. Token environment variable not reaching the plugin
+3. Custom fork expecting different configuration
+
+**Solutions:**
+1. Get fresh tokens from @BotFather on Telegram
+2. Add tokens directly to character files (not just environment)
+3. Use our custom fork: `@elizaos/plugin-telegram": "github.com/gaiaaiagent/plugin-telegram.git#1.x"`
 
 ### Plugin Version Compatibility Crisis (August 29, 2025)
 
@@ -569,6 +672,76 @@ bash /opt/projects/GAIA/scripts/start-all-agents.sh
 ```
 
 ## COMPLETE OPERATIONS GUIDE
+
+### 🚀 QUICKSTART - RECOMMENDED APPROACH
+
+**For full functionality (Web UI + Telegram):**
+```bash
+# 1. Stop any running agents
+sudo pkill -f 'packages/cli/dist/index.js' 2>/dev/null || true
+
+# 2. Start all agents in single process
+bash /opt/projects/GAIA/start-all-agents-single-process.sh
+
+# 3. Access web UI
+# https://regen.gaiaai.xyz/ (Username: regenai, Password: regen2025)
+```
+
+### Agent Startup Options
+
+#### Option 1: Single Process Mode (RECOMMENDED)
+**Use when:** You need web UI access to all agents
+```bash
+bash /opt/projects/GAIA/start-all-agents-single-process.sh
+```
+- ✅ All 5 agents available in web UI
+- ✅ Each has its own Telegram bot
+- ✅ Unified logging and management
+- ⚠️ Restart affects all agents
+
+#### Option 2: Multi-Process Mode
+**Use when:** You need independent agent control
+```bash
+bash /opt/projects/GAIA/start-all-agents-telegram.sh
+```
+- ✅ Independent agent restarts
+- ✅ Separate logs per agent
+- ❌ Web UI only shows RegenAI
+- ⚠️ More complex management
+
+#### Option 3: No Telegram Mode
+**Use when:** Testing or Telegram issues
+```bash
+bash /opt/projects/GAIA/start-all-agents-no-telegram.sh
+```
+- ✅ Simpler configuration
+- ✅ No bot token issues
+- ❌ No Telegram functionality
+
+### Stopping Agents
+
+```bash
+# Option 1: Quick stop (works for any user with sudo)
+sudo pkill -f 'packages/cli/dist/index.js'
+
+# Option 2: Check who started them first
+ps aux | grep -E "bun.*packages/cli" | grep -v grep
+
+# Option 3: Stop specific agent
+pkill -f 'governor.character.json'
+```
+
+### Restarting Agents
+
+```bash
+# Full restart (recommended)
+sudo pkill -f 'packages/cli/dist/index.js' 2>/dev/null || true
+sleep 2
+bash /opt/projects/GAIA/start-all-agents-single-process.sh
+
+# Quick restart keeping knowledge in memory
+kill -HUP $(pgrep -f 'packages/cli/dist/index.js')
+```
 
 ### Agent Management (CRITICAL PROCEDURES)
 

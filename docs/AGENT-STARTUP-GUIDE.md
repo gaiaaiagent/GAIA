@@ -26,11 +26,12 @@ OPENAI_API_KEY=your-api-key-here
 TEXT_MODEL=gpt-5-nano-2025-08-07
 TEXT_EMBEDDING_MODEL=text-embedding-3-small
 
-# Telegram Bot Tokens (get from @BotFather)
-TELEGRAM_BOT_TOKEN_ADVOCATE=your-advocate-token
-TELEGRAM_BOT_TOKEN_VOICEOFNATURE=your-voiceofnature-token
-TELEGRAM_BOT_TOKEN_GOVERNOR=your-governor-token
-TELEGRAM_BOT_TOKEN_NARRATIVE=your-narrative-token
+# Telegram Configuration (Tokens now in character files)
+# Tokens are configured in each character's secrets section:
+# - @RegenAdvocacyBot (Advocate)
+# - @RegenVoiceOfNatureBot (VoiceOfNature)
+# - @RegenGovernBot (Governor)
+# - @RegenNarrativeBot (Narrative)
 # Note: RegenAI is web-only, no Telegram bot
 ```
 
@@ -43,10 +44,22 @@ sudo chmod -R g+rws /opt/projects/GAIA
 
 ## Starting Agents
 
-### Official Startup Script
-Use the production-ready script with full Telegram support:
+### Recommended: Single-Process Mode (Full Web UI + Telegram)
+Best for most use cases - all agents accessible via web UI:
 ```bash
-bash /opt/projects/GAIA/start-all-agents-with-telegram.sh
+bash /opt/projects/GAIA/start-all-agents-single-process.sh
+```
+
+### Alternative: Multi-Process Mode (Independent Control)
+Use when you need to restart agents independently:
+```bash
+bash /opt/projects/GAIA/start-all-agents-telegram.sh
+```
+
+### Testing: No Telegram Mode
+For testing or when Telegram tokens are unavailable:
+```bash
+bash /opt/projects/GAIA/start-all-agents-no-telegram.sh
 ```
 
 This script:
@@ -138,6 +151,94 @@ cp new-docs/* /opt/projects/GAIA/knowledge/
 # Restart agents
 sudo pkill -f 'packages/cli/dist/index.js start'
 bash /opt/projects/GAIA/start-all-agents-with-telegram.sh
+```
+
+## Common Issues and Solutions
+
+### 502 Bad Gateway Error on Web UI
+
+**Problem**: Getting 502 when accessing https://regen.gaiaai.xyz/
+
+**Causes & Solutions**:
+1. **Wrong port in nginx config**:
+```bash
+# Check which port agents are actually using
+grep "AgentServer is listening" /opt/projects/GAIA/logs/*.log
+
+# Update nginx config to correct port (usually 3000)
+# Edit /opt/projects/GAIA/nginx-ssl.conf
+# Change: server 172.17.0.1:XXXX to actual port
+
+# Restart nginx
+docker compose up -d nginx --no-deps
+```
+
+2. **Agents not running**:
+```bash
+# Check if agents are running
+ps aux | grep "bun.*packages/cli" | grep -v grep
+
+# If not, start them
+bash /opt/projects/GAIA/start-all-agents-single-process.sh
+```
+
+### Web UI Shows "Inactive" Agents
+
+**Problem**: Agents show as "inactive" in web UI, can't chat with them
+
+**Solution**: Use single-process mode so all agents share the same web server:
+```bash
+# Stop multi-process agents
+sudo pkill -f 'packages/cli/dist/index.js'
+
+# Start in single-process mode
+bash /opt/projects/GAIA/start-all-agents-single-process.sh
+```
+
+### Telegram Bot "401: Unauthorized" Errors
+
+**Problem**: Telegram bots failing with authentication errors
+
+**Solutions**:
+1. **Check bot tokens are valid**:
+   - Get fresh tokens from @BotFather on Telegram
+   - Update tokens in character files' `secrets` section
+
+2. **Verify token configuration**:
+```bash
+# Check character files have tokens
+grep "TELEGRAM_BOT_TOKEN" /opt/projects/GAIA/characters/*.json
+```
+
+### Multiple Agent Instances Running
+
+**Problem**: Duplicate agents from different users/sessions
+
+**Solution**:
+```bash
+# See all running agents
+ps aux | grep "bun.*packages/cli" | grep -v grep
+
+# Stop ALL agents (requires sudo)
+sudo pkill -f 'packages/cli/dist/index.js'
+
+# Start fresh
+bash /opt/projects/GAIA/start-all-agents-single-process.sh
+```
+
+### CHARACTER.* Environment Variables Not Working
+
+**Problem**: Bash cannot export variables with dots
+
+**Solution**: Use inline environment passing or add to character files:
+```bash
+# Method 1: Inline (for testing)
+env TELEGRAM_BOT_TOKEN="token" bun start --character char.json
+
+# Method 2: In character file (recommended)
+"secrets": {
+  "TELEGRAM_BOT_TOKEN": "your-token"
+}
 ```
 
 ## Troubleshooting

@@ -2,32 +2,29 @@
 
 ## Overview
 
-The RegenAI project has 5 AI agents integrated with Telegram, allowing team members to interact with them directly through Telegram messages. Each agent has its own unique personality and expertise area.
+The RegenAI project has 4 AI agents integrated with Telegram, allowing team members to interact with them directly through Telegram messages. Each agent has its own unique personality and expertise area.
+
+> **Note:** RegenAI itself is web-only and does not have a Telegram bot.
 
 ## Available RegenAI Telegram Bots
 
-### 1. **RegenAI** - Development Orchestrator
-- **Telegram Handle:** `@RegenAIBot` (example - replace with actual handle)
-- **Expertise:** General RegenAI questions, development coordination
-- **Character:** Technical, collaborative, systems thinking
+### 1. **Advocate** - Educational Specialist  
+- **Telegram Handle:** `@RegenAdvocacyBot`
+- **Expertise:** Educational content, carbon credits, regenerative practices
+- **Character:** Clear, helpful, educational focus
 
-### 2. **Facilitator** - Community Facilitator  
-- **Telegram Handle:** `@RegenFacilitatorBot` (example - replace with actual handle)
-- **Expertise:** Community engagement, process facilitation, meeting coordination
-- **Character:** Supportive, organized, people-focused
-
-### 3. **Voice of Nature** - Philosophical Voice
-- **Telegram Handle:** `@RegenVoiceOfNatureBot` (example - replace with actual handle)
+### 2. **Voice of Nature** - Philosophical Voice
+- **Telegram Handle:** `@RegenVoiceOfNatureBot`
 - **Expertise:** Ecological wisdom, regenerative principles, philosophical insights
 - **Character:** Contemplative, nature-centered, inspiring
 
-### 4. **Governor** - Governance Expert
-- **Telegram Handle:** `@RegenGovernorBot` (example - replace with actual handle)
+### 3. **Governor** - Governance Expert
+- **Telegram Handle:** `@RegenGovernBot`
 - **Expertise:** Governance processes, DAODAO proposals, token economics
 - **Character:** Analytical, structured, governance-focused
 
-### 5. **Narrative** - Storyteller
-- **Telegram Handle:** `@RegenNarrativeBot` (example - replace with actual handle)
+### 4. **Narrative** - Storyteller
+- **Telegram Handle:** `@RegenNarrativeBot`
 - **Expertise:** Storytelling, content creation, narrative development
 - **Character:** Creative, engaging, story-focused
 
@@ -39,31 +36,35 @@ The RegenAI project has 5 AI agents integrated with Telegram, allowing team memb
 3. The bot will introduce itself and explain its capabilities
 
 ### Step 2: Basic Interaction
+
+#### In Direct Messages (DMs)
 - Send any message to start a conversation
-- Ask questions about:
-  - Regen Network projects and initiatives
-  - Regenerative agriculture and carbon credits
-  - Governance proposals and voting
-  - Technical questions about the platform
-  - Community events and activities
+- The bot will always respond in DMs
+
+#### In Group Chats
+- **Mention-Only Mode**: Bots only respond when directly mentioned
+- To get a response, either:
+  - Mention the bot by username: `@RegenGovernBot what is DAODAO?`
+  - Include the bot's name: `Governor, can you explain governance?`
+- Bots have a 1% chance of randomly responding to keep conversations engaging
 
 ### Step 3: Example Interactions
 
-**With RegenAI:**
+**With Advocate (Direct Message):**
 ```
-You: What's the status of the latest Regen Registry updates?
-RegenAI: I can help you understand the current Regen Registry developments...
+You: What are carbon credits and how do they work?
+Advocate: Carbon credits are tradable certificates representing...
 ```
 
-**With Governor:**
+**With Governor (Group Chat):**
 ```
-You: How do I create a governance proposal?
+You: @RegenGovernBot how do I create a governance proposal?
 Governor: Let me walk you through the DAODAO proposal creation process...
 ```
 
-**With Voice of Nature:**
+**With Voice of Nature (Mention by name):**
 ```
-You: What are the regenerative principles behind carbon credit methodologies?
+You: Voice of Nature, what are the regenerative principles behind carbon sequestration?
 Voice of Nature: The living systems approach to carbon sequestration reflects...
 ```
 
@@ -99,8 +100,31 @@ Reference previous parts of the conversation or specific Regen initiatives you'r
 Each bot has a unique personality - lean into their strengths:
 - Ask **Governor** about governance and processes
 - Ask **Voice of Nature** about regenerative philosophy  
-- Ask **Facilitator** about community coordination
+- Ask **Advocate** about carbon credits and educational content
 - Ask **Narrative** about storytelling and content
+
+## Group Chat Behavior (Mention-Only Mode)
+
+To reduce spam and improve conversation quality, our bots use **mention-only mode** in group chats:
+
+### When Bots Respond in Groups:
+1. **Direct Mentions**: `@BotUsername` (e.g., `@RegenGovernBot`)
+2. **Name Mentions**: Using the bot's name in your message
+3. **Direct Messages**: Always respond in DMs
+4. **Random Responses**: 1% chance to respond organically
+
+### Example Group Interactions:
+```
+✅ WILL RESPOND:
+User: @RegenGovernBot what's the latest proposal?
+User: Governor, can you explain the voting process?
+User: Hey @RegenAdvocacyBot, tell me about carbon credits
+
+❌ WON'T RESPOND (unless random 1%):
+User: What's happening with governance?
+User: Anyone know about carbon credits?
+User: How does voting work?
+```
 
 ## Technical Details
 
@@ -111,10 +135,10 @@ Each bot has a unique personality - lean into their strengths:
 {
   "clients": ["telegram"],
   "allowDirectMessages": true,
-  "shouldOnlyJoinInAllowedGroups": false,
-  "messageTrackingLimit": 100,
+  "TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED": true,
+  "TELEGRAM_RANDOM_RESPONSE_RATE": "0.01",
   "secrets": {
-    "key": "<TELEGRAM_BOT_TOKEN>"
+    "TELEGRAM_BOT_TOKEN": "<bot-token>",
   }
 }
 ```
