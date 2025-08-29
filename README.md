@@ -38,13 +38,19 @@ echo "OPENAI_API_KEY=your-key-here" > .env
 echo "POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza" >> .env
 
 # Start agents (will run without knowledge base)
-bash start-all-agents.sh
+bash start-all-agents-with-telegram.sh
 
 # Visit locally  
 open http://localhost:3000
 ```
 
 > **Note**: The `knowledge/` directory contains sensitive data and is not included in the repository. Agents will run without the knowledge base for testing purposes.
+
+### 📚 Complete Setup Guide
+
+For production deployment with Telegram bots and full configuration, see:
+- **[Agent Startup Guide](docs/AGENT-STARTUP-GUIDE.md)** - Complete startup and management instructions
+- **[CLAUDE.md](CLAUDE.md)** - Critical configuration and known issues
 
 ## The Agents
 

@@ -151,7 +151,7 @@ curl -u regenai:regen2025 https://regen.gaiaai.xyz/
 - **5 AI Agents**: RegenAI, Advocate, Voice of Nature, Governor, Narrative
 - **Database**: PostgreSQL with pgvector (Docker container on port 5433)
 - **Knowledge Base**: 13,000+ documents (Notion pages, Regen Network docs, governance, technical docs)
-- **Model**: GPT-5 Nano 2025-08-07 (chat) + OpenAI text-embedding-3-small (embeddings)
+- **AI Models**: Configured via environment variables (see Model Configuration section below)
 - **Plugin-Knowledge**: Custom fork with deduplication and enhanced processing
 
 ## 🌿 KOI Node System (Knowledge Organization Infrastructure)
@@ -321,6 +321,58 @@ CHARACTER.ADVOCATE.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true
 
 **Note:** With 32GB RAM, all agents can have `LOAD_DOCS_ON_STARTUP: true` for best performance.
 
+## Model Configuration
+
+### How Models Are Configured
+The AI models used by agents are configured through a hierarchy of settings:
+
+1. **Environment Variables (Highest Priority)**
+   - `TEXT_MODEL` - Sets the primary chat model for all agents
+   - `TEXT_EMBEDDING_MODEL` - Sets the embedding model
+   - `OPENAI_SMALL_MODEL` / `SMALL_MODEL` - Small text generation model
+   - `OPENAI_LARGE_MODEL` / `LARGE_MODEL` - Large text generation model
+   - `OPENAI_EMBEDDING_MODEL` - OpenAI-specific embedding model
+   - `OPENAI_EMBEDDING_DIMENSIONS` - Embedding vector dimensions (default: 1536)
+
+2. **Character File Settings**
+   - `modelProvider` - Specifies the AI provider (e.g., "openai", "anthropic")
+   - Model-specific settings in character JSON files
+
+3. **Plugin Defaults (Lowest Priority)**
+   - OpenAI plugin defaults are used if no environment variables are set
+   - Located in `@elizaos/plugin-openai` configuration
+
+### Setting Models in .env File
+```bash
+# Primary models (override all defaults)
+TEXT_MODEL=gpt-4o-mini
+TEXT_EMBEDDING_MODEL=text-embedding-3-small
+
+# Provider-specific models
+OPENAI_SMALL_MODEL=gpt-4o-mini
+OPENAI_LARGE_MODEL=gpt-4o
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+OPENAI_EMBEDDING_DIMENSIONS=1536
+
+# Model provider (if not set in character files)
+MODEL_PROVIDER=openai
+```
+
+### Model Selection Priority
+1. Environment variables in `.env` file
+2. Startup script overrides (e.g., in `start-all-agents.sh`)
+3. Character file `modelProvider` and model settings
+4. Plugin default values
+
+### Checking Active Models
+```bash
+# View configured environment variables
+grep -E "MODEL|GPT|EMBEDDING" /opt/projects/GAIA/.env
+
+# Check runtime logs for model usage
+grep "Using model" /opt/projects/GAIA/logs/regenai.log | tail -10
+```
+
 ## Development Environment
 
 ### Working Directory
@@ -334,20 +386,26 @@ CHARACTER.ADVOCATE.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true
 - **Language**: TypeScript
 - **Database**: PostgreSQL with pgvector extension
 - **Container**: Docker for postgres/nginx/django only
+- **AI Provider**: Configured via environment variables (typically OpenAI)
 
 ## Key Commands
 
 ### Agent Operations
 ```bash
+# Start all agents (official method)
+bash /opt/projects/GAIA/start-all-agents-with-telegram.sh
+
 # Check status
 ps aux | grep -E "bun.*packages/cli/dist" | grep -v grep
 
-# Restart to load new knowledge
-pkill -f 'packages/cli/dist/index.js start'
-bash /opt/projects/GAIA/start-agents-hybrid.sh
+# Stop all agents
+sudo pkill -f 'packages/cli/dist/index.js start'
 
 # View logs
-tail -100 /opt/projects/GAIA-direct/logs/all-agents-hybrid.log
+tail -100 /opt/projects/GAIA/logs/*.log
+
+# Full documentation
+# See: docs/AGENT-STARTUP-GUIDE.md
 ```
 
 ### Database Operations
@@ -713,8 +771,9 @@ See [Django Admin Troubleshooting Guide](docs/DJANGO-ADMIN-TROUBLESHOOTING.md) f
 ### Agents not responding?
 1. Check if running: `ps aux | grep bun.*packages/cli`
 2. Check nginx: `docker ps | grep nginx`
-3. View logs: `tail -50 /opt/projects/GAIA-direct/logs/all-agents-hybrid.log`
-4. Restart: `bash /opt/projects/GAIA/start-agents-hybrid.sh`
+3. View logs: `tail -50 /opt/projects/GAIA/logs/*.log`
+4. Restart: `bash /opt/projects/GAIA/start-all-agents-with-telegram.sh`
+5. **See full guide**: [AGENT-STARTUP-GUIDE.md](docs/AGENT-STARTUP-GUIDE.md)
 
 ### Knowledge not updating?
 - Agents must be restarted to load new knowledge
