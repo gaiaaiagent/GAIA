@@ -29,6 +29,27 @@ POSTGRES_URL=postgresql://postgres:@localhost:5433/eliza
 - ✅ **Agents (5 instances):** Run as native bun processes on host
 - ❌ **Never run agents in Docker** - this breaks the proxy configuration
 
+### CHARACTER.* Environment Variable Timing Issue (August 29, 2025)
+
+**CRITICAL:** ElizaOS initialization order affects CHARACTER.* variable accessibility in plugins!
+
+**Problem:** Plugins calling `runtime.getSetting()` for CHARACTER.* variables fail on PostgreSQL but work on PGLite
+
+**Root Cause:** Database-specific initialization timing differences:
+- **PGLite**: Fast file-based → CHARACTER.* processing completes before plugin loading ✅
+- **PostgreSQL**: Network + migrations + schema → plugins may load before CHARACTER.* processing ❌
+
+**Solution:** Manual environment injection in startup scripts for PostgreSQL deployments:
+```bash
+# Required for PostgreSQL (not needed for PGLite)
+CHARACTER.GOVERNOR.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true \
+CHARACTER.GOVERNOR.TELEGRAM_RANDOM_RESPONSE_RATE=0.01 \
+POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza \
+bun packages/cli/dist/index.js start --character characters/governor.character.json
+```
+
+**Key Insight:** Code working locally (PGLite) may fail in production (PostgreSQL) due to initialization timing, requiring manual injection workaround.
+
 ### Web Server Configuration (August 27, 2025)
 
 **HTTPS/SSL Setup Requirements:**

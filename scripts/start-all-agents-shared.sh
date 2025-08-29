@@ -3,7 +3,7 @@
 # Start All RegenAI Agents with SHARED Database (No Duplicate Embeddings!)
 # All agents use same PGLITE_DATA_DIR so embeddings are computed only once
 
-SERVER="darren@202.61.196.119"
+SERVER="user@your-server-ip"
 GAIA_DIR="/opt/projects/GAIA-direct"
 KNOWLEDGE_PATH="/opt/projects/GAIA/knowledge"
 CHARACTERS_PATH="/opt/projects/GAIA/characters"
@@ -68,10 +68,10 @@ ssh $SERVER "ps aux | grep 'packages/cli/dist/index.js start' | grep -v grep"
 echo ""
 echo "🌐 Access URLs:"
 echo "Main RegenAI:      https://regen.gaiaai.xyz/"
-echo "Facilitator:       http://202.61.196.119:3001"
-echo "Voice of Nature:   http://202.61.196.119:3002"
-echo "Governor:          http://202.61.196.119:3003"
-echo "Narrative:         http://202.61.196.119:3004"
+echo "Facilitator:       http://your-server-ip:3001"
+echo "Voice of Nature:   http://your-server-ip:3002"
+echo "Governor:          http://your-server-ip:3003"
+echo "Narrative:         http://your-server-ip:3004"
 
 echo ""
 echo "📝 Monitor logs:"

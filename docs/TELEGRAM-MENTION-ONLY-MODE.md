@@ -139,6 +139,20 @@ Source: telegram | Mentioned: true (direct, confidence: 1.0)
    - Character name should match exactly (case sensitive)
    - Restart agent after environment changes
 
+4. **DATABASE-SPECIFIC ISSUE: CHARACTER.* variables not accessible in plugins**
+   - **Root Cause**: ElizaOS initialization order differs between PGLite and PostgreSQL
+   - **PGLite**: CHARACTER.* variables available during plugin initialization ✅
+   - **PostgreSQL**: Plugins load before CHARACTER.* variables are processed ❌
+   - **Solution**: Use manual environment injection in startup scripts
+   - **Example Fix**:
+     ```bash
+     # In startup script, manually inject environment variables
+     CHARACTER.GOVERNOR.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true \
+     CHARACTER.GOVERNOR.TELEGRAM_RANDOM_RESPONSE_RATE=0.01 \
+     POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza \
+     bun packages/cli/dist/index.js start --character characters/governor.character.json
+     ```
+
 ### Debug Commands
 
 ```bash
@@ -154,8 +168,35 @@ echo $CHARACTER.GOVERNOR.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED
 
 ## Deployment
 
-1. **Update `.env`** with character-specific settings
-2. **Restart agents** to load new configuration  
+### Database-Specific Deployment Notes
+
+**⚠️ CRITICAL:** Deployment approach depends on your database configuration!
+
+#### PGLite Deployment (Development/Single-Agent)
+```bash
+# Standard approach - CHARACTER.* variables work normally
+1. Update `.env` with character-specific settings
+2. Restart agents to load new configuration
+3. Test functionality with mention and non-mention messages
+```
+
+#### PostgreSQL Deployment (Production/Multi-Agent)
+```bash
+# Manual environment injection required due to initialization timing
+1. Update `.env` with character-specific settings
+2. Modify startup scripts to manually inject environment variables
+3. Example startup script modification:
+   CHARACTER.GOVERNOR.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true \
+   CHARACTER.GOVERNOR.TELEGRAM_RANDOM_RESPONSE_RATE=0.01 \
+   POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza \
+   bun packages/cli/dist/index.js start --character characters/governor.character.json
+4. Restart agents and verify environment variables are accessible
+5. Test functionality and monitor logs
+```
+
+### Standard Deployment Steps
+1. **Choose deployment approach** based on database type (see above)
+2. **Update configuration** following database-specific pattern
 3. **Test functionality** with mention and non-mention messages
 4. **Monitor logs** for mention detection debug information
 
