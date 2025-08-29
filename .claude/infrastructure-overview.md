@@ -12,17 +12,6 @@ _Complete inventory of systems, tools, and frameworks created_
 - **Schema**: 17 tables (agents, memories, rooms, logs, etc.)
 - **Status**: ✅ Fully operational
 
-### 2. Django Admin Interface
-
-- **URL**: http://localhost:8000/
-- **Login**: admin / admin123
-- **Purpose**: Database visibility and contract compliance tracking
-- **Features**:
-  - Browse all 17 ElizaOS tables
-  - Contract compliance dashboard
-  - Interaction metrics tracking
-  - Document processing metrics
-  - Agent performance monitoring
 
 ### 3. Database Schema Inspector
 
@@ -35,53 +24,31 @@ _Complete inventory of systems, tools, and frameworks created_
   - Row count statistics
   - CLI with multiple options
 
-## 🧪 Testing Infrastructure
+### 2. Django Admin Interface
 
-### TDD Test Suite
-
-- **File**: `tests/facilitator-agent-real.test.ts`
-- **Status**: 2 passing / 10 failing (database ✅, API communication ❌)
-- **Coverage**:
-  - Agent identity verification
-  - Knowledge integration tests
-  - Multi-agent coordination
-  - Database integration
-  - Error handling validation
-
-### Semantic Testing Framework (Planned)
-
-- **Design**: `tests/semantic-testing-framework.md`
-- **Focus**: Response accuracy, knowledge grounding, citation validation
-- **Status**: 🚧 Framework designed, implementation needed
-
-## 📊 Contract Compliance System
-
-### Tracking Models (Django)
-
-```python
-InteractionMetric  # Track 100k interactions target
-DocumentMetric     # Track 15k documents target
-AgentMetric        # Track 5 agents target
-```
-
-### Compliance Dashboard
-
-- **URL**: http://localhost:8000/admin/ (custom view needed)
-- **Metrics**: Progress bars, completion percentages
+- **URL Production**: http://regen.gaiaai.xyz:8000/admin/ 
 - **Real-time**: Connected to live ElizaOS database
-- **Reporting**: Contract milestone tracking
+- **Reporting**: Agent interactions and performance dashboard
+
+### Admin Dashboard
+
+- **URL**: http://localhost:8000/
+- **Login**: admin / admin123
+- **Purpose**: Database visibility and contract completion tracking
+- **Features**:
+  - Browse all 17 ElizaOS tables
+  - Interaction metrics tracking
+  - Document processing metrics
+  - Agent performance monitoring
+  - User activity monitoring
+  - Message analysis
+  - Retrieval and search testing
+
 
 ## 🤖 Agent Architecture
 
-### Current Agents
 
-1. **RegenAI Facilitator** ✅
-   - Character file: `characters/facilitator.character.json`
-   - Role: Partnership orchestrator
-   - Plugins: Bootstrap, SQL, OpenAI, Knowledge
-   - Status: Deployed and tested
-
-### Planned Agents (TDD Ready)
+### Official Agents
 
 2. **Narrative Agent** 🚧
 
@@ -90,14 +57,25 @@ AgentMetric        # Track 5 agents target
 
 3. **Politician Agent** 📋
 
+   - Character file: `characters/politician.character.json` (partial)
    - Role: Governance and policy coordination
 
 4. **Advocate Agent** 📋
 
+   - Character file: `characters/advocate.character.json` (partial)
    - Role: Community mobilization
 
 5. **Voice of Nature** 📋
+   - Character file: `characters/voiceofnature.character.json` (partial)
    - Role: Ecological wisdom and grounding
+
+
+### Additional Agents
+
+1. **RegenAI Facilitator** ✅
+   - Character file: `characters/facilitator.character.json`
+   - Role: Regen AI Partnership orchestrator
+
 
 ## 🗃️ Knowledge Management
 
@@ -129,7 +107,7 @@ AgentMetric        # Track 5 agents target
 2. **Django Admin**: Full CRUD interface
 3. **Direct PGLite Access**: For debugging and validation
 
-### Monitoring & Debugging
+### Reporting
 
 - **ElizaOS Logs**: Real-time agent activity
 - **Django Admin**: Database state visualization
@@ -142,13 +120,20 @@ AgentMetric        # Track 5 agents target
 GAIA/
 ├── characters/                    # Agent character definitions
 │   ├── facilitator.character.json
-│   └── narrative.character.json (partial)
-├── tests/                        # TDD test suite
-│   ├── facilitator-agent-real.test.ts
-│   └── semantic-testing-framework.md
-├── django_admin/                # Database admin interface
-│   ├── eliza_tables/models.py   # Django models matching ElizaOS
-│   ├── eliza_tables/admin.py    # Admin interface config
+│   ├── narrative.character.json 
+│   ├── governor.character.json 
+│   └── advocate.character.json 
+├── django_admin/                 # Database admin interface
+│   ├── elizaos/                 # Read-only ElizaOS models
+│   │   ├── models.py            # Django models matching ElizaOS tables
+│   │   └── admin.py             # Admin interface configuration
+│   ├── metrics/                 # Contract tracking models
+│   │   ├── models.py            # Managed models for metrics
+│   │   └── admin.py             # Metrics admin interface
+│   ├── reporting/               # Dashboard and reporting
+│   │   ├── views.py             # Dashboard views
+│   │   └── templatetags/        # Template utilities (dict_extras)
+│   ├── knowledge/               # Knowledge indexing progress
 │   └── manage.py                # Django management
 ├── inspect-schema.js            # Database inspection utility
 ├── packages/cli/.eliza/pglite/  # ElizaOS database
@@ -158,13 +143,13 @@ GAIA/
 ## 🌐 Network Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   ElizaOS       │    │   Django Admin  │    │   TDD Tests     │
-│   Agent Runtime │◄──►│   Interface     │◄──►│   Validation    │
-│   :3001         │    │   :8000         │    │   Framework     │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                        │                        │
-         ▼                        ▼                        ▼
+┌─────────────────┐    ┌─────────────────┐
+│   ElizaOS       │    │   Django Admin  │
+│   Agent Runtime │◄──►│   Interface     │
+│   :3001         │    │   :8000         │
+└─────────────────┘    └─────────────────┘
+         │                        │       
+         ▼                        ▼       
 ┌─────────────────────────────────────────────────────────────────┐
 │                    PGLite Database                              │
 │                    (Single Source of Truth)                    │
@@ -178,30 +163,3 @@ GAIA/
 - ElizaOS agent runtime with facilitator character
 - Complete database schema mapping (17 tables)
 - Django admin interface for data visualization
-- TDD framework with database integration
-- Database inspection and debugging tools
-- Contract compliance tracking infrastructure
-
-### 🚧 In Progress
-
-- Agent API communication (TDD tests failing but framework ready)
-- Semantic testing implementation
-- Additional agent character development
-
-### 📋 Next Priority
-
-1. Fix agent API communication for TDD tests
-2. Implement semantic testing validation
-3. Create interaction tracking hooks
-4. Deploy remaining 4 agent characters
-5. Build automated compliance reporting
-
-## 🏆 Key Achievements
-
-1. **Mathematical Precision**: Every piece of infrastructure is testable and verifiable
-2. **Contract Alignment**: All systems designed around 100k interactions / 15k docs / 5 agents
-3. **Living Documentation**: Infrastructure that documents itself through inspection tools
-4. **TDD Foundation**: Failing tests define exactly what needs to be built
-5. **Zero-Trust Verification**: Database schema inspector ensures models match reality
-
-This infrastructure provides a solid foundation for scaling to full contract requirements with mathematical precision and complete traceability.

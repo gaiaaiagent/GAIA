@@ -198,18 +198,9 @@ bun run lint
 
 ## Current State Notes
 
-- **Production**: 76 interactions logged, system working
-- **ChannelParticipant 500**: Known bug, only affects admin panel
+- **Production**: interactions logged, system working
 - **Auto-deployment**: Active on `regen` branch
 - **Development branch**: `regen-develop` created and active
-
-## Next Steps
-
-1. Set up local PostgreSQL for testing
-2. Configure `.env.local` for development
-3. Test local agent execution
-4. Validate Django admin locally
-5. Create first safe feature on `regen-develop`
 
 ---
 

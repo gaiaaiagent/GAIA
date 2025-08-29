@@ -1,0 +1,106 @@
+{
+  "description": "Enhanced priority files including RegenAI-specific components",
+  "categories": {
+    "root": [
+      "CLAUDE.md",
+      ".env",
+      "package.json",
+      "README.md",
+      "llms.txt",
+      "tsconfig.json",
+      "turbo.json",
+      "docker-compose.yaml",
+      "CHANGELOG.md",
+      "eliza.postman.json"
+    ],
+    "regenai_specific": [
+      "docs/CONTRACT-JDA.md",
+      "docs/AGENT-OPERATIONS.md",
+      "docs/NOTION-INTEGRATION.md",
+      "docs/PLUGIN-DEVELOPMENT.md",
+      "knowledge/README.md",
+      "scripts/start-agents-hybrid.sh",
+      "scripts/check-agents.sh"
+    ],
+    "plugin_knowledge": [
+      "packages/core/src/types/knowledge.ts",
+      "packages/plugin-bootstrap/src/index.ts",
+      "packages/plugin-bootstrap/src/services/embedding.ts",
+      "packages/plugin-sql/src/index.ts",
+      "packages/plugin-sql/src/pg/adapter.ts"
+    ],
+    "koi_integration": [
+      ".claude/planning/features/koi-integration.md",
+      ".claude/planning/features/agent-archetypes.md",
+      ".claude/journal/10-koi-conversion-progress-batch-1.md",
+      ".claude/journal/16-contract-day-one-reality-check.md"
+    ],
+    "claude_journal": [
+      ".claude/journal/00-index.md",
+      ".claude/journal/19-day2-elizaos-analysis.md",
+      ".claude/journal/20-group-chat-investigation-and-diagnostic-tools.md",
+      ".claude/journal/21-taxonomy-matrix-vision-and-meta-review.md",
+      ".claude/journal/18-database-integration-breakthrough.md"
+    ],
+    "claude_planning": [
+      ".claude/planning/current-priorities.md",
+      ".claude/planning/architecture/elizaos-knowledge-architecture.md",
+      ".claude/planning/features/character-development-framework.md",
+      ".claude/planning/roadmaps/milestone-1-core-agent-framework.md"
+    ],
+    "claude_diagnostics": [
+      ".claude/diagnostics/01-investigate-group-chat.js",
+      ".claude/diagnostics/README.md"
+    ],
+    "core_typescript": [
+      "packages/core/src/runtime.ts",
+      "packages/core/src/types/index.ts",
+      "packages/core/src/database.ts",
+      "packages/core/src/index.ts",
+      "packages/core/src/actions.ts",
+      "packages/core/src/services.ts",
+      "packages/core/src/prompts.ts",
+      "packages/core/src/memory.ts",
+      "packages/core/src/embedding.ts"
+    ],
+    "server_typescript": [
+      "packages/server/src/index.ts",
+      "packages/server/src/socketio/index.ts",
+      "packages/server/src/services/message.ts",
+      "packages/server/src/api/index.ts",
+      "packages/server/src/bus.ts",
+      "packages/server/src/api/messaging/sessions.ts",
+      "packages/server/src/api/messaging/channels.ts"
+    ],
+    "django": [
+      "django_admin/elizaos/models.py",
+      "django_admin/elizaos/admin.py",
+      "django_admin/eliza_admin/settings.py",
+      "django_admin/manage.py",
+      "django_admin/README.md",
+      "django_admin/contract_tracking/models.py",
+      "django_admin/monitoring/views.py"
+    ],
+    "characters": [
+      "characters/facilitator.character.json",
+      "characters/narrative.character.json",
+      "characters/regenai.character.json",
+      "characters/voiceofnature.character.json",
+      "characters/governor.character.json"
+    ],
+    "client": [
+      "packages/client/src/components/chat.tsx",
+      "packages/client/src/hooks/use-socket-chat.ts",
+      "packages/client/src/App.tsx",
+      "packages/client/src/components/group-card.tsx",
+      "packages/client/src/lib/socketio-manager.ts"
+    ],
+    "tests": [
+      "packages/core/src/__tests__/runtime.test.ts",
+      "packages/server/src/__tests__/basic-functionality.test.ts",
+      "packages/plugin-bootstrap/src/__tests__/services.test.ts",
+      "packages/plugin-sql/src/__tests__/integration/base-adapter-methods.test.ts"
+    ]
+  },
+  "total": 85
+}
