@@ -2,7 +2,18 @@
 
 ## Architecture Overview
 
-The RegenAI Telegram integration uses ElizaOS's `@elizaos/plugin-telegram` to connect AI agents to Telegram. Each agent runs as a native bun process and maintains its own Telegram bot connection.
+The RegenAI Telegram integration uses a **forked version** of ElizaOS's `@elizaos/plugin-telegram` to connect AI agents to Telegram. Each agent runs as a native bun process and maintains its own Telegram bot connection.
+
+### 🚨 IMPORTANT: We Use a Custom Fork
+
+**Why we forked the plugin:**
+- Original plugin was designed for ElizaOS v1.0.19, but we run ElizaOS v1.4.2
+- Needed dependency updates for compatibility
+- Required build configuration changes (disabled DTS generation due to type conflicts)
+
+**Our fork:** https://github.com/gaiaaiagent/plugin-telegram  
+**Branch:** `1.x`  
+**Integration:** Used via GitHub URL in package.json
 
 ## Current Implementation Status
 
@@ -18,40 +29,109 @@ The RegenAI Telegram integration uses ElizaOS's `@elizaos/plugin-telegram` to co
 Each agent requires a unique Telegram bot token to avoid 409 Conflict errors.
 
 **Environment Variables (in `/opt/projects/GAIA-direct/.env`):**
+
+ElizaOS uses a specific naming convention: `CHARACTER.{CHARACTER_NAME}.{SETTING_KEY}`
+
 ```bash
-# Primary RegenAI bot
-TELEGRAM_BOT_TOKEN=<your-regenai-bot-token>
+# RegenAI bot (character name: "RegenAI")
+CHARACTER.REGENAI.TELEGRAM_BOT_TOKEN=<your-regenai-bot-token>
+CHARACTER.REGENAI.OPENAI_API_KEY=<your-openai-key>
 
-# Facilitator bot  
-TELEGRAM_BOT_TOKEN_ADVOCATE=<your-facilitator-bot-token>
+# Facilitator bot (character name: "Facilitator") 
+CHARACTER.FACILITATOR.TELEGRAM_BOT_TOKEN=<your-facilitator-bot-token>
+CHARACTER.FACILITATOR.OPENAI_API_KEY=<your-openai-key>
 
-# Narrative bot
-TELEGRAM_BOT_TOKEN_NARRATIVE=<your-narrative-bot-token>
+# Narrative bot (character name: "Narrative")
+CHARACTER.NARRATIVE.TELEGRAM_BOT_TOKEN=<your-narrative-bot-token>
+CHARACTER.NARRATIVE.OPENAI_API_KEY=<your-openai-key>
 
-# Voice of Nature bot
-TELEGRAM_BOT_TOKEN_VOICEOFNATURE=<your-voiceofnature-bot-token>
+# Voice of Nature bot (character name: "Voice of Nature" -> "VOICE_OF_NATURE")
+CHARACTER.VOICE_OF_NATURE.TELEGRAM_BOT_TOKEN=<your-voiceofnature-bot-token>
+CHARACTER.VOICE_OF_NATURE.OPENAI_API_KEY=<your-openai-key>
 
-# Governor bot
-TELEGRAM_BOT_TOKEN_GOVERNOR=<your-governor-bot-token>
+# Governor bot (character name: "Governor")
+CHARACTER.GOVERNOR.TELEGRAM_BOT_TOKEN=<your-governor-bot-token>
+CHARACTER.GOVERNOR.OPENAI_API_KEY=<your-openai-key>
+```
+
+## Plugin Installation and Configuration
+
+### Step 1: Install the Forked Plugin
+
+The telegram plugin **MUST be built from source** after installation:
+
+```bash
+# 1. Install from our fork (done automatically by package.json)
+bun install
+
+# 2. CRITICAL: Build the plugin from source
+cd node_modules/@elizaos/plugin-telegram
+bun run build
+
+# 3. Restart agents to load the updated plugin
+pkill -f 'packages/cli/dist/index.js start'
+bash start-agents-hybrid.sh
+```
+
+**Package.json Configuration:**
+```json
+{
+  "dependencies": {
+    "@elizaos/plugin-telegram": "https://github.com/gaiaaiagent/plugin-telegram.git#1.x"
+  }
+}
 ```
 
 ## Character Configuration
 
-### Basic Telegram Configuration Template:
+### 🚨 CRITICAL: ElizaOS Environment Variable System
 
+ElizaOS automatically loads environment variables using the pattern: `CHARACTER.{CHARACTER_NAME}.{SETTING_KEY}`
+
+**How it works:**
+1. ElizaOS reads your character's `name` field
+2. Converts it to UPPERCASE and replaces spaces with underscores
+3. Looks for environment variables starting with `CHARACTER.{NAME}.`
+4. Automatically adds these to your character's settings/secrets
+
+**Example:** For a character named "Governor":
+- `CHARACTER.GOVERNOR.TELEGRAM_BOT_TOKEN` → automatically available as `TELEGRAM_BOT_TOKEN`
+- `CHARACTER.GOVERNOR.OPENAI_API_KEY` → automatically available as `OPENAI_API_KEY`
+
+### 🚨 CRITICAL: Schema Requirements
+
+ElizaOS has **strict character schema validation**. The following fields MUST be placed correctly:
+
+**❌ WRONG (causes validation failure):**
 ```json
 {
   "name": "AgentName",
-  "clients": ["telegram"],
+  "clients": ["telegram"],           // ❌ NOT allowed at root level
+  "allowDirectMessages": true,       // ❌ NOT allowed at root level
+  "plugins": ["@elizaos/plugin-telegram"]
+}
+```
+
+**✅ CORRECT:**
+```json
+{
+  "name": "AgentName",
+  "username": "agentname",
   "plugins": [
     "@elizaos/plugin-bootstrap",
+    "@elizaos/plugin-sql",
+    "@elizaos/plugin-openai",
+    "@elizaos/plugin-knowledge", 
     "@elizaos/plugin-telegram"
   ],
   "settings": {
-    "secrets": {
-      "TELEGRAM_BOT_TOKEN": "<bot-token>"
-    }
+    "clients": ["telegram"],           // ✅ Must be in settings
+    "allowDirectMessages": true,       // ✅ Must be in settings
+    "LOAD_DOCS_ON_STARTUP": true,
+    "KNOWLEDGE_PATH": "./knowledge"
+    // API keys automatically loaded from CHARACTER.AGENTNAME.* environment variables
   },
+  "secrets": {},
   "bio": ["Agent description for Telegram users"],
   "lore": ["Background information"],
   "messageExamples": [
@@ -123,6 +203,67 @@ ps aux | grep "bun.*packages/cli.*AgentName"
 
 # Check agent logs for Telegram connection
 tail -f /opt/projects/GAIA-direct/logs/agentname.log | grep -i telegram
+```
+
+## Troubleshooting Guide
+
+### Character Validation Failures
+
+**Problem:** `Character validation failed: Unrecognized key(s) in object: 'clients', 'allowDirectMessages'`
+
+**Root Cause:** These fields are not part of the core Character schema and cannot be at the root level.
+
+**Solution:** Move `clients` and `allowDirectMessages` to the `settings` object:
+
+```json
+{
+  "settings": {
+    "clients": ["telegram"],
+    "allowDirectMessages": true
+  }
+}
+```
+
+### Plugin Not Found Errors
+
+**Problem:** `Cannot find module '@elizaos/plugin-telegram'`
+
+**Solutions:**
+1. **Check package.json:** Ensure the plugin is listed with our fork URL
+2. **Clean install:** `rm -rf node_modules bun.lock && bun install`
+3. **Build from source:** `cd node_modules/@elizaos/plugin-telegram && bun run build`
+
+### No Response from Bot
+
+**Problem:** Bot receives messages but doesn't respond
+
+**Common Causes:**
+1. **Missing OpenAI API Key:** Bot can't generate responses without AI model access
+   ```bash
+   # Check logs for: "⚠️ OPENAI_API_KEY not found in process.env"
+   ```
+   
+2. **Settings State Errors:** `No settings state found for server undefined`
+   - Usually resolves after first successful message processing
+
+**Solutions:**
+1. Add `OPENAI_API_KEY` to environment variables or character settings
+2. Ensure bot token is correctly configured
+3. Check agent logs for specific error messages
+
+### Build/Compatibility Issues
+
+**Problem:** TypeScript errors during plugin build
+
+**Solution:** Our fork disables DTS generation to avoid type conflicts:
+```typescript
+// tsup.config.ts
+export default defineConfig({
+  entry: ["src/index.ts"],
+  format: ["cjs"],
+  dts: false, // Disabled to avoid Plugin type export issues
+  ...
+});
 ```
 
 ## Common Issues and Solutions

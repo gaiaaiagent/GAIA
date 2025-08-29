@@ -1,220 +1,304 @@
-# Plugin Development & Testing Guide
+# Plugin Development and Integration Guide
 
-## Critical Discovery: Plugin Loading Locations
+## Overview
 
-**⚠️ IMPORTANT:** The RegenAI agents load plugins from TWO different locations:
+This guide documents the patterns and practices for integrating external ElizaOS plugins into the GAIA project, based on learnings from integrating the Telegram plugin.
 
-1. **External Plugin Directory**: `/opt/projects/plugin-knowledge/`
-   - This is where plugins are ACTUALLY loaded from at runtime
-   - Separate repository from the main ElizaOS fork
-   
-2. **Monorepo Packages**: `/opt/projects/GAIA-direct/packages/plugin-knowledge/`
-   - This is where you develop and build plugins
-   - Part of the forked ElizaOS codebase
+## External Plugin Integration Pattern
 
-### Why This Matters
+### When to Fork a Plugin
 
-When you modify a plugin in the monorepo, the changes won't take effect unless you copy the built files to the external directory. This can cause hours of confusion if you don't know about it!
+Fork an external plugin when:
+1. **Version Compatibility:** Plugin targets older ElizaOS version than your project
+2. **Build Issues:** Plugin has TypeScript or build configuration problems
+3. **Custom Requirements:** You need modifications not available upstream
+4. **Maintenance:** Original plugin is unmaintained or slow to update
 
-## Complete Build & Test Process
+### Fork Setup Process
 
-### 1. Modify Plugin Code
-
+#### 1. Create Fork
 ```bash
-# Navigate to the plugin in the monorepo
-cd /opt/projects/GAIA-direct/packages/plugin-knowledge
-
-# Edit source files
-vim src/service.ts
+# Fork the original repository on GitHub
+# Example: https://github.com/elizaos-plugins/plugin-telegram
+# → https://github.com/gaiaaiagent/plugin-telegram
 ```
 
-### 2. Build the Plugin
-
-```bash
-# Build just the plugin
-cd /opt/projects/GAIA-direct/packages/plugin-knowledge
-bun run build
-
-# OR build everything (slower but ensures consistency)
-cd /opt/projects/GAIA-direct
-bun run build
-```
-
-### 3. Deploy to Runtime Location
-
-**This is the critical step most people miss!**
-
-```bash
-# Copy built plugin to external directory where agents load from
-cp -f /opt/projects/GAIA-direct/packages/plugin-knowledge/dist/index.js \
-      /opt/projects/plugin-knowledge/dist/index.js
-
-# For other plugins, check where they're loaded from:
-ps aux | grep bun | grep packages/cli
-# Then check the logs to see the actual load path
-```
-
-### 4. Restart Agents
-
-Agents must be restarted to load the new plugin code:
-
-```bash
-# Check running agents
-ps aux | grep -E "bun.*packages/cli/dist" | grep -v grep
-
-# Stop agents
-pkill -f 'packages/cli/dist/index.js start'
-
-# Restart (example for test)
-cd /opt/projects/GAIA-direct
-bun packages/cli/dist/index.js start --character /tmp/test-character.json
-
-# For production agents
-bash /opt/projects/GAIA/start-agents-hybrid.sh
-```
-
-## Testing Changes
-
-### Create a Test Character
-
+#### 2. Update Dependencies
 ```json
+// package.json in your fork
 {
-  "name": "TestAgent",
-  "username": "testagent",
-  "plugins": [
-    "@elizaos/plugin-bootstrap",
-    "@elizaos/plugin-sql", 
-    "@elizaos/plugin-openai",
-    "@elizaos/plugin-knowledge"
-  ],
-  "settings": {
-    "LOAD_DOCS_ON_STARTUP": true,
-    "KNOWLEDGE_PATH": "/tmp/test-knowledge"
+  "dependencies": {
+    "@elizaos/core": "^1.4.2",  // Match your project version
+    // ... other deps
   }
 }
 ```
 
-### Run Isolated Test
-
-```bash
-# Create test knowledge directory
-mkdir -p /tmp/test-knowledge
-echo "Test content" > /tmp/test-knowledge/test.md
-
-# Run test agent
-cd /opt/projects/GAIA-direct
-timeout 60 bun packages/cli/dist/index.js start \
-  --character /tmp/test-character.json 2>&1 | tee /tmp/test.log
-
-# Check logs for your changes
-grep "Your debug message" /tmp/test.log
+#### 3. Fix Build Configuration
+```typescript
+// tsup.config.ts - Common fixes
+export default defineConfig({
+  entry: ["src/index.ts"],
+  format: ["cjs"],
+  dts: false, // Disable if Plugin type exports cause issues
+  sourcemap: true,
+  clean: true,
+});
 ```
 
-## Debugging Plugin Loading
+#### 4. Test the Fork
+```bash
+cd your-fork
+bun install
+bun run build  # Should complete without errors
+```
 
-### Find Where Plugin Is Loaded From
+### Integration in Main Project
 
-Add this to `/opt/projects/GAIA-direct/packages/cli/src/utils/load-plugin.ts`:
-
-```typescript
-if (repository.includes('knowledge')) {
-  logger.info(`[PLUGIN-LOAD] Knowledge plugin loaded from: ${importPath}`);
+#### 1. Update package.json
+```json
+{
+  "dependencies": {
+    "@elizaos/plugin-name": "https://github.com/your-org/plugin-name.git#branch-name"
+  }
 }
 ```
 
-Then rebuild CLI and check logs:
-
+#### 2. Install and Build
 ```bash
-cd /opt/projects/GAIA-direct
-bun run build:cli
+# Clean install to ensure fork is used
+rm -rf node_modules bun.lock
+bun install
+
+# CRITICAL: Build plugin from source
+cd node_modules/@elizaos/plugin-name
+bun run build
 ```
 
-### Common Issues & Solutions
-
-#### Changes Not Taking Effect
-
-1. **Check where plugin is actually loaded from:**
-   ```bash
-   grep "Successfully loaded plugin" /path/to/logs
-   ```
-
-2. **Verify the external plugin directory has your changes:**
-   ```bash
-   grep "your-new-code" /opt/projects/plugin-knowledge/dist/index.js
-   ```
-
-3. **Clear Bun cache if needed:**
-   ```bash
-   rm -rf ~/.bun/install/cache/*
-   ```
-
-#### Old Code Still Running
-
-This usually means:
-- Plugin is loaded from external directory, not monorepo
-- Bun has cached an old version
-- Agent wasn't properly restarted
-
-Solution:
-```bash
-# Kill all agents
-pkill -f 'bun.*index.js'
-
-# Clear cache
-rm -rf ~/.bun/install/cache/*
-
-# Copy latest build
-cp -f /opt/projects/GAIA-direct/packages/plugin-knowledge/dist/index.js \
-      /opt/projects/plugin-knowledge/dist/index.js
-
-# Restart
+#### 3. Character Configuration
+Follow the character schema requirements (see Telegram example):
+```json
+{
+  "plugins": ["@elizaos/plugin-name"],
+  "settings": {
+    // Plugin-specific config goes in settings, NOT at root level
+    "PLUGIN_API_KEY": "${PLUGIN_API_KEY}",
+    "pluginSpecificOption": true
+  }
+}
 ```
 
-## Plugin Architecture Notes
+## Character Schema Requirements
 
-### Knowledge Plugin Deduplication
+### Core Schema Structure
 
-The knowledge plugin now includes deduplication to prevent duplicate documents:
+The ElizaOS Character schema is **strict** and only allows specific root-level fields:
 
-1. **Exact Match**: Uses content-based SHA-256 hash IDs
-2. **Semantic Similarity**: Uses pgvector to find similar documents (>95% similarity)
-3. **Returns Early**: When duplicate found, returns existing fragment count
-
-### Key Files
-
-- **Service**: `src/service.ts` - Main knowledge service with deduplication logic
-- **Loader**: `src/docs-loader.ts` - Loads documents from filesystem
-- **Processor**: `src/document-processor.ts` - Processes documents into fragments
-
-## Quick Reference Commands
-
-```bash
-# Build plugin
-cd /opt/projects/GAIA-direct/packages/plugin-knowledge && bun run build
-
-# Deploy to runtime
-cp -f dist/index.js /opt/projects/plugin-knowledge/dist/index.js
-
-# Test changes
-cd /opt/projects/GAIA-direct
-bun packages/cli/dist/index.js start --character /tmp/test-character.json
-
-# Check logs
-tail -f /opt/projects/GAIA-direct/logs/all-agents-hybrid.log
-
-# Restart production agents
-bash /opt/projects/GAIA/start-agents-hybrid.sh
+```typescript
+interface Character {
+  id?: UUID;
+  name: string;           // Required
+  username?: string;
+  system?: string;
+  templates?: Record<string, TemplateType>;
+  bio: string | string[]; // Required
+  messageExamples?: MessageExample[][];
+  postExamples?: string[];
+  topics?: string[];
+  adjectives?: string[];
+  knowledge?: (string | { path: string; shared?: boolean } | DirectoryItem)[];
+  plugins?: string[];
+  settings?: Record<string, any>;  // Flexible - plugin config goes here
+  secrets?: Record<string, any>;
+  style?: StyleConfig;
+}
 ```
 
-## Important Paths
+### Plugin Configuration Guidelines
 
-- **Development**: `/opt/projects/GAIA-direct/packages/`
-- **Runtime Plugins**: `/opt/projects/plugin-knowledge/`
-- **Agent Configs**: `/opt/projects/GAIA/characters/`
-- **Knowledge**: `/opt/projects/GAIA/knowledge/`
-- **Logs**: `/opt/projects/GAIA-direct/logs/`
+#### ✅ Correct Plugin Configuration
+```json
+{
+  "name": "MyAgent",
+  "bio": "Agent description",
+  "plugins": ["@elizaos/plugin-example"],
+  "settings": {
+    // All plugin-specific config here
+    "API_KEY": "${API_KEY}",
+    "clients": ["telegram"],
+    "allowDirectMessages": true,
+    "customOption": "value"
+  },
+  "secrets": {}
+}
+```
 
----
+#### ❌ Common Mistakes
+```json
+{
+  "name": "MyAgent", 
+  "clients": ["telegram"],      // ❌ Not allowed at root
+  "allowDirectMessages": true,  // ❌ Not allowed at root
+  "customOption": "value",      // ❌ Not allowed at root
+  "plugins": ["@elizaos/plugin-example"]
+}
+```
 
-*Last Updated: August 2024*
-*Critical Discovery: External plugin directory issue found during deduplication debugging*
+### Debugging Character Validation
+
+Enable debug logging to see validation errors:
+```bash
+# Look for character validation error messages
+bun packages/cli/dist/index.js start --character your-character.json 2>&1 | grep -i "validation"
+```
+
+Common validation errors:
+- `Unrecognized key(s) in object` - Move fields to `settings`
+- `Character validation failed` - Check required fields (`name`, `bio`)
+- `Failed to load character` - JSON syntax error
+
+## Plugin Development Best Practices
+
+### 1. Dependency Management
+- Always use `workspace:*` for internal `@elizaos/` packages in monorepo
+- Use specific versions for external dependencies
+- Test compatibility with your ElizaOS version
+
+### 2. Build Configuration
+- Disable DTS generation if you encounter Plugin type export issues
+- Use `bun` instead of `npm` for all operations
+- Test builds in clean environment
+
+### 3. Testing Integration
+```bash
+# Test character loading
+bun packages/cli/dist/index.js start --character test-character.json
+
+# Check plugin loading
+grep -i "plugin.*loaded" logs/agent.log
+
+# Verify service registration
+grep -i "registered.*handler" logs/agent.log
+```
+
+### 4. Documentation
+- Document fork reasons in README
+- Include build-from-source requirements
+- Provide character configuration examples
+- Document troubleshooting steps
+
+## ElizaOS Environment Variable System
+
+### How ElizaOS Loads Environment Variables
+
+ElizaOS automatically loads environment variables using a specific naming convention:
+
+**Pattern:** `CHARACTER.{CHARACTER_NAME}.{SETTING_KEY}`
+
+**Process:**
+1. ElizaOS reads the `name` field from your character.json
+2. Converts the name to UPPERCASE and replaces spaces with underscores
+3. Scans environment variables for the pattern `CHARACTER.{NAME}.`
+4. Automatically adds matching variables to the character's settings/secrets
+
+### Character-Specific Environment Variables
+
+```bash
+# .env file - ElizaOS naming convention
+CHARACTER.GOVERNOR.TELEGRAM_BOT_TOKEN=your-bot-token
+CHARACTER.GOVERNOR.OPENAI_API_KEY=your-openai-key
+CHARACTER.GOVERNOR.CUSTOM_SETTING=custom-value
+
+# For character name "My Agent" → "MY_AGENT"  
+CHARACTER.MY_AGENT.DISCORD_BOT_TOKEN=your-discord-token
+CHARACTER.MY_AGENT.API_KEY=your-api-key
+```
+
+```json
+// Character file - no need to reference environment variables directly
+{
+  "name": "Governor",
+  "settings": {
+    "clients": ["telegram"],
+    "allowDirectMessages": true
+    // TELEGRAM_BOT_TOKEN and OPENAI_API_KEY automatically loaded from:
+    // CHARACTER.GOVERNOR.TELEGRAM_BOT_TOKEN and CHARACTER.GOVERNOR.OPENAI_API_KEY
+  }
+}
+```
+
+### Priority Order
+1. Character-specific environment variables (`CHARACTER.{NAME}.*`)
+2. Character `settings` (explicit values)
+3. Character `secrets`
+4. Global environment variables
+5. Default values
+
+### Security Best Practices
+- ✅ Use `CHARACTER.{NAME}.*` pattern for secure API keys
+- ✅ Keep character files clean without hardcoded secrets  
+- ✅ Character files can be safely committed to repositories
+- ❌ Don't use `${VARIABLE}` syntax - ElizaOS doesn't support this
+- ❌ Don't put API keys directly in character files
+
+## Maintenance and Updates
+
+### Keeping Forks Updated
+```bash
+# Add upstream remote
+git remote add upstream https://github.com/original/plugin-repo.git
+
+# Fetch upstream changes
+git fetch upstream
+
+# Merge or rebase upstream changes
+git merge upstream/main
+# or
+git rebase upstream/main
+
+# Push updates
+git push origin your-branch
+```
+
+### Plugin Update Checklist
+- [ ] Dependencies compatible with current ElizaOS version
+- [ ] Build completes without errors
+- [ ] Character validation passes
+- [ ] Plugin loads and registers successfully
+- [ ] Basic functionality works
+- [ ] Documentation updated
+
+## Common Patterns
+
+### Service Registration
+```typescript
+// Plugin services automatically register with runtime
+export default {
+  name: "plugin-name",
+  description: "Plugin description",
+  services: [YourService],
+  // ... other exports
+};
+```
+
+### Character Access in Plugins
+```typescript
+// Access character configuration
+const botToken = runtime.getSetting("TELEGRAM_BOT_TOKEN");
+const allowDMs = runtime.getSetting("allowDirectMessages");
+
+// Character schema fields
+const agentName = runtime.character.name;
+const agentBio = runtime.character.bio;
+```
+
+### Error Handling
+```typescript
+// Graceful degradation if plugin requirements not met
+if (!botToken) {
+  logger.warn("Plugin disabled - no API token provided");
+  return null;
+}
+```
+
+This pattern ensures plugins work even when not fully configured, preventing agent startup failures.
