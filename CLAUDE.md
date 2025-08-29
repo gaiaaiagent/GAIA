@@ -94,6 +94,24 @@ bash /opt/projects/GAIA/start-all-agents.sh
 - **Permission denied errors**: Fix ownership with sudo commands above
 - **Agents reprocessing all documents**: Ensure using our fork with deduplication
 
+### Plugin Version Compatibility Crisis (August 29, 2025)
+
+**CRITICAL:** ElizaOS plugin ecosystem has severe version fragmentation!
+
+**Problem:** Official plugins are incompatible with current ElizaOS releases
+- Telegram plugin expects: @elizaos/core ^1.0.19 (3 weeks old)
+- Current ElizaOS: 1.4.4 (25+ versions newer)
+- Result: Official documentation approaches fail completely
+
+**Impact:**
+- Plugin documentation doesn't work with newer ElizaOS
+- Forces use of undocumented workarounds
+- `"secrets": {"key": "${TOKEN}"}` substitution broken
+- No version compatibility matrix exists
+
+**Workaround:** Use `"secrets": {}` + CHARACTER.* environment injection
+**Root Cause:** Plugin ecosystem management and versioning strategy broken
+
 ### How Agents Actually Run
 
 **The RegenAI agents are NOT Docker containers!** They run as native bun processes.

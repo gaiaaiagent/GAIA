@@ -200,6 +200,17 @@ echo $CHARACTER.GOVERNOR.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED
 3. **Test functionality** with mention and non-mention messages
 4. **Monitor logs** for mention detection debug information
 
+## Version Compatibility Issues
+
+**⚠️ CRITICAL:** The official ElizaOS Telegram plugin documentation may not work with newer ElizaOS versions due to version incompatibility.
+
+**Known Issue:**
+- Plugin expects: @elizaos/core ^1.0.19
+- If using ElizaOS 1.4.0+: Official `"key": "${TOKEN}"` approach fails
+- **Solution:** Use empty `"secrets": {}` with CHARACTER.* environment injection
+
+This is a broader ElizaOS ecosystem problem, not specific to mention-only mode.
+
 ## Contributing
 
 When extending this feature:
