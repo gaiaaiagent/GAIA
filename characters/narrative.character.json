@@ -5,12 +5,13 @@
     "@elizaos/plugin-bootstrap",
     "@elizaos/plugin-sql",
     "@elizaos/plugin-openai",
-    "@elizaos/plugin-knowledge"
+    "@elizaos/plugin-knowledge",
+    "@elizaos/plugin-telegram"
   ],
+  "secrets": {},
   "settings": {
-    "secrets": {
-      "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN_NARRATIVE}"
-    },
+    "clients": ["telegram"],
+    "allowDirectMessages": true,
     "voice": {
       "model": "en_US-female-medium"
     },

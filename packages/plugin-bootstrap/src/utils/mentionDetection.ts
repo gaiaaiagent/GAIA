@@ -26,13 +26,11 @@ export function detectTelegramMention(
   const source = message.content.source?.toLowerCase();
   const channelType = message.content.channelType?.toLowerCase();
   
-  // Get the actual Telegram bot username from settings or mapping
+  // Get the actual Telegram bot username from settings
   let telegramBotUsername = '';
   
-  // Check for specific bot username mappings
-  if (agentName === 'governor') {
-    telegramBotUsername = 'regengovernbot';
-  } else if (runtime.getSetting('TELEGRAM_BOT_USERNAME')) {
+  // Check for bot username in settings
+  if (runtime.getSetting('TELEGRAM_BOT_USERNAME')) {
     telegramBotUsername = String(runtime.getSetting('TELEGRAM_BOT_USERNAME')).toLowerCase();
   }
   
@@ -128,8 +126,15 @@ export function shouldSkipForMentionOnly(
   runtime: IAgentRuntime,
   message: Memory
 ): boolean {
+  // DEBUG: Log what settings are available
+  logger.debug(`[MentionDetection DEBUG] Checking settings for ${runtime.character.name}`);
+  logger.debug(`[MentionDetection DEBUG] Available settings keys:`, Object.keys(runtime.settings || {}));
+  logger.debug(`[MentionDetection DEBUG] Available secrets keys:`, Object.keys(runtime.character.secrets || {}));
+  
   // Check if mention-only mode is enabled for Telegram
   const onlyRespondWhenMentioned = runtime.getSetting('TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED');
+  logger.debug(`[MentionDetection DEBUG] TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED:`, onlyRespondWhenMentioned);
+  
   if (!onlyRespondWhenMentioned || String(onlyRespondWhenMentioned).toLowerCase() !== 'true') {
     logger.debug(`[MentionDetection] Mention-only mode disabled for ${runtime.character.name}`);
     return false; // Mode not enabled, don't skip
