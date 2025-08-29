@@ -41,6 +41,7 @@ import * as providers from './providers/index.ts';
 
 import { TaskService } from './services/task.ts';
 import { EmbeddingGenerationService } from './services/embedding.ts';
+import { shouldSkipForMentionOnly } from './utils/mentionDetection.ts';
 
 export * from './actions/index.ts';
 export * from './evaluators/index.ts';
@@ -485,6 +486,25 @@ const messageReceivedHandler = async ({
             entityId: message.entityId,
             startTime,
             status: 'muted',
+            endTime: Date.now(),
+            duration: Date.now() - startTime,
+            source: 'messageHandler',
+          });
+          return;
+        }
+
+        // Check mention-only mode for Telegram
+        if (shouldSkipForMentionOnly(runtime, message)) {
+          runtime.logger.debug(`[Bootstrap] Skipping response - mention-only mode enabled, bot not mentioned, and no random response triggered in message: "${message.content.text}"`);
+          // Emit run ended event for mention-only skip
+          await runtime.emitEvent(EventType.RUN_ENDED, {
+            runtime,
+            runId,
+            messageId: message.id,
+            roomId: message.roomId,
+            entityId: message.entityId,
+            startTime,
+            status: 'mention_only_skip',
             endTime: Date.now(),
             duration: Date.now() - startTime,
             source: 'messageHandler',
@@ -1718,7 +1738,6 @@ export const bootstrapPlugin: Plugin = {
     providers.relationshipsProvider,
     providers.choiceProvider,
     providers.factsProvider,
-    providers.knowledgeProvider,
     providers.roleProvider,
     providers.settingsProvider,
     // there is given no reason for this - odi

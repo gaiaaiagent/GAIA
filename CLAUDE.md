@@ -225,13 +225,60 @@ Each agent character file should have these settings for proper knowledge access
   "@elizaos/plugin-sql",
   "@elizaos/plugin-openai",
   "@elizaos/plugin-knowledge",  // Required for knowledge access
+  "@elizaos/plugin-telegram",   // Required for Telegram functionality
   "@elizaos/plugin-http-api"
 ],
 "settings": {
-  "LOAD_DOCS_ON_STARTUP": true,  // Set to true for immediate knowledge access
-  "KNOWLEDGE_PATH": "./knowledge"  // Points to /opt/projects/GAIA/knowledge
+  "clients": ["telegram"],              // Enable Telegram client
+  "allowDirectMessages": true,          // Allow DMs
+  "LOAD_DOCS_ON_STARTUP": true,         // Set to true for immediate knowledge access
+  "KNOWLEDGE_PATH": "./knowledge",      // Points to /opt/projects/GAIA/knowledge
+  "TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED": true,  // Only respond when mentioned (optional)
+  "TELEGRAM_RANDOM_RESPONSE_RATE": "0.01"        // 1% random response rate (optional)
 }
 ```
+
+### Telegram Mention-Only Mode
+
+**NEW FEATURE:** Agents can now be configured to only respond in Telegram groups when mentioned, reducing spam while maintaining engagement.
+
+**Environment Configuration:**
+
+Use the ElizaOS character-specific environment pattern in your `.env` file:
+
+```bash
+# Enable mention-only mode for Governor agent
+CHARACTER.GOVERNOR.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true
+CHARACTER.GOVERNOR.TELEGRAM_RANDOM_RESPONSE_RATE=0.01
+
+# Enable for other agents using their character name
+CHARACTER.REGENAI.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true
+CHARACTER.ADVOCATE.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true
+```
+
+**Configuration Options:**
+
+1. **`CHARACTER.{AGENT}.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED`** (boolean, default: false)
+   - When `true`: Only responds when directly mentioned, in DMs, or random responses
+   - When `false`: Uses normal LLM-based shouldRespond logic
+   - Detection methods:
+     - Direct mention: `@RegenGovernBot`, `@botname`
+     - Name mention: `Governor what's the status?`
+     - DMs: Always responds in direct messages
+     - Random: Occasional responses based on rate
+
+2. **`CHARACTER.{AGENT}.TELEGRAM_RANDOM_RESPONSE_RATE`** (float, default: 0.01)
+   - Probability (0.0-1.0) of responding to non-mentions
+   - `0.01` = 1% chance (1 in 100 messages)
+   - `0.05` = 5% chance (1 in 20 messages)  
+   - `0.0` = No random responses
+   - Keeps conversations organic and prevents complete silence
+
+**Benefits:**
+- **Faster**: Programmatic detection vs LLM analysis
+- **Cheaper**: Fewer LLM calls for shouldRespond decisions  
+- **More Reliable**: Consistent mention detection
+- **Environment-Based**: Consistent with other ElizaOS configuration patterns
 
 **Note:** With 32GB RAM, all agents can have `LOAD_DOCS_ON_STARTUP: true` for best performance.
 
