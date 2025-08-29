@@ -1,1 +1,0 @@
-# ElizaOS database tables app

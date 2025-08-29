@@ -22,11 +22,10 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(','
 
 # Application definition
 INSTALLED_APPS = [
-    'reporting',     # Dashboard views and reporting
+    'reporting',     # Dashboard views, reporting, and templatetags
     'elizaos',       # Read-only ElizaOS models
     'metrics',       # Our tracking tables
     'knowledge',     # Knowledge indexing progress
-    'eliza_tables',  # Legacy - needed for templatetags
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
