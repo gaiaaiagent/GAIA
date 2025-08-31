@@ -37,11 +37,13 @@ docker compose up -d postgres
 cp .env.example .env
 # Edit .env and add your OpenAI API key
 
-# Setup character files from templates (SECURITY)
+# ⚠️ CRITICAL: Setup character files from templates
+# This step is REQUIRED - agents won't start without it!
 ./scripts/setup-characters.sh
 # Choose option 1 for full setup with Telegram
+# (or option 3 for web-only without Telegram)
 
-# Start all agents (recommended: single-process mode)
+# Now start all agents (recommended: single-process mode)
 bash start-all-agents-single-process.sh
 
 # Or use the control center

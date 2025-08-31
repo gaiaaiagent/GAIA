@@ -10,6 +10,19 @@ echo "🚀 Starting all RegenAI agents in single process..."
 echo "   This enables full web UI functionality for all agents"
 echo ""
 
+# Check if character files exist
+if [ ! -f "$GAIA_DIR/characters/regenai.character.json" ]; then
+    echo "❌ Error: Character files not found!"
+    echo ""
+    echo "   You need to configure character files first:"
+    echo "   ./scripts/setup-characters.sh"
+    echo ""
+    echo "   This will create character files from templates and"
+    echo "   configure any Telegram bot tokens if needed."
+    echo ""
+    exit 1
+fi
+
 # Stop any existing agents
 echo "🛑 Stopping any existing agent processes..."
 pkill -f 'packages/cli/dist/index.js start' 2>/dev/null || true

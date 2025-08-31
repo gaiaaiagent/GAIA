@@ -259,13 +259,13 @@ If agents show incorrect processing statistics:
 
 ### KOI Service Issues
 ```bash
-# Restart KOI node server
-cd /home/regenai/project/koi-infrastructure/koi-regen-node
-pkill -f "python.*node" && source venv/bin/activate && python -m node &
-
 # Restart KOI query server
-cd /opt/projects/plugin-knowledge-gaia  
+cd /opt/projects/plugin-knowledge-standalone  
 pkill -f "bun.*koi-query" && bun scripts/koi-query-server.ts &
+
+# Check KOI dashboard
+curl http://localhost:8100/health
+# Public access: https://regen.gaiaai.xyz/koi/
 ```
 
 ## Next Steps

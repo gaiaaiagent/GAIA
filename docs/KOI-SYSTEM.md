@@ -4,13 +4,18 @@
 
 The KOI (Knowledge Organization Infrastructure) system provides distributed knowledge management and monitoring for the RegenAI agent ecosystem. It implements a Resource Identifier (RID) based system for tracking agent processing and content sources.
 
+## Current Implementation
+
+As of August 2025, the KOI system has been fully integrated into the ElizaOS knowledge plugin architecture. The previous standalone Python implementation has been deprecated in favor of a TypeScript/Bun implementation that provides better integration with the agent ecosystem.
+
 ## Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   KOI Node      │    │  KOI Query      │    │   Web Dashboard │
-│  (Port 8001)    │────│  (Port 8100)    │────│   (regen.gaiaai │
-│  Python/FastAPI │    │  TypeScript/Bun │    │   .xyz/koi/)    │
+│  KOI Query      │    │   Web Dashboard │    │    Nginx Proxy  │
+│  Server         │────│  (Built-in HTML)│────│   (Public URL)  │
+│  (Port 8100)    │    │                 │    │ regen.gaiaai.xyz│
+│ TypeScript/Bun  │    │                 │    │      /koi/      │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          │                       │                       │
@@ -25,33 +30,26 @@ The KOI (Knowledge Organization Infrastructure) system provides distributed know
 
 ## Components
 
-### KOI Node Server (Port 8001)
-- **Purpose**: Agent registration, RID generation, KOI-net protocol compliance
-- **Location**: `/home/regenai/project/koi-infrastructure/koi-regen-node/`  
-- **Technology**: Python FastAPI with KOI-net framework
-- **Key Features**:
-  - Agent RID generation and registry
-  - Health monitoring endpoints
-  - KOI protocol compliance
-  - Agent statistics tracking
-
 ### KOI Query Server (Port 8100)
-- **Purpose**: Knowledge querying, agent statistics, web dashboard
-- **Location**: `/opt/projects/plugin-knowledge-gaia/`
+- **Purpose**: Knowledge querying, agent statistics, web dashboard, API endpoints
+- **Location**: Runs from the forked plugin-knowledge repository
 - **Technology**: TypeScript with Bun runtime
+- **Repository**: https://github.com/gaiaaiagent/plugin-knowledge.git#regenai-unified-fixes
 - **Key Features**:
   - Real-time agent statistics
   - Knowledge base querying
-  - Web dashboard interface
+  - Built-in web dashboard interface
   - Agent identity mapping
+  - RESTful API endpoints
 
 ### Web Dashboard
-- **Access**: https://regen.gaiaai.xyz/koi/
+- **Public Access**: https://regen.gaiaai.xyz/koi/
 - **Features**:
   - Real-time processing statistics
   - Content source breakdown
   - Interactive query interface
   - Agent status monitoring
+  - No authentication required (public access)
 
 ## Agent RID System
 
@@ -62,13 +60,13 @@ Each agent receives a canonical Resource Identifier (RID) following this format:
 
 ### Current Agent Mappings
 
-| Agent Name | RID | GAIA UUID | Display Name |
-|------------|-----|-----------|--------------|
-| RegenAI | `relevant.agent.regenai.v1.0.0` | UUID from DB | RegenAI |
-| Voice of Nature | `relevant.agent.voiceofnature.v1.0.0` | UUID from DB | VoiceOfNature |
-| Facilitator | `relevant.agent.facilitator.v1.0.0` | UUID from DB | RegenAI Facilitator |
-| Governor | `relevant.agent.governor.v1.0.0` | UUID from DB | Governor |
-| Narrative | `relevant.agent.narrative.v1.0.0` | UUID from DB | Narrator |
+| Agent Name | Character Name | Status | UUID |
+|------------|---------------|--------|------|
+| RegenAI | RegenAI | active | 8e1e4498-b3c8-0fae-ad1f-e90d1c1a4331 |
+| Advocate | Advocate | active | 5b4a0683-da89-0d56-aebc-03985cb8c8cc |
+| Voice of Nature | VoiceOfNature | active | 8acf7e3c-53a0-087b-88df-05867d0fd1d5 |
+| Governor | Governor | active | 156cca7b-a15e-05aa-8929-5d95bf5494be |
+| Narrator | Narrator | active | 7de19cb6-ad0e-0a27-b290-9bd52b248847 |
 
 ## Source Metadata System
 
@@ -83,169 +81,140 @@ The knowledge plugin preserves content source information based on file paths:
 - Default → `documents` (Generic documents)
 
 ### Implementation
-Located in `/opt/projects/plugin-knowledge/src/docs-loader.ts`:
-
-```typescript
-const relativePath = path.relative(docsPath, filePath);
-const pathParts = relativePath.split(path.sep);
-let detectedSource = 'documents';
-
-for (const part of pathParts) {
-    const lowerPart = part.toLowerCase();
-    if (lowerPart.includes('notion')) {
-        detectedSource = 'notion';
-        break;
-    }
-    // ... additional source detection
-}
-```
+The source detection is implemented in the plugin-knowledge repository within the document processing pipeline.
 
 ## API Endpoints
 
-### KOI Node Server (Port 8001)
+### Public Access via HTTPS
+All endpoints are publicly accessible at `https://regen.gaiaai.xyz/koi/[endpoint]`
+
+### Available Endpoints
+
+#### Dashboard
+```
+GET https://regen.gaiaai.xyz/koi/
+```
+Interactive web dashboard with statistics and visualizations.
 
 #### Health Check
 ```bash
-GET /regen/health
-curl http://localhost:8001/regen/health
+GET https://regen.gaiaai.xyz/koi/health
+curl https://regen.gaiaai.xyz/koi/health
 ```
 
 #### Agent Registry
 ```bash
-GET /regen/agents
-curl http://localhost:8001/regen/agents | jq
-```
-
-#### Individual Agent Info
-```bash
-GET /regen/agents/{identifier}
-curl http://localhost:8001/regen/agents/relevant.agent.regenai.v1.0.0 | jq
+GET https://regen.gaiaai.xyz/koi/agents
+curl https://regen.gaiaai.xyz/koi/agents | jq
 ```
 
 #### Statistics
 ```bash
-GET /regen/stats
-curl http://localhost:8001/regen/stats | jq
-```
-
-### KOI Query Server (Port 8100)
-
-#### Statistics Dashboard
-```bash
-GET /stats
-curl http://localhost:8100/stats | jq
+GET https://regen.gaiaai.xyz/koi/stats
+curl https://regen.gaiaai.xyz/koi/stats | jq
 ```
 
 #### Knowledge Query
 ```bash
-POST /query
-curl -X POST http://localhost:8100/query \
+POST https://regen.gaiaai.xyz/koi/query
+curl -X POST https://regen.gaiaai.xyz/koi/query \
   -H "Content-Type: application/json" \
   -d '{"question":"What is regenerative agriculture?"}' | jq
 ```
 
-#### Agent Mappings
+#### Suggested Questions
 ```bash
-GET /agents  
-curl http://localhost:8100/agents | jq
-```
-
-#### Health Check
-```bash
-GET /health
-curl http://localhost:8100/health | jq
+GET https://regen.gaiaai.xyz/koi/suggestions
+curl https://regen.gaiaai.xyz/koi/suggestions | jq
 ```
 
 ## Operations
 
 ### Service Management
 
-#### Check Status
-```bash
-# Check if both services are running
-ps aux | grep -E "(python.*node|bun.*koi-query)" | grep -v grep
-```
+#### Starting the KOI Server
 
-#### Start Services
-```bash
-# Start KOI node server
-cd /home/regenai/project/koi-infrastructure/koi-regen-node
-source venv/bin/activate && python -m node &
+The KOI server runs from the plugin-knowledge repository:
 
-# Start KOI query server
-cd /opt/projects/plugin-knowledge-gaia
+```bash
+# Clone the repository if not already present
+cd /opt/projects
+git clone https://github.com/gaiaaiagent/plugin-knowledge.git -b regenai-unified-fixes plugin-knowledge-standalone
+
+# Install dependencies
+cd plugin-knowledge-standalone
+bun install
+
+# Start the KOI query server
 bun scripts/koi-query-server.ts &
 ```
 
-#### Stop Services
+#### Check Status
 ```bash
-# Stop KOI node server
-pkill -f "python.*node"
+# Check if service is running
+ps aux | grep -E "bun.*koi-query" | grep -v grep
 
+# Test health endpoint
+curl http://localhost:8100/health
+```
+
+#### Stop Service
+```bash
 # Stop KOI query server  
 pkill -f "bun.*koi-query"
 ```
 
 #### View Logs
+The KOI server outputs logs to console. To capture logs:
 ```bash
-# KOI node server logs
-tail -f /home/regenai/project/koi-infrastructure/koi-regen-node/koi-node.log
+# Start with log capture
+bun scripts/koi-query-server.ts > koi-server.log 2>&1 &
 
-# KOI query server logs
-tail -f /opt/projects/plugin-knowledge-gaia/koi-server-fixed.log
+# View logs
+tail -f koi-server.log
 ```
 
-### Configuration Files
+### Configuration
 
-#### KOI Node Configuration
-**Location**: `/home/regenai/project/koi-infrastructure/koi-regen-node/config.yaml`
-
-Key settings:
-```yaml
-server:
-  host: 127.0.0.1
-  port: 8001
-  
-env:
-  priv_key_password: PRIV_KEY_PASSWORD
-
-rid_namespace: regen
-```
-
-#### KOI Node Environment
-**Location**: `/home/regenai/project/koi-infrastructure/koi-regen-node/.env`
+The KOI system uses environment variables and connects to the ElizaOS PostgreSQL database:
 
 ```bash
-PRIV_KEY_PASSWORD=regen-koi-node-password
+# Database connection (uses same as agents)
+POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza
+
+# KOI server port (default: 8100)
+KOI_PORT=8100
 ```
+
+## Current Statistics (as of August 2025)
+
+- **92,690+ content items** tracked across all sources
+- **27,276 processed documents** 
+- **5 active agents** monitoring and processing
+- **12 content sources** including:
+  - Notion workspaces
+  - Twitter/X feeds
+  - Medium articles
+  - Discord conversations
+  - Website content
+  - GitHub repositories
 
 ## Troubleshooting
 
 ### Common Issues
 
-#### Services Not Running
+#### Service Not Running
 ```bash
-# Check ports are available
-ss -tlnp | grep -E ":(8001|8100)"
+# Check port availability
+ss -tlnp | grep 8100
 
 # Check for process conflicts
-ps aux | grep -E "python.*8001|bun.*8100"
+ps aux | grep -E "bun.*8100"
 
-# Restart services
-pkill -f "python.*node|bun.*koi-query"
-# Then start services again
-```
-
-#### Agent Statistics Incorrect
-```bash
-# Check agent mappings
-curl -s http://localhost:8001/regen/agents | jq '.agents'
-
-# Verify database agent records  
-docker exec gaia-postgres-1 psql -U postgres -d eliza -c "SELECT id, name FROM agents;"
-
-# Check for phantom entries in logs
-tail -100 /opt/projects/plugin-knowledge-gaia/koi-server-fixed.log | grep phantom
+# Restart service
+pkill -f "bun.*koi-query"
+cd /opt/projects/plugin-knowledge-standalone
+bun scripts/koi-query-server.ts &
 ```
 
 #### Dashboard Not Loading
@@ -253,50 +222,34 @@ tail -100 /opt/projects/plugin-knowledge-gaia/koi-server-fixed.log | grep phanto
 # Check nginx proxy configuration
 docker logs nginx | grep koi
 
-# Test services directly
+# Test service directly
 curl -s http://localhost:8100/health
-curl -s http://localhost:8001/regen/health
 
-# Check network connectivity
-curl -s https://regen.gaiaai.xyz/koi/ | head -20
+# Check public access
+curl -s https://regen.gaiaai.xyz/koi/health
 ```
 
-#### Source Metadata Missing
+#### Agent Statistics Incorrect
 ```bash
-# Check knowledge plugin build
-ls -la /opt/projects/plugin-knowledge/dist/
+# Check agent mappings
+curl -s http://localhost:8100/agents | jq
 
-# Verify source detection in logs
-grep -i "source.*detected" /opt/projects/GAIA-direct/logs/all-agents-hybrid.log
-
-# Restart agents to reload plugin
-bash /opt/projects/GAIA/start-agents-hybrid.sh
-```
-
-### Phantom Entry Detection
-
-The KOI system automatically filters out phantom agent entries with suspicious patterns:
-
-- Agent identifiers with dashes and length < 30 characters
-- Agents with >10,000 pending documents and 0 processed
-
-These phantom entries are logged and excluded from statistics:
-```
-[WARN] Skipping phantom agent entry: voice-of-nature with 13095 pending, 0 processed
+# Verify database agent records  
+docker exec gaia-postgres-1 psql -U postgres -d eliza -c "SELECT id, name FROM agents;"
 ```
 
 ## Integration with GAIA System
 
 ### Knowledge Plugin Integration
-The KOI system integrates with the ElizaOS knowledge plugin to:
+The KOI system is fully integrated with the ElizaOS knowledge plugin to:
 
 1. **Track Processing**: Monitor which agents process which documents
 2. **Preserve Metadata**: Maintain source information from file paths
 3. **Filter Statistics**: Remove phantom entries from agent statistics
-4. **Map Identities**: Connect agent RIDs to GAIA UUIDs and display names
+4. **Map Identities**: Connect agent UUIDs to display names
 
 ### Database Schema
-The KOI registry uses additional tables in the PostgreSQL database:
+The KOI system uses tables in the PostgreSQL database:
 
 - `koi_content_sources` - Track content sources and their metadata
 - `koi_content_items` - Individual content items with RIDs
@@ -306,18 +259,34 @@ The KOI registry uses additional tables in the PostgreSQL database:
 When agents are restarted:
 
 1. **Knowledge Reload**: New knowledge files are processed
-2. **RID Registration**: Agents are re-registered with KOI node
-3. **Statistics Update**: Processing statistics are refreshed
-4. **Source Detection**: New source metadata is applied
+2. **Statistics Update**: Processing statistics are refreshed
+3. **Source Detection**: New source metadata is applied
+
+## Migration Notes
+
+### Previous Implementation (Deprecated)
+The original KOI implementation was located at `/home/regenai/project/koi-infrastructure/` and used:
+- Python/FastAPI framework
+- Port 8001 for the node server
+- Separate KOI-net protocol implementation
+
+This has been fully replaced by the integrated TypeScript implementation in the plugin-knowledge repository.
+
+### Backup Location
+A backup of the old implementation is stored at:
+```
+/opt/projects/koi-infrastructure-backup-[date].tar.gz
+```
 
 ## Future Enhancements
 
 ### Planned Features
-- Real-time processing status updates
-- Content source analytics
-- Agent performance metrics
+- Real-time processing status updates via WebSocket
+- Content source analytics dashboard
+- Agent performance metrics visualization
 - Knowledge graph visualization
 - Automated content deduplication
+- Multi-agent collaboration tracking
 
 ### Monitoring Integration
 - OpenTelemetry support for metrics
@@ -331,3 +300,4 @@ When agents are restarted:
 - `/opt/projects/GAIA/docs/AGENT-OPERATIONS.md` - Agent operations guide
 - `/opt/projects/GAIA/docs/RAG_TROUBLESHOOTING_GUIDE.md` - RAG system debugging
 - `/opt/projects/GAIA/docs/NOTION-INTEGRATION.md` - Knowledge integration details
+- Plugin-knowledge repository: https://github.com/gaiaaiagent/plugin-knowledge

@@ -5,6 +5,18 @@ cd /opt/projects/GAIA
 
 echo "🚀 Starting all agents without Telegram..."
 
+# Check if character files exist
+if [ ! -f "/opt/projects/GAIA/characters/regenai.character.json" ]; then
+    echo "❌ Error: Character files not found!"
+    echo ""
+    echo "   You need to configure character files first:"
+    echo "   ./scripts/setup-characters.sh"
+    echo ""
+    echo "   Choose option 3 for web-only mode (no Telegram)"
+    echo ""
+    exit 1
+fi
+
 # Kill existing agents
 pkill -f 'packages/cli/dist/index.js start' 2>/dev/null || true
 sleep 2

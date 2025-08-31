@@ -282,33 +282,27 @@ relevant.agent.narrative.v1.0.0     -> Narrator
 
 ### Key Services
 
-#### KOI Node Server (Port 8001)
-```bash
-# Location: /home/regenai/project/koi-infrastructure/koi-regen-node/
-# Start: source venv/bin/activate && python -m node
-
-# Health check
-curl http://localhost:8001/regen/health
-
-# List all agents with RIDs
-curl http://localhost:8001/regen/agents
-
-# Get specific agent info
-curl http://localhost:8001/regen/agents/relevant.agent.regenai.v1.0.0
-```
-
 #### KOI Query Server (Port 8100)  
 ```bash
-# Location: /opt/projects/plugin-knowledge-gaia/
+# Repository: https://github.com/gaiaaiagent/plugin-knowledge.git#regenai-unified-fixes
+# Location: /opt/projects/plugin-knowledge-standalone/
 # Start: bun scripts/koi-query-server.ts
+
+# Health check
+curl http://localhost:8100/health
 
 # Statistics dashboard
 curl http://localhost:8100/stats
+
+# List all agents
+curl http://localhost:8100/agents
 
 # Query knowledge base
 curl -X POST http://localhost:8100/query \
   -H "Content-Type: application/json" \
   -d '{"question":"What is regenerative agriculture?"}'
+
+# Public Access: https://regen.gaiaai.xyz/koi/
 ```
 
 ### Source Metadata System
@@ -325,26 +319,18 @@ The knowledge plugin now preserves source information from file paths:
 
 #### Check KOI System Status
 ```bash
-# Check both services are running
-ps aux | grep -E "(python.*node|bun.*koi-query)" | grep -v grep
+# Check if service is running
+ps aux | grep -E "bun.*koi-query" | grep -v grep
 
-# View KOI node logs  
-tail -f /home/regenai/project/koi-infrastructure/koi-regen-node/koi-node.log
-
-# View query server logs
-tail -f /opt/projects/plugin-knowledge-gaia/koi-server-fixed.log
+# View query server logs (if capturing)
+tail -f /opt/projects/plugin-knowledge-standalone/koi-server.log
 ```
 
 #### Restart KOI Services
 ```bash
-# Restart KOI node
-cd /home/regenai/project/koi-infrastructure/koi-regen-node
-pkill -f "python.*node" 
-source venv/bin/activate && python -m node &
-
 # Restart query server  
-cd /opt/projects/plugin-knowledge-gaia
 pkill -f "bun.*koi-query"
+cd /opt/projects/plugin-knowledge-standalone
 bun scripts/koi-query-server.ts &
 ```
 
@@ -965,12 +951,11 @@ See [Django Admin Troubleshooting Guide](docs/DJANGO-ADMIN-TROUBLESHOOTING.md) f
 - **Test isolated**: `bun packages/cli/dist/index.js start --character /tmp/test-character.json`
 
 ### KOI System issues?
-- **Check services**: `ps aux | grep -E "(python.*node|bun.*koi-query)" | grep -v grep`
-- **KOI node not responding**: Check port 8001, restart with `cd /home/regenai/project/koi-infrastructure/koi-regen-node && source venv/bin/activate && python -m node`
-- **Query server not responding**: Check port 8100, restart with `cd /opt/projects/plugin-knowledge-gaia && bun scripts/koi-query-server.ts`
-- **Agent statistics wrong**: Check agent RID mappings at `curl http://localhost:8001/regen/agents`
+- **Check service**: `ps aux | grep -E "bun.*koi-query" | grep -v grep`
+- **Query server not responding**: Check port 8100, restart with `cd /opt/projects/plugin-knowledge-standalone && bun scripts/koi-query-server.ts`
+- **Agent statistics wrong**: Check agent mappings at `curl http://localhost:8100/agents`
 - **Source counts incorrect**: Verify knowledge plugin source detection is working and agents have been restarted
-- **Dashboard not loading**: Check nginx proxy configuration and that both services are running
+- **Dashboard not loading**: Check nginx proxy configuration at https://regen.gaiaai.xyz/koi/ and that service is running
 
 ### Phantom agent entries?
 If you see agents with unrealistic statistics (e.g., 13K+ pending):

@@ -42,6 +42,31 @@ sudo chown -R $USER:gaia-devs /opt/projects/GAIA
 sudo chmod -R g+rws /opt/projects/GAIA
 ```
 
+### 4. Configure Character Files (CRITICAL STEP)
+
+**⚠️ IMPORTANT: You must configure character files before starting agents!**
+
+The repository contains template files that need to be configured with your tokens:
+
+```bash
+# Run the character setup script
+./scripts/setup-characters.sh
+
+# Choose an option:
+# 1) Setup all characters (with Telegram) - RECOMMENDED
+# 2) Setup specific character
+# 3) Web-only mode (no Telegram)
+```
+
+This script will:
+- Create actual character files from templates
+- Prompt for Telegram bot tokens (or read from .env)
+- Configure mention-only mode settings
+
+**Without this step, agents will fail to start or Telegram bots won't work!**
+
+See [SECURITY.md](../SECURITY.md) for why we use this template system.
+
 ## Starting Agents
 
 ### Recommended: Single-Process Mode (Full Web UI + Telegram)

@@ -276,33 +276,27 @@ ps aux | grep -E "(python.*node|bun.*koi-query)" | grep -v grep
 
 ### KOI Service Management
 ```bash
-# Start KOI node server
-cd /home/regenai/project/koi-infrastructure/koi-regen-node
-source venv/bin/activate && python -m node &
-
 # Start KOI query server
-cd /opt/projects/plugin-knowledge-gaia
+cd /opt/projects/plugin-knowledge-standalone
 bun scripts/koi-query-server.ts &
 
 # Check KOI dashboard
 curl -s http://localhost:8100/health | jq
 
-# View agent RID mappings
-curl -s http://localhost:8001/regen/agents | jq '.agents'
+# View agent mappings
+curl -s http://localhost:8100/agents | jq
 ```
 
 ### KOI Dashboard Access
 - **Web Interface**: https://regen.gaiaai.xyz/koi/
 - **Features**: Real-time agent statistics, content source breakdown, query interface
 - **Monitoring**: Agent processing status with proper name mapping
+- **Public Access**: No authentication required
 
 ### KOI Troubleshooting
 ```bash
-# Check KOI node server logs
-tail -f /home/regenai/project/koi-infrastructure/koi-regen-node/koi-node.log
-
-# Check KOI query server logs  
-tail -f /opt/projects/plugin-knowledge-gaia/koi-server-fixed.log
+# Check KOI query server logs (if capturing)
+tail -f /opt/projects/plugin-knowledge-standalone/koi-server.log
 
 # Test KOI knowledge query
 curl -X POST http://localhost:8100/query \
