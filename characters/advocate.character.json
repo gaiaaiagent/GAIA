@@ -7,12 +7,14 @@
     "@elizaos/plugin-openai",
     "@elizaos/plugin-anthropic",
     "@elizaos/plugin-knowledge",
-    "@elizaos/plugin-telegram"
+    "@elizaos/plugin-telegram-disabled"
   ],
   "secrets": {},
   "settings": {
-    "clients": ["telegram"],
+    "clients": [],
     "allowDirectMessages": true,
+    "TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED": true,
+    "TELEGRAM_RANDOM_RESPONSE_RATE": 0.01,
     "voice": {
       "model": "en_US-female-warm"
     },

@@ -9,7 +9,9 @@
     "@elizaos/plugin-telegram"
   ],
   "settings": {
-    "clients": ["telegram"],
+    "clients": [
+      "telegram"
+    ],
     "allowDirectMessages": true,
     "voice": {
       "model": "en_US-neutral-medium"

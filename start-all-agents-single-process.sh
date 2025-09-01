@@ -35,9 +35,23 @@ if [ -f "$GAIA_DIR/.env" ]; then
 fi
 
 # Start all agents in a single process
+# Note: CHARACTER.* variables must be passed using env command since bash can't export variables with dots
+# Character names must match exactly (case-sensitive) from the character files
 echo "🎯 Starting all agents in single process..."
-PORT=3000 \
+env PORT=3000 \
   POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza \
+  'CHARACTER.Governor.TELEGRAM_BOT_TOKEN=8058793609:AAGZlJkjJtMUrcUmLXgosGYyAvBYyy0Zn8s' \
+  'CHARACTER.Governor.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true' \
+  'CHARACTER.Governor.TELEGRAM_RANDOM_RESPONSE_RATE=0.01' \
+  'CHARACTER.Advocate.TELEGRAM_BOT_TOKEN=8280814835:AAE9oue7ZTGKPzVImeONCAcCJ1WBT5KICdI' \
+  'CHARACTER.Advocate.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true' \
+  'CHARACTER.Advocate.TELEGRAM_RANDOM_RESPONSE_RATE=0.01' \
+  'CHARACTER.VoiceOfNature.TELEGRAM_BOT_TOKEN=8258974878:AAFSAHju2RghN56i27ry5-5UEGCTAKMMBzI' \
+  'CHARACTER.VoiceOfNature.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true' \
+  'CHARACTER.VoiceOfNature.TELEGRAM_RANDOM_RESPONSE_RATE=0.01' \
+  'CHARACTER.Narrator.TELEGRAM_BOT_TOKEN=7413348697:AAG7M8e55424h_3k4YHkwRzjBMkX1DvkWLc' \
+  'CHARACTER.Narrator.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true' \
+  'CHARACTER.Narrator.TELEGRAM_RANDOM_RESPONSE_RATE=0.01' \
   bun packages/cli/dist/index.js start \
     --character "$GAIA_DIR/characters/regenai.character.json" \
     --character "$GAIA_DIR/characters/advocate.character.json" \
