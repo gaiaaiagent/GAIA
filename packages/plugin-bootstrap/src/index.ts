@@ -32,6 +32,9 @@ import {
   type UUID,
   type WorldPayload,
   getLocalServerUrl,
+  TelemetryManager,
+  TelemetryConfig,
+  createCorrelatedLogger,
 } from '@elizaos/core';
 import { v4 } from 'uuid';
 
@@ -336,12 +339,25 @@ const messageReceivedHandler = async ({
   callback,
   onComplete,
 }: MessageReceivedHandlerParams): Promise<void> => {
+  // Set up telemetry
+  const telemetry = TelemetryManager.getInstance(runtime.logger);
+  const correlationId = telemetry.createCorrelationId();
+  const handlerContext = telemetry.startSpan('messageReceivedHandler', correlationId, {
+    messageId: message.id,
+    entityId: message.entityId,
+    roomId: message.roomId,
+    contentLength: message.content.text?.length || 0,
+  });
+  
+  // Create correlated logger for this request
+  const correlatedLogger = createCorrelatedLogger(runtime.logger, correlationId);
+  
   // Set up timeout monitoring
   const timeoutDuration = 60 * 60 * 1000; // 1 hour
   let timeoutId: NodeJS.Timeout | undefined = undefined;
 
   try {
-    runtime.logger.info(
+    correlatedLogger.info(
       `[Bootstrap] Message received from ${message.entityId} in room ${message.roomId}`
     );
     // Generate a new response ID
@@ -553,9 +569,14 @@ const messageReceivedHandler = async ({
             `[Bootstrap] Evaluating response for ${runtime.character.name}\nPrompt: ${shouldRespondPrompt}`
           );
 
+          const shouldRespondSpan = telemetry.startSpan('shouldRespond_useModel', correlationId, {
+            modelType: 'TEXT_SMALL',
+            promptLength: shouldRespondPrompt.length
+          });
           const response = await runtime.useModel(ModelType.TEXT_SMALL, {
             prompt: shouldRespondPrompt,
           });
+          telemetry.endSpan(shouldRespondSpan);
 
           runtime.logger.debug(
             `[Bootstrap] Response evaluation for ${runtime.character.name}:\n${response}`
@@ -602,9 +623,14 @@ const messageReceivedHandler = async ({
           });
 
           // Get initial response with provider selection
+          const initialResponseSpan = telemetry.startSpan('initial_response_useModel', correlationId, {
+            modelType: 'TEXT_LARGE',
+            promptLength: providerSelectionPrompt.length
+          });
           const initialResponse = await runtime.useModel(ModelType.TEXT_LARGE, {
             prompt: providerSelectionPrompt,
           });
+          telemetry.endSpan(initialResponseSpan);
           
           runtime.logger.debug({ initialResponse }, '[Bootstrap] Initial LLM response with providers');
           
@@ -647,9 +673,15 @@ const messageReceivedHandler = async ({
           const maxRetries = 3;
 
           while (retries < maxRetries && (!responseContent?.thought || !responseContent?.actions)) {
+            const retrySpan = telemetry.startSpan(`retry_useModel_${retries}`, correlationId, {
+              modelType: 'TEXT_LARGE',
+              retryAttempt: retries,
+              promptLength: prompt.length
+            });
             let response = await runtime.useModel(ModelType.TEXT_LARGE, {
               prompt,
             });
+            telemetry.endSpan(retrySpan);
 
             runtime.logger.debug({ response }, '[Bootstrap] *** Raw LLM Response ***');
 
@@ -985,6 +1017,10 @@ const messageReceivedHandler = async ({
     })();
 
     await Promise.race([processingPromise, timeoutPromise]);
+    telemetry.endSpan(handlerContext);
+  } catch (error) {
+    telemetry.endSpan(handlerContext, error as Error);
+    throw error;
   } finally {
     clearTimeout(timeoutId);
     onComplete?.();

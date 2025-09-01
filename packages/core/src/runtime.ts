@@ -8,7 +8,8 @@ interface WorkingMemoryEntry {
 }
 import { createUniqueUuid } from './entities';
 import { decryptSecret, getSalt, safeReplacer } from './index';
-import { createLogger } from './logger';
+import { createLogger, createCorrelatedLogger } from './logger';
+import { TelemetryManager, TelemetryConfig, CorrelationContext } from './telemetry';
 import {
   ChannelType,
   EventType,
@@ -1426,6 +1427,17 @@ export class AgentRuntime implements IAgentRuntime {
     onlyInclude = false,
     skipCache = false
   ): Promise<State> {
+    // Initialize telemetry
+    const telemetry = TelemetryManager.getInstance(this.logger);
+    const correlationId = CorrelationContext.get(this.agentId) || telemetry.createCorrelationId();
+    const spanContext = telemetry.startSpan('composeState', correlationId, {
+      messageId: message.id,
+      includeListLength: includeList?.length || 0,
+      onlyInclude,
+      skipCache
+    });
+
+    try {
     const filterList = onlyInclude ? includeList : null;
     const emptyObj = {
       values: {},
@@ -1512,6 +1524,20 @@ export class AgentRuntime implements IAgentRuntime {
         }
       }
     }
+    // Log provider outputs if enabled
+    if (TelemetryConfig.LOG_PROVIDERS) {
+      Object.entries(currentProviderResults).forEach(([providerName, result]) => {
+        telemetry.logProvider({
+          correlationId,
+          timestamp: Date.now(),
+          providerName,
+          executionTime: 0, // Provider execution time would need to be tracked separately
+          outputSize: JSON.stringify(result).length,
+          output: result
+        });
+      });
+    }
+
     const newState = {
       values: {
         ...aggregatedStateValues,
@@ -1526,7 +1552,13 @@ export class AgentRuntime implements IAgentRuntime {
     if (message.id) {
       this.stateCache.set(message.id, newState);
     }
+    
+    telemetry.endSpan(spanContext);
     return newState;
+    } catch (error: any) {
+      telemetry.endSpan(spanContext, error);
+      throw error;
+    }
   }
 
   getService<T extends Service = Service>(serviceName: ServiceTypeName | string): T | null {
@@ -1804,6 +1836,17 @@ export class AgentRuntime implements IAgentRuntime {
     params: Omit<ModelParamsMap[T], 'runtime'> | any,
     provider?: string
   ): Promise<R> {
+    // Initialize telemetry
+    const telemetry = TelemetryManager.getInstance(this.logger);
+    const correlationId = CorrelationContext.get(this.agentId) || telemetry.createCorrelationId();
+    const spanContext = telemetry.startSpan(`useModel_${modelType}`, correlationId, {
+      modelType,
+      provider,
+      hasPrompt: !!params?.prompt,
+      hasInput: !!params?.input,
+      hasMessages: !!params?.messages
+    });
+    
     const modelKey = typeof modelType === 'string' ? modelType : ModelType[modelType];
     const promptContent =
       params?.prompt ||
@@ -1812,6 +1855,7 @@ export class AgentRuntime implements IAgentRuntime {
     const model = this.getModel(modelKey, provider);
     if (!model) {
       const errorMsg = `No handler found for delegate type: ${modelKey}`;
+      telemetry.endSpan(spanContext, new Error(errorMsg));
       throw new Error(errorMsg);
     }
 
@@ -1848,6 +1892,20 @@ export class AgentRuntime implements IAgentRuntime {
         };
       }
     }
+    // Log prompt if enabled
+    if (TelemetryConfig.LOG_PROMPTS && promptContent) {
+      telemetry.logPrompt({
+        correlationId,
+        timestamp: Date.now(),
+        template: 'useModel',
+        variables: params || {},
+        resolvedPrompt: promptContent,
+        modelProvider: provider || 'default',
+        modelName: modelKey,
+        tokenCountEstimate: Math.ceil(promptContent.length / 4)
+      });
+    }
+
     const startTime = performance.now();
     try {
       const response = await model(this, paramsWithRuntime);
@@ -1905,8 +1963,10 @@ export class AgentRuntime implements IAgentRuntime {
         type: `useModel:${modelKey}`,
       });
 
+      telemetry.endSpan(spanContext);
       return response as R;
     } catch (error: any) {
+      telemetry.endSpan(spanContext, error);
       throw error;
     }
   }

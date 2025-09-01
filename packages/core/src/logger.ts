@@ -222,6 +222,7 @@ export interface LoggerBindings extends Record<string, unknown> {
   __forceType?: 'browser' | 'node';
   level?: string;
   maxMemoryLogs?: number; // Maximum number of logs to keep in memory
+  correlationId?: string; // Added for request tracking
 }
 
 interface DestinationStream {
@@ -914,6 +915,41 @@ export interface ElizaLogger extends Logger {
 
 // Cast logger to include custom methods
 const typedLogger = logger as ElizaLogger;
+
+// ============================================================================
+// Telemetry-Enhanced Logger Creation
+// ============================================================================
+
+/**
+ * Create a logger with telemetry support
+ */
+export function createTelemetryLogger(
+  bindings: LoggerBindings = {},
+  correlationId?: string
+): Logger {
+  const telemetryBindings = {
+    ...bindings,
+    correlationId: correlationId || bindings.correlationId,
+  };
+  
+  const baseLogger = createLogger(telemetryBindings);
+  
+  return baseLogger;
+}
+
+/**
+ * Create a child logger with correlation ID
+ */
+export function createCorrelatedLogger(
+  parentLogger: Logger,
+  correlationId: string,
+  additionalBindings?: Record<string, unknown>
+): Logger {
+  return parentLogger.child({
+    correlationId,
+    ...additionalBindings,
+  });
+}
 
 // Main exports
 export { createLogger, typedLogger as logger };
