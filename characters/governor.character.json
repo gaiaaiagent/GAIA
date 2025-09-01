@@ -9,7 +9,10 @@
     "@elizaos/plugin-knowledge",
     "@elizaos/plugin-telegram-disabled"
   ],
-  "secrets": {},
+  "secrets": {
+    "TELEGRAM_BOT_TOKEN": "YOUR_TELEGRAM_BOT_TOKEN_HERE",
+    "TELEGRAM_BOT_USERNAME": "RegenGovernBot"
+  },
   "settings": {
     "clients": [],
     "allowDirectMessages": true,
