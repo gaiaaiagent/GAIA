@@ -590,46 +590,8 @@ const messageReceivedHandler = async ({
         let responseContent: Content | null = null;
 
         if (shouldRespond) {
-          // STEP 1: First pass - Get LLM to select providers
-          runtime.logger.debug('[Bootstrap] STEP 1: Asking LLM to select providers...');
-          
-          // First compose state with basic providers for initial response
-          state = await runtime.composeState(message, ['ACTIONS', 'PROVIDERS']);
-          
-          const providerSelectionPrompt = composePromptFromState({
-            state,
-            template: runtime.character.templates?.messageHandlerTemplate || messageHandlerTemplate,
-          });
-
-          // Get initial response with provider selection
-          const initialResponse = await runtime.useModel(ModelType.TEXT_LARGE, {
-            prompt: providerSelectionPrompt,
-          });
-          
-          runtime.logger.debug({ initialResponse }, '[Bootstrap] Initial LLM response with providers');
-          
-          const parsedInitial = parseKeyValueXml(initialResponse);
-          const selectedProviders = parsedInitial?.providers || [];
-          
-          runtime.logger.debug(`[Bootstrap] LLM selected providers: ${selectedProviders.join(', ')}`);
-          runtime.logger.debug(`[KNOWLEDGE-DEBUG] Provider selection details:`, {
-            messageContent: message.content?.text,
-            parsedXML: parsedInitial,
-            selectedProviders,
-            containsJaguar: message.content?.text?.toLowerCase().includes('jaguar'),
-            containsCredit: message.content?.text?.toLowerCase().includes('credit')
-          });
-          
-          // STEP 2: If providers were selected, compose state with them and regenerate response
-          if (selectedProviders.length > 0) {
-            runtime.logger.debug('[Bootstrap] STEP 2: Composing state with selected providers...');
-            state = await runtime.composeState(message, [...selectedProviders, 'ACTIONS']);
-            
-            runtime.logger.debug('[Bootstrap] STEP 3: Generating final response with enriched state...');
-          } else {
-            // No providers selected, just ensure ACTIONS is in state
-            state = await runtime.composeState(message, ['ACTIONS']);
-          }
+          // Initial state composition - include ACTIONS, PROVIDERS, and KNOWLEDGE so LLM has immediate access to knowledge
+          state = await runtime.composeState(message, ['ACTIONS', 'PROVIDERS', 'KNOWLEDGE']);
           
           if (!state.values.actionNames) {
             runtime.logger.warn(
@@ -646,8 +608,27 @@ const messageReceivedHandler = async ({
           let retries = 0;
           const maxRetries = 3;
 
-          while (retries < maxRetries && (!responseContent?.thought || !responseContent?.actions)) {
-            let response = await runtime.useModel(ModelType.TEXT_LARGE, {
+          let response = await runtime.useModel(ModelType.TEXT_LARGE, {
+            prompt,
+          });
+
+          // Parse the initial response
+          const parsedResponse = parseKeyValueXml(response);
+
+          // If the response already has text, use it directly without retrying
+          if (parsedResponse?.text) {
+            responseContent = {
+              ...parsedResponse,
+              text: parsedResponse.text,
+              thought: parsedResponse.thought || '',
+              actions: parsedResponse.actions || ['REPLY'],
+              providers: parsedResponse.providers || [],
+              simple: parsedResponse.simple || false,
+            };
+          }
+
+          while (retries < maxRetries && !responseContent?.text) {
+            response = await runtime.useModel(ModelType.TEXT_LARGE, {
               prompt,
             });
 
@@ -672,10 +653,10 @@ const messageReceivedHandler = async ({
             }
 
             retries++;
-            if (!responseContent?.thought || !responseContent?.actions) {
+            if (!responseContent?.text) {
               runtime.logger.warn(
                 { response, parsedXml, responseContent },
-                '[Bootstrap] *** Missing required fields (thought or actions), retrying... ***'
+                '[Bootstrap] *** Missing required text field, retrying... ***'
               );
             }
           }
@@ -762,19 +743,7 @@ const messageReceivedHandler = async ({
           }
 
           if (responseContent?.providers?.length && responseContent?.providers?.length > 0) {
-            runtime.logger.debug(
-              `[Bootstrap] LLM selected providers: ${responseContent.providers.join(', ')}`
-            );
-            runtime.logger.debug(`[KNOWLEDGE-DEBUG] Final response providers:`, {
-              providers: responseContent.providers,
-              messageWas: message.content?.text,
-              shouldHaveKnowledge: message.content?.text?.toLowerCase().includes('jaguar') || 
-                                   message.content?.text?.toLowerCase().includes('credit')
-            });
             state = await runtime.composeState(message, responseContent?.providers || []);
-          } else {
-            runtime.logger.debug('[Bootstrap] No providers selected by LLM');
-            runtime.logger.debug(`[KNOWLEDGE-DEBUG] No providers selected for message: ${message.content?.text}`);
           }
 
           if (responseContent && responseContent.simple && responseContent.text) {
