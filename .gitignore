@@ -325,3 +325,4 @@ tsconfig.tsbuildinfo
 test-data/
 .env.backup
 .env.backup
+characters.backup/
