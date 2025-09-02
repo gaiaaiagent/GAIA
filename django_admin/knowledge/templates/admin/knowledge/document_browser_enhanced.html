@@ -1,0 +1,741 @@
+{% extends "admin/base_site.html" %}
+{% load admin_static %}
+
+{% block title %}{{ title }} | Django Admin{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .browser-container {
+            margin: 20px 0;
+        }
+        
+        /* Enhanced Search & Filter Toolbar */
+        .browser-toolbar {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .search-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 15px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .filter-group label {
+            font-weight: bold;
+            color: #0d47a1;
+            font-size: 0.9em;
+        }
+        
+        .search-input, .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus, .filter-group select:focus {
+            border-color: #0d47a1;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(13, 71, 161, 0.1);
+        }
+        
+        .search-btn {
+            background: #0d47a1;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: #1565c0;
+        }
+        
+        /* Statistics Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            background: rgba(13, 71, 161, 0.05);
+            border-radius: 6px;
+            padding: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 8px;
+        }
+        
+        .stat-value {
+            display: block;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        
+        .stat-label {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 2px;
+        }
+        
+        /* Enhanced Document Grid */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .document-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .document-card:hover {
+            border-color: #0d47a1;
+            box-shadow: 0 4px 12px rgba(13, 71, 161, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .document-title {
+            font-weight: bold;
+            color: #0d47a1;
+            margin: 0 0 5px 0;
+            font-size: 1.1em;
+            line-height: 1.3;
+        }
+        
+        .document-subtitle {
+            color: #666;
+            font-size: 0.9em;
+            margin: 0;
+        }
+        
+        .file-type-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        
+        .badge-json { background: #e3f2fd; color: #0d47a1; }
+        .badge-md { background: #e8f5e8; color: #2e7d32; }
+        .badge-txt { background: #f3e5f5; color: #7b1fa2; }
+        .badge-unknown { background: #f5f5f5; color: #666; }
+        
+        .document-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .meta-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .meta-label {
+            font-weight: 500;
+        }
+        
+        .source-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .source-rag { background: #fff3e0; color: #f57c00; }
+        .source-character { background: #e8f5e8; color: #388e3c; }
+        .source-unknown { background: #f5f5f5; color: #757575; }
+        
+        /* Document Detail View */
+        .document-detail {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #0d47a1;
+        }
+        
+        .detail-title {
+            color: #0d47a1;
+            margin: 0;
+            font-size: 1.5em;
+        }
+        
+        .detail-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .action-btn:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .primary-btn {
+            background: #0d47a1;
+        }
+        
+        .primary-btn:hover {
+            background: #1565c0;
+        }
+        
+        .detail-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .detail-meta-item {
+            text-align: center;
+        }
+        
+        .meta-value {
+            display: block;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #0d47a1;
+            margin-bottom: 5px;
+        }
+        
+        .meta-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        /* Content Renderer */
+        .content-renderer {
+            margin: 25px 0;
+        }
+        
+        .content-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .content-tab {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            cursor: pointer;
+            margin-right: 2px;
+        }
+        
+        .content-tab.active {
+            background: white;
+            border-bottom: 1px solid white;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content-panel {
+            border: 1px solid #ddd;
+            border-radius: 0 4px 4px 4px;
+            padding: 20px;
+            background: white;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .json-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        
+        .markdown-content {
+            line-height: 1.6;
+            max-width: none;
+        }
+        
+        .markdown-content h1,
+        .markdown-content h2,
+        .markdown-content h3 {
+            color: #0d47a1;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .markdown-content code {
+            background: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        .markdown-content pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        /* Fragment Hierarchy */
+        .fragment-hierarchy {
+            margin: 25px 0;
+        }
+        
+        .hierarchy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .hierarchy-title {
+            color: #0d47a1;
+            margin: 0;
+            font-size: 1.2em;
+        }
+        
+        .fragment-count {
+            background: #0d47a1;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .fragment-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .fragment-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        
+        .fragment-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .fragment-position {
+            background: #0d47a1;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .fragment-preview {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin: 10px 0 0 0;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-section {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Loading States */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+{% endblock %}
+
+{% block extrajs %}
+    {{ block.super }}
+    <script>
+        // Content tab switching
+        function showContentTab(type) {
+            // Hide all panels
+            document.querySelectorAll('.content-panel').forEach(panel => {
+                panel.style.display = 'none';
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.content-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected panel and activate tab
+            const panel = document.getElementById(type + '-panel');
+            const tab = document.getElementById(type + '-tab');
+            
+            if (panel) panel.style.display = 'block';
+            if (tab) tab.classList.add('active');
+        }
+        
+        // Initialize tabs
+        document.addEventListener('DOMContentLoaded', function() {
+            showContentTab('rendered');
+        });
+        
+        // Copy to clipboard functionality
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // Show brief success message
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+        
+        // Search form submission
+        function submitSearch() {
+            document.getElementById('search-form').submit();
+        }
+        
+        // Clear search filters
+        function clearFilters() {
+            document.getElementById('search-query').value = '';
+            document.getElementById('source-filter').value = '';
+            document.getElementById('file-type-filter').value = '';
+            submitSearch();
+        }
+        
+        // Auto-submit on select change
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.auto-submit').forEach(element => {
+                element.addEventListener('change', submitSearch);
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="browser-container">
+    <h1>{{ title }}</h1>
+    
+    <a href="{% url 'knowledge:overview' %}" class="action-btn">← Back to Overview</a>
+    
+    {% if error %}
+        <div class="error-message">{{ error }}</div>
+    {% endif %}
+    
+    {% if not selected_document %}
+        <!-- Document List View -->
+        <form id="search-form" method="get" class="browser-toolbar">
+            <div class="search-section">
+                <div class="filter-group">
+                    <label for="search-query">Search Documents</label>
+                    <input 
+                        type="text" 
+                        id="search-query" 
+                        name="search" 
+                        value="{{ search_query }}" 
+                        placeholder="Search in titles and content..." 
+                        class="search-input"
+                    >
+                </div>
+                
+                <div class="filter-group">
+                    <label for="source-filter">Source</label>
+                    <select id="source-filter" name="source" class="auto-submit">
+                        <option value="">All Sources</option>
+                        {% for source in available_sources %}
+                        <option value="{{ source.source }}" {% if source.source == source_filter %}selected{% endif %}>
+                            {{ source.source|capfirst }} ({{ source.count }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="file-type-filter">File Type</label>
+                    <select id="file-type-filter" name="file_type" class="auto-submit">
+                        <option value="">All Types</option>
+                        {% for file_type in available_file_types %}
+                        <option value="{{ file_type.ext }}" {% if file_type.ext == file_type_filter %}selected{% endif %}>
+                            .{{ file_type.ext }} ({{ file_type.count }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div>
+                    <button type="submit" class="search-btn">Search</button>
+                    <button type="button" onclick="clearFilters()" class="action-btn" style="margin-left: 5px;">Clear</button>
+                </div>
+            </div>
+            
+            {% if document_stats %}
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-value">{{ document_stats.total_documents }}</span>
+                    <div class="stat-label">Documents</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ document_stats.total_size|filesizeformat }}</span>
+                    <div class="stat-label">Total Size</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ document_stats.avg_length|floatformat:0 }}</span>
+                    <div class="stat-label">Avg Length</div>
+                </div>
+                {% if document_stats.earliest_date %}
+                <div class="stat-item">
+                    <span class="stat-value">{{ document_stats.earliest_date|date:"M j" }}</span>
+                    <div class="stat-label">First Added</div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </form>
+        
+        {% if documents %}
+            <div class="documents-grid">
+                {% for doc in documents %}
+                <div class="document-card" onclick="location.href='?document_id={{ doc.id }}'">
+                    <div class="document-header">
+                        <div>
+                            <h3 class="document-title">{{ doc.title }}</h3>
+                            {% if doc.filename and doc.filename != doc.title %}
+                                <p class="document-subtitle">{{ doc.filename }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="file-type-badge badge-{{ doc.file_ext|default:'unknown' }}">
+                            {{ doc.file_ext|default:'txt'|upper }}
+                        </div>
+                    </div>
+                    
+                    <div class="document-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Size:</span>
+                            <span>{{ doc.file_size_formatted }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Length:</span>
+                            <span>{{ doc.content_length_formatted }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Added:</span>
+                            <span>{{ doc.created_at|timesince }} ago</span>
+                        </div>
+                        {% if doc.timestamp_formatted %}
+                        <div class="meta-item">
+                            <span class="meta-label">Modified:</span>
+                            <span>{{ doc.timestamp_formatted }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="source-badge source-{{ doc.source|slugify }}">
+                        {{ doc.source|capfirst }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-results">
+                <h3>No Documents Found</h3>
+                <p>No documents match your current search criteria.</p>
+                {% if search_query or source_filter or file_type_filter %}
+                    <button onclick="clearFilters()" class="search-btn">Clear Filters</button>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+    {% else %}
+        <!-- Document Detail View -->
+        <div class="document-detail">
+            <div class="detail-header">
+                <h2 class="detail-title">{{ selected_document.title }}</h2>
+                <div class="detail-actions">
+                    <a href="?" class="action-btn">← Back to List</a>
+                    <button onclick="copyToClipboard(document.getElementById('raw-content').textContent)" class="action-btn">
+                        Copy Content
+                    </button>
+                </div>
+            </div>
+            
+            <div class="detail-meta-grid">
+                <div class="detail-meta-item">
+                    <span class="meta-value">{{ selected_document.metadata.originalFilename|default:'Unknown' }}</span>
+                    <span class="meta-label">Filename</span>
+                </div>
+                <div class="detail-meta-item">
+                    <span class="meta-value">{{ selected_document.content_length|filesizeformat }}</span>
+                    <span class="meta-label">Content Size</span>
+                </div>
+                <div class="detail-meta-item">
+                    <span class="meta-value">{{ selected_document.metadata.source|capfirst|default:'Unknown' }}</span>
+                    <span class="meta-label">Source</span>
+                </div>
+                <div class="detail-meta-item">
+                    <span class="meta-value">{{ selected_document.created_at|date:"M j, Y H:i" }}</span>
+                    <span class="meta-label">Added</span>
+                </div>
+                {% if selected_document.metadata.fileSize %}
+                <div class="detail-meta-item">
+                    <span class="meta-value">{{ selected_document.metadata.fileSize|filesizeformat }}</span>
+                    <span class="meta-label">File Size</span>
+                </div>
+                {% endif %}
+                <div class="detail-meta-item">
+                    <span class="meta-value">{{ fragment_hierarchy|length }}</span>
+                    <span class="meta-label">Fragments</span>
+                </div>
+            </div>
+            
+            {% if rendered_content %}
+            <div class="content-renderer">
+                <div class="content-tabs">
+                    <div id="rendered-tab" class="content-tab active" onclick="showContentTab('rendered')">
+                        {% if rendered_content.type == 'json' %}JSON Preview
+                        {% elif rendered_content.type == 'markdown' %}Markdown Preview  
+                        {% else %}Text Preview
+                        {% endif %}
+                    </div>
+                    <div id="raw-tab" class="content-tab" onclick="showContentTab('raw')">Raw Content</div>
+                </div>
+                
+                <div id="rendered-panel" class="content-panel">
+                    {% if rendered_content.type == 'json' %}
+                        <pre class="json-content">{{ rendered_content.content }}</pre>
+                    {% elif rendered_content.type == 'markdown' %}
+                        <div class="markdown-content">{{ rendered_content.content|linebreaks }}</div>
+                    {% else %}
+                        <div class="text-content">{{ rendered_content.content|linebreaks }}</div>
+                    {% endif %}
+                </div>
+                
+                <div id="raw-panel" class="content-panel" style="display: none;">
+                    <pre id="raw-content">{{ rendered_content.raw }}</pre>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if fragment_hierarchy %}
+            <div class="fragment-hierarchy">
+                <div class="hierarchy-header">
+                    <h3 class="hierarchy-title">Document Fragments</h3>
+                    <span class="fragment-count">{{ fragment_hierarchy|length }} fragment{{ fragment_hierarchy|length|pluralize }}</span>
+                </div>
+                
+                <div class="fragment-list">
+                    {% for fragment in fragment_hierarchy %}
+                    <div class="fragment-item">
+                        <div class="fragment-header">
+                            <span class="fragment-position">Position {{ fragment.position }}</span>
+                            <span style="font-size: 0.8em; color: #666;">{{ fragment.content_length }} chars • {{ fragment.created_at|timesince }} ago</span>
+                        </div>
+                        <div class="fragment-preview">{{ fragment.content_preview }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

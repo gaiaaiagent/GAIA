@@ -1,0 +1,259 @@
+{% extends "admin/base_site.html" %}
+{% load admin_static %}
+
+{% block title %}{{ title }} | Django Admin{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .reports-container {
+            margin: 20px 0;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            display: block;
+            font-size: 2em;
+            font-weight: bold;
+            color: #0d47a1;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .error-analysis {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        
+        .section-title {
+            color: #0d47a1;
+            margin: 0 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0d47a1;
+        }
+        
+        .error-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .error-type-card {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        
+        .error-type-name {
+            font-weight: bold;
+            color: #721c24;
+            margin-bottom: 5px;
+        }
+        
+        .error-type-count {
+            color: #721c24;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .recent-reports {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        
+        .reports-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .reports-table th,
+        .reports-table td {
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .reports-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        
+        .success-rate {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .rate-high { background: #d4edda; color: #155724; }
+        .rate-medium { background: #fff3cd; color: #856404; }
+        .rate-low { background: #f8d7da; color: #721c24; }
+        
+        .back-link {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .back-link:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="reports-container">
+    <h1>{{ title }}</h1>
+    
+    <a href="{% url 'knowledge:overview' %}" class="back-link">← Back to Overview</a>
+    
+    <!-- Statistics Overview -->
+    <div class="stats-overview">
+        <div class="stat-card">
+            <span class="stat-value">{{ report_stats.total_reports|default:"0" }}</span>
+            <span class="stat-label">Total Reports</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ report_stats.json_reports|default:"0" }}</span>
+            <span class="stat-label">JSON Reports</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ report_stats.md_reports|default:"0" }}</span>
+            <span class="stat-label">Markdown Reports</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ error_analysis.overall_failure_rate|floatformat:1|default:"0" }}%</span>
+            <span class="stat-label">Overall Failure Rate</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ error_analysis.total_files_processed|default:"0" }}</span>
+            <span class="stat-label">Files Processed</span>
+        </div>
+        {% if report_stats.reporting_duration %}
+        <div class="stat-card">
+            <span class="stat-value">{{ report_stats.reporting_duration|floatformat:1 }}h</span>
+            <span class="stat-label">Reporting Period</span>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Error Analysis -->
+    {% if error_analysis.error_types %}
+    <div class="error-analysis">
+        <h2 class="section-title">Error Analysis</h2>
+        <div class="error-types">
+            {% for error_type, count in error_analysis.error_types.items %}
+            <div class="error-type-card">
+                <div class="error-type-name">
+                    {% if error_type == 'undefined_object_error' %}
+                        Undefined Object Error
+                    {% elif error_type == 'text_split_error' %}
+                        Text Split Error
+                    {% else %}
+                        Other Error
+                    {% endif %}
+                </div>
+                <div class="error-type-count">{{ count }} occurrence{{ count|pluralize }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Recent Reports -->
+    {% if recent_reports %}
+    <div class="recent-reports">
+        <h2 class="section-title">Recent Processing Reports</h2>
+        <table class="reports-table">
+            <thead>
+                <tr>
+                    <th>Report</th>
+                    <th>Type</th>
+                    <th>Created</th>
+                    <th>Files Processed</th>
+                    <th>Success Rate</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in recent_reports %}
+                <tr>
+                    <td>{{ report.title|truncatechars:30 }}</td>
+                    <td>
+                        <span class="file-type-badge badge-{{ report.file_ext|default:'unknown' }}">
+                            {{ report.file_ext|default:'txt'|upper }}
+                        </span>
+                    </td>
+                    <td>{{ report.created_at|timesince }} ago</td>
+                    <td>
+                        {% if report.stats.totalFiles %}
+                            {{ report.stats.totalFiles }} files
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if report.success_rate >= 80 %}
+                            <span class="success-rate rate-high">{{ report.success_rate|floatformat:1 }}%</span>
+                        {% elif report.success_rate >= 50 %}
+                            <span class="success-rate rate-medium">{{ report.success_rate|floatformat:1 }}%</span>
+                        {% else %}
+                            <span class="success-rate rate-low">{{ report.success_rate|floatformat:1 }}%</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if report.has_errors %}
+                            <span style="color: #dc3545; font-weight: bold;">Errors</span>
+                        {% else %}
+                            <span style="color: #28a745; font-weight: bold;">Success</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Navigation Links -->
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+        <a href="{% url 'knowledge:document_browser' %}" class="back-link">Document Browser</a>
+        <a href="{% url 'knowledge:retrieval_tester' %}" class="back-link">Retrieval Tester</a>
+        <a href="{% url 'knowledge:performance_monitor' %}" class="back-link">Performance Monitor</a>
+    </div>
+</div>
+{% endblock %}

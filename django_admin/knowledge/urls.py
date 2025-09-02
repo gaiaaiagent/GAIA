@@ -19,6 +19,7 @@ urlpatterns = [
     path('tester/', views.retrieval_tester, name='retrieval_tester'),
     path('inspector/', views.rag_pipeline_inspector, name='rag_inspector'),
     path('monitor/', views.performance_monitor, name='performance_monitor'),
+    path('reports/', views.processing_reports_dashboard, name='processing_reports'),
     
     # API endpoints for AJAX updates
     path('api/stats/', views.api_knowledge_stats, name='api_stats'),

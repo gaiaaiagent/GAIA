@@ -404,7 +404,13 @@
         <h2 class="section-title">Knowledge Management Tools</h2>
         
         <p>
-            <a href="{% url 'knowledge:document_browser' %}" class="button">Document & Fragment Browser</a>
+            <a href="{% url 'knowledge:document_browser' %}" class="button">📄 Enhanced Document Browser</a>
+            <a href="{% url 'knowledge:processing_reports' %}" class="button">📊 Processing Reports</a>
+            <a href="{% url 'knowledge:retrieval_tester' %}" class="button">🔍 Retrieval Tester</a>
+            <a href="{% url 'knowledge:performance_monitor' %}" class="button">📈 Performance Monitor</a>
+        </p>
+        
+        <p style="margin-top: 15px;">
             <a href="{% url 'admin:knowledge_knowledgememory_changelist' %}" class="button">Knowledge Memories</a>
             <a href="{% url 'admin:knowledge_knowledgeembedding_changelist' %}" class="button">Embeddings</a>
             <a href="{% url 'admin:knowledge_conversationmemory_changelist' %}" class="button">Conversations</a>

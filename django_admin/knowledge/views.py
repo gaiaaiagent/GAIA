@@ -329,26 +329,40 @@ def get_system_health_overview():
 
 @staff_member_required
 def document_browser(request):
-    """Document and fragment browser interface"""
+    """Enhanced document and fragment browser interface"""
     document_id = request.GET.get('document_id')
     source_filter = request.GET.get('source', '')
+    search_query = request.GET.get('search', '').strip()
+    file_type_filter = request.GET.get('file_type', '')
     
     context = {
         'title': 'Document & Fragment Browser',
         'source_filter': source_filter,
+        'search_query': search_query,
+        'file_type_filter': file_type_filter,
         'available_sources': get_available_sources(),
+        'available_file_types': get_available_file_types(),
     }
     
     if document_id:
-        context.update({
-            'selected_document': get_document_details(document_id),
-            'document_fragments': get_document_fragments(document_id),
-            'document_embeddings': get_document_embeddings(document_id),
-        })
+        document_details = get_document_details(document_id)
+        if document_details:
+            context.update({
+                'selected_document': document_details,
+                'document_fragments': get_document_fragments(document_id),
+                'document_embeddings': get_document_embeddings(document_id),
+                'rendered_content': render_document_content(document_details),
+                'fragment_hierarchy': get_fragment_hierarchy(document_id),
+            })
+        else:
+            context['error'] = f'Document with ID {document_id} not found'
     else:
-        context['documents'] = get_documents_list(source_filter)
+        context.update({
+            'documents': get_documents_list(source_filter, search_query, file_type_filter),
+            'document_stats': get_document_browser_stats(source_filter, search_query, file_type_filter),
+        })
     
-    return render(request, 'admin/knowledge/document_browser.html', context)
+    return render(request, 'admin/knowledge/document_browser_enhanced.html', context)
 
 def get_available_sources():
     """Get list of available content sources"""
@@ -368,30 +382,245 @@ def get_available_sources():
         logger.error(f"Error getting available sources: {e}")
         return []
 
-def get_documents_list(source_filter=''):
-    """Get paginated list of documents"""
+def get_available_file_types():
+    """Get list of available file types"""
     try:
-        memories = KnowledgeMemory.objects.filter(type='documents')
-        
-        if source_filter:
-            memories = memories.filter(metadata__source=source_filter)
-        
-        documents = []
-        for memory in memories.order_by('-created_at')[:100]:  # Limit to 100 for performance
-            doc_data = {
-                'id': str(memory.id),
-                'title': memory.metadata.get('originalFilename', 'Unknown') if memory.metadata else 'Unknown',
-                'source': memory.source,
-                'created_at': memory.created_at,
-                'content_length': memory.text_length,
-                'agent_id': str(memory.agent_id) if memory.agent_id else None,
-            }
-            documents.append(doc_data)
-        
-        return documents
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT DISTINCT metadata->>'fileExt' as file_ext,
+                       COUNT(*) as count
+                FROM memories 
+                WHERE type = 'documents' 
+                    AND metadata->>'fileExt' IS NOT NULL
+                GROUP BY metadata->>'fileExt'
+                ORDER BY count DESC
+            """)
+            
+            return [{'ext': row[0], 'count': row[1]} for row in cursor.fetchall()]
     except Exception as e:
-        logger.error(f"Error getting documents list: {e}")
+        logger.error(f"Error getting available file types: {e}")
         return []
+
+def render_document_content(document_details):
+    """Render document content based on file type with proper formatting"""
+    if not document_details or not document_details.get('content'):
+        return {'type': 'text', 'content': 'No content available'}
+    
+    content = document_details['content']
+    file_ext = document_details.get('metadata', {}).get('fileExt', '').lower()
+    
+    try:
+        # Get text content
+        text_content = content.get('text', '') if isinstance(content, dict) else str(content)
+        
+        if file_ext == 'json':
+            # Format JSON content
+            try:
+                import json
+                if isinstance(content, dict) and 'text' in content:
+                    json_data = json.loads(content['text'])
+                    formatted_json = json.dumps(json_data, indent=2, sort_keys=True)
+                    return {
+                        'type': 'json',
+                        'content': formatted_json,
+                        'raw': text_content
+                    }
+            except json.JSONDecodeError:
+                pass
+        
+        elif file_ext == 'md':
+            # Markdown content - we'll render this in the template
+            return {
+                'type': 'markdown',
+                'content': text_content,
+                'raw': text_content
+            }
+        
+        # Default to plain text
+        return {
+            'type': 'text',
+            'content': text_content,
+            'raw': text_content
+        }
+        
+    except Exception as e:
+        logger.error(f"Error rendering document content: {e}")
+        return {'type': 'error', 'content': f'Error rendering content: {str(e)}'}
+
+def get_fragment_hierarchy(document_id):
+    """Get hierarchical structure of document fragments"""
+    try:
+        fragments = KnowledgeMemory.objects.filter(
+            type='knowledge',
+            metadata__documentId=document_id
+        ).order_by('metadata__position')
+        
+        hierarchy = []
+        for fragment in fragments:
+            position = fragment.metadata.get('position', 0) if fragment.metadata else 0
+            hierarchy.append({
+                'id': str(fragment.id),
+                'position': position,
+                'content_preview': (fragment.content.get('text', '') if isinstance(fragment.content, dict) else '')[:150] + '...',
+                'content_length': len(fragment.content.get('text', '') if isinstance(fragment.content, dict) else ''),
+                'created_at': fragment.created_at,
+            })
+        
+        return hierarchy
+    except Exception as e:
+        logger.error(f"Error getting fragment hierarchy: {e}")
+        return []
+
+def get_document_browser_stats(source_filter='', search_query='', file_type_filter=''):
+    """Get statistics for current document browser filters"""
+    try:
+        with connection.cursor() as cursor:
+            # Build dynamic WHERE clause
+            where_conditions = ["type = 'documents'"]
+            params = []
+            
+            if source_filter:
+                where_conditions.append("metadata->>'source' = %s")
+                params.append(source_filter)
+            
+            if search_query:
+                where_conditions.append("(content->>'text' ILIKE %s OR metadata->>'title' ILIKE %s)")
+                params.extend([f'%{search_query}%', f'%{search_query}%'])
+            
+            if file_type_filter:
+                where_conditions.append("metadata->>'fileExt' = %s")
+                params.append(file_type_filter)
+            
+            where_clause = ' AND '.join(where_conditions)
+            
+            cursor.execute(f"""
+                SELECT 
+                    COUNT(*) as total_docs,
+                    AVG(LENGTH(content->>'text')) as avg_length,
+                    MIN("createdAt") as earliest,
+                    MAX("createdAt") as latest,
+                    SUM((metadata->>'fileSize')::int) as total_size
+                FROM memories 
+                WHERE {where_clause}
+            """, params)
+            
+            row = cursor.fetchone()
+            if row:
+                total_docs, avg_length, earliest, latest, total_size = row
+                return {
+                    'total_documents': total_docs or 0,
+                    'avg_length': int(avg_length) if avg_length else 0,
+                    'earliest_date': earliest,
+                    'latest_date': latest,
+                    'total_size': total_size or 0
+                }
+    except Exception as e:
+        logger.error(f"Error getting document browser stats: {e}")
+    
+    return {
+        'total_documents': 0,
+        'avg_length': 0,
+        'earliest_date': None,
+        'latest_date': None,
+        'total_size': 0
+    }
+
+def get_documents_list(source_filter='', search_query='', file_type_filter='', limit=100):
+    """Get enhanced paginated list of documents with search and filtering"""
+    try:
+        with connection.cursor() as cursor:
+            # Build dynamic query with filters
+            where_conditions = ["type = 'documents'"]
+            params = []
+            
+            if source_filter:
+                where_conditions.append("metadata->>'source' = %s")
+                params.append(source_filter)
+            
+            if search_query:
+                where_conditions.append("(content->>'text' ILIKE %s OR metadata->>'title' ILIKE %s OR metadata->>'originalFilename' ILIKE %s)")
+                params.extend([f'%{search_query}%', f'%{search_query}%', f'%{search_query}%'])
+            
+            if file_type_filter:
+                where_conditions.append("metadata->>'fileExt' = %s")
+                params.append(file_type_filter)
+            
+            where_clause = ' AND '.join(where_conditions)
+            params.append(limit)
+            
+            cursor.execute(f"""
+                SELECT 
+                    id,
+                    metadata->>'title' as title,
+                    metadata->>'originalFilename' as filename,
+                    metadata->>'source' as source,
+                    metadata->>'fileExt' as file_ext,
+                    (metadata->>'fileSize')::int as file_size,
+                    metadata->>'timestamp' as timestamp_ms,
+                    "createdAt",
+                    "agentId",
+                    LENGTH(content->>'text') as content_length
+                FROM memories 
+                WHERE {where_clause}
+                ORDER BY "createdAt" DESC
+                LIMIT %s
+            """, params)
+            
+            documents = []
+            for row in cursor.fetchall():
+                (id, title, filename, source, file_ext, file_size, 
+                 timestamp_ms, created_at, agent_id, content_length) = row
+                
+                # Format file size
+                file_size_formatted = format_file_size(file_size) if file_size else 'Unknown'
+                
+                # Format timestamp
+                timestamp_formatted = format_timestamp(timestamp_ms) if timestamp_ms else None
+                
+                documents.append({
+                    'id': str(id),
+                    'title': title or filename or 'Untitled',
+                    'filename': filename,
+                    'source': source or 'unknown',
+                    'file_ext': file_ext or 'txt',
+                    'file_size': file_size,
+                    'file_size_formatted': file_size_formatted,
+                    'timestamp_ms': timestamp_ms,
+                    'timestamp_formatted': timestamp_formatted,
+                    'created_at': created_at,
+                    'agent_id': str(agent_id) if agent_id else None,
+                    'content_length': content_length or 0,
+                    'content_length_formatted': format_file_size(content_length) if content_length else '0 B',
+                })
+            
+            return documents
+            
+    except Exception as e:
+        logger.error(f"Error getting enhanced documents list: {e}", exc_info=True)
+        return []
+
+def format_file_size(size_bytes):
+    """Format file size in human readable format"""
+    if not size_bytes:
+        return '0 B'
+    
+    for unit in ['B', 'KB', 'MB', 'GB']:
+        if size_bytes < 1024.0:
+            return f"{size_bytes:.1f} {unit}"
+        size_bytes /= 1024.0
+    return f"{size_bytes:.1f} TB"
+
+def format_timestamp(timestamp_ms):
+    """Convert Unix timestamp (ms) to human readable format"""
+    try:
+        if timestamp_ms:
+            import datetime
+            timestamp_s = int(timestamp_ms) / 1000
+            dt = datetime.datetime.fromtimestamp(timestamp_s)
+            return dt.strftime('%Y-%m-%d %H:%M:%S')
+    except (ValueError, TypeError):
+        pass
+    return None
 
 def get_document_details(document_id):
     """Get detailed information about a specific document"""
@@ -653,6 +882,230 @@ def perform_knowledge_test(query_text, agent_id=None, embedding_model='default',
         results['error'] = str(e)
     
     return results
+
+@staff_member_required 
+def processing_reports_dashboard(request):
+    """Dashboard for analyzing document processing reports and trends"""
+    context = {
+        'title': 'Processing Reports Dashboard',
+        'report_stats': get_processing_report_stats(),
+        'recent_reports': get_recent_processing_reports(),
+        'error_analysis': get_processing_error_analysis(),
+        'success_trends': get_processing_success_trends(),
+    }
+    return render(request, 'admin/knowledge/processing_reports.html', context)
+
+def get_processing_report_stats():
+    """Get overall processing statistics from report documents"""
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT 
+                    COUNT(*) as total_reports,
+                    COUNT(CASE WHEN metadata->>'originalFilename' LIKE '%.json' THEN 1 END) as json_reports,
+                    COUNT(CASE WHEN metadata->>'originalFilename' LIKE '%.md' THEN 1 END) as md_reports,
+                    AVG((metadata->>'fileSize')::int) as avg_size,
+                    MIN("createdAt") as first_report,
+                    MAX("createdAt") as latest_report
+                FROM memories 
+                WHERE type = 'documents' 
+                    AND metadata->>'source' = 'rag-service-main-upload'
+                    AND metadata->>'title' LIKE 'report-%'
+            """)
+            
+            row = cursor.fetchone()
+            if row:
+                return {
+                    'total_reports': row[0] or 0,
+                    'json_reports': row[1] or 0,
+                    'md_reports': row[2] or 0,
+                    'avg_size': int(row[3]) if row[3] else 0,
+                    'first_report': row[4],
+                    'latest_report': row[5],
+                    'reporting_duration': (row[5] - row[4]).total_seconds() / 3600 if row[4] and row[5] else 0
+                }
+    except Exception as e:
+        logger.error(f"Error getting processing report stats: {e}")
+    
+    return {
+        'total_reports': 0,
+        'json_reports': 0, 
+        'md_reports': 0,
+        'avg_size': 0,
+        'first_report': None,
+        'latest_report': None,
+        'reporting_duration': 0
+    }
+
+def get_recent_processing_reports(limit=10):
+    """Get recent processing reports with content analysis"""
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT 
+                    metadata->>'title' as title,
+                    metadata->>'originalFilename' as filename,
+                    metadata->>'fileExt' as file_ext,
+                    (metadata->>'fileSize')::int as file_size,
+                    "createdAt",
+                    content->>'text' as content_text
+                FROM memories
+                WHERE type = 'documents'
+                    AND metadata->>'source' = 'rag-service-main-upload'
+                    AND metadata->>'title' LIKE 'report-%'
+                ORDER BY "createdAt" DESC
+                LIMIT %s
+            """, [limit])
+            
+            reports = []
+            for row in cursor.fetchall():
+                title, filename, file_ext, file_size, created_at, content_text = row
+                
+                # Try to extract stats from content if it's JSON
+                stats = {}
+                if file_ext == 'json' and content_text:
+                    try:
+                        import json
+                        data = json.loads(content_text)
+                        if 'stats' in data:
+                            stats = data['stats']
+                    except json.JSONDecodeError:
+                        pass
+                
+                reports.append({
+                    'title': title,
+                    'filename': filename,
+                    'file_ext': file_ext,
+                    'file_size': file_size,
+                    'created_at': created_at,
+                    'stats': stats,
+                    'has_errors': 'failed' in stats and stats.get('failed', 0) > 0,
+                    'success_rate': (stats.get('successful', 0) / max(stats.get('totalFiles', 1), 1)) * 100 if stats else 0
+                })
+            
+            return reports
+    except Exception as e:
+        logger.error(f"Error getting recent processing reports: {e}")
+        return []
+
+def get_processing_error_analysis():
+    """Analyze common processing errors from reports"""
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT content->>'text' as content_text
+                FROM memories
+                WHERE type = 'documents'
+                    AND metadata->>'source' = 'rag-service-main-upload' 
+                    AND metadata->>'title' LIKE 'report-%'
+                    AND metadata->>'originalFilename' LIKE '%.json'
+                ORDER BY "createdAt" DESC
+                LIMIT 20
+            """)
+            
+            error_types = {}
+            total_files_processed = 0
+            total_failures = 0
+            
+            for row in cursor.fetchall():
+                content_text = row[0]
+                if content_text:
+                    try:
+                        import json
+                        data = json.loads(content_text)
+                        
+                        # Count file processing stats
+                        if 'stats' in data:
+                            total_files_processed += data['stats'].get('totalFiles', 0)
+                            total_failures += data['stats'].get('failed', 0)
+                        
+                        # Extract error types
+                        if 'errors' in data and isinstance(data['errors'], list):
+                            for error in data['errors']:
+                                error_msg = error.get('error', 'Unknown Error')
+                                # Standardize error messages
+                                if 'undefined is not an object' in error_msg:
+                                    error_type = 'undefined_object_error'
+                                elif 'split' in error_msg:
+                                    error_type = 'text_split_error'
+                                else:
+                                    error_type = 'other_error'
+                                
+                                error_types[error_type] = error_types.get(error_type, 0) + 1
+                        
+                    except json.JSONDecodeError:
+                        continue
+            
+            return {
+                'error_types': error_types,
+                'total_files_processed': total_files_processed,
+                'total_failures': total_failures,
+                'overall_failure_rate': (total_failures / max(total_files_processed, 1)) * 100 if total_files_processed > 0 else 0
+            }
+    except Exception as e:
+        logger.error(f"Error analyzing processing errors: {e}")
+        return {'error_types': {}, 'total_files_processed': 0, 'total_failures': 0, 'overall_failure_rate': 0}
+
+def get_processing_success_trends():
+    """Get processing success trends over time"""
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT 
+                    DATE("createdAt") as report_date,
+                    content->>'text' as content_text,
+                    "createdAt"
+                FROM memories
+                WHERE type = 'documents'
+                    AND metadata->>'source' = 'rag-service-main-upload'
+                    AND metadata->>'title' LIKE 'report-%'
+                    AND metadata->>'originalFilename' LIKE '%.json'
+                ORDER BY "createdAt" DESC
+                LIMIT 30
+            """)
+            
+            daily_stats = {}
+            
+            for row in cursor.fetchall():
+                report_date, content_text, created_at = row
+                
+                if content_text:
+                    try:
+                        import json
+                        data = json.loads(content_text)
+                        
+                        if 'stats' in data:
+                            stats = data['stats']
+                            date_key = report_date.strftime('%Y-%m-%d')
+                            
+                            if date_key not in daily_stats:
+                                daily_stats[date_key] = {
+                                    'total_files': 0,
+                                    'successful': 0,
+                                    'failed': 0,
+                                    'reports': 0
+                                }
+                            
+                            daily_stats[date_key]['total_files'] += stats.get('totalFiles', 0)
+                            daily_stats[date_key]['successful'] += stats.get('successful', 0)
+                            daily_stats[date_key]['failed'] += stats.get('failed', 0)
+                            daily_stats[date_key]['reports'] += 1
+                            
+                    except json.JSONDecodeError:
+                        continue
+            
+            # Calculate success rates
+            for date_key in daily_stats:
+                total = daily_stats[date_key]['total_files']
+                if total > 0:
+                    daily_stats[date_key]['success_rate'] = (daily_stats[date_key]['successful'] / total) * 100
+                else:
+                    daily_stats[date_key]['success_rate'] = 0
+            
+            return daily_stats
+    except Exception as e:
+        logger.error(f"Error getting processing success trends: {e}")
+        return {}
 
 @staff_member_required
 def rag_pipeline_inspector(request):
