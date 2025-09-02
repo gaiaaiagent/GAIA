@@ -5,7 +5,26 @@ This guide provides the official process for starting and managing the RegenAI a
 
 ## Prerequisites
 
-### 1. PostgreSQL Database
+### 1. Ollama for Embeddings
+Ensure Ollama is installed and running:
+```bash
+# Check if Ollama is running
+ollama list
+
+# If not installed, install it:
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Start Ollama service
+ollama serve &
+
+# Pull the embedding model
+ollama pull nomic-embed-text:latest
+
+# Verify model is available
+ollama list | grep nomic-embed-text
+```
+
+### 2. PostgreSQL Database
 Ensure PostgreSQL is running in Docker:
 ```bash
 docker ps | grep postgres
@@ -21,10 +40,18 @@ Create or verify `/opt/projects/GAIA/.env` contains:
 # Database
 POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza
 
-# OpenAI Configuration
+# Embedding Configuration (Ollama for local embeddings)
+EMBEDDING_PROVIDER=ollama
+EMBEDDING_MODEL=nomic-embed-text:latest
+OLLAMA_BASE_URL=http://localhost:11434
+
+# Text Generation (OpenAI)
+TEXT_PROVIDER=openai
 OPENAI_API_KEY=your-api-key-here
-TEXT_MODEL=gpt-5-nano-2025-08-07
-TEXT_EMBEDDING_MODEL=text-embedding-3-small
+TEXT_MODEL=gpt-4o-mini
+
+# Knowledge System
+CTX_KNOWLEDGE_ENABLED=true
 
 # Telegram Configuration (Tokens now in character files)
 # Tokens are configured in each character's secrets section:

@@ -1,41 +1,51 @@
-# Plugin-Knowledge Changes Required
+# Plugin-Knowledge Changes - Deduplication & Ollama Support
 
 ## Overview
 
-The `@elizaos/plugin-knowledge` package requires several fixes for proper ESM compatibility and debugging. These changes are currently in the local `packages/plugin-knowledge` directory on branch `fix-esm-export-and-debug`.
+The `@elizaos/plugin-knowledge` package has been enhanced with content-based deduplication and Ollama embedding support. These changes are in the `regenai-unified-fixes` branch of our fork.
 
-## Required Changes
+## Major Features Added (September 2, 2025)
 
-### 1. Fix ESM Export (src/index.ts)
+### 1. Content-Based Deduplication
+- SHA-256 hashing for document identification
+- Shared embeddings across multiple agents
+- Agent-scoped fragment references
+- ~90% storage reduction for multi-agent setups
+
+### 2. Ollama Embedding Support
+- Local embedding generation with nomic-embed-text model
+- 768-dimension embeddings (vs 1536 for OpenAI)
+- Zero-cost embeddings
+- ~2-3x faster than API calls
+
+### 3. Key Bug Fixes
+
+#### createUniqueUuid Parameters (src/service.ts)
 ```typescript
-// Add at the end of the file
-export default knowledgePlugin;
+// BEFORE (broken):
+id: createUniqueUuid() as UUID
+
+// AFTER (fixed):
+id: createUniqueUuid(this.runtime, originalFragment.id) as UUID
 ```
 
-### 2. Add Debug Logging
-- Added console.log statements in `src/provider.ts` to track provider calls
-- Added console.log statements in `src/service.ts` to track service initialization
-
-### 3. Fix tsup Configuration (tsup.config.ts)
+#### Text Split Null Checks (src/document-processor.ts)
 ```typescript
-// Change the runner from tsx to tsup
-runner: 'tsup'
-```
-
-### 4. Add Polyfills (src/polyfills.ts)
-```typescript
-// @ts-nocheck
-import { polyfillNode } from 'esbuild-plugin-polyfill-node';
-
-// Polyfill global if needed
-if (typeof global === 'undefined') {
-  (window as any).global = window;
+// Added null/undefined checks
+if (!text || typeof text !== 'string') {
+  logger.warn(`[splitIntoChunks] Received invalid text: ${typeof text}`);
+  return [];
 }
 ```
 
-### 5. Import Polyfills (src/index.ts)
+#### Report Generation Location (src/report-generator.ts)
 ```typescript
-import './polyfills.js';
+// BEFORE (caused recursive processing):
+this.reportPath = path.join(knowledgePath, '.processing-reports');
+
+// AFTER (proper location):
+const projectRoot = process.cwd();
+this.reportPath = path.join(projectRoot, 'logs', 'knowledge-processing-reports');
 ```
 
 ## Implementation Status

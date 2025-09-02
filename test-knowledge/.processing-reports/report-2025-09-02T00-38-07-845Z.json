@@ -1,0 +1,40 @@
+{
+  "timestamp": "2025-09-02T00:38:07.845Z",
+  "stats": {
+    "startTime": "2025-09-02T00:38:07.845Z",
+    "totalFiles": 1,
+    "successful": 0,
+    "failed": 1,
+    "skipped": 0,
+    "exactDuplicates": 0,
+    "semanticDuplicates": 0,
+    "endTime": "2025-09-02T00:38:07.854Z",
+    "duration": 0.009
+  },
+  "fileTypes": {
+    ".md": {
+      "processed": 0,
+      "failed": 1,
+      "skipped": 0
+    }
+  },
+  "errors": {
+    "Permission Denied": {
+      "count": 1,
+      "files": [
+        "simple-test.md"
+      ]
+    }
+  },
+  "duplicates": {
+    "exact": [],
+    "semantic": []
+  },
+  "failedFiles": [
+    {
+      "path": "/Users/darrenzal/GAIA/test-knowledge/simple-test.md",
+      "reason": "Permission Denied",
+      "error": ""
+    }
+  ]
+}

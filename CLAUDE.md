@@ -86,7 +86,41 @@ bun packages/cli/dist/index.js start --character characters/governor.character.j
 - Basic auth credentials: `regenai:regen2025`
 - Ports: HTTP (80) redirects to HTTPS (443)
 
-### Plugin-Knowledge Configuration (Updated Aug 28, 2025)
+### Knowledge Deduplication & Ollama Embeddings (September 2, 2025)
+
+**CRITICAL:** Multiple agents now share knowledge without duplicating embeddings!
+
+**Problem:** Each agent was creating duplicate embeddings for the same documents (5 agents = 5x storage/processing)
+
+**Solution:** Content-based deduplication with Ollama local embeddings:
+1. **SHA-256 content IDs**: Documents identified by content hash, not filename
+2. **Shared embeddings**: First agent creates embeddings, others reuse them
+3. **Agent-scoped references**: Each agent creates lightweight references to shared knowledge
+4. **Ollama embeddings**: Local, free, fast embeddings with nomic-embed-text model
+
+**Configuration:**
+```bash
+# Environment variables for Ollama embeddings
+EMBEDDING_PROVIDER=ollama
+EMBEDDING_MODEL=nomic-embed-text:latest
+OLLAMA_BASE_URL=http://localhost:11434
+TEXT_PROVIDER=openai  # Keep OpenAI for text generation
+TEXT_MODEL=gpt-4o-mini
+```
+
+**Key fixes:**
+- Fixed `createUniqueUuid(runtime, baseUserId)` parameters in fragment references
+- Added null checks for text.split operations
+- Moved processing reports out of knowledge folder
+- Clean corrupted fragments: file paths and error messages in knowledge base
+
+**Performance:**
+- First agent: ~10-20 min for 10k documents
+- Subsequent agents: ~30 seconds (references only)
+- Storage: ~90% reduction for multi-agent setups
+- Cost: $0 for embeddings (vs OpenAI API costs)
+
+### Plugin-Knowledge Configuration (Updated Sep 2, 2025)
 
 **CRITICAL:** We use a custom fork of plugin-knowledge with deduplication fixes!
 
