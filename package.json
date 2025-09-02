@@ -78,7 +78,7 @@
     "@elizaos/plugin-bootstrap": "1.4.5",
     "@elizaos/plugin-coinbase": "^1.0.2",
     "@elizaos/plugin-e2b": "1.2.0",
-    "@elizaos/plugin-knowledge": "https://github.com/gaiaaiagent/plugin-knowledge.git#regenai-unified-fixes",
+    "@elizaos/plugin-knowledge": "https://github.com/gaiaaiagent/plugin-knowledge.git#fix-esm-export-and-debug",
     "@elizaos/plugin-openai": "^1.0.9",
     "@elizaos/plugin-telegram": "https://github.com/gaiaaiagent/plugin-telegram.git#1.x",
     "chalk": "^5.4.1",
