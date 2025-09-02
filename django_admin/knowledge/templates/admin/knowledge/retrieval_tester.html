@@ -1,0 +1,459 @@
+{% extends "admin/base_site.html" %}
+{% load admin_static %}
+
+{% block title %}{{ title }} | Django Admin{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .tester-container {
+            margin: 20px 0;
+        }
+        
+        .test-form {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        
+        .form-group label {
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .sample-queries {
+            margin-top: 10px;
+        }
+        
+        .query-chip {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #0d47a1;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 3px 3px 3px 0;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .query-chip:hover {
+            background: #bbdefb;
+            border-color: #0d47a1;
+        }
+        
+        .test-button {
+            background-color: #0d47a1;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .test-button:hover {
+            background-color: #1565c0;
+        }
+        
+        .results-section {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stat-value {
+            display: block;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        
+        .stat-label {
+            display: block;
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .fragments-list {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .fragment-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .fragment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .similarity-score {
+            background: #0d47a1;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .fragment-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        
+        .meta-item {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .source-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+        }
+        
+        .fragment-content {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .back-link {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .back-link:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .section-title {
+            color: #0d47a1;
+            margin: 0 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0d47a1;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            
+            .fragment-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extrajs %}
+    {{ block.super }}
+    <script>
+        function selectSampleQuery(query) {
+            document.getElementById('query-text').value = query;
+        }
+        
+        function toggleAdvancedSettings() {
+            const advanced = document.getElementById('advanced-settings');
+            const button = document.getElementById('advanced-toggle');
+            
+            if (advanced.style.display === 'none') {
+                advanced.style.display = 'grid';
+                button.textContent = 'Hide Advanced Settings';
+            } else {
+                advanced.style.display = 'none';
+                button.textContent = 'Show Advanced Settings';
+            }
+        }
+        
+        // Auto-expand textarea as user types
+        document.addEventListener('DOMContentLoaded', function() {
+            const textarea = document.getElementById('query-text');
+            if (textarea) {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = this.scrollHeight + 'px';
+                });
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="tester-container">
+    <h1>{{ title }}</h1>
+    
+    <a href="{% url 'knowledge:overview' %}" class="back-link">← Back to Overview</a>
+    
+    <!-- Test Form -->
+    <div class="test-form">
+        <h2 class="section-title">Knowledge Retrieval Test</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="query-text">Query Text:</label>
+                    <textarea 
+                        id="query-text" 
+                        name="query_text" 
+                        placeholder="Enter your question or query here..."
+                        required
+                    >{{ query_text|default:"" }}</textarea>
+                    
+                    {% if sample_queries %}
+                    <div class="sample-queries">
+                        <strong>Sample Queries:</strong><br>
+                        {% for query in sample_queries %}
+                        <span class="query-chip" onclick="selectSampleQuery('{{ query }}')">{{ query }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="agent-id">Test Agent (Optional):</label>
+                    <select id="agent-id" name="agent_id">
+                        <option value="">All Agents</option>
+                        {% for agent in available_agents %}
+                        <option value="{{ agent.id }}" {% if agent.id == agent_id %}selected{% endif %}>
+                            {{ agent.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="max-results">Max Results:</label>
+                    <input 
+                        type="number" 
+                        id="max-results" 
+                        name="max_results" 
+                        value="{{ max_results|default:"10" }}" 
+                        min="1" 
+                        max="50"
+                    >
+                </div>
+                
+                <div id="advanced-settings" style="display: none; grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label for="embedding-model">Embedding Model:</label>
+                        <select id="embedding-model" name="embedding_model">
+                            <option value="default" {% if embedding_model == "default" %}selected{% endif %}>Default</option>
+                            <option value="text-embedding-3-small" {% if embedding_model == "text-embedding-3-small" %}selected{% endif %}>OpenAI Small</option>
+                            <option value="text-embedding-3-large" {% if embedding_model == "text-embedding-3-large" %}selected{% endif %}>OpenAI Large</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="similarity-threshold">Similarity Threshold:</label>
+                        <input 
+                            type="number" 
+                            id="similarity-threshold" 
+                            name="similarity_threshold" 
+                            value="{{ similarity_threshold|default:"0.1" }}" 
+                            min="0.0" 
+                            max="1.0" 
+                            step="0.1"
+                        >
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="advanced-toggle" type="button" onclick="toggleAdvancedSettings()" style="background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 4px; margin-right: 15px; cursor: pointer;">
+                    Show Advanced Settings
+                </button>
+                <button type="submit" class="test-button">Run Test</button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Test Results -->
+    {% if fragments is not None or error %}
+    <div class="results-section">
+        <h2 class="section-title">Test Results</h2>
+        
+        {% if error %}
+        <div class="error-message">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% elif fragments %}
+        
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-value">{{ stats.total_found|default:"0" }}</span>
+                <span class="stat-label">Fragments Found</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ stats.query_time_ms|default:"0" }}ms</span>
+                <span class="stat-label">Query Time</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ stats.avg_similarity|default:"0.000" }}</span>
+                <span class="stat-label">Avg Similarity</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ stats.sources_found|default:"0" }}</span>
+                <span class="stat-label">Sources Found</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ stats.agents_found|default:"0" }}</span>
+                <span class="stat-label">Agents Found</span>
+            </div>
+        </div>
+        
+        <!-- Fragment Results -->
+        <h3 style="color: #0d47a1; margin-bottom: 15px;">Retrieved Fragments:</h3>
+        
+        <div class="fragments-list">
+            {% for fragment in fragments %}
+            <div class="fragment-card">
+                <div class="fragment-header">
+                    <div class="fragment-meta">
+                        <span class="meta-item"><strong>Document:</strong> {{ fragment.document_title|truncatechars:50 }}</span>
+                        <span class="source-badge">{{ fragment.source|capfirst }}</span>
+                        <span class="meta-item">{{ fragment.created_at|timesince }} ago</span>
+                    </div>
+                    <div class="similarity-score">{{ fragment.similarity_score }}</div>
+                </div>
+                
+                <div class="fragment-content">{{ fragment.content|truncatechars:1000 }}</div>
+                
+                <div style="margin-top: 10px; font-size: 0.8em; color: #666;">
+                    ID: {{ fragment.id|truncatechars:20 }}
+                    {% if fragment.agent_id %}| Agent: {{ fragment.agent_id|truncatechars:16 }}{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% else %}
+        <div class="no-results">
+            <h3>No Results Found</h3>
+            <p>No knowledge fragments matched your query with the specified criteria.</p>
+            <p>Try:</p>
+            <ul style="text-align: left; display: inline-block; margin-top: 10px;">
+                <li>Lowering the similarity threshold</li>
+                <li>Using different keywords</li>
+                <li>Increasing max results</li>
+                <li>Testing with a specific agent</li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- Navigation Links -->
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+        <a href="{% url 'knowledge:rag_inspector' %}" class="back-link">RAG Pipeline Inspector</a>
+        <a href="{% url 'knowledge:performance_monitor' %}" class="back-link">Performance Monitor</a>
+        <a href="{% url 'knowledge:document_browser' %}" class="back-link">Document Browser</a>
+    </div>
+</div>
+{% endblock %}

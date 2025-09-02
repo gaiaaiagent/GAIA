@@ -228,3 +228,184 @@ class KoiProcessing(models.Model):
         
     def __str__(self):
         return f"{self.content_rid} - Agent {self.agent_id[:8]}... ({self.status})"
+
+# ============================================================================
+# SECTION 4: Enhanced ElizaOS Integration Models
+# Additional models for complete system visibility
+# ============================================================================
+
+class ConversationMemory(models.Model):
+    """
+    Read-only view of conversation memories with RAG usage tracking.
+    Shows which conversations used knowledge retrieval and what was retrieved.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    agent_id = models.UUIDField(db_column='agentId')
+    room_id = models.UUIDField(db_column='roomId', null=True, blank=True)
+    entity_id = models.UUIDField(db_column='entityId', null=True, blank=True)
+    world_id = models.UUIDField(db_column='worldId', null=True, blank=True)
+    content = models.JSONField()  # Message content
+    metadata = models.JSONField(default=dict)  # Contains RAG usage data
+    created_at = models.DateTimeField(db_column='createdAt')
+    unique = models.BooleanField(default=True)
+    
+    class Meta:
+        managed = False  # Don't create migrations - read-only view
+        db_table = 'messages'  # ElizaOS messages table
+        verbose_name = 'Conversation Memory'
+        verbose_name_plural = 'Conversation Memories'
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        text = self.content.get('text', '') if isinstance(self.content, dict) else ''
+        preview = text[:50] + '...' if len(text) > 50 else text
+        return f"[{self.agent_id}] {preview}"
+    
+    @property
+    def knowledge_used(self):
+        """Check if this conversation used RAG knowledge retrieval"""
+        if not self.metadata:
+            return False
+        return self.metadata.get('knowledgeUsed', False) or 'ragUsage' in self.metadata
+    
+    @property
+    def rag_fragments_count(self):
+        """Get count of knowledge fragments used in RAG"""
+        if not self.knowledge_used:
+            return 0
+        rag_usage = self.metadata.get('ragUsage', {})
+        return rag_usage.get('totalFragments', 0)
+    
+    @property
+    def rag_query_text(self):
+        """Get the query text used for RAG retrieval"""
+        if not self.knowledge_used:
+            return None
+        rag_usage = self.metadata.get('ragUsage', {})
+        return rag_usage.get('queryText', None)
+
+class AgentConfiguration(models.Model):
+    """
+    Read-only view of agent configurations and runtime data.
+    Shows agent settings, model configurations, and capabilities.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    bio = models.TextField(blank=True)
+    settings = models.JSONField(default=dict)  # Agent configuration
+    knowledge = models.JSONField(default=list, blank=True)  # Character knowledge
+    lore = models.JSONField(default=list, blank=True)  # Character lore
+    message_examples = models.JSONField(default=list, blank=True)
+    post_examples = models.JSONField(default=list, blank=True)
+    plugins = models.JSONField(default=list, blank=True)  # Active plugins
+    
+    class Meta:
+        managed = False  # Don't create migrations - read-only view
+        db_table = 'agents'  # ElizaOS agents table
+        verbose_name = 'Agent Configuration'
+        verbose_name_plural = 'Agent Configurations'
+        ordering = ['name']
+        
+    def __str__(self):
+        return f"{self.name} ({str(self.id)[:8]}...)"
+    
+    @property
+    def has_knowledge_plugin(self):
+        """Check if agent has knowledge plugin enabled"""
+        plugins = self.plugins or []
+        return '@elizaos/plugin-knowledge' in plugins
+    
+    @property
+    def knowledge_settings(self):
+        """Extract knowledge-specific settings"""
+        settings = self.settings or {}
+        knowledge_settings = {}
+        for key, value in settings.items():
+            if 'knowledge' in key.lower() or 'embedding' in key.lower() or 'text_model' in key.lower():
+                knowledge_settings[key] = value
+        return knowledge_settings
+
+# ============================================================================
+# SECTION 5: Enhanced Analytics Models  
+# Comprehensive tracking for performance optimization and insights
+# ============================================================================
+
+class DocumentProcessingMetrics(models.Model):
+    """
+    Track document processing performance and outcomes.
+    Helps identify bottlenecks and optimization opportunities.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    document_id = models.UUIDField()
+    agent_id = models.UUIDField()
+    source_type = models.CharField(max_length=50)  # notion, docs, discord, etc.
+    file_type = models.CharField(max_length=20)  # pdf, md, txt, docx, etc.
+    file_size_bytes = models.BigIntegerField()
+    processing_time_ms = models.IntegerField()
+    fragment_count = models.IntegerField()
+    embedding_generation_time_ms = models.IntegerField(null=True, blank=True)
+    deduplication_action = models.CharField(max_length=20, choices=[
+        ('new', 'New Document'),
+        ('merged', 'Merged with Existing'),
+        ('flagged', 'Flagged for Review'),
+        ('skipped', 'Skipped (Duplicate)'),
+    ])
+    success = models.BooleanField()
+    error_message = models.TextField(blank=True)
+    timestamp = models.DateTimeField(default=timezone.now)
+    
+    class Meta:
+        db_table = 'document_processing_metrics'
+        ordering = ['-timestamp']
+        
+    def __str__(self):
+        status = "✓" if self.success else "✗"
+        return f"{status} {self.source_type}/{self.file_type} - {self.fragment_count} fragments ({self.processing_time_ms}ms)"
+
+class FragmentRetrievalMetrics(models.Model):
+    """
+    Track which fragments are retrieved most often and their relevance.
+    Helps optimize knowledge organization and identify high-value content.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    fragment_memory_id = models.UUIDField()  # Links to KnowledgeMemory
+    query_id = models.UUIDField(null=True, blank=True)  # Links to KnowledgeQuery
+    agent_id = models.UUIDField()
+    similarity_score = models.FloatField()  # RAG retrieval score
+    rank_in_results = models.IntegerField()  # 1st, 2nd, 3rd result, etc.
+    used_in_response = models.BooleanField()  # Was this fragment actually used?
+    relevance_feedback = models.CharField(max_length=20, choices=[
+        ('unknown', 'Unknown'),
+        ('relevant', 'Relevant'),
+        ('partially', 'Partially Relevant'),
+        ('irrelevant', 'Irrelevant'),
+    ], default='unknown')
+    timestamp = models.DateTimeField(default=timezone.now)
+    
+    class Meta:
+        db_table = 'fragment_retrieval_metrics'
+        ordering = ['-timestamp']
+        
+    def __str__(self):
+        return f"Fragment {str(self.fragment_memory_id)[:8]}... - Rank #{self.rank_in_results} (score: {self.similarity_score:.3f})"
+
+class SystemHealthMetrics(models.Model):
+    """
+    Track overall system health and performance indicators.
+    Provides insights for capacity planning and optimization.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    metric_name = models.CharField(max_length=100)  # total_documents, avg_query_time, etc.
+    metric_value = models.FloatField()
+    metric_unit = models.CharField(max_length=20)  # count, ms, mb, etc.
+    agent_id = models.UUIDField(null=True, blank=True)  # Agent-specific or system-wide
+    metadata = models.JSONField(default=dict, blank=True)  # Additional context
+    timestamp = models.DateTimeField(default=timezone.now)
+    
+    class Meta:
+        db_table = 'system_health_metrics'
+        ordering = ['-timestamp', 'metric_name']
+        
+    def __str__(self):
+        agent_info = f" (Agent: {str(self.agent_id)[:8]}...)" if self.agent_id else ""
+        return f"{self.metric_name}: {self.metric_value} {self.metric_unit}{agent_info}"

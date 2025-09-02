@@ -21,6 +21,8 @@ import json
 from .models import (
     KnowledgeQuery,
     KnowledgeMemory, KnowledgeEmbedding,
+    ConversationMemory, AgentConfiguration,
+    DocumentProcessingMetrics, FragmentRetrievalMetrics, SystemHealthMetrics,
     KoiSource, KoiContent, KoiProcessing
 )
 
@@ -270,3 +272,223 @@ class KoiProcessingAdmin(admin.ModelAdmin):
             return format_html('<pre style="color: red;">{}</pre>', formatted)
         return 'No error details'
     formatted_error_details.short_description = 'Error Details (JSON)'
+
+# ============================================================================
+# SECTION 4: Enhanced ElizaOS Integration Admin
+# Additional admin interfaces for complete system visibility
+# ============================================================================
+
+@admin.register(ConversationMemory)
+class ConversationMemoryAdmin(admin.ModelAdmin):
+    """Admin interface for conversation memories with RAG tracking"""
+    list_display = ['id_short', 'text_preview', 'agent_short', 'knowledge_used_badge', 
+                   'rag_fragments_count', 'created_at']
+    list_filter = ['created_at', 'agent_id']
+    search_fields = ['content', 'metadata']
+    readonly_fields = ['id', 'formatted_content', 'formatted_metadata', 'agent_id',
+                      'room_id', 'entity_id', 'world_id', 'created_at', 'unique',
+                      'knowledge_used', 'rag_fragments_count', 'rag_query_text']
+    ordering = ['-created_at']
+    list_per_page = 50
+    
+    def id_short(self, obj):
+        return str(obj.id)[:8] + '...'
+    id_short.short_description = 'ID'
+    
+    def agent_short(self, obj):
+        return str(obj.agent_id)[:8] + '...' if obj.agent_id else 'N/A'
+    agent_short.short_description = 'Agent'
+    
+    def text_preview(self, obj):
+        text = obj.content.get('text', '') if isinstance(obj.content, dict) else ''
+        return text[:80] + '...' if len(text) > 80 else text
+    text_preview.short_description = 'Message Preview'
+    
+    def knowledge_used_badge(self, obj):
+        if obj.knowledge_used:
+            return format_html(
+                '<span style="background-color: #28A745; color: white; padding: 2px 6px; '
+                'border-radius: 3px; font-size: 11px;">RAG</span>'
+            )
+        return format_html(
+            '<span style="background-color: #6C757D; color: white; padding: 2px 6px; '
+            'border-radius: 3px; font-size: 11px;">No RAG</span>'
+        )
+    knowledge_used_badge.short_description = 'Knowledge Used'
+    
+    def formatted_content(self, obj):
+        if obj.content:
+            formatted = json.dumps(obj.content, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No content'
+    formatted_content.short_description = 'Content (JSON)'
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (JSON)'
+    
+    def get_queryset(self, request):
+        # Show all conversation messages
+        return super().get_queryset(request)
+
+@admin.register(AgentConfiguration)
+class AgentConfigurationAdmin(admin.ModelAdmin):
+    """Admin interface for agent configurations"""
+    list_display = ['name', 'id_short', 'has_knowledge_plugin_badge', 'plugin_count', 'knowledge_count']
+    list_filter = ['plugins', 'settings']
+    search_fields = ['name', 'bio']
+    readonly_fields = ['id', 'name', 'bio', 'formatted_settings', 'formatted_knowledge', 
+                      'formatted_lore', 'formatted_plugins', 'knowledge_settings_display',
+                      'has_knowledge_plugin']
+    ordering = ['name']
+    
+    def id_short(self, obj):
+        return str(obj.id)[:8] + '...'
+    id_short.short_description = 'ID'
+    
+    def has_knowledge_plugin_badge(self, obj):
+        if obj.has_knowledge_plugin:
+            return format_html(
+                '<span style="background-color: #28A745; color: white; padding: 2px 6px; '
+                'border-radius: 3px; font-size: 11px;">Knowledge</span>'
+            )
+        return format_html(
+            '<span style="background-color: #DC3545; color: white; padding: 2px 6px; '
+            'border-radius: 3px; font-size: 11px;">No Knowledge</span>'
+        )
+    has_knowledge_plugin_badge.short_description = 'Knowledge Plugin'
+    
+    def plugin_count(self, obj):
+        plugins = obj.plugins or []
+        return len(plugins)
+    plugin_count.short_description = 'Plugin Count'
+    
+    def knowledge_count(self, obj):
+        knowledge = obj.knowledge or []
+        return len(knowledge)
+    knowledge_count.short_description = 'Knowledge Items'
+    
+    def knowledge_settings_display(self, obj):
+        settings = obj.knowledge_settings
+        if settings:
+            formatted = json.dumps(settings, indent=2)
+            return format_html('<pre style="max-width: 600px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No knowledge-specific settings found'
+    knowledge_settings_display.short_description = 'Knowledge Settings'
+    
+    def formatted_settings(self, obj):
+        if obj.settings:
+            formatted = json.dumps(obj.settings, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No settings'
+    formatted_settings.short_description = 'Settings (JSON)'
+    
+    def formatted_knowledge(self, obj):
+        if obj.knowledge:
+            formatted = json.dumps(obj.knowledge, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No knowledge'
+    formatted_knowledge.short_description = 'Knowledge (JSON)'
+    
+    def formatted_lore(self, obj):
+        if obj.lore:
+            formatted = json.dumps(obj.lore, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No lore'
+    formatted_lore.short_description = 'Lore (JSON)'
+    
+    def formatted_plugins(self, obj):
+        if obj.plugins:
+            formatted = json.dumps(obj.plugins, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No plugins'
+    formatted_plugins.short_description = 'Plugins (JSON)'
+
+# ============================================================================
+# SECTION 5: Enhanced Analytics Admin
+# Comprehensive tracking for performance optimization and insights
+# ============================================================================
+
+@admin.register(DocumentProcessingMetrics)
+class DocumentProcessingMetricsAdmin(admin.ModelAdmin):
+    """Admin interface for document processing performance tracking"""
+    list_display = ['timestamp', 'source_type', 'file_type', 'success_badge', 'processing_time_ms', 
+                   'fragment_count', 'deduplication_action', 'agent_short']
+    list_filter = ['source_type', 'file_type', 'success', 'deduplication_action', 'timestamp']
+    search_fields = ['document_id', 'error_message']
+    readonly_fields = ['id', 'document_id', 'agent_id', 'timestamp']
+    ordering = ['-timestamp']
+    list_per_page = 100
+    
+    def agent_short(self, obj):
+        return str(obj.agent_id)[:8] + '...'
+    agent_short.short_description = 'Agent'
+    
+    def success_badge(self, obj):
+        if obj.success:
+            return format_html(
+                '<span style="background-color: #28A745; color: white; padding: 2px 6px; '
+                'border-radius: 3px; font-size: 11px;">✓ Success</span>'
+            )
+        return format_html(
+            '<span style="background-color: #DC3545; color: white; padding: 2px 6px; '
+            'border-radius: 3px; font-size: 11px;">✗ Failed</span>'
+        )
+    success_badge.short_description = 'Status'
+
+@admin.register(FragmentRetrievalMetrics)
+class FragmentRetrievalMetricsAdmin(admin.ModelAdmin):
+    """Admin interface for fragment retrieval and relevance tracking"""
+    list_display = ['timestamp', 'fragment_short', 'agent_short', 'similarity_score', 
+                   'rank_in_results', 'used_in_response_badge', 'relevance_feedback']
+    list_filter = ['used_in_response', 'relevance_feedback', 'timestamp']
+    search_fields = ['fragment_memory_id', 'query_id']
+    readonly_fields = ['id', 'fragment_memory_id', 'query_id', 'agent_id', 'timestamp']
+    ordering = ['-timestamp']
+    list_per_page = 100
+    
+    def fragment_short(self, obj):
+        return str(obj.fragment_memory_id)[:8] + '...'
+    fragment_short.short_description = 'Fragment'
+    
+    def agent_short(self, obj):
+        return str(obj.agent_id)[:8] + '...'
+    agent_short.short_description = 'Agent'
+    
+    def used_in_response_badge(self, obj):
+        if obj.used_in_response:
+            return format_html(
+                '<span style="background-color: #28A745; color: white; padding: 2px 6px; '
+                'border-radius: 3px; font-size: 11px;">Used</span>'
+            )
+        return format_html(
+            '<span style="background-color: #6C757D; color: white; padding: 2px 6px; '
+            'border-radius: 3px; font-size: 11px;">Not Used</span>'
+        )
+    used_in_response_badge.short_description = 'Used in Response'
+
+@admin.register(SystemHealthMetrics)
+class SystemHealthMetricsAdmin(admin.ModelAdmin):
+    """Admin interface for system health monitoring"""
+    list_display = ['metric_name', 'metric_value', 'metric_unit', 'agent_short', 'timestamp']
+    list_filter = ['metric_name', 'metric_unit', 'agent_id', 'timestamp']
+    search_fields = ['metric_name', 'agent_id']
+    readonly_fields = ['id', 'agent_id', 'timestamp', 'formatted_metadata']
+    ordering = ['-timestamp', 'metric_name']
+    list_per_page = 100
+    
+    def agent_short(self, obj):
+        if obj.agent_id:
+            return str(obj.agent_id)[:8] + '...'
+        return 'System-wide'
+    agent_short.short_description = 'Agent/Scope'
+    
+    def formatted_metadata(self, obj):
+        if obj.metadata:
+            formatted = json.dumps(obj.metadata, indent=2)
+            return format_html('<pre>{}</pre>', formatted)
+        return 'No metadata'
+    formatted_metadata.short_description = 'Metadata (JSON)'

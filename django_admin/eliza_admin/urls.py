@@ -13,6 +13,7 @@ urlpatterns = [
     path('', root_redirect),
     path('admin/', admin.site.urls),
     path('regenai/', include('reporting.urls')),
+    path('knowledge/', include('knowledge.urls')),
     path('auth/check/', auth_check, name='auth_check'),
 ]
 
