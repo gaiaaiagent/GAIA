@@ -1,0 +1,157 @@
+#!/bin/bash
+
+# Start All RegenAI Agents with Telegram Bots
+# Template for running multiple agents with individual Telegram bots
+# Each agent gets its own bot token and mention-only configuration
+
+# Load environment variables from .env if it exists
+if [ -f .env ]; then
+    echo "📋 Loading environment from .env file..."
+    set -a
+    source .env
+    set +a
+fi
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GAIA_DIR="$SCRIPT_DIR"
+KNOWLEDGE_PATH="$SCRIPT_DIR/knowledge"
+CHARACTERS_PATH="$SCRIPT_DIR/characters"
+
+# Telegram Bot Tokens - Replace with your actual tokens from @BotFather
+# Each agent needs its own unique bot token
+export TELEGRAM_BOT_TOKEN_REGENAI="YOUR_REGENAI_BOT_TOKEN"
+export TELEGRAM_BOT_TOKEN_ADVOCATE="YOUR_ADVOCATE_BOT_TOKEN"
+export TELEGRAM_BOT_TOKEN_VOICEOFNATURE="YOUR_VOICEOFNATURE_BOT_TOKEN"
+export TELEGRAM_BOT_TOKEN_GOVERNOR="YOUR_GOVERNOR_BOT_TOKEN"
+export TELEGRAM_BOT_TOKEN_NARRATIVE="YOUR_NARRATIVE_BOT_TOKEN"
+
+# Base environment variables shared by all agents
+BASE_ENV="LOG_LEVEL=info TEXT_PROVIDER=openai TEXT_MODEL=gpt-4o-mini EMBEDDING_PROVIDER=ollama EMBEDDING_MODEL=nomic-embed-text:latest OLLAMA_BASE_URL=http://localhost:11434 POSTGRES_URL=postgresql://yourusername@localhost:5432/eliza KNOWLEDGE_PATH=$KNOWLEDGE_PATH"
+
+# Agent-specific Telegram configurations
+# Adjust bot usernames to match what you created with @BotFather
+REGENAI_ENV="CHARACTER.RegenAI.TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN_REGENAI} CHARACTER.RegenAI.TELEGRAM_BOT_USERNAME=YourRegenAIBot CHARACTER.RegenAI.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true CHARACTER.RegenAI.TELEGRAM_RANDOM_RESPONSE_RATE=0.01"
+
+ADVOCATE_ENV="CHARACTER.Advocate.TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN_ADVOCATE} CHARACTER.Advocate.TELEGRAM_BOT_USERNAME=YourAdvocateBot CHARACTER.Advocate.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true CHARACTER.Advocate.TELEGRAM_RANDOM_RESPONSE_RATE=0.01"
+
+VOICEOFNATURE_ENV="CHARACTER.VoiceOfNature.TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN_VOICEOFNATURE} CHARACTER.VoiceOfNature.TELEGRAM_BOT_USERNAME=YourVoiceOfNatureBot CHARACTER.VoiceOfNature.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true CHARACTER.VoiceOfNature.TELEGRAM_RANDOM_RESPONSE_RATE=0.01"
+
+GOVERNOR_ENV="CHARACTER.Governor.TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN_GOVERNOR} CHARACTER.Governor.TELEGRAM_BOT_USERNAME=YourGovernorBot CHARACTER.Governor.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true CHARACTER.Governor.TELEGRAM_RANDOM_RESPONSE_RATE=0.01"
+
+NARRATIVE_ENV="CHARACTER.Narrator.TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN_NARRATIVE} CHARACTER.Narrator.TELEGRAM_BOT_USERNAME=YourNarrativeBot CHARACTER.Narrator.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true CHARACTER.Narrator.TELEGRAM_RANDOM_RESPONSE_RATE=0.01"
+
+echo "🚀 Starting All RegenAI Agents..."
+
+# Stop any existing agents
+echo "🛑 Stopping existing agents..."
+pkill -f 'packages/cli/dist/index.js' 2>/dev/null || true
+sleep 2
+
+# Create logs directory
+mkdir -p $GAIA_DIR/logs
+
+# Check prerequisites
+echo "🔐 Checking prerequisites..."
+
+# Check OpenAI API key
+if [ -z "$OPENAI_API_KEY" ]; then
+    echo "❌ Error: OPENAI_API_KEY not set!"
+    echo "Please add OPENAI_API_KEY to your .env file"
+    exit 1
+fi
+
+# Check PostgreSQL connection
+if ! psql -d eliza -c "SELECT 1;" > /dev/null 2>&1; then
+    echo "❌ Error: Cannot connect to PostgreSQL database 'eliza'"
+    echo "Please ensure PostgreSQL is running and database exists"
+    echo "Create with: createdb eliza"
+    exit 1
+fi
+
+# Check Telegram bot tokens
+echo "🔐 Checking Telegram bot tokens..."
+if [ "$TELEGRAM_BOT_TOKEN_REGENAI" = "YOUR_REGENAI_BOT_TOKEN" ]; then
+    echo "⚠️  Warning: TELEGRAM_BOT_TOKEN_REGENAI not configured - RegenAI bot will not connect"
+fi
+if [ "$TELEGRAM_BOT_TOKEN_ADVOCATE" = "YOUR_ADVOCATE_BOT_TOKEN" ]; then
+    echo "⚠️  Warning: TELEGRAM_BOT_TOKEN_ADVOCATE not configured - Advocate bot will not connect"
+fi
+if [ "$TELEGRAM_BOT_TOKEN_VOICEOFNATURE" = "YOUR_VOICEOFNATURE_BOT_TOKEN" ]; then
+    echo "⚠️  Warning: TELEGRAM_BOT_TOKEN_VOICEOFNATURE not configured - VoiceOfNature bot will not connect"
+fi
+if [ "$TELEGRAM_BOT_TOKEN_GOVERNOR" = "YOUR_GOVERNOR_BOT_TOKEN" ]; then
+    echo "⚠️  Warning: TELEGRAM_BOT_TOKEN_GOVERNOR not configured - Governor bot will not connect"
+fi
+if [ "$TELEGRAM_BOT_TOKEN_NARRATIVE" = "YOUR_NARRATIVE_BOT_TOKEN" ]; then
+    echo "⚠️  Warning: TELEGRAM_BOT_TOKEN_NARRATIVE not configured - Narrative bot will not connect"
+fi
+
+# Function to start an agent
+start_agent() {
+    local AGENT_NAME=$1
+    local PORT=$2
+    local CHARACTER_FILE=$3
+    local ENV_VARS=$4
+    
+    echo "Starting $AGENT_NAME on port $PORT..."
+    cd $GAIA_DIR && env $BASE_ENV $ENV_VARS PORT=$PORT bun packages/cli/dist/index.js start --character ${CHARACTERS_PATH}/${CHARACTER_FILE} > ${GAIA_DIR}/logs/${AGENT_NAME}.log 2>&1 &
+    
+    sleep 2
+    
+    # Check if agent started
+    if ps aux | grep -q "${CHARACTER_FILE}"; then
+        echo "✅ $AGENT_NAME started on port $PORT"
+    else
+        echo "❌ Failed to start $AGENT_NAME - check logs/${AGENT_NAME}.log"
+    fi
+}
+
+# Start all agents
+start_agent "regenai" 3000 "regenai.character.json" "$REGENAI_ENV"
+start_agent "advocate" 3001 "advocate.character.json" "$ADVOCATE_ENV"
+start_agent "voiceofnature" 3002 "voiceofnature.character.json" "$VOICEOFNATURE_ENV"
+start_agent "governor" 3003 "governor.character.json" "$GOVERNOR_ENV"
+start_agent "narrative" 3004 "narrative.character.json" "$NARRATIVE_ENV"
+
+echo ""
+echo "🎉 All agents started!"
+echo ""
+echo "📊 Agent Status:"
+ps aux | grep -E "bun.*packages/cli/dist/index.js" | grep -v grep
+
+echo ""
+echo "🌐 Access URLs:"
+echo "Main RegenAI:      http://localhost:3000"
+echo "Advocate:          http://localhost:3001"
+echo "Voice of Nature:   http://localhost:3002"
+echo "Governor:          http://localhost:3003"
+echo "Narrative:         http://localhost:3004"
+
+echo ""
+echo "🤖 Telegram Bots (configure with your actual bot usernames):"
+echo "RegenAI:           @YourRegenAIBot"
+echo "Advocate:          @YourAdvocateBot"
+echo "Voice of Nature:   @YourVoiceOfNatureBot"
+echo "Governor:          @YourGovernorBot"
+echo "Narrative:         @YourNarrativeBot"
+
+echo ""
+echo "📝 Monitor logs:"
+echo "tail -f $GAIA_DIR/logs/regenai.log"
+echo "tail -f $GAIA_DIR/logs/advocate.log"
+echo "tail -f $GAIA_DIR/logs/voiceofnature.log"
+echo "tail -f $GAIA_DIR/logs/governor.log"
+echo "tail -f $GAIA_DIR/logs/narrative.log"
+
+echo ""
+echo "🔍 Check Telegram connections:"
+echo "grep 'Bot info\\|Telegram' $GAIA_DIR/logs/*.log"
+
+echo ""
+echo "💡 Configuration Tips:"
+echo "1. Create bots with @BotFather on Telegram"
+echo "2. Replace token placeholders in this script"
+echo "3. Update bot usernames to match your created bots"
+echo "4. Adjust TELEGRAM_RANDOM_RESPONSE_RATE as needed (0.01 = 1%)"
+echo "5. Set TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=false to disable mention-only mode"

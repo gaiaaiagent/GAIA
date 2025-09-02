@@ -86,6 +86,35 @@ bun packages/cli/dist/index.js start --character characters/governor.character.j
 - Basic auth credentials: `regenai:regen2025`
 - Ports: HTTP (80) redirects to HTTPS (443)
 
+### Production Telegram Mention-Only Deployment (September 2, 2025)
+
+**SUCCESS:** All 4 agents now deployed with Telegram mention-only functionality in production!
+
+**Achievement:** Successfully deployed mention-only Telegram functionality to production server (202.61.196.119) with:
+- **4 Telegram bots active**: @RegenGovernBot, @RegenVoiceOfNatureBot, @RegenNarrativeBot, @RegenAdvocacyBot  
+- **Mention-only mode working**: Agents only respond when mentioned or in DMs
+- **Custom plugin fork deployed**: Using github.com/gaiaaiagent/plugin-telegram#1.x with mention detection
+- **Production startup script**: Modified to use full bun path `/home/darren/.bun/bin/bun`
+
+**Key Production Fixes:**
+1. **Bun path issue**: Production server needed full path `/home/darren/.bun/bin/bun` instead of `bun` command
+2. **Plugin building**: Custom plugin-telegram required `bun run build` after installation
+3. **Character file updates**: Had to manually add `@elizaos/plugin-telegram` to plugins arrays and update tokens
+4. **Environment variables**: CHARACTER.* variables properly configured for mention-only mode
+
+**Production Configuration:**
+```bash
+# Working startup command pattern:
+env PORT=3001 \
+TELEGRAM_BOT_TOKEN="your-token" \
+'CHARACTER.AgentName.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true' \
+'CHARACTER.AgentName.TELEGRAM_RANDOM_RESPONSE_RATE=0.01' \
+/home/darren/.bun/bin/bun packages/cli/dist/index.js start \
+--character characters/agent.character.json
+```
+
+**Verification:** All agents confirmed receiving and processing Telegram mentions correctly.
+
 ### Knowledge Deduplication & Ollama Embeddings (September 2, 2025)
 
 **CRITICAL:** Multiple agents now share knowledge without duplicating embeddings!
@@ -173,19 +202,39 @@ bash /opt/projects/GAIA/start-all-agents.sh
 - **Multi-Agent Support**: Each agent can have independent settings
 - **Environment Integration**: Uses CHARACTER.AgentName.SETTING_NAME pattern
 
-**Working Configuration:**
+**Working Configuration (Production Deployment):**
 ```bash
-# Multi-agent startup with mention-only mode
-CHARACTER.TelegramTestAgent.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true \
-CHARACTER.TelegramTestAgent.TELEGRAM_RANDOM_RESPONSE_RATE=0.05 \
-TELEGRAM_BOT_TOKEN=bot1-token \
-bun packages/cli/dist/index.js start --character test-telegram.character.json &
+# ✅ PRODUCTION VERIFIED: All 4 agents deployed successfully on 202.61.196.119
+# Governor Agent
+env PORT=3002 TELEGRAM_BOT_TOKEN=8058793609:AAGZlJkjJtMUrcUmLXgosGYyAvBYyy0Zn8s \
+'CHARACTER.Governor.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true' \
+'CHARACTER.Governor.TELEGRAM_RANDOM_RESPONSE_RATE=0.01' \
+/home/darren/.bun/bin/bun packages/cli/dist/index.js start --character characters/governor.character.json &
 
-CHARACTER.TelegramTestAgent2.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true \
-CHARACTER.TelegramTestAgent2.TELEGRAM_RANDOM_RESPONSE_RATE=0.05 \
-TELEGRAM_BOT_TOKEN=bot2-token \
-bun packages/cli/dist/index.js start --character test-telegram2.character.json &
+# VoiceOfNature Agent  
+env PORT=3003 TELEGRAM_BOT_TOKEN=8258974878:AAFOylFnYxRLQgKJNAR8uCXjFPdRmHVuwC4 \
+'CHARACTER.VoiceOfNature.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true' \
+'CHARACTER.VoiceOfNature.TELEGRAM_RANDOM_RESPONSE_RATE=0.01' \
+/home/darren/.bun/bin/bun packages/cli/dist/index.js start --character characters/voiceofnature.character.json &
+
+# Narrative Agent
+env PORT=3004 TELEGRAM_BOT_TOKEN=7413348697:AAGHWcX8yNZkdl2PzYqJIqvlKMkCqeQoqRc \
+'CHARACTER.Narrator.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true' \
+'CHARACTER.Narrator.TELEGRAM_RANDOM_RESPONSE_RATE=0.01' \
+/home/darren/.bun/bin/bun packages/cli/dist/index.js start --character characters/narrative.character.json &
+
+# Advocate Agent
+env PORT=3001 TELEGRAM_BOT_TOKEN=8280814835:AAE9oue7ZTGKPzVImeONCAcCJ1WBT5KICdI \
+'CHARACTER.Advocate.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true' \
+'CHARACTER.Advocate.TELEGRAM_RANDOM_RESPONSE_RATE=0.01' \
+/home/darren/.bun/bin/bun packages/cli/dist/index.js start --character characters/advocate.character.json &
 ```
+
+**Bot Usernames (Verified Active):**
+- @RegenGovernBot (Governor)
+- @RegenVoiceOfNatureBot (VoiceOfNature) 
+- @RegenNarrativeBot (Narrative)
+- @RegenAdvocacyBot (Advocate)
 
 **Plugin Fork:** `"@elizaos/plugin-telegram": "https://github.com/gaiaaiagent/plugin-telegram.git#1.x"`
 

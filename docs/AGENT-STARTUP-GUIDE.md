@@ -3,6 +3,23 @@
 ## Overview
 This guide provides the official process for starting and managing the RegenAI agents. All 5 agents (RegenAI, Advocate, VoiceOfNature, Governor, Narrative) run as native Bun processes with PostgreSQL database support and Telegram bot integration.
 
+## 🎉 Production Deployment Status (September 2, 2025)
+
+**SUCCESS:** All 4 Telegram bots successfully deployed on production server (202.61.196.119) with mention-only functionality!
+
+**Active Telegram Bots:**
+- ✅ @RegenGovernBot (Governor agent)
+- ✅ @RegenVoiceOfNatureBot (VoiceOfNature agent) 
+- ✅ @RegenNarrativeBot (Narrative agent)
+- ✅ @RegenAdvocacyBot (Advocate agent)
+- ❌ RegenAI agent (intentionally no Telegram bot)
+
+**Key Production Fixes Applied:**
+- Used full bun path: `/home/darren/.bun/bin/bun` (not just `bun`)
+- Built custom plugin-telegram fork after installation
+- Updated character files with Telegram plugin and tokens
+- Configured mention-only mode with CHARACTER.* environment variables
+
 ## Prerequisites
 
 ### 1. Ollama for Embeddings
