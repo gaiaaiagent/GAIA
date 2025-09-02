@@ -156,40 +156,49 @@ bash /opt/projects/GAIA/start-all-agents.sh
 - **Permission denied errors**: Fix ownership with sudo commands above
 - **Agents reprocessing all documents**: Ensure using our fork with deduplication
 
-### Telegram Multi-Agent Configuration (August 29, 2025)
+### Telegram Mention-Only Mode Implementation (September 2, 2025)
 
-**CRITICAL DISCOVERY:** Running multiple Telegram bots requires specific configuration approach!
+**SUCCESS:** Implemented working mention-only mode for Telegram bots!
 
-**Problem:** Multiple agents with different Telegram bot tokens
-- Each agent needs its own bot token (@RegenAdvocacyBot, @RegenGovernBot, etc.)
-- Environment variables with dots (CHARACTER.*) cannot be exported in bash
-- Single process vs multi-process tradeoffs
+**What We Built:**
+- Custom plugin-telegram fork with mention-only support
+- Multi-agent configuration system using CHARACTER.* environment variables
+- Comprehensive documentation and templates for deployment
+- Full backward compatibility with existing setups
 
-**Solutions:**
+**Key Features:**
+- **Mention Detection**: @username, name mentions, reply mentions, Telegram entities
+- **Configurable Random Response Rate**: Default 1% for organic conversation
+- **DM Override**: Always responds in direct messages
+- **Multi-Agent Support**: Each agent can have independent settings
+- **Environment Integration**: Uses CHARACTER.AgentName.SETTING_NAME pattern
 
-#### Option 1: Single Process (RECOMMENDED - Full Web UI Support)
+**Working Configuration:**
 ```bash
-# Add tokens to each character file's secrets section:
-"secrets": {
-  "TELEGRAM_BOT_TOKEN": "your-bot-token-here",
-  "TELEGRAM_BOT_USERNAME": "YourBotUsername"
-}
+# Multi-agent startup with mention-only mode
+CHARACTER.TelegramTestAgent.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true \
+CHARACTER.TelegramTestAgent.TELEGRAM_RANDOM_RESPONSE_RATE=0.05 \
+TELEGRAM_BOT_TOKEN=bot1-token \
+bun packages/cli/dist/index.js start --character test-telegram.character.json &
 
-# Run all agents in one process:
-bash /opt/projects/GAIA/start-all-agents-single-process.sh
+CHARACTER.TelegramTestAgent2.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true \
+CHARACTER.TelegramTestAgent2.TELEGRAM_RANDOM_RESPONSE_RATE=0.05 \
+TELEGRAM_BOT_TOKEN=bot2-token \
+bun packages/cli/dist/index.js start --character test-telegram2.character.json &
 ```
-**Pros:** All agents available in web UI, unified management
-**Cons:** All agents share same process (restart affects all)
 
-#### Option 2: Multiple Processes (Telegram-only focus)
-```bash
-# Use env command to pass variables with dots:
-env TELEGRAM_BOT_TOKEN="token" \
-    TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED="true" \
-    bun packages/cli/dist/index.js start --character character.json
-```
-**Pros:** Independent agent management
-**Cons:** Web UI only shows agents in same process
+**Plugin Fork:** `"@elizaos/plugin-telegram": "https://github.com/gaiaaiagent/plugin-telegram.git#1.x"`
+
+**Templates Available:**
+- `characters/test-telegram.character.json.template`
+- `characters/test-telegram2.character.json.template`  
+- `start-test-agents.sh.template`
+
+**Documentation:** See `docs/TELEGRAM-MENTION-ONLY-SETUP.md` for complete setup guide.
+
+### Legacy: Telegram Multi-Agent Configuration (August 29, 2025)
+
+**SOLVED:** The mention-only mode implementation above provides the complete solution for multi-agent Telegram bots.
 
 ### Port Assignment and Nginx Configuration (August 29, 2025)
 

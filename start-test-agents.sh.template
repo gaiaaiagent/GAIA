@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# Start Two Test Telegram Agents with mention-only mode
+# Template for setting up Telegram bots with proper environment variables
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GAIA_DIR="$SCRIPT_DIR"
+CHARACTERS_PATH="$SCRIPT_DIR/characters"
+
+echo "🚀 Starting Two Test Telegram Agents with Mention-Only Mode..."
+
+# Kill any existing agents
+pkill -f 'packages/cli/dist/index.js' 2>/dev/null || true
+sleep 2
+
+# Create logs directory
+mkdir -p $GAIA_DIR/logs
+
+# Base environment
+BASE_ENV="LOG_LEVEL=info TEXT_PROVIDER=openai TEXT_MODEL=gpt-4o-mini POSTGRES_URL=postgresql://user:pass@localhost:5432/eliza"
+
+# Agent 1 specific environment (must match character name exactly)
+AGENT1_ENV="CHARACTER.TelegramTestAgent.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true CHARACTER.TelegramTestAgent.TELEGRAM_RANDOM_RESPONSE_RATE=0.05"
+
+# Agent 2 specific environment (must match character name exactly)
+AGENT2_ENV="CHARACTER.TelegramTestAgent2.TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED=true CHARACTER.TelegramTestAgent2.TELEGRAM_RANDOM_RESPONSE_RATE=0.05"
+
+# Start Test Agent 1
+echo "Starting TelegramTestAgent on port 3000..."
+cd $GAIA_DIR && env $BASE_ENV $AGENT1_ENV TELEGRAM_BOT_TOKEN=YOUR_BOT_1_TOKEN_HERE bun packages/cli/dist/index.js start --character ${CHARACTERS_PATH}/test-telegram.character.json --port 3000 > ${GAIA_DIR}/logs/test-telegram1.log 2>&1 &
+
+sleep 5
+
+# Start Test Agent 2  
+echo "Starting TelegramTestAgent2 on port 3001..."
+cd $GAIA_DIR && env $BASE_ENV $AGENT2_ENV TELEGRAM_BOT_TOKEN=YOUR_BOT_2_TOKEN_HERE bun packages/cli/dist/index.js start --character ${CHARACTERS_PATH}/test-telegram2.character.json --port 3001 > ${GAIA_DIR}/logs/test-telegram2.log 2>&1 &
+
+sleep 5
+
+echo ""
+echo "🎉 Both test agents started with mention-only mode!"
+echo ""
+echo "📊 Agent Status:"
+ps aux | grep -E "test-telegram.*character.json" | grep -v grep
+
+echo ""
+echo "🌐 Access URLs:"
+echo "Test Agent 1: http://localhost:3000"
+echo "Test Agent 2: http://localhost:3001"
+
+echo ""
+echo "🤖 Telegram Bots:"
+echo "Agent 1: @YOUR_BOT_1_USERNAME (should only respond to mentions)"
+echo "Agent 2: @YOUR_BOT_2_USERNAME (should only respond to mentions)"
+
+echo ""
+echo "⚙️ Settings:"
+echo "- Mention-only mode: ENABLED"
+echo "- Random response rate: 5%"
+echo "- Direct messages: Always respond"
+
+echo ""
+echo "📝 Monitor logs:"
+echo "tail -f $GAIA_DIR/logs/test-telegram1.log"
+echo "tail -f $GAIA_DIR/logs/test-telegram2.log"
+
+echo ""
+echo "🔍 Test in Telegram:"
+echo "1. Mention each bot: @YOUR_BOT_1_USERNAME hello, @YOUR_BOT_2_USERNAME hi"
+echo "2. Send regular messages (should get 5% random responses)"
+echo "3. DM each bot (should always respond)"
+
+echo ""
+echo "🐛 Debug mention detection:"
+echo "grep 'Mention-only' logs/test-telegram*.log"
