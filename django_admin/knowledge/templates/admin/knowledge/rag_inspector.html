@@ -1,0 +1,457 @@
+{% extends "admin/base_site.html" %}
+{% load admin_static %}
+
+{% block title %}{{ title }} | Django Admin{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .inspector-container {
+            margin: 20px 0;
+        }
+        
+        .inspector-form {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-group label {
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        
+        .inspect-button {
+            background-color: #0d47a1;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .inspect-button:hover {
+            background-color: #1565c0;
+        }
+        
+        /* Pipeline Steps */
+        .pipeline-results {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            color: #0d47a1;
+            margin: 0 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0d47a1;
+        }
+        
+        .pipeline-steps {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .pipeline-step {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .step-number {
+            background: #0d47a1;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .step-name {
+            font-weight: bold;
+            color: #0d47a1;
+            font-size: 1.1em;
+            margin: 0 10px;
+            flex: 1;
+        }
+        
+        .step-time {
+            background: #28a745;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .step-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-success { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        
+        .step-description {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .step-io {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .io-section {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        
+        .io-label {
+            font-weight: bold;
+            color: #0d47a1;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+        }
+        
+        .io-content {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            color: #495057;
+            white-space: pre-wrap;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        
+        .step-details {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(13, 71, 161, 0.05);
+            border-radius: 4px;
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        /* Final Context */
+        .final-context {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .context-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .context-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .context-content {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        /* Context Fragments */
+        .context-fragments {
+            margin-top: 20px;
+        }
+        
+        .fragments-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .fragment-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        
+        .fragment-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .similarity-score {
+            background: #0d47a1;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .fragment-source {
+            background: #28a745;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7em;
+        }
+        
+        .fragment-content {
+            font-size: 0.8em;
+            color: #495057;
+            line-height: 1.4;
+        }
+        
+        .back-link {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .back-link:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .step-io {
+                grid-template-columns: 1fr;
+            }
+            
+            .fragment-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="inspector-container">
+    <h1>{{ title }}</h1>
+    
+    <a href="{% url 'knowledge:overview' %}" class="back-link">← Back to Overview</a>
+    
+    <!-- RAG Pipeline Inspector Form -->
+    <div class="inspector-form">
+        <h2 class="section-title">RAG Pipeline Step-by-Step Analysis</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="query-text">Query to Analyze:</label>
+                    <textarea 
+                        id="query-text" 
+                        name="query_text" 
+                        placeholder="Enter a question to trace through the RAG pipeline..."
+                        required
+                    >{{ query_text|default:"" }}</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="agent-id">Test Agent (Optional):</label>
+                    <select id="agent-id" name="agent_id">
+                        <option value="">All Agents</option>
+                        {% for agent in available_agents %}
+                        <option value="{{ agent.id }}" {% if agent.id == agent_id %}selected{% endif %}>
+                            {{ agent.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div>
+                    <button type="submit" class="inspect-button">🔍 Inspect Pipeline</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    {% if error %}
+        <div class="error-message">
+            <strong>Error:</strong> {{ error }}
+        </div>
+    {% endif %}
+    
+    <!-- Pipeline Steps Results -->
+    {% if steps %}
+    <div class="pipeline-results">
+        <h2 class="section-title">Pipeline Execution Steps</h2>
+        
+        <div class="pipeline-steps">
+            {% for step in steps %}
+            <div class="pipeline-step">
+                <div class="step-header">
+                    <div style="display: flex; align-items: center;">
+                        <div class="step-number">{{ step.step_number }}</div>
+                        <h3 class="step-name">{{ step.name }}</h3>
+                    </div>
+                    <div>
+                        <span class="step-time">{{ step.time_ms }}ms</span>
+                        <span class="step-status {% if step.success %}status-success{% else %}status-error{% endif %}">
+                            {% if step.success %}✓ Success{% else %}✗ Error{% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="step-description">{{ step.description }}</div>
+                
+                <div class="step-io">
+                    <div class="io-section">
+                        <div class="io-label">INPUT</div>
+                        <div class="io-content">{{ step.input|truncatechars:200 }}</div>
+                    </div>
+                    <div class="io-section">
+                        <div class="io-label">OUTPUT</div>
+                        <div class="io-content">{{ step.output|truncatechars:200 }}</div>
+                    </div>
+                </div>
+                
+                {% if step.details %}
+                <div class="step-details">
+                    <strong>Details:</strong> {{ step.details }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Final Context Assembly -->
+    {% if final_context %}
+    <div class="final-context">
+        <div class="context-header">
+            <h2 class="section-title" style="margin: 0;">Assembled Context</h2>
+            <div class="context-stats">
+                <span>{{ final_context|length }} characters</span>
+                {% if context_fragments %}
+                <span>{{ context_fragments|length }} fragments</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="context-content">{{ final_context }}</div>
+        
+        {% if context_fragments %}
+        <div class="context-fragments">
+            <h3 style="color: #0d47a1; margin-bottom: 10px;">Source Fragments</h3>
+            <div class="fragments-grid">
+                {% for fragment in context_fragments %}
+                <div class="fragment-item">
+                    <div class="fragment-meta">
+                        <div>
+                            <span class="fragment-source">{{ fragment.source|capfirst }}</span>
+                        </div>
+                        <span class="similarity-score">{{ fragment.similarity }}</span>
+                    </div>
+                    <div class="fragment-content">{{ fragment.content }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- Navigation Links -->
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+        <a href="{% url 'knowledge:retrieval_tester' %}" class="back-link">Retrieval Tester</a>
+        <a href="{% url 'knowledge:performance_monitor' %}" class="back-link">Performance Monitor</a>
+        <a href="{% url 'knowledge:document_browser' %}" class="back-link">Document Browser</a>
+    </div>
+</div>
+{% endblock %}

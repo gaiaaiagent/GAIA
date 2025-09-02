@@ -1,0 +1,457 @@
+{% extends "admin/base_site.html" %}
+{% load admin_static %}
+
+{% block title %}{{ title }} | Django Admin{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .monitor-container {
+            margin: 20px 0;
+        }
+        
+        /* Real-time Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .metric-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            border-color: #0d47a1;
+            transform: translateY(-2px);
+        }
+        
+        .metric-value {
+            display: block;
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #0d47a1;
+            margin-bottom: 8px;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .metric-trend {
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .trend-up { color: #28a745; }
+        .trend-down { color: #dc3545; }
+        .trend-stable { color: #6c757d; }
+        
+        /* Performance Charts */
+        .charts-section {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        
+        .section-title {
+            color: #0d47a1;
+            margin: 0 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0d47a1;
+        }
+        
+        .chart-placeholder {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 40px;
+            text-align: center;
+            color: #666;
+            margin: 15px 0;
+        }
+        
+        /* Recent Queries Table */
+        .queries-section {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        
+        .queries-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .queries-table th,
+        .queries-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .queries-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        
+        .query-text {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .rag-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .rag-yes { background: #d4edda; color: #155724; }
+        .rag-no { background: #f8d7da; color: #721c24; }
+        
+        /* System Alerts */
+        .alerts-section {
+            margin: 25px 0;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-icon {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .alert-message {
+            flex: 1;
+        }
+        
+        .alert-time {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        
+        /* Auto-refresh Controls */
+        .refresh-controls {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .refresh-status {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .refresh-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .btn-primary {
+            background: #0d47a1;
+            color: white;
+            border-color: #0d47a1;
+        }
+        
+        .btn:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn-primary:hover {
+            background: #1565c0;
+        }
+        
+        .back-link {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .back-link:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .refresh-controls {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extrajs %}
+    {{ block.super }}
+    <script>
+        let refreshInterval = null;
+        let refreshEnabled = false;
+        
+        function toggleAutoRefresh() {
+            refreshEnabled = !refreshEnabled;
+            const button = document.getElementById('toggle-refresh');
+            const status = document.getElementById('refresh-status');
+            
+            if (refreshEnabled) {
+                button.textContent = 'Stop Auto-Refresh';
+                button.className = 'btn btn-warning';
+                status.textContent = 'Auto-refresh: ON (every 30 seconds)';
+                refreshInterval = setInterval(refreshData, 30000);
+            } else {
+                button.textContent = 'Start Auto-Refresh';
+                button.className = 'btn btn-primary';
+                status.textContent = 'Auto-refresh: OFF';
+                if (refreshInterval) {
+                    clearInterval(refreshInterval);
+                    refreshInterval = null;
+                }
+            }
+        }
+        
+        function refreshData() {
+            // In a real implementation, this would fetch updated metrics via AJAX
+            // For now, we'll just reload the page
+            location.reload();
+        }
+        
+        function manualRefresh() {
+            const button = document.getElementById('manual-refresh');
+            button.disabled = true;
+            button.textContent = 'Refreshing...';
+            
+            // Simulate refresh delay
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const status = document.getElementById('refresh-status');
+            status.textContent = 'Auto-refresh: OFF';
+        });
+        
+        // Clean up interval on page unload
+        window.addEventListener('beforeunload', function() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="monitor-container">
+    <h1>{{ title }}</h1>
+    
+    <a href="{% url 'knowledge:overview' %}" class="back-link">← Back to Overview</a>
+    
+    <!-- Auto-refresh Controls -->
+    <div class="refresh-controls">
+        <div>
+            <span id="refresh-status" class="refresh-status">Loading...</span>
+            <br>
+            <small>Last updated: {{ request.timestamp|default:"Just now" }}</small>
+        </div>
+        <div class="refresh-buttons">
+            <button id="manual-refresh" class="btn" onclick="manualRefresh()">
+                🔄 Refresh Now
+            </button>
+            <button id="toggle-refresh" class="btn btn-primary" onclick="toggleAutoRefresh()">
+                ▶️ Start Auto-Refresh
+            </button>
+        </div>
+    </div>
+    
+    <!-- Current Performance Metrics -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <span class="metric-value">{{ current_metrics.total_queries_hour|default:"0" }}</span>
+            <div class="metric-label">Queries (Last Hour)</div>
+            <div class="metric-trend trend-stable">Monitoring...</div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">{{ current_metrics.avg_response_time_ms|default:"0" }}ms</span>
+            <div class="metric-label">Avg Response Time</div>
+            <div class="metric-trend trend-stable">Real-time</div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">{{ current_metrics.rag_queries_hour|default:"0" }}</span>
+            <div class="metric-label">RAG Queries</div>
+            <div class="metric-trend trend-up">{{ current_metrics.rag_usage_rate|default:"0" }}% usage</div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-value">{{ current_metrics.active_agents|default:"0" }}</span>
+            <div class="metric-label">Active Agents</div>
+            <div class="metric-trend trend-stable">Online now</div>
+        </div>
+    </div>
+    
+    <!-- System Health Alerts -->
+    {% if system_alerts %}
+    <div class="alerts-section">
+        <h2 class="section-title">System Alerts</h2>
+        {% for alert in system_alerts %}
+        <div class="alert alert-{{ alert.level }}">
+            <span class="alert-icon">
+                {% if alert.level == 'error' %}❌
+                {% elif alert.level == 'warning' %}⚠️
+                {% else %}✅
+                {% endif %}
+            </span>
+            <div class="alert-message">{{ alert.message }}</div>
+            <div class="alert-time">{{ alert.timestamp|timesince }} ago</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alerts-section">
+        <div class="alert alert-success">
+            <span class="alert-icon">✅</span>
+            <div class="alert-message">No system alerts - All systems operating normally</div>
+            <div class="alert-time">Current status</div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Performance Charts -->
+    <div class="charts-section">
+        <h2 class="section-title">Performance Trends</h2>
+        <div class="chart-placeholder">
+            📈 Query Volume Over Time
+            <br><small>Chart visualization would be implemented with Chart.js or similar library</small>
+        </div>
+        <div class="chart-placeholder">
+            📊 Response Time Distribution  
+            <br><small>Histogram of response times across different query types</small>
+        </div>
+        <div class="chart-placeholder">
+            🔍 RAG Usage Patterns
+            <br><small>Knowledge retrieval patterns and success rates</small>
+        </div>
+    </div>
+    
+    <!-- Recent Query Activity -->
+    {% if recent_queries %}
+    <div class="queries-section">
+        <h2 class="section-title">Recent Query Activity</h2>
+        <table class="queries-table">
+            <thead>
+                <tr>
+                    <th>Query</th>
+                    <th>Agent</th>
+                    <th>Time</th>
+                    <th>RAG Used</th>
+                    <th>Fragments</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for query in recent_queries %}
+                <tr>
+                    <td>
+                        <div class="query-text" title="{{ query.query_text }}">
+                            {{ query.query_text|default:"[Empty query]" }}
+                        </div>
+                    </td>
+                    <td>
+                        <code>{{ query.agent_id }}</code>
+                    </td>
+                    <td>{{ query.created_at|timesince }} ago</td>
+                    <td>
+                        <span class="rag-badge {% if query.used_rag %}rag-yes{% else %}rag-no{% endif %}">
+                            {% if query.used_rag %}✓ Yes{% else %}✗ No{% endif %}
+                        </span>
+                    </td>
+                    <td>{{ query.fragment_count|default:"0" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="queries-section">
+        <h2 class="section-title">Recent Query Activity</h2>
+        <div class="chart-placeholder">
+            No recent queries found in the last 2 hours.
+            <br><small>Query activity will appear here as agents process requests.</small>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Navigation Links -->
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+        <a href="{% url 'knowledge:document_browser' %}" class="back-link">Document Browser</a>
+        <a href="{% url 'knowledge:retrieval_tester' %}" class="back-link">Retrieval Tester</a>
+        <a href="{% url 'knowledge:rag_inspector' %}" class="back-link">RAG Inspector</a>
+        <a href="{% url 'knowledge:processing_reports' %}" class="back-link">Processing Reports</a>
+    </div>
+</div>
+{% endblock %}
