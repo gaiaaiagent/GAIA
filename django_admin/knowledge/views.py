@@ -19,8 +19,7 @@ import logging
 
 from .models import (
     KnowledgeMemory, KnowledgeEmbedding, ConversationMemory, AgentConfiguration,
-    KoiSource, KoiContent, KoiProcessing,
-    KnowledgeQuery, DocumentProcessingMetrics, FragmentRetrievalMetrics, SystemHealthMetrics
+    KoiSource, KoiContent, KoiProcessing
 )
 
 logger = logging.getLogger(__name__)
@@ -51,40 +50,41 @@ def knowledge_overview(request):
     return render(request, 'admin/knowledge/overview.html', context)
 
 def get_knowledge_stats():
-    """Get high-level knowledge system statistics"""
+    """Get high-level knowledge system statistics with optimized queries"""
     try:
         with connection.cursor() as cursor:
-            # Get document and fragment counts
+            # Combined query for better performance - get memory and embedding stats in one go
             cursor.execute("""
+                WITH memory_stats AS (
+                    SELECT 
+                        COUNT(CASE WHEN type = 'documents' THEN 1 END) as document_count,
+                        COUNT(CASE WHEN type = 'knowledge' THEN 1 END) as fragment_count,
+                        COUNT(DISTINCT "agentId") as agent_count,
+                        COUNT(CASE WHEN "createdAt" > %s THEN 1 END) as recent_count
+                    FROM memories 
+                    WHERE type IN ('documents', 'knowledge')
+                ),
+                embedding_stats AS (
+                    SELECT 
+                        COUNT(*) as embedding_count,
+                        COUNT(CASE WHEN dim_384 IS NOT NULL THEN 1 END) as dim_384_count,
+                        COUNT(CASE WHEN dim_768 IS NOT NULL THEN 1 END) as dim_768_count,
+                        COUNT(CASE WHEN dim_1536 IS NOT NULL THEN 1 END) as dim_1536_count
+                    FROM embeddings
+                )
                 SELECT 
-                    COUNT(CASE WHEN type = 'documents' THEN 1 END) as document_count,
-                    COUNT(CASE WHEN type = 'knowledge' THEN 1 END) as fragment_count,
-                    COUNT(DISTINCT "agentId") as agent_count,
-                    COUNT(CASE WHEN "createdAt" > %s THEN 1 END) as recent_count
-                FROM memories 
-                WHERE type IN ('documents', 'knowledge')
+                    m.document_count, m.fragment_count, m.agent_count, m.recent_count,
+                    e.embedding_count, e.dim_384_count, e.dim_768_count, e.dim_1536_count
+                FROM memory_stats m 
+                CROSS JOIN embedding_stats e
             """, [timezone.now() - timedelta(days=7)])
             
             row = cursor.fetchone()
             if row:
-                document_count, fragment_count, agent_count, recent_count = row
+                (document_count, fragment_count, agent_count, recent_count,
+                 embedding_count, dim_384_count, dim_768_count, dim_1536_count) = row
             else:
                 document_count = fragment_count = agent_count = recent_count = 0
-            
-            # Get embedding statistics
-            cursor.execute("""
-                SELECT 
-                    COUNT(*) as embedding_count,
-                    COUNT(CASE WHEN dim_384 IS NOT NULL THEN 1 END) as dim_384_count,
-                    COUNT(CASE WHEN dim_768 IS NOT NULL THEN 1 END) as dim_768_count,
-                    COUNT(CASE WHEN dim_1536 IS NOT NULL THEN 1 END) as dim_1536_count
-                FROM embeddings
-            """)
-            
-            row = cursor.fetchone()
-            if row:
-                embedding_count, dim_384_count, dim_768_count, dim_1536_count = row
-            else:
                 embedding_count = dim_384_count = dim_768_count = dim_1536_count = 0
             
         return {
@@ -100,7 +100,7 @@ def get_knowledge_stats():
             }
         }
     except Exception as e:
-        logger.error(f"Error getting knowledge stats: {e}")
+        logger.error(f"Error getting knowledge stats: {e}", exc_info=True)
         return {
             'total_documents': 0,
             'total_fragments': 0,
@@ -537,13 +537,31 @@ def retrieval_tester(request):
 def get_available_agents():
     """Get list of agents with knowledge plugin"""
     try:
-        agents = AgentConfiguration.objects.filter(
-            plugins__contains='@elizaos/plugin-knowledge'
-        )
-        return [{'id': str(agent.id), 'name': agent.name} for agent in agents]
+        # Use raw SQL since Django JSONB contains query may not work correctly
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT id, name 
+                FROM agents 
+                WHERE enabled = true
+                    AND plugins::text LIKE '%@elizaos/plugin-knowledge%'
+                ORDER BY name
+            """)
+            
+            agents = []
+            for row in cursor.fetchall():
+                agent_id, name = row
+                agents.append({'id': str(agent_id), 'name': name})
+            
+            return agents
     except Exception as e:
         logger.error(f"Error getting available agents: {e}")
-        return []
+        # Fallback to getting all enabled agents
+        try:
+            agents = AgentConfiguration.objects.filter(enabled=True).values('id', 'name')
+            return [{'id': str(agent['id']), 'name': agent['name']} for agent in agents]
+        except Exception as e2:
+            logger.error(f"Error getting fallback agents: {e2}")
+            return []
 
 def get_sample_queries():
     """Get sample queries for testing"""
@@ -804,8 +822,9 @@ def get_current_performance_metrics():
                     AVG(EXTRACT(EPOCH FROM (NOW() - "createdAt")) * 1000) as avg_response_time,
                     COUNT(CASE WHEN metadata ? 'knowledgeUsed' AND metadata->>'knowledgeUsed' = 'true' THEN 1 END) as rag_queries,
                     COUNT(DISTINCT "agentId") as active_agents
-                FROM messages 
+                FROM memories 
                 WHERE "createdAt" > NOW() - INTERVAL '1 hour'
+                    AND type = 'messages'
             """)
             
             row = cursor.fetchone()
@@ -840,8 +859,9 @@ def get_recent_query_performance():
                     "agentId",
                     CASE WHEN metadata ? 'knowledgeUsed' AND metadata->>'knowledgeUsed' = 'true' THEN true ELSE false END as used_rag,
                     COALESCE((metadata->'ragUsage'->>'totalFragments')::int, 0) as fragment_count
-                FROM messages
+                FROM memories
                 WHERE "createdAt" > NOW() - INTERVAL '2 hours'
+                    AND type = 'messages'
                     AND content->>'text' IS NOT NULL
                     AND LENGTH(content->>'text') > 10
                 ORDER BY "createdAt" DESC
@@ -873,8 +893,9 @@ def get_system_alerts():
             # Check for high error rates
             cursor.execute("""
                 SELECT COUNT(*) as error_count
-                FROM messages
+                FROM memories
                 WHERE "createdAt" > NOW() - INTERVAL '1 hour'
+                    AND type = 'messages'
                     AND metadata ? 'error'
             """)
             

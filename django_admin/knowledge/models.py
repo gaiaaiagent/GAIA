@@ -238,8 +238,10 @@ class ConversationMemory(models.Model):
     """
     Read-only view of conversation memories with RAG usage tracking.
     Shows which conversations used knowledge retrieval and what was retrieved.
+    This uses the memories table filtered to type='messages'.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    type = models.TextField()  # Should be 'messages'
     agent_id = models.UUIDField(db_column='agentId')
     room_id = models.UUIDField(db_column='roomId', null=True, blank=True)
     entity_id = models.UUIDField(db_column='entityId', null=True, blank=True)
@@ -251,7 +253,7 @@ class ConversationMemory(models.Model):
     
     class Meta:
         managed = False  # Don't create migrations - read-only view
-        db_table = 'messages'  # ElizaOS messages table
+        db_table = 'memories'  # ElizaOS memories table
         verbose_name = 'Conversation Memory'
         verbose_name_plural = 'Conversation Memories'
         ordering = ['-created_at']
@@ -290,14 +292,21 @@ class AgentConfiguration(models.Model):
     Shows agent settings, model configurations, and capabilities.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    enabled = models.BooleanField(default=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
     name = models.CharField(max_length=255)
-    bio = models.TextField(blank=True)
-    settings = models.JSONField(default=dict)  # Agent configuration
-    knowledge = models.JSONField(default=list, blank=True)  # Character knowledge
-    lore = models.JSONField(default=list, blank=True)  # Character lore
+    username = models.CharField(max_length=255, null=True, blank=True)
+    system = models.TextField(null=True, blank=True)
+    bio = models.JSONField(default=list, blank=True)  # This is JSONB array in the actual table
     message_examples = models.JSONField(default=list, blank=True)
     post_examples = models.JSONField(default=list, blank=True)
+    topics = models.JSONField(default=list, blank=True)
+    adjectives = models.JSONField(default=list, blank=True)
+    knowledge = models.JSONField(default=list, blank=True)  # Character knowledge
     plugins = models.JSONField(default=list, blank=True)  # Active plugins
+    settings = models.JSONField(default=dict, blank=True)  # Agent configuration
+    style = models.JSONField(default=dict, blank=True)  # Agent style settings
     
     class Meta:
         managed = False  # Don't create migrations - read-only view
@@ -324,88 +333,22 @@ class AgentConfiguration(models.Model):
             if 'knowledge' in key.lower() or 'embedding' in key.lower() or 'text_model' in key.lower():
                 knowledge_settings[key] = value
         return knowledge_settings
+    
+    @property
+    def bio_text(self):
+        """Extract bio text from JSONB array"""
+        if isinstance(self.bio, list) and self.bio:
+            return ' '.join(str(item) for item in self.bio)
+        return 'No bio available'
 
 # ============================================================================
-# SECTION 5: Enhanced Analytics Models  
-# Comprehensive tracking for performance optimization and insights
+# SECTION 5: Notes
 # ============================================================================
 
-class DocumentProcessingMetrics(models.Model):
-    """
-    Track document processing performance and outcomes.
-    Helps identify bottlenecks and optimization opportunities.
-    """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    document_id = models.UUIDField()
-    agent_id = models.UUIDField()
-    source_type = models.CharField(max_length=50)  # notion, docs, discord, etc.
-    file_type = models.CharField(max_length=20)  # pdf, md, txt, docx, etc.
-    file_size_bytes = models.BigIntegerField()
-    processing_time_ms = models.IntegerField()
-    fragment_count = models.IntegerField()
-    embedding_generation_time_ms = models.IntegerField(null=True, blank=True)
-    deduplication_action = models.CharField(max_length=20, choices=[
-        ('new', 'New Document'),
-        ('merged', 'Merged with Existing'),
-        ('flagged', 'Flagged for Review'),
-        ('skipped', 'Skipped (Duplicate)'),
-    ])
-    success = models.BooleanField()
-    error_message = models.TextField(blank=True)
-    timestamp = models.DateTimeField(default=timezone.now)
-    
-    class Meta:
-        db_table = 'document_processing_metrics'
-        ordering = ['-timestamp']
-        
-    def __str__(self):
-        status = "✓" if self.success else "✗"
-        return f"{status} {self.source_type}/{self.file_type} - {self.fragment_count} fragments ({self.processing_time_ms}ms)"
-
-class FragmentRetrievalMetrics(models.Model):
-    """
-    Track which fragments are retrieved most often and their relevance.
-    Helps optimize knowledge organization and identify high-value content.
-    """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    fragment_memory_id = models.UUIDField()  # Links to KnowledgeMemory
-    query_id = models.UUIDField(null=True, blank=True)  # Links to KnowledgeQuery
-    agent_id = models.UUIDField()
-    similarity_score = models.FloatField()  # RAG retrieval score
-    rank_in_results = models.IntegerField()  # 1st, 2nd, 3rd result, etc.
-    used_in_response = models.BooleanField()  # Was this fragment actually used?
-    relevance_feedback = models.CharField(max_length=20, choices=[
-        ('unknown', 'Unknown'),
-        ('relevant', 'Relevant'),
-        ('partially', 'Partially Relevant'),
-        ('irrelevant', 'Irrelevant'),
-    ], default='unknown')
-    timestamp = models.DateTimeField(default=timezone.now)
-    
-    class Meta:
-        db_table = 'fragment_retrieval_metrics'
-        ordering = ['-timestamp']
-        
-    def __str__(self):
-        return f"Fragment {str(self.fragment_memory_id)[:8]}... - Rank #{self.rank_in_results} (score: {self.similarity_score:.3f})"
-
-class SystemHealthMetrics(models.Model):
-    """
-    Track overall system health and performance indicators.
-    Provides insights for capacity planning and optimization.
-    """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    metric_name = models.CharField(max_length=100)  # total_documents, avg_query_time, etc.
-    metric_value = models.FloatField()
-    metric_unit = models.CharField(max_length=20)  # count, ms, mb, etc.
-    agent_id = models.UUIDField(null=True, blank=True)  # Agent-specific or system-wide
-    metadata = models.JSONField(default=dict, blank=True)  # Additional context
-    timestamp = models.DateTimeField(default=timezone.now)
-    
-    class Meta:
-        db_table = 'system_health_metrics'
-        ordering = ['-timestamp', 'metric_name']
-        
-    def __str__(self):
-        agent_info = f" (Agent: {str(self.agent_id)[:8]}...)" if self.agent_id else ""
-        return f"{self.metric_name}: {self.metric_value} {self.metric_unit}{agent_info}"
+# Future Analytics Models:
+# Additional analytics models can be added when corresponding database tables are created:
+# - DocumentProcessingMetrics: Track processing performance and outcomes
+# - FragmentRetrievalMetrics: Track fragment usage and relevance
+# - SystemHealthMetrics: Track overall system health indicators
+#
+# These would provide deeper insights into system performance and optimization opportunities.

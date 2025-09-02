@@ -22,7 +22,6 @@ from .models import (
     KnowledgeQuery,
     KnowledgeMemory, KnowledgeEmbedding,
     ConversationMemory, AgentConfiguration,
-    DocumentProcessingMetrics, FragmentRetrievalMetrics, SystemHealthMetrics,
     KoiSource, KoiContent, KoiProcessing
 )
 
@@ -331,18 +330,21 @@ class ConversationMemoryAdmin(admin.ModelAdmin):
     formatted_metadata.short_description = 'Metadata (JSON)'
     
     def get_queryset(self, request):
-        # Show all conversation messages
-        return super().get_queryset(request)
+        # Filter to only show conversation messages
+        qs = super().get_queryset(request)
+        return qs.filter(type='messages')
 
 @admin.register(AgentConfiguration)
 class AgentConfigurationAdmin(admin.ModelAdmin):
     """Admin interface for agent configurations"""
-    list_display = ['name', 'id_short', 'has_knowledge_plugin_badge', 'plugin_count', 'knowledge_count']
-    list_filter = ['plugins', 'settings']
-    search_fields = ['name', 'bio']
-    readonly_fields = ['id', 'name', 'bio', 'formatted_settings', 'formatted_knowledge', 
-                      'formatted_lore', 'formatted_plugins', 'knowledge_settings_display',
-                      'has_knowledge_plugin']
+    list_display = ['name', 'id_short', 'enabled', 'has_knowledge_plugin_badge', 'plugin_count', 'knowledge_count']
+    list_filter = ['enabled', 'plugins', 'settings']
+    search_fields = ['name', 'username', 'system']
+    readonly_fields = ['id', 'enabled', 'created_at', 'updated_at', 'name', 'username', 'system', 
+                      'bio_text_display', 'formatted_bio', 'formatted_settings', 'formatted_knowledge', 
+                      'formatted_message_examples', 'formatted_post_examples', 'formatted_topics',
+                      'formatted_adjectives', 'formatted_plugins', 'formatted_style',
+                      'knowledge_settings_display', 'has_knowledge_plugin']
     ordering = ['name']
     
     def id_short(self, obj):
@@ -386,6 +388,17 @@ class AgentConfigurationAdmin(admin.ModelAdmin):
         return 'No settings'
     formatted_settings.short_description = 'Settings (JSON)'
     
+    def bio_text_display(self, obj):
+        return obj.bio_text
+    bio_text_display.short_description = 'Bio (Text)'
+    
+    def formatted_bio(self, obj):
+        if obj.bio:
+            formatted = json.dumps(obj.bio, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No bio'
+    formatted_bio.short_description = 'Bio (JSON)'
+    
     def formatted_knowledge(self, obj):
         if obj.knowledge:
             formatted = json.dumps(obj.knowledge, indent=2)
@@ -393,12 +406,33 @@ class AgentConfigurationAdmin(admin.ModelAdmin):
         return 'No knowledge'
     formatted_knowledge.short_description = 'Knowledge (JSON)'
     
-    def formatted_lore(self, obj):
-        if obj.lore:
-            formatted = json.dumps(obj.lore, indent=2)
+    def formatted_message_examples(self, obj):
+        if obj.message_examples:
+            formatted = json.dumps(obj.message_examples, indent=2)
             return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
-        return 'No lore'
-    formatted_lore.short_description = 'Lore (JSON)'
+        return 'No message examples'
+    formatted_message_examples.short_description = 'Message Examples (JSON)'
+    
+    def formatted_post_examples(self, obj):
+        if obj.post_examples:
+            formatted = json.dumps(obj.post_examples, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No post examples'
+    formatted_post_examples.short_description = 'Post Examples (JSON)'
+    
+    def formatted_topics(self, obj):
+        if obj.topics:
+            formatted = json.dumps(obj.topics, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No topics'
+    formatted_topics.short_description = 'Topics (JSON)'
+    
+    def formatted_adjectives(self, obj):
+        if obj.adjectives:
+            formatted = json.dumps(obj.adjectives, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No adjectives'
+    formatted_adjectives.short_description = 'Adjectives (JSON)'
     
     def formatted_plugins(self, obj):
         if obj.plugins:
@@ -406,89 +440,34 @@ class AgentConfigurationAdmin(admin.ModelAdmin):
             return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
         return 'No plugins'
     formatted_plugins.short_description = 'Plugins (JSON)'
+    
+    def formatted_style(self, obj):
+        if obj.style:
+            formatted = json.dumps(obj.style, indent=2)
+            return format_html('<pre style="max-width: 800px; overflow-x: auto;">{}</pre>', formatted)
+        return 'No style'
+    formatted_style.short_description = 'Style (JSON)'
 
 # ============================================================================
-# SECTION 5: Enhanced Analytics Admin
-# Comprehensive tracking for performance optimization and insights
+# SECTION 5: Future Analytics Models
+# These models reference tables that don't exist yet but could be created
+# They are commented out until the corresponding database tables are created
 # ============================================================================
 
-@admin.register(DocumentProcessingMetrics)
-class DocumentProcessingMetricsAdmin(admin.ModelAdmin):
-    """Admin interface for document processing performance tracking"""
-    list_display = ['timestamp', 'source_type', 'file_type', 'success_badge', 'processing_time_ms', 
-                   'fragment_count', 'deduplication_action', 'agent_short']
-    list_filter = ['source_type', 'file_type', 'success', 'deduplication_action', 'timestamp']
-    search_fields = ['document_id', 'error_message']
-    readonly_fields = ['id', 'document_id', 'agent_id', 'timestamp']
-    ordering = ['-timestamp']
-    list_per_page = 100
-    
-    def agent_short(self, obj):
-        return str(obj.agent_id)[:8] + '...'
-    agent_short.short_description = 'Agent'
-    
-    def success_badge(self, obj):
-        if obj.success:
-            return format_html(
-                '<span style="background-color: #28A745; color: white; padding: 2px 6px; '
-                'border-radius: 3px; font-size: 11px;">✓ Success</span>'
-            )
-        return format_html(
-            '<span style="background-color: #DC3545; color: white; padding: 2px 6px; '
-            'border-radius: 3px; font-size: 11px;">✗ Failed</span>'
-        )
-    success_badge.short_description = 'Status'
+# Uncomment when document_processing_metrics table is created:
+# @admin.register(DocumentProcessingMetrics)
+# class DocumentProcessingMetricsAdmin(admin.ModelAdmin):
+#     """Admin interface for document processing performance tracking"""
+#     pass
 
-@admin.register(FragmentRetrievalMetrics)
-class FragmentRetrievalMetricsAdmin(admin.ModelAdmin):
-    """Admin interface for fragment retrieval and relevance tracking"""
-    list_display = ['timestamp', 'fragment_short', 'agent_short', 'similarity_score', 
-                   'rank_in_results', 'used_in_response_badge', 'relevance_feedback']
-    list_filter = ['used_in_response', 'relevance_feedback', 'timestamp']
-    search_fields = ['fragment_memory_id', 'query_id']
-    readonly_fields = ['id', 'fragment_memory_id', 'query_id', 'agent_id', 'timestamp']
-    ordering = ['-timestamp']
-    list_per_page = 100
-    
-    def fragment_short(self, obj):
-        return str(obj.fragment_memory_id)[:8] + '...'
-    fragment_short.short_description = 'Fragment'
-    
-    def agent_short(self, obj):
-        return str(obj.agent_id)[:8] + '...'
-    agent_short.short_description = 'Agent'
-    
-    def used_in_response_badge(self, obj):
-        if obj.used_in_response:
-            return format_html(
-                '<span style="background-color: #28A745; color: white; padding: 2px 6px; '
-                'border-radius: 3px; font-size: 11px;">Used</span>'
-            )
-        return format_html(
-            '<span style="background-color: #6C757D; color: white; padding: 2px 6px; '
-            'border-radius: 3px; font-size: 11px;">Not Used</span>'
-        )
-    used_in_response_badge.short_description = 'Used in Response'
+# Uncomment when fragment_retrieval_metrics table is created:
+# @admin.register(FragmentRetrievalMetrics)  
+# class FragmentRetrievalMetricsAdmin(admin.ModelAdmin):
+#     """Admin interface for fragment retrieval and relevance tracking"""
+#     pass
 
-@admin.register(SystemHealthMetrics)
-class SystemHealthMetricsAdmin(admin.ModelAdmin):
-    """Admin interface for system health monitoring"""
-    list_display = ['metric_name', 'metric_value', 'metric_unit', 'agent_short', 'timestamp']
-    list_filter = ['metric_name', 'metric_unit', 'agent_id', 'timestamp']
-    search_fields = ['metric_name', 'agent_id']
-    readonly_fields = ['id', 'agent_id', 'timestamp', 'formatted_metadata']
-    ordering = ['-timestamp', 'metric_name']
-    list_per_page = 100
-    
-    def agent_short(self, obj):
-        if obj.agent_id:
-            return str(obj.agent_id)[:8] + '...'
-        return 'System-wide'
-    agent_short.short_description = 'Agent/Scope'
-    
-    def formatted_metadata(self, obj):
-        if obj.metadata:
-            formatted = json.dumps(obj.metadata, indent=2)
-            return format_html('<pre>{}</pre>', formatted)
-        return 'No metadata'
-    formatted_metadata.short_description = 'Metadata (JSON)'
+# Uncomment when system_health_metrics table is created:
+# @admin.register(SystemHealthMetrics)
+# class SystemHealthMetricsAdmin(admin.ModelAdmin):
+#     """Admin interface for system health monitoring"""
+#     pass
