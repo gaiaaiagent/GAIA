@@ -1,0 +1,10 @@
+rid-lib
+__pycache__
+*.json
+*.pem
+*.yaml
+venv
+.env
+prototypes
+.vscode
+dist/

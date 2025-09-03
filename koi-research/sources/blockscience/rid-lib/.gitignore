@@ -1,0 +1,10 @@
+__pycache__
+.vscode
+venv/
+dist/
+build/
+*.egg*
+testing/
+.coverage
+rid_cache/
+htmlcov/

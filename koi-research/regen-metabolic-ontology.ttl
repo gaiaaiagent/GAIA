@@ -1,0 +1,171 @@
+@prefix regen:  <https://regen.network/ontology#> .
+@prefix koi:    <https://regen.network/koi#> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix schema: <http://schema.org/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+### Core metaphors: organs, flows, metabolism
+regen:System           a rdfs:Class ; rdfs:label "Living System" .
+regen:Organ            a rdfs:Class ; rdfs:label "Functional Organ" .
+regen:MetabolicFlow    a rdfs:Class ; rdfs:label "Metabolic Flow" .
+regen:Transformation   a rdfs:Class ; rdfs:label "Transformation" .
+regen:FeedbackLoop     a rdfs:Class ; rdfs:label "Feedback Loop" .
+
+### Actors and substrates
+regen:Commons          a rdfs:Class ; rdfs:label "Commons" .
+regen:Agent            a rdfs:Class ; rdfs:label "Agent" .
+regen:HumanActor       a rdfs:Class ; rdfs:subClassOf regen:Agent .
+regen:AIAgent          a rdfs:Class ; rdfs:subClassOf regen:Agent .
+regen:SemanticAsset    a rdfs:Class ; rdfs:label "Semantic Asset" .
+regen:EcologicalAsset  a rdfs:Class ; rdfs:label "Ecological Asset" .
+regen:LegitimacyNote   a rdfs:Class ; rdfs:label "Legitimacy Note" .
+regen:GovernanceAct    a rdfs:Class ; rdfs:label "Governance Act" .
+regen:Metric           a rdfs:Class ; rdfs:label "Metric" .
+
+### Processual substrates (metabolic processes)
+regen:Anchor           a rdfs:Class ; rdfs:label "Anchor Process" .
+regen:Attest           a rdfs:Class ; rdfs:label "Attest Process" .
+regen:Issue            a rdfs:Class ; rdfs:label "Issue Process" .
+regen:Circulate        a rdfs:Class ; rdfs:label "Circulate Process" .
+regen:Retire           a rdfs:Class ; rdfs:label "Retire Process" .
+regen:Govern           a rdfs:Class ; rdfs:label "Govern Process" .
+
+### Relations
+regen:hasOrgan         a rdf:Property ; rdfs:domain regen:System ; rdfs:range regen:Organ .
+regen:usesAgent        a rdf:Property ; rdfs:domain regen:Organ  ; rdfs:range regen:Agent .
+regen:produces         a rdf:Property ; rdfs:domain regen:Organ  ; rdfs:range regen:SemanticAsset .
+regen:actsOn           a rdf:Property ; rdfs:domain regen:MetabolicFlow ; rdfs:range rdfs:Resource .
+regen:fromState        a rdf:Property ; rdfs:domain regen:Transformation ; rdfs:range rdfs:Resource .
+regen:toState          a rdf:Property ; rdfs:domain regen:Transformation ; rdfs:range rdfs:Resource .
+regen:enacts           a rdf:Property ; rdfs:domain regen:Commons ; rdfs:range regen:GovernanceAct .
+regen:attests          a rdf:Property ; rdfs:domain regen:Commons ; rdfs:range regen:LegitimacyNote .
+regen:measures         a rdf:Property ; rdfs:domain regen:Metric  ; rdfs:range rdfs:Resource .
+regen:feeds            a rdf:Property ; rdfs:domain regen:FeedbackLoop ; rdfs:range rdfs:Resource .
+regen:guards           a rdf:Property ; rdfs:domain regen:GovernanceAct ; rdfs:range regen:MetabolicFlow .
+regen:orchestrates     a rdf:Property ; rdfs:domain regen:AIAgent ; rdfs:range regen:MetabolicFlow .
+regen:derivesFrom      a rdf:Property ; rdfs:domain regen:SemanticAsset ; rdfs:range regen:SemanticAsset .
+regen:references       a rdf:Property ; rdfs:domain regen:SemanticAsset ; rdfs:range rdfs:Resource .
+regen:alignsWith       a rdf:Property ; rdfs:domain rdfs:Resource ; rdfs:range rdfs:Literal .
+
+### Lightweight PROV alignment
+regen:wasAnchoredBy    a rdf:Property ; rdfs:subPropertyOf prov:wasAttributedTo .
+regen:wasAttestedBy    a rdf:Property ; rdfs:subPropertyOf prov:wasAttributedTo .
+regen:wasIssuedBy      a rdf:Property ; rdfs:subPropertyOf prov:wasAttributedTo .
+regen:wasGovernedBy    a rdf:Property ; rdfs:subPropertyOf prov:wasAssociatedWith .
+
+### Organs for the Regen AI metabolic stack
+regen:KnowledgeCommons  a regen:Organ ;
+    rdfs:label "Knowledge Commons" ;
+    rdfs:comment "Distributed knowledge repository and discovery system" .
+
+regen:AgentOrchestrator a regen:Organ ;
+    rdfs:label "Agent Orchestrator" ;
+    rdfs:comment "ElizaOS hub for agent coordination" .
+
+regen:RegistryInterface a regen:Organ ;
+    rdfs:label "Registry Interface" ;
+    rdfs:comment "External agent services for Registry/Marketplace" .
+
+regen:MRVWatch a regen:Organ ;
+    rdfs:label "MRV Watch" ;
+    rdfs:comment "Environmental monitoring and alerting system" .
+
+regen:ImpactAnalytics a regen:Organ ;
+    rdfs:label "Impact Analytics" ;
+    rdfs:comment "Dashboards, reports, and audit systems" .
+
+### Example system instance
+regen:RegenAISystem a regen:System ;
+    regen:hasOrgan regen:KnowledgeCommons, 
+                   regen:AgentOrchestrator, 
+                   regen:RegistryInterface, 
+                   regen:MRVWatch, 
+                   regen:ImpactAnalytics ;
+    rdfs:comment "Regen AI as a metabolic organ of the Commons" .
+
+### Example agents from roadmap
+regen:ProposalWriter a regen:AIAgent ;
+    rdfs:label "Proposal Writer Agent" ;
+    rdfs:comment "AI agent for drafting governance proposals" .
+
+regen:PMAssistant a regen:AIAgent ;
+    rdfs:label "PM Assistant Agent" ;
+    rdfs:comment "Project management assistant agent" .
+
+regen:RegistryAssistant a regen:AIAgent ;
+    rdfs:label "Registry Assistant Agent" ;
+    rdfs:comment "Registry query and form-filling assistant" .
+
+regen:EcoNarrator a regen:AIAgent ;
+    rdfs:label "Eco Narrator Agent" ;
+    rdfs:comment "Storytelling agent for ecological narratives" .
+
+### Metabolic flows mapped to roadmap phases
+# Foundation Phase (6 months)
+regen:Flow_KnowledgeAnchoring a regen:MetabolicFlow, regen:Anchor ;
+    rdfs:label "Knowledge Anchoring Flow" ;
+    regen:actsOn regen:KnowledgeCommons .
+
+regen:Flow_InternalAgents a regen:MetabolicFlow, regen:Issue ;
+    rdfs:label "Internal Agents Flow" ;
+    regen:actsOn regen:ProposalWriter, regen:PMAssistant .
+
+regen:Flow_Orchestration a regen:MetabolicFlow, regen:Transformation ;
+    rdfs:label "Orchestration Flow" ;
+    regen:actsOn regen:AgentOrchestrator .
+
+regen:Flow_AIGovernance a regen:MetabolicFlow, regen:Govern ;
+    rdfs:label "AI Governance Flow" ;
+    regen:actsOn regen:KnowledgeCommons, 
+                 regen:AgentOrchestrator, 
+                 regen:ProposalWriter, 
+                 regen:PMAssistant .
+
+# Scaling Phase (12 months)
+regen:Flow_CommunityPortal a regen:MetabolicFlow, regen:Circulate ;
+    rdfs:label "Community Portal Flow" ;
+    regen:actsOn regen:KnowledgeCommons .
+
+regen:Flow_ExternalAgents a regen:MetabolicFlow, regen:Issue ;
+    rdfs:label "External Agents Flow" ;
+    regen:actsOn regen:RegistryAssistant, regen:EcoNarrator .
+
+regen:Flow_MRV a regen:MetabolicFlow, regen:Attest ;
+    rdfs:label "MRV Flow" ;
+    regen:actsOn regen:MRVWatch .
+
+regen:Flow_Metrics a regen:MetabolicFlow ;
+    rdfs:label "Metrics Flow" ;
+    regen:actsOn regen:ImpactAnalytics .
+
+### Example semantic assets
+koi:Roadmap_WIP a regen:SemanticAsset ;
+    schema:name "[WIP] Regen AI Roadmap for Regen Knowledge Commons" ;
+    regen:alignsWith "Re-Whole Value", "Nest Caring", "Harmonize Agency" ;
+    regen:references regen:Flow_KnowledgeAnchoring, 
+                     regen:Flow_InternalAgents, 
+                     regen:Flow_Orchestration, 
+                     regen:Flow_AIGovernance,
+                     regen:Flow_CommunityPortal, 
+                     regen:Flow_ExternalAgents, 
+                     regen:Flow_MRV, 
+                     regen:Flow_Metrics .
+
+### Provenance hooks
+koi:Roadmap_WIP regen:wasAnchoredBy regen:KnowledgeCommons ;
+                regen:wasGovernedBy regen:CommonsCouncil .
+
+regen:CommonsCouncil a regen:Commons ;
+    rdfs:label "Commons Council" ;
+    regen:enacts [ a regen:GovernanceAct ; 
+                   schema:name "AI Governance v0.1" ] ;
+    regen:attests [ a regen:LegitimacyNote ; 
+                    schema:description "Public oversight & audit logs" ] .
+
+### Example feedback loop
+regen:Loop_Legibility a regen:FeedbackLoop ;
+    rdfs:label "Legibility Feedback Loop" ;
+    regen:feeds regen:KnowledgeCommons, 
+                regen:ImpactAnalytics, 
+                regen:CommonsCouncil .

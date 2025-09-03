@@ -1,0 +1,37 @@
+import logging
+from pydantic import Field
+from rich.logging import RichHandler
+from koi_net import NodeInterface
+from koi_net.protocol.node import NodeProfile, NodeType
+from koi_net.config import NodeConfig, KoiNetConfig
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[RichHandler()]
+)
+
+logging.getLogger("koi_net").setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+
+class PartialNodeConfig(NodeConfig):
+    koi_net: KoiNetConfig = Field(default_factory = lambda:
+        KoiNetConfig(
+            node_name="partial",
+            node_profile=NodeProfile(
+                node_type=NodeType.PARTIAL
+            ),
+            cache_directory_path=".partial_rid_cache",
+            event_queues_path="partial_event_queues.json",
+            private_key_pem_path="partial_priv_key.pem"
+        )
+    )
+
+node = NodeInterface(
+    config=PartialNodeConfig.load_from_yaml("partial_config.yaml")
+)
+
+if __name__ == "__main__":
+    node.poller.run()
