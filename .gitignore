@@ -326,3 +326,8 @@ test-data/
 .env.backup
 .env.backup
 characters.backup/
+
+# Test files with secrets
+characters/test-*.character.json
+start-test-telegram.sh
+logs/test-*.log
