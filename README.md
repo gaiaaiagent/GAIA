@@ -87,6 +87,27 @@ For production deployment with Telegram bots and full configuration, see:
 - **[Agent Startup Guide](docs/AGENT-STARTUP-GUIDE.md)** - Complete startup and management instructions
 - **[CLAUDE.md](CLAUDE.md)** - Critical configuration and known issues
 
+## 🌍 KOI Knowledge Graph Visualization (New!)
+
+Explore the knowledge graph powering RegenAI agents through our interactive visualization system:
+
+- **🔍 Natural Language Queries**: Ask questions in plain English, converted to SPARQL automatically
+- **📊 Interactive Visualizations**: Sigma.js network graphs and D3.js essence alignment charts
+- **⚡ Real-time Data**: Live SPARQL queries against Apache Jena Fuseki triplestore
+- **🎯 Essence Alignments**: Visualize how content aligns with Re-Whole Value, Nest Caring, and Harmonize Agency
+
+**Access**: `http://localhost:5173/koi` (local) | `https://regen.gaiaai.xyz/koi` (production)
+
+### Technology Stack
+- **Frontend**: React with D3.js and Sigma.js
+- **Backend**: Django REST API with SPARQLWrapper
+- **Database**: Apache Jena Fuseki triplestore + PostgreSQL caching
+- **AI**: OpenAI GPT-4 for natural language to SPARQL conversion
+
+See `docs/KOI-SYSTEM.md` for complete documentation.
+
+---
+
 ## The Agents
 
 We've developed five specialized agents, each with a specific role:

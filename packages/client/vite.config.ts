@@ -59,14 +59,10 @@ export default defineConfig({
         global: 'globalThis',
         Buffer: 'globalThis.Buffer',
       },
-      // Inject polyfills early
-      inject: [path.resolve(__dirname, './src/polyfills.ts')],
     },
     include: ['buffer', 'process', 'crypto-browserify', 'stream-browserify', 'util'],
     // Force optimization even for linked packages
     force: true,
-    // Ensure elizaos/core is pre-bundled with polyfills
-    entries: ['./src/entry.tsx'],
   },
   build: {
     target: 'esnext',
@@ -101,6 +97,8 @@ export default defineConfig({
   define: {
     // Define globals for browser compatibility
     'process.env': {},
+    'process.version': JSON.stringify('v18.0.0'),
+    'process.versions': JSON.stringify({ node: '18.0.0', v8: '8.0.0' }),
     global: 'globalThis',
     // Ensure Buffer is available globally
     Buffer: 'globalThis.Buffer',

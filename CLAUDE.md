@@ -349,6 +349,45 @@ curl -u regenai:regen2025 https://regen.gaiaai.xyz/
 - **AI Models**: Configured via environment variables (see Model Configuration section below)
 - **Plugin-Knowledge**: Custom fork with deduplication and enhanced processing
 
+## 🌍 KOI Knowledge Graph Visualization (January 2025)
+
+### Major Milestone: Backend API Integration Complete ✅
+
+Successfully implemented a comprehensive KOI knowledge graph visualization system with real SPARQL data integration:
+
+**What's Working:**
+- **Django REST API**: Complete backend with 5 API endpoints (`/api/koi/*`)
+- **Apache Jena Fuseki**: SPARQL triplestore with 50 RDF triples
+- **Real Data Flow**: `/api/koi/graph-data/` returns actual knowledge graph data (6 nodes, 5 edges)
+- **React Frontend**: Interactive tabbed interface with 4 visualization components
+- **Mock Data Fallbacks**: Graceful degradation when APIs unavailable
+
+**Key Files Created:**
+- `django_admin/koi_graph/` - Complete Django app with models, services, views
+- `packages/client/src/routes/koi/` - React frontend with D3.js/Sigma.js
+- `sample-koi-data.ttl` - RDF test data with documents, concepts, processes
+
+**API Endpoints (Working):**
+- `GET /api/koi/health/` - Service health check
+- `GET /api/koi/graph-data/?max_nodes=100&depth=2` - Graph visualization data
+- `POST /api/koi/nl-query/` - Natural language to SPARQL (ready for connection)
+- `POST /api/koi/sparql/` - Direct SPARQL execution (ready for connection)
+- `GET /api/koi/essence-data/` - Essence alignment visualization
+
+**Architecture:**
+```
+React Frontend (5173) → Django API (8000) → Apache Jena Fuseki (3030) → PostgreSQL Cache
+```
+
+**Next Steps:**
+- Connect natural language interface to backend API
+- Connect SPARQL editor to execution service
+- Implement essence radar with real alignment data
+
+See updated documentation in `docs/KOI-SYSTEM.md` for complete technical details.
+
+---
+
 ## 🌿 KOI Node System (Knowledge Organization Infrastructure)
 
 ### Overview

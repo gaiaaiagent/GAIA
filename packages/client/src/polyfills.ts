@@ -13,8 +13,14 @@ const g: any =
         ? global
         : {};
 
+// Ensure Buffer is available globally with all methods
 if (!g.Buffer) {
   g.Buffer = Buffer;
+}
+
+// Make sure window.Buffer is also available (for crypto-browserify)
+if (typeof window !== 'undefined' && !window.Buffer) {
+  window.Buffer = Buffer;
 }
 
 if (!g.global) {
@@ -25,13 +31,27 @@ if (!g.process) {
   g.process = {
     env: {},
     browser: true,
-    version: '',
-    versions: {},
+    version: 'v18.0.0', // Provide a valid version string
+    versions: {
+      node: '18.0.0',
+      v8: '8.0.0'
+    },
     nextTick: (cb: (...args: any[]) => void) =>
       Promise.resolve()
         .then(cb)
         .catch(() => setTimeout(cb, 0)),
   };
+}
+
+// Ensure crypto global for crypto-browserify
+if (typeof window !== 'undefined') {
+  try {
+    if (!window.crypto && typeof crypto !== 'undefined') {
+      window.crypto = crypto;
+    }
+  } catch (e) {
+    // Ignore crypto setup errors
+  }
 }
 
 export {};
