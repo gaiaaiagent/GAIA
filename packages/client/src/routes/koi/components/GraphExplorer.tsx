@@ -3,14 +3,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { 
   Search, 
   ZoomIn, 
   ZoomOut, 
   RotateCcw, 
   Settings,
-  Loader2
+  Loader2,
+  Eye,
+  EyeOff
 } from 'lucide-react';
+import D3ForceGraph from './D3ForceGraph';
 
 interface GraphNode {
   id: string;
@@ -48,57 +53,27 @@ export default function GraphExplorer() {
   const [graphData, setGraphData] = useState<GraphData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showMetadata, setShowMetadata] = useState(false);
 
-  // Load initial graph data
+  // Load graph data when showMetadata changes
   useEffect(() => {
     loadGraphData();
-  }, []);
+  }, [showMetadata]);
 
   const loadGraphData = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // Try to fetch from API first, fallback to mock data if not available
-      let data;
-      try {
-        const response = await fetch('/api/koi/graph-data/?max_nodes=1000&depth=2');
-        if (response.ok) {
-          data = await response.json();
-        } else {
-          throw new Error('API not available');
-        }
-      } catch (apiError) {
-        // Fallback to mock data for testing
-        console.log('Using mock graph data for testing');
-        data = {
-          nodes: [
-            { id: 'doc1', label: 'Regen White Paper 2023', size: 15, color: '#4285f4', type: 'Document' },
-            { id: 'doc2', label: 'Regenerative Agriculture Principles', size: 12, color: '#4285f4', type: 'Document' },
-            { id: 'doc3', label: 'Carbon Sequestration Study', size: 10, color: '#4285f4', type: 'Document' },
-            { id: 'concept1', label: 'Regenerative Agriculture', size: 18, color: '#34a853', type: 'Concept' },
-            { id: 'concept2', label: 'Carbon Sequestration', size: 14, color: '#34a853', type: 'Concept' },
-            { id: 'concept3', label: 'Ecosystem Health', size: 16, color: '#34a853', type: 'Concept' },
-            { id: 'essence1', label: 'Re-Whole Value', size: 20, color: '#ea4335', type: 'EssenceAlignment' },
-            { id: 'essence2', label: 'Nest Caring', size: 18, color: '#ea4335', type: 'EssenceAlignment' },
-            { id: 'essence3', label: 'Harmonize Agency', size: 16, color: '#ea4335', type: 'EssenceAlignment' },
-            { id: 'process1', label: 'Soil Carbon Enhancement', size: 13, color: '#fbbc04', type: 'MetabolicProcess' },
-            { id: 'process2', label: 'Biodiversity Restoration', size: 11, color: '#fbbc04', type: 'MetabolicProcess' }
-          ],
-          edges: [
-            { source: 'doc1', target: 'concept1', label: 'mentions', weight: 0.8, color: '#666' },
-            { source: 'doc2', target: 'concept1', label: 'defines', weight: 0.9, color: '#666' },
-            { source: 'doc3', target: 'concept2', label: 'studies', weight: 0.7, color: '#666' },
-            { source: 'concept1', target: 'essence1', label: 'alignsWith', weight: 0.89, color: '#666' },
-            { source: 'concept1', target: 'essence2', label: 'alignsWith', weight: 0.76, color: '#666' },
-            { source: 'concept2', target: 'essence1', label: 'alignsWith', weight: 0.79, color: '#666' },
-            { source: 'concept3', target: 'essence3', label: 'alignsWith', weight: 0.82, color: '#666' },
-            { source: 'concept1', target: 'process1', label: 'enabledBy', weight: 0.6, color: '#666' },
-            { source: 'concept2', target: 'process2', label: 'enabledBy', weight: 0.7, color: '#666' },
-            { source: 'process1', target: 'concept3', label: 'produces', weight: 0.5, color: '#666' }
-          ]
-        };
+      const url = `http://localhost:8001/api/koi/graph-data/?max_nodes=1000&depth=2&show_metadata=${showMetadata}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
+      
+      const data = await response.json();
 
       setGraphData({
         nodes: data.nodes || [],
@@ -224,26 +199,21 @@ export default function GraphExplorer() {
           </div>
         )}
 
-        {/* Sigma.js container */}
+        {/* D3 Force Graph container */}
         <div 
           ref={containerRef} 
           className="w-full h-full bg-muted/20"
           style={{ minHeight: '400px' }}
         >
-          {/* Placeholder visualization */}
-          {!loading && !error && graphData && (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="text-center space-y-4">
-                <div className="text-6xl">🕸️</div>
-                <div className="space-y-2">
-                  <h3 className="text-lg font-medium">Graph Visualization</h3>
-                  <p className="text-sm text-muted-foreground max-w-md">
-                    Interactive Sigma.js graph visualization will be implemented in Phase 3.
-                    Currently showing {graphData.nodes.length} nodes and {graphData.edges.length} edges.
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* D3.js Force-Directed Graph */}
+          {!loading && !error && graphData && graphData.nodes.length > 0 && (
+            <D3ForceGraph
+              nodes={graphData.nodes}
+              edges={graphData.edges}
+              width={containerRef.current?.clientWidth || 800}
+              height={containerRef.current?.clientHeight || 600}
+              onNodeClick={(node) => handleNodeSelect(node.id)}
+            />
           )}
         </div>
 
@@ -292,27 +262,48 @@ export default function GraphExplorer() {
           </div>
         )}
 
-        {/* Legend */}
-        <div className="absolute bottom-4 left-4">
+        {/* Legend and Controls */}
+        <div className="absolute bottom-4 left-4 space-y-2">
           <Card className="w-64">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm">Node Types</CardTitle>
+              <CardTitle className="text-sm">Display Options</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              {Object.entries({
-                'Document': '#4285f4',
-                'Concept': '#34a853',
-                'Essence': '#ea4335',
-                'Process': '#fbbc04'
-              }).map(([type, color]) => (
-                <div key={type} className="flex items-center gap-2 text-xs">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
-                    style={{ backgroundColor: color }}
-                  />
-                  {type}
-                </div>
-              ))}
+            <CardContent className="space-y-3">
+              {/* Metadata Toggle */}
+              <div className="flex items-center justify-between">
+                <Label htmlFor="metadata-toggle" className="text-xs flex items-center gap-2">
+                  {showMetadata ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                  Show Metadata Nodes
+                </Label>
+                <Switch
+                  id="metadata-toggle"
+                  checked={showMetadata}
+                  onCheckedChange={setShowMetadata}
+                />
+              </div>
+              
+              {/* Node Type Legend */}
+              <div className="pt-2 border-t">
+                <div className="text-xs font-medium mb-2">Node Types</div>
+                {Object.entries({
+                  'SemanticAsset': '#4CAF50',
+                  'Agent': '#2196F3',
+                  'Organization': '#9C27B0',
+                  'Resource': '#FF9800',
+                  ...(showMetadata ? {
+                    'Ontology': '#607D8B',
+                    'CID': '#795548'
+                  } : {})
+                }).map(([type, color]) => (
+                  <div key={type} className="flex items-center gap-2 text-xs py-0.5">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: color }}
+                    />
+                    <span>{type}</span>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </div>
