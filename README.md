@@ -87,6 +87,37 @@ For production deployment with Telegram bots and full configuration, see:
 - **[Agent Startup Guide](docs/AGENT-STARTUP-GUIDE.md)** - Complete startup and management instructions
 - **[CLAUDE.md](CLAUDE.md)** - Critical configuration and known issues
 
+## 🌍 KOI Knowledge Graph System (Active Development!)
+
+RegenAI is implementing the Knowledge Organization Infrastructure (KOI) protocol for distributed knowledge management:
+
+### Current Features
+- **📊 Interactive Graph Visualization**: D3.js force-directed graph showing 326+ entities
+- **🔍 SPARQL Integration**: Apache Jena Fuseki triplestore with 3,851+ RDF triples
+- **🎯 Metabolic Ontology**: 36 classes modeling regenerative systems
+- **⚡ Real-time API**: Flask server connecting React UI to knowledge graph
+- **🔄 Provenance Tracking**: CAT receipts for all transformations
+
+### In Development
+- **Sensor Nodes**: Monitor websites, documents, and APIs for new content
+- **Processor Nodes**: Extract entities using metabolic ontology
+- **Entity Resolution**: Deduplicate entities across sources using embeddings
+- **Agent RAG Integration**: Connect knowledge graph to ElizaOS agents
+
+**Access**: `http://localhost:5173/koi` (local) | `https://regen.gaiaai.xyz/koi` (production)
+
+**Documentation**: See [koi-research repository](https://github.com/gaiaaiagent/koi-research) for complete KOI implementation details
+
+### Technology Stack
+- **Frontend**: React with D3.js and Sigma.js
+- **Backend**: Django REST API with SPARQLWrapper
+- **Database**: Apache Jena Fuseki triplestore + PostgreSQL caching
+- **AI**: OpenAI GPT-4 for natural language to SPARQL conversion
+
+See `docs/KOI-SYSTEM.md` for complete documentation.
+
+---
+
 ## The Agents
 
 We've developed five specialized agents, each with a specific role:

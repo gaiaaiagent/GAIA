@@ -1,0 +1,74 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix koi: <http://koi.regen.network/ontology/> .
+@prefix regen: <http://regen.network/ontology#> .
+
+# Sample Documents
+<http://koi.regen.network/documents/doc1> a koi:Document ;
+    rdfs:label "Regen Network White Paper 2023" ;
+    koi:hasEssenceAlignment [
+        koi:essenceType "Re-Whole Value" ;
+        koi:alignmentScore 0.89
+    ] ;
+    koi:hasEssenceAlignment [
+        koi:essenceType "Nest Caring" ;
+        koi:alignmentScore 0.76
+    ] ;
+    koi:hasEssenceAlignment [
+        koi:essenceType "Harmonize Agency" ;
+        koi:alignmentScore 0.82
+    ] ;
+    regen:connects <http://koi.regen.network/concepts/concept1> .
+
+<http://koi.regen.network/documents/doc2> a koi:Document ;
+    rdfs:label "Regenerative Agriculture Principles" ;
+    koi:hasEssenceAlignment [
+        koi:essenceType "Re-Whole Value" ;
+        koi:alignmentScore 0.92
+    ] ;
+    koi:hasEssenceAlignment [
+        koi:essenceType "Nest Caring" ;
+        koi:alignmentScore 0.88
+    ] ;
+    koi:hasEssenceAlignment [
+        koi:essenceType "Harmonize Agency" ;
+        koi:alignmentScore 0.71
+    ] ;
+    regen:connects <http://koi.regen.network/concepts/concept1> ;
+    regen:relatesTo <http://koi.regen.network/processes/process1> .
+
+<http://koi.regen.network/documents/doc3> a koi:Document ;
+    rdfs:label "Carbon Sequestration Study" ;
+    koi:hasEssenceAlignment [
+        koi:essenceType "Re-Whole Value" ;
+        koi:alignmentScore 0.79
+    ] ;
+    koi:hasEssenceAlignment [
+        koi:essenceType "Nest Caring" ;
+        koi:alignmentScore 0.84
+    ] ;
+    koi:hasEssenceAlignment [
+        koi:essenceType "Harmonize Agency" ;
+        koi:alignmentScore 0.67
+    ] ;
+    regen:connects <http://koi.regen.network/concepts/concept2> .
+
+# Sample Concepts
+<http://koi.regen.network/concepts/concept1> a koi:Concept ;
+    rdfs:label "Regenerative Agriculture" ;
+    regen:connects <http://koi.regen.network/processes/process1> .
+
+<http://koi.regen.network/concepts/concept2> a koi:Concept ;
+    rdfs:label "Carbon Sequestration" ;
+    regen:connects <http://koi.regen.network/processes/process2> .
+
+<http://koi.regen.network/concepts/concept3> a koi:Concept ;
+    rdfs:label "Ecosystem Health" ;
+    regen:relatesTo <http://koi.regen.network/processes/process1> .
+
+# Sample Processes
+<http://koi.regen.network/processes/process1> a koi:MetabolicProcess ;
+    rdfs:label "Soil Carbon Enhancement" .
+
+<http://koi.regen.network/processes/process2> a koi:MetabolicProcess ;
+    rdfs:label "Biodiversity Restoration" .

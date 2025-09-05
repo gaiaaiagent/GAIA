@@ -278,15 +278,260 @@ A backup of the old implementation is stored at:
 /opt/projects/koi-infrastructure-backup-[date].tar.gz
 ```
 
+## KOI Knowledge Graph Visualization (New - January 2025)
+
+### Overview
+A comprehensive web-based knowledge graph visualization system has been implemented, providing interactive exploration of the KOI knowledge base through SPARQL queries and visual interfaces.
+
+### Architecture
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   React Web UI │    │  Django REST API│    │ Apache Jena     │
+│   (Frontend)    │────│   (Backend)     │────│ Fuseki SPARQL   │
+│   Port 5173     │    │   Port 8000     │    │   Port 3030     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌─────────────────┐
+                    │   PostgreSQL    │
+                    │  (Query Cache)  │
+                    │   Port 5432     │
+                    └─────────────────┘
+```
+
+### Components
+
+#### Frontend (React)
+- **Location**: `/Users/darrenzal/projects/RegenAI/GAIA/packages/client/src/routes/koi/`
+- **URL**: `http://localhost:5173/koi` (development) / `https://regen.gaiaai.xyz/koi` (production)
+- **Features**:
+  - **Natural Language Query Interface**: Convert English questions to SPARQL
+  - **SPARQL Editor**: Direct SPARQL query execution with syntax validation
+  - **Graph Explorer**: Interactive Sigma.js network visualization (6 nodes, 5 edges)
+  - **Essence Radar**: D3.js radar chart showing essence alignments (Re-Whole Value, Nest Caring, Harmonize Agency)
+  - **Tabbed Interface**: Organized navigation between different visualization modes
+
+#### Backend API (Django)
+- **Location**: `/Users/darrenzal/projects/RegenAI/GAIA/django_admin/koi_graph/`
+- **Endpoints**:
+  - `/api/koi/nl-query/` - Natural language to SPARQL conversion and execution
+  - `/api/koi/sparql/` - Direct SPARQL query execution
+  - `/api/koi/graph-data/` - Graph visualization data (✅ IMPLEMENTED - returns real SPARQL data)
+  - `/api/koi/essence-data/` - Essence alignment visualization data
+  - `/api/koi/health/` - Service health check
+
+#### SPARQL Triplestore (Apache Jena Fuseki)
+- **Service**: Apache Jena Fuseki
+- **Port**: 3030
+- **Dataset**: `/koi`
+- **Data**: RDF triples from sample-koi-data.ttl with documents, concepts, processes, and essence alignments
+- **Query Endpoint**: `http://fuseki:3030/koi/sparql`
+- **Update Endpoint**: `http://fuseki:3030/koi/update`
+
+### Key Features
+
+#### Natural Language to SPARQL
+- **Model**: OpenAI GPT-4 for query generation
+- **Ontology-Aware**: Uses KOI ontology structure for accurate query generation
+- **Validation**: Syntax validation before execution
+- **Caching**: PostgreSQL-based result caching for performance
+
+#### Real Data Integration (✅ WORKING)
+- **Status**: Successfully implemented - backend API now returns real SPARQL data from Apache Jena Fuseki
+- **Sample Data**: 50 RDF triples including:
+  - 3 Document entities with titles and essence alignment scores
+  - 3 Concept entities (Regenerative Agriculture, Carbon Sequestration, Ecosystem Health)
+  - 2 Metabolic Process entities (Soil Carbon Enhancement, Biodiversity Restoration)
+  - Relationship mappings between all entities
+- **Query Results**: Graph Explorer displays 6 nodes and 5 edges from real triplestore data
+
+#### Visualization Components
+- **Sigma.js Graph**: Interactive network visualization with node clustering and edge relationships
+- **D3.js Essence Radar**: Three-axis radar chart showing alignment scores for KOI essence types
+- **Mock Data Fallbacks**: Graceful fallback to test data when APIs unavailable
+
+### Data Model
+
+#### RDF Ontology
+```turtle
+@prefix koi: <http://koi.regen.network/ontology/> .
+@prefix regen: <http://regen.network/ontology#> .
+
+# Essence Alignments
+koi:hasEssenceAlignment [
+    koi:essenceType "Re-Whole Value" ;
+    koi:alignmentScore 0.89
+] .
+
+# Entity Relationships  
+regen:connects <concept> .
+regen:relatesTo <process> .
+```
+
+#### Essence Types
+- **Re-Whole Value**: Alignment with regenerative wholeness principles
+- **Nest Caring**: Alignment with caring and nurturing approaches  
+- **Harmonize Agency**: Alignment with collaborative agency and harmony
+
+### API Documentation
+
+#### Natural Language Query
+```bash
+curl -X POST http://localhost:8000/api/koi/nl-query/ \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Show me documents about regenerative agriculture"}'
+```
+
+#### Direct SPARQL Query
+```bash
+curl -X POST http://localhost:8000/api/koi/sparql/ \
+  -H "Content-Type: application/json" \
+  -d '{"query": "SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10"}'
+```
+
+#### Graph Visualization Data
+```bash
+curl "http://localhost:8000/api/koi/graph-data/?max_nodes=100&depth=2"
+```
+
+### Development Setup
+
+#### Prerequisites
+- Bun v1.2.15+ (for React frontend)
+- Python 3.10+ with Poetry (for Django backend)
+- Docker (for Apache Jena Fuseki)
+- OpenAI API key (for natural language processing)
+
+#### Quick Start
+```bash
+# 1. Start Apache Jena Fuseki
+docker run -d --name fuseki-koi -p 3030:3030 \
+  apache/jena-fuseki:latest /jena-fuseki/run --file /tmp/koi-data.ttl /koi
+
+# 2. Start Django backend
+cd django_admin
+poetry install
+poetry run python manage.py migrate
+poetry run python manage.py runserver 8000
+
+# 3. Start React frontend  
+cd packages/client
+bun install
+bun run dev  # Starts on port 5173
+
+# 4. Access KOI visualization
+open http://localhost:5173/koi
+```
+
+#### Load Sample Data
+```bash
+# Load sample RDF data into Fuseki
+curl -X POST http://localhost:3030/koi/data \
+  -H "Content-Type: text/turtle" \
+  --data-binary @sample-koi-data.ttl
+```
+
+### Implementation Status
+
+#### ✅ Completed (Phase 1)
+- Django koi_graph app with models, services, views, URLs
+- React KOI page with tabbed interface and components
+- SPARQL service integration with Apache Jena Fuseki
+- Graph visualization with real data from triplestore
+- Mock data fallbacks for testing
+- Natural language query interface (UI ready)
+- SPARQL editor interface (UI ready)
+- Sample RDF data with 50 triples
+
+#### 🔄 In Progress (Phase 2)
+- Connect natural language interface to Django NL-to-SPARQL service
+- Connect SPARQL editor to Django SPARQL execution service
+- Implement essence radar visualization with real alignment data
+
+#### 📋 Planned (Phase 3)
+- Advanced Sigma.js features (clustering, filtering, search)
+- Provenance timeline visualization
+- Real-time query performance metrics
+- SPARQL query builder interface
+- Export functionality (JSON, CSV, RDF)
+
+### Configuration
+
+#### Environment Variables
+```bash
+# Django Backend
+KOI_SPARQL_ENDPOINT=http://fuseki:3030/koi/sparql
+KOI_SPARQL_UPDATE_ENDPOINT=http://fuseki:3030/koi/update
+KOI_SPARQL_TIMEOUT=30
+OPENAI_API_KEY=your-openai-key
+
+# React Frontend
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+#### Docker Compose Integration
+```yaml
+services:
+  fuseki:
+    image: apache/jena-fuseki:latest
+    ports:
+      - "3030:3030"
+    command: ["/jena-fuseki/run", "--file", "/tmp/sample-data.ttl", "/koi"]
+    
+  django-koi:
+    build: ./django_admin
+    ports:
+      - "8000:8000" 
+    depends_on:
+      - fuseki
+      - postgres
+```
+
+### Troubleshooting
+
+#### Common Issues
+
+**SPARQL Connection Errors**
+```bash
+# Check Fuseki service
+curl http://localhost:3030/$/ping
+
+# Test SPARQL endpoint
+curl -X POST http://localhost:3030/koi/sparql \
+  -H "Content-Type: application/sparql-query" \
+  -d "SELECT (COUNT(*) as ?count) WHERE { ?s ?p ?o }"
+```
+
+**Frontend API Errors**
+```bash
+# Check Django service
+curl http://localhost:8000/api/koi/health/
+
+# Verify CORS settings in django_admin/settings.py
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
+```
+
+**Graph Visualization Issues**
+- **No nodes displayed**: Check browser console for API errors
+- **Sigma.js errors**: Verify D3.js and Sigma.js dependencies loaded
+- **Mock data shown**: API endpoints not available, using fallback data
+
+### Related Files
+- `/Users/darrenzal/projects/RegenAI/GAIA/sample-koi-data.ttl` - Sample RDF data
+- `/Users/darrenzal/projects/RegenAI/GAIA/django_admin/koi_graph/` - Backend API implementation
+- `/Users/darrenzal/projects/RegenAI/GAIA/packages/client/src/routes/koi/` - Frontend implementation
+
 ## Future Enhancements
 
-### Planned Features
+### Planned Features  
 - Real-time processing status updates via WebSocket
 - Content source analytics dashboard
 - Agent performance metrics visualization
-- Knowledge graph visualization
-- Automated content deduplication
 - Multi-agent collaboration tracking
+- Knowledge graph expansion with production data
+- Advanced SPARQL query optimization
 
 ### Monitoring Integration
 - OpenTelemetry support for metrics

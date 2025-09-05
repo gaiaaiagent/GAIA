@@ -1,0 +1,1 @@
+# Django migrations for KOI Graph app

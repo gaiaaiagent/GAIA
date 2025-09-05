@@ -26,6 +26,7 @@ import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet';
 import { Button } from './components/ui/button';
 import CreateGroupPage from './routes/group-new';
 import AgentSettingsRoute from './routes/agent-settings';
+import KOIPage from './routes/koi';
 import clientLogger from '@/lib/logger';
 
 // Create a query client with optimized settings
@@ -182,6 +183,14 @@ function AppContent() {
                     <div className="w-full md:max-w-4xl">
                       <EnvSettings />
                     </div>
+                  </div>
+                }
+              />
+              <Route
+                path="koi"
+                element={
+                  <div className="flex-1 min-h-0 overflow-hidden">
+                    <KOIPage />
                   </div>
                 }
               />

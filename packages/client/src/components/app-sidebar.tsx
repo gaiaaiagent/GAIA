@@ -38,7 +38,7 @@ import {
 import { useDeleteChannel } from '@/hooks/use-query-hooks';
 import clientLogger from '@/lib/logger'; // Added import
 import { useQueryClient } from '@tanstack/react-query'; // Import useQueryClient
-import { Book, Cog, Plus, TerminalIcon, Trash2, Users } from 'lucide-react'; // Added Hash for channels
+import { Book, Cog, Network, Plus, TerminalIcon, Trash2, Users } from 'lucide-react'; // Added Hash for channels
 import { useMemo, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'; // Added useNavigate
 import {
@@ -642,6 +642,7 @@ export function AppSidebar({
         {/* ---------- footer ---------- */}
         <SidebarFooter className="px-2 py-4">
           <SidebarMenu>
+            <FooterLink to="/koi" Icon={Network} label="Graph" />
             <FooterLink to="https://eliza.how/" Icon={Book} label="Documentation" />
             <FooterLink to="/logs" Icon={TerminalIcon} label="Logs" />
             <FooterLink to="/settings" Icon={Cog} label="Settings" />
