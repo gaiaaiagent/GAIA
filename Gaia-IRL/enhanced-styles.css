@@ -1,0 +1,450 @@
+/* Enhanced Grant Application Styles with AI Suggestions */
+
+/* Keep existing styles and add these enhancements */
+
+/* Success Celebration Overlay */
+.success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.success-overlay.show {
+    opacity: 1;
+}
+
+.success-modal {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.success-overlay.show .success-modal {
+    transform: scale(1);
+}
+
+.success-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.success-content h2 {
+    color: #42d4aa;
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.application-id {
+    background: #f0f0f0;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 15px 0;
+    font-family: monospace;
+}
+
+.success-message {
+    color: #666;
+    margin: 20px 0;
+}
+
+.success-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.success-actions button {
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #42d4aa, #5fe4c0);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+/* Confetti Animation */
+.confetti-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+    animation: confetti-fall 3s linear forwards;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Chat Suggestion Action Buttons */
+.chat-suggestion-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.chat-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chat-accept-btn {
+    background: linear-gradient(135deg, #42d4aa, #5fe4c0);
+    color: white;
+}
+
+.chat-accept-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.chat-reject-btn {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.chat-reject-btn:hover {
+    background: #e0e0e0;
+}
+
+.agent-message .message-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Form Field Highlighting */
+.form-group {
+    transition: all 0.3s ease;
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.form-group.highlighted {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+}
+
+.form-group.has-suggestion {
+    padding-bottom: 150px; /* Space for suggestion box */
+}
+
+/* Suggestion Box */
+.suggestion-box {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: white;
+    border: 2px solid #42d4aa;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    animation: slideIn 0.3s ease;
+    z-index: 10;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.suggestion-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #42d4aa;
+}
+
+.suggestion-icon {
+    font-size: 18px;
+    animation: sparkle 2s infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.suggestion-content {
+    background: #f7fafc;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    color: #2d3748;
+    line-height: 1.6;
+}
+
+.suggestion-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.suggestion-actions button {
+    flex: 1;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.accept-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.accept-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.edit-btn {
+    background: linear-gradient(135deg, #42d4aa 0%, #5fe4c0 100%);
+    color: white;
+}
+
+.edit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.reject-btn {
+    background: #e2e8f0;
+    color: #64748b;
+}
+
+.reject-btn:hover {
+    background: #cbd5e1;
+}
+
+/* Chat Enhancements */
+.chat-message {
+    margin-bottom: 15px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.chat-message.has-suggestion-indicator {
+    position: relative;
+}
+
+.suggestion-indicator {
+    display: inline-block;
+    margin-right: 6px;
+    animation: sparkle 2s infinite;
+}
+
+.message-timestamp {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.chat-message.system-message {
+    background: #f1f5f9;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #64748b;
+    text-align: center;
+    margin: 10px 20px;
+}
+
+/* Progress Indicator */
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #e2e8f0;
+    z-index: 100;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #42d4aa 0%, #5fe4c0 100%);
+    transition: width 0.5s ease;
+}
+
+/* Field Focus Effects */
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #42d4aa;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group.highlighted input,
+.form-group.highlighted textarea,
+.form-group.highlighted select {
+    background: white;
+    border-color: #42d4aa;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .chat-section {
+        width: 100%;
+        height: 400px;
+        margin-bottom: 20px;
+    }
+    
+    .form-section {
+        width: 100%;
+    }
+    
+    .suggestion-box {
+        position: relative;
+        bottom: auto;
+        left: 0;
+        right: 0;
+        margin-top: 10px;
+    }
+    
+    .form-group.has-suggestion {
+        padding-bottom: 20px;
+    }
+}
+
+/* Completion Badge */
+.completion-badge {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    display: none;
+    animation: bounceIn 0.5s ease;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.completion-badge.show {
+    display: block;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: inline-block;
+}
+
+.typing-indicator span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #42d4aa;
+    margin: 0 2px;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-indicator span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1);
+    }
+}

@@ -11,6 +11,7 @@ services:
       - '80:80' # Main web access
       - '443:443' # HTTPS access
     volumes:
+      - ./Gaia-IRL:/opt/projects/GAIA/Gaia-IRL:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - django-static:/app/staticfiles:ro
     depends_on:
