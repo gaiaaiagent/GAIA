@@ -1,0 +1,193 @@
+{% extends "admin/base_site.html" %}
+{% load static dict_extras %}
+
+{% block title %}Interaction Report{% endblock %}
+
+{% block extrastyle %}
+<style>
+  /* Fix text colors */
+  table {
+    background: white !important;
+    color: #333 !important;
+  }
+  table th {
+    background: #f0f0f0 !important;
+    color: #333 !important;
+  }
+  table td {
+    color: #333 !important;
+    background: white !important;
+  }
+  table tr {
+    background: white !important;
+    color: #333 !important;
+  }
+  table tfoot tr {
+    background: #f9f9f9 !important;
+    color: #333 !important;
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    body.theme-auto table,
+    body.theme-dark table {
+      background: #1e1e1e !important;
+      color: #ddd !important;
+    }
+    body.theme-auto table th,
+    body.theme-dark table th {
+      background: #2b2b2b !important;
+      color: #ddd !important;
+    }
+    body.theme-auto table td,
+    body.theme-dark table td {
+      color: #ddd !important;
+      background: #1e1e1e !important;
+    }
+    body.theme-auto table tr,
+    body.theme-dark table tr {
+      background: #1e1e1e !important;
+      color: #ddd !important;
+    }
+    body.theme-auto table tfoot tr,
+    body.theme-dark table tfoot tr {
+      background: #2b2b2b !important;
+      color: #ddd !important;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">Home</a>
+  &rsaquo; <a href="{% url 'reporting:dashboard' %}">Dashboard</a>
+  &rsaquo; Interaction Report
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Interaction Report</h1>
+
+<form method="get" style="margin-bottom: 20px">
+  <label for="days">Time Period:</label>
+  <select name="days" id="days" onchange="this.form.submit()">
+    <option value="1" {% if days == 1 %}selected{% endif %}>Last 24 hours</option>
+    <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 days</option>
+    <option value="14" {% if days == 14 %}selected{% endif %}>Last 14 days</option>
+    <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 days</option>
+  </select>
+</form>
+
+<h2>Daily Interaction Statistics</h2>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 30px">
+  <thead>
+    <tr style="background: #f0f0f0">
+      <th style="padding: 10px; text-align: left">Date</th>
+      <th style="padding: 10px; text-align: right">Memories</th>
+      <th style="padding: 10px; text-align: right">Messages</th>
+      <th style="padding: 10px; text-align: right">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for stat in daily_stats %}
+    <tr>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd">{{ stat.date }}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right">
+        {{ stat.memories }}
+      </td>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right">
+        {{ stat.messages }}
+      </td>
+      <td
+        style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right; font-weight: bold"
+      >
+        {{ stat.total }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr style="background: #f9f9f9; font-weight: bold">
+      <td style="padding: 10px">Total</td>
+      <td style="padding: 10px; text-align: right">-</td>
+      <td style="padding: 10px; text-align: right">-</td>
+      <td style="padding: 10px; text-align: right">-</td>
+    </tr>
+  </tfoot>
+</table>
+
+<h2>Platform Breakdown</h2>
+{% if platform_stats %}
+<table style="width: 50%; border-collapse: collapse; margin-bottom: 30px">
+  <thead>
+    <tr style="background: #f0f0f0">
+      <th style="padding: 10px; text-align: left">Platform</th>
+      <th style="padding: 10px; text-align: right">Room Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for platform in platform_stats %}
+    <tr>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd">
+        {{ platform.source|default:"Unknown" }}
+      </td>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right">
+        {{ platform.count }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No platform data available.</p>
+{% endif %}
+
+<h2>Recent Memories (Last 50)</h2>
+<table style="width: 100%; border-collapse: collapse">
+  <thead>
+    <tr style="background: #f0f0f0">
+      <th style="padding: 10px; text-align: left">Time</th>
+      <th style="padding: 10px; text-align: left">Type</th>
+      <th style="padding: 10px; text-align: left">Content</th>
+      <th style="padding: 10px; text-align: left">Agent</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for memory in recent_memories %}
+    <tr>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd">
+        {{ memory.created_at|date:"Y-m-d H:i:s" }}
+      </td>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd">{{ memory.type }}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd">
+        {{ memory.content|truncatewords:20 }}
+      </td>
+      <td style="padding: 10px; border-bottom: 1px solid #ddd">
+        {{ memory.agent_id|slice:":8" }}...
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4" style="padding: 20px; text-align: center">No recent memories found.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div style="margin-top: 30px">
+  <a
+    href="{% url 'reporting:dashboard' %}"
+    class="button"
+    style="
+      padding: 10px 20px;
+      background: #666;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    "
+    >Back to Dashboard</a
+  >
+</div>
+
+{% endblock %}

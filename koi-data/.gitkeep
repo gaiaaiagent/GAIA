@@ -1,0 +1,3 @@
+# KOI Data Directory
+# This directory is used for staging RDF data files for Apache Jena Fuseki
+# Place your knowledge graph TTL/RDF files here for loading into the triplestore

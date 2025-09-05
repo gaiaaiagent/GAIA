@@ -265,22 +265,29 @@ grep "Telegram" /tmp/agents.log | tail -10
 
 ### Token Management
 
-⚠️ **NEVER commit tokens to Git!**
+⚠️ **NEVER commit real tokens to Git!**
 
-1. **Use `.env` file** (added to `.gitignore`)
-2. **Store in character `secrets` section** (use placeholders in templates)
-3. **Use environment variables** for CI/CD
-4. **Rotate tokens regularly**
+**GitHub Repository Setup:**
+- Character files use placeholders: `"${TELEGRAM_BOT_TOKEN_ADVOCATE}"`
+- Real tokens stored in `.env` file (gitignored)
+- Production server can use real tokens in character files
 
 ### Secure Storage Options
 
 ```bash
-# Option 1: Character file secrets (Recommended for production)
+# Option 1: Environment variables in .env file (RECOMMENDED)
+# Create .env from .env.example and add real tokens:
+TELEGRAM_BOT_TOKEN_ADVOCATE=8280814835:AAE...
+TELEGRAM_BOT_TOKEN_GOVERNOR=8058793609:AAG...
+TELEGRAM_BOT_TOKEN_NARRATIVE=7413348697:AAG...
+TELEGRAM_BOT_TOKEN_VOICEOFNATURE=8258974878:AAF...
+
+# Option 2: Direct in character file (production server only)
 "secrets": {
   "TELEGRAM_BOT_TOKEN": "actual-token-here"
 }
 
-# Option 2: Environment variables
+# Option 3: Runtime environment variable
 export TELEGRAM_BOT_TOKEN="actual-token-here"
 
 # Option 3: .env file (for development)
