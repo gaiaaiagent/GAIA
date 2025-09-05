@@ -1100,3 +1100,70 @@ If you see agents with unrealistic statistics (e.g., 13K+ pending):
 *For detailed operations, see `docs/AGENT-OPERATIONS.md`*
 *For plugin development, see `docs/PLUGIN-DEVELOPMENT.md`*
 *For contract details, see `docs/CONTRACT-JDA.md`*
+## 🌍 KOI Knowledge Graph Visualization (September 2025)
+
+### Complete Setup Successfully Deployed!
+
+The KOI knowledge graph visualization is now fully integrated with ElizaOS at https://regen.gaiaai.xyz/
+
+**Key Components:**
+- **Apache Jena Fuseki** - SPARQL triplestore with 3,900+ triples (port 3030)
+- **KOI API Server** - Flask API connecting frontend to Fuseki (port 8001)
+- **React Frontend** - Interactive graph visualization with D3.js
+- **Nginx Proxy** - HTTPS access with `/api/koi/` endpoint
+
+**Access Points:**
+- Graph button in sidebar footer (Network icon)
+- Direct URLs: `/koi` or `/KOI` (case-insensitive)
+- API: `https://regen.gaiaai.xyz/api/koi/health/`
+
+**Critical Setup Notes:**
+1. **Client Build Location**: ElizaOS serves from `packages/server/dist/client/`, NOT `packages/client/dist/`
+   - Always copy after building: `cp -r packages/client/dist/* packages/server/dist/client/`
+2. **Fuseki Persistence**: Use Docker volume and `tdb2` type (not `mem`)
+3. **Full Bun Path**: Use `/home/darren/.bun/bin/bun` on production server
+4. **API Endpoints**: Use relative paths (`/api/koi/`) in production
+
+**Quick Start:**
+```bash
+# Start Fuseki
+docker run -d --name fuseki-koi -p 3030:3030 -v fuseki-data:/fuseki stain/jena-fuseki
+
+# Start KOI API
+screen -dmS koi-api bash -c 'cd koi-data && python3 koi_api_server.py'
+
+# Build and deploy client
+cd packages/client && bun vite build
+cp -r dist/* ../server/dist/client/
+
+# Start agents
+/home/darren/.bun/bin/bun packages/cli/dist/index.js start --character characters/*.character.json
+```
+
+See `docs/KOI-SETUP-GUIDE.md` for complete installation and troubleshooting guide.
+
+
+## 🔐 Security Configuration (September 2025)
+
+### Environment Variables
+All sensitive configuration (API keys, bot tokens, passwords) should be stored in `.env` file, NOT in scripts.
+
+**Setup:**
+1. Copy `.env.example` to `.env`
+2. Fill in your actual values
+3. Never commit `.env` to git
+
+**Scripts automatically load from .env:**
+- `start-all-agents-single-process.sh`
+- `start-all-agents-with-telegram.sh`
+- `start-all-agents-no-telegram.sh`
+
+All startup scripts now use `source .env` to load environment variables securely.
+
+### Required Environment Variables:
+- Telegram bot tokens for each agent
+- OpenAI/Anthropic API keys
+- Database credentials
+- JWT/Session secrets
+
+See `.env.example` for complete list.

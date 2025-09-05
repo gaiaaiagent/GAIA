@@ -1,62 +1,30 @@
 #!/bin/bash
 
-# Simple agent startup without Telegram
-cd /opt/projects/GAIA
-
-echo "🚀 Starting all agents without Telegram..."
-
-# Check if character files exist
-if [ ! -f "/opt/projects/GAIA/characters/regenai.character.json" ]; then
-    echo "❌ Error: Character files not found!"
-    echo ""
-    echo "   You need to configure character files first:"
-    echo "   ./scripts/setup-characters.sh"
-    echo ""
-    echo "   Choose option 3 for web-only mode (no Telegram)"
-    echo ""
+# Load environment variables (but ignore telegram tokens)
+if [ -f .env ]; then
+    set -a
+    source .env
+    set +a
+    # Unset telegram tokens
+    unset $(env | grep TELEGRAM | cut -d= -f1)
+else
+    echo "Error: .env file not found!"
     exit 1
 fi
 
-# Kill existing agents
-pkill -f 'packages/cli/dist/index.js start' 2>/dev/null || true
-sleep 2
+echo "Starting All RegenAI Agents (No Telegram)"
+echo "========================================="
 
-# Database connection
-export POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza
+# Kill any existing agents
+pkill -f 'packages/cli/dist/index.js' 2>/dev/null
 
-# Start each agent
-echo "Starting RegenAI on port 3000..."
-PORT=3000 bun packages/cli/dist/index.js start --character /opt/projects/GAIA/characters/regenai.character.json > /opt/projects/GAIA/logs/regenai.log 2>&1 &
-sleep 2
+# Start all agents without telegram
+/home/darren/.bun/bin/bun packages/cli/dist/index.js start \
+  --character characters/regenai.character.json \
+  --character characters/advocate.character.json \
+  --character characters/governor.character.json \
+  --character characters/narrative.character.json \
+  --character characters/voiceofnature.character.json \
+  2>&1 | tee logs/all-agents-no-telegram.log &
 
-echo "Starting Advocate on port 3001..."
-PORT=3001 bun packages/cli/dist/index.js start --character /opt/projects/GAIA/characters/advocate.character.json > /opt/projects/GAIA/logs/advocate.log 2>&1 &
-sleep 2
-
-echo "Starting Voice of Nature on port 3002..."
-PORT=3002 bun packages/cli/dist/index.js start --character /opt/projects/GAIA/characters/voiceofnature.character.json > /opt/projects/GAIA/logs/voiceofnature.log 2>&1 &
-sleep 2
-
-echo "Starting Governor on port 3003..."
-PORT=3003 bun packages/cli/dist/index.js start --character /opt/projects/GAIA/characters/governor.character.json > /opt/projects/GAIA/logs/governor.log 2>&1 &
-sleep 2
-
-echo "Starting Narrative on port 3004..."
-PORT=3004 bun packages/cli/dist/index.js start --character /opt/projects/GAIA/characters/narrative.character.json > /opt/projects/GAIA/logs/narrative.log 2>&1 &
-sleep 2
-
-echo ""
-echo "✅ All agents started without Telegram!"
-echo ""
-echo "📊 Agent Status:"
-ps aux | grep -E "bun.*packages/cli/dist/index.js start" | grep -v grep
-
-echo ""
-echo "🌐 Web UI Access: https://regen.gaiaai.xyz/"
-echo ""
-echo "📝 Monitor logs:"
-echo "tail -f /opt/projects/GAIA/logs/regenai.log"
-echo "tail -f /opt/projects/GAIA/logs/advocate.log"
-echo "tail -f /opt/projects/GAIA/logs/voiceofnature.log"
-echo "tail -f /opt/projects/GAIA/logs/governor.log"
-echo "tail -f /opt/projects/GAIA/logs/narrative.log"
+echo "All agents started (web-only mode)"
