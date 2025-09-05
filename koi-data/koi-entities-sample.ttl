@@ -1,0 +1,199 @@
+@prefix koi: <http://koi.network/ontology#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix regen: <http://regen.network/ontology#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<orn:regen.document:soundcloud_1379120071_1> regen:alignsWith "Nest Caring" .
+
+<orn:regen.document:soundcloud_1458432457_0> regen:alignsWith "Re-Whole Value" .
+
+<orn:regen.document:soundcloud_1458432457_2> regen:alignsWith "Re-Whole Value" .
+
+<orn:regen.document:soundcloud_935957083_0> prov:wasAttributedTo "mistral-production-v1" .
+
+<orn:regen.document:soundcloud_935957083_1> rdfs:label "Episode 35: Alnoor Ladha | Sacred Activism: Towards a Brave Earth" .
+
+<orn:regen.document:website_cccf67665ae459a7_0> prov:wasAttributedTo "mistral-production-v1" .
+
+<orn:regen.document:website_cccf67665ae459a7_1> regen:alignsWith "Re-Whole Value" ;
+    prov:generatedAtTime "2025-09-03T06:50:34.923908+00:00"^^xsd:dateTime .
+
+<orn:regen.github:github_7b566b651ea250b1_1> rdfs:label "License" ;
+    koi:ontologyVersion <cid:sha256:e002e2e94b5cc9057e16fe0173854c88af1d1ba307986c0337066ddcbfdeb4a7> .
+
+<orn:regen.github:github_9c7d5998761f8f53_3> prov:wasAttributedTo "mistral-production-v1" .
+
+<orn:regen.github:github_c83580a64edd9671_0> rdfs:label "regen-network" .
+
+<orn:regen.medium:medium_042c8e2fa665c7e7_0> rdfs:label "Regen Network" ;
+    prov:wasGeneratedBy <orn:regen.ontology:unified-v1> .
+
+<orn:regen.medium:medium_6f8554debe249195_0> rdfs:label "Regen Network" .
+
+<orn:regen.medium:medium_b28d5da8e68fb4c2_1> a regen:SemanticAsset .
+
+<orn:regen.medium:medium_d87cc049e1c7a9d8_1> regen:alignsWith "Harmonize Agency" .
+
+<orn:regen.medium:medium_e71a8cd939b99352_0> regen:alignsWith "Re-Whole Value" .
+
+<orn:regen.notion:046__Jonathan_Ledgard___Interspecies_Money_4850e9c4_0> regen:alignsWith "Harmonize Agency" .
+
+<orn:regen.notion:046__Jonathan_Ledgard___Interspecies_Money_4850e9c4_8> prov:wasAttributedTo "mistral-production-v1" ;
+    prov:wasGeneratedBy <orn:regen.ontology:unified-v1> .
+
+<orn:regen.notion:046__Jonathan_Ledgard___Interspecies_Money_4850e9c4_9> prov:wasGeneratedBy <orn:regen.ontology:unified-v1> .
+
+<orn:regen.notion:Copy_of__6a37885d_0> a regen:Agent .
+
+<orn:regen.notion:Copy_of__6a37885d_1> prov:wasGeneratedBy <orn:regen.ontology:unified-v1> .
+
+<orn:regen.notion:Ep_45__TMO_7020bb4f_1> rdfs:label "Ep 45: TMO" .
+
+<orn:regen.notion:Ep__53__Revathi_Kollegala_8d2eab10_0> prov:wasGeneratedBy <orn:regen.ontology:unified-v1> .
+
+<orn:regen.notion:Explore_partnerships___scope_of_work_IXO__curve_la_f9599587_4> a regen:Organization .
+
+<orn:regen.notion:Improve_SOC_seq__global_database__TSIP__Skidmore___4cc37be2_1> prov:generatedAtTime "2025-09-03T06:47:57.627198+00:00"^^xsd:dateTime .
+
+<orn:regen.notion:KOI_Repo_Guide_1d725b77> rdfs:label "KOI_Repo_Guide_1d725b77.md" .
+
+<orn:regen.notion:Leandro__ML_specialist__Tom_Hengle_team_-_Brazil__037d5cf3_4> regen:alignsWith "Re-Whole Value" .
+
+<orn:regen.notion:Managing_Hub_and_KOI_0> prov:generatedAtTime "2025-09-03T06:41:22.019223+00:00"^^xsd:dateTime .
+
+<orn:regen.notion:OIE_Organizaci_n_Mundial_de_Sanidad_Animal__World__066d6546_0> a regen:Agent .
+
+<orn:regen.notion:OIE_Organizaci_n_Mundial_de_Sanidad_Animal__World__066d6546_1> koi:ontologyVersion <cid:sha256:e002e2e94b5cc9057e16fe0173854c88af1d1ba307986c0337066ddcbfdeb4a7> .
+
+<orn:regen.notion:PRP_Production_Steps_2> a regen:Organization .
+
+<orn:regen.notion:PRP_Production_Steps_3> regen:alignsWith "Re-Whole Value" .
+
+<orn:regen.notion:PRP_Production_Steps_4> a regen:Organization .
+
+<orn:regen.notion:PRP_Production_Steps_8> regen:alignsWith "Harmonize Agency" .
+
+<orn:regen.notion:Public_Comment_Period_of_the_CarbonPlus_e5a0d49b_0> koi:ontologyVersion <cid:sha256:e002e2e94b5cc9057e16fe0173854c88af1d1ba307986c0337066ddcbfdeb4a7> .
+
+<orn:regen.notion:Registry_2_0_5f689685_1> regen:alignsWith "Re-Whole Value" .
+
+<orn:regen.notion:Ruuts_story_telling_and_project_key_info__a2879814_1> prov:wasDerivedFrom "/Users/darrenzal/projects/RegenAI/GAIA/data/notion/storage/pages/Ruuts_story_telling_and_project_key_info__a2879814.md" .
+
+<orn:regen.notion:Sampling_Methodology_Section_Review__451b530b_0> prov:generatedAtTime "2025-09-03T06:49:07.636978+00:00"^^xsd:dateTime .
+
+<orn:regen.notion:Token_Fee_Split_1_0_abfd0e51_12> prov:wasAttributedTo "mistral-production-v1" .
+
+<orn:regen.notion:Token_Fee_Split_1_0_abfd0e51_6> regen:alignsWith "Re-Whole Value" .
+
+<orn:regen.notion:Token_Fee_Split_1_0_abfd0e51_8> prov:wasAttributedTo "mistral-production-v1" .
+
+<orn:regen.notion:Treasury_Wine_Estate_46f50701_1> rdfs:label "Treasury Wine Estate" .
+
+<orn:regen.notion:Treasury_Wine_Estate_46f50701_3> prov:generatedAtTime "2025-09-03T06:32:11.819114+00:00"^^xsd:dateTime .
+
+<orn:regen.notion:Treasury_Wine_Estate_46f50701_4> prov:wasAttributedTo "mistral-production-v1" .
+
+<orn:regen.notion:Untitled_1dd25b77_2> koi:ontologyVersion <cid:sha256:e002e2e94b5cc9057e16fe0173854c88af1d1ba307986c0337066ddcbfdeb4a7> .
+
+<orn:regen.notion:Untitled_1ea25b77_2> regen:alignsWith "Re-Whole Value" .
+
+<orn:regen.notion:Untitled_1f825b77_0> prov:wasGeneratedBy <orn:regen.ontology:unified-v1> .
+
+<orn:regen.notion:Untitled_1fb25b77_1> prov:generatedAtTime "2025-09-03T06:31:15.527808+00:00"^^xsd:dateTime .
+
+<orn:regen.notion:Untitled_1fb25b77_2> a regen:EcologicalAsset .
+
+<orn:regen.notion:Untitled_1fb25b77_3> prov:wasGeneratedBy <orn:regen.ontology:unified-v1> .
+
+<orn:regen.notion:Untitled_20025b77_1> prov:generatedAtTime "2025-09-03T06:34:58.933175+00:00"^^xsd:dateTime .
+
+<orn:regen.notion:Untitled_20025b77_2> regen:alignsWith "Harmonize Agency" .
+
+<orn:regen.notion:Untitled_20825b77_0> regen:alignsWith "Nest Caring" .
+
+<orn:regen.notion:Untitled_20825b77_1> prov:generatedAtTime "2025-09-03T06:56:35.225176+00:00"^^xsd:dateTime .
+
+<orn:regen.notion:Untitled_21025b77_0> prov:wasAttributedTo "mistral-production-v1" .
+
+<orn:regen.notion:Untitled_5c4b87b2_1> prov:generatedAtTime "2025-09-03T06:54:21.089451+00:00"^^xsd:dateTime .
+
+<orn:regen.notion:Untitled_5c4b87b2_3> prov:wasDerivedFrom "/Users/darrenzal/projects/RegenAI/GAIA/data/notion/storage/pages/Untitled_5c4b87b2.md" .
+
+<orn:regen.notion:Untitled_c5e49135_1> a regen:SemanticAsset .
+
+<orn:regen.notion:Untitled_d3518403_2> koi:ontologyVersion <cid:sha256:e002e2e94b5cc9057e16fe0173854c88af1d1ba307986c0337066ddcbfdeb4a7> .
+
+<orn:regen.notion:Updated_Info_about_Grazing_Data_-_Email_from_Ben_7_1e184ffc_2> prov:wasAttributedTo "mistral-production-v1" .
+
+<orn:regen.notion:entries_0> prov:wasGeneratedBy <orn:regen.ontology:unified-v1> .
+
+<orn:regen.notion:entries_1> koi:ontologyVersion <cid:sha256:e002e2e94b5cc9057e16fe0173854c88af1d1ba307986c0337066ddcbfdeb4a7> .
+
+<orn:regen.podcast:episode_024_complete_2> rdfs:label "Moon Hooch" .
+
+<orn:regen.podcast:episode_024_complete_3> koi:ontologyVersion <cid:sha256:e002e2e94b5cc9057e16fe0173854c88af1d1ba307986c0337066ddcbfdeb4a7> .
+
+<orn:regen.podcast:episode_030_complete_0> rdfs:label "Gregory Landway" .
+
+<orn:regen.podcast:episode_030_complete_6> prov:wasGeneratedBy <orn:regen.ontology:unified-v1> .
+
+<orn:regen.podcast:episode_036_complete_0> prov:wasDerivedFrom "/Users/darrenzal/projects/RegenAI/GAIA/data/podcast/storage/podcast_complete/episode_036_complete.json" .
+
+<orn:regen.podcast:episode_036_complete_2> prov:wasDerivedFrom "/Users/darrenzal/projects/RegenAI/GAIA/data/podcast/storage/podcast_complete/episode_036_complete.json" .
+
+<orn:regen.podcast:episode_038_final_0> regen:alignsWith "Nest Caring" .
+
+<orn:regen.podcast:episode_058_final_1> prov:wasAttributedTo "mistral-production-v1" .
+
+<orn:regen.podcast:episode_058_final_5> koi:ontologyVersion <cid:sha256:e002e2e94b5cc9057e16fe0173854c88af1d1ba307986c0337066ddcbfdeb4a7> .
+
+<orn:regen.transform:019__Tom_Newmark__d00299ee_extraction> regen:toState <orn:regen.notion:019__Tom_Newmark__d00299ee_4> .
+
+<orn:regen.transform:046__Jonathan_Ledgard___Interspecies_Money_4850e9c4_extraction> regen:toState <orn:regen.notion:046__Jonathan_Ledgard___Interspecies_Money_4850e9c4_3> .
+
+<orn:regen.transform:05__Jack_Zampolin_2c81d1e6_extraction> regen:processingTime 12.331346988677979 .
+
+<orn:regen.transform:Copy_of_Shannon_Ridge_Vineyard_7b7b1780_extraction> regen:process "Extract" .
+
+<orn:regen.transform:Creating_land_page_674932e8_extraction> prov:generatedAtTime "2025-09-03T06:42:35.002985+00:00"^^xsd:dateTime .
+
+<orn:regen.transform:Develop_a_DeSci_strategy_6a8de162_extraction> prov:generatedAtTime "2025-09-03T06:49:15.988710+00:00"^^xsd:dateTime .
+
+<orn:regen.transform:GOAT_meeting__define_attendants_4481dcfd_extraction> regen:toState <orn:regen.notion:GOAT_meeting__define_attendants_4481dcfd_0> .
+
+<orn:regen.transform:Open_Science_extraction> regen:processingTime 10.768906116485596 .
+
+<orn:regen.transform:Treasury_Wine_Estate_46f50701_extraction> regen:toState <orn:regen.notion:Treasury_Wine_Estate_46f50701_0> .
+
+<orn:regen.transform:Untitled_21025b77_extraction> regen:processingTime 18.26884913444519 .
+
+<orn:regen.transform:Untitled_573aa5bd_extraction> regen:fromState "/Users/darrenzal/projects/RegenAI/GAIA/data/notion/storage/pages/Untitled_573aa5bd.md" .
+
+<orn:regen.transform:Updated_Info_about_Grazing_Data_-_Email_from_Ben_7_1e184ffc_extraction> regen:toState <orn:regen.notion:Updated_Info_about_Grazing_Data_-_Email_from_Ben_7_1e184ffc_1> .
+
+<orn:regen.transform:_Peer_Review_pipeline_in_RND__cb7ca14e_extraction> a regen:Transformation ;
+    regen:processingTime 16.569841146469116 ;
+    regen:toState <orn:regen.notion:_Peer_Review_pipeline_in_RND__cb7ca14e_1> .
+
+<orn:regen.transform:carbon_plus_upgrades_post_on_socials__24eb65c0_extraction> a regen:Transformation ;
+    regen:fromState "/Users/darrenzal/projects/RegenAI/GAIA/data/notion/storage/pages/carbon_plus_upgrades_post_on_socials__24eb65c0.md" .
+
+<orn:regen.transform:entries_extraction> regen:processingTime 16.548717975616455 .
+
+<orn:regen.transform:episode_024_complete_extraction> regen:toState <orn:regen.podcast:episode_024_complete_1> .
+
+<orn:regen.transform:episode_030_complete_extraction> regen:fromState "/Users/darrenzal/projects/RegenAI/GAIA/data/podcast/storage/podcast_complete/episode_030_complete.json" .
+
+<orn:regen.transform:episode_058_final_extraction> regen:toState <orn:regen.podcast:episode_058_final_7> .
+
+<orn:regen.transform:medium_9284cd94d6069e8b_extraction> a regen:Transformation .
+
+<orn:regen.transform:medium_d87cc049e1c7a9d8_extraction> regen:process "Extract" .
+
+<orn:regen.transform:soundcloud_891330625_extraction> regen:processingTime 12.226214170455933 .
+
+<orn:regen.notion:Treasury_Wine_Estate_46f50701_0> prov:wasGeneratedBy <orn:regen.ontology:unified-v1> .
+
+[] regen:schema "http://schema.org/" .
+
