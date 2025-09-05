@@ -6,10 +6,11 @@
     "@elizaos/plugin-sql",
     "@elizaos/plugin-ollama",
     "@elizaos/plugin-openai",
-    "@elizaos/plugin-knowledge"
+    "@elizaos/plugin-knowledge",
+        "@elizaos/plugin-telegram"
   ],
   "secrets": {
-    "TELEGRAM_BOT_TOKEN": "YOUR_TELEGRAM_BOT_TOKEN_HERE",
+    "TELEGRAM_BOT_TOKEN": "8280814835:AAE9oue7ZTGKPzVImeONCAcCJ1WBT5KICdI",
     "TELEGRAM_BOT_USERNAME": "RegenAdvocacyBot"
   },
   "settings": {

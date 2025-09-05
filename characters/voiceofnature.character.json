@@ -7,10 +7,10 @@
     "@elizaos/plugin-openai",
     "@elizaos/plugin-anthropic",
     "@elizaos/plugin-knowledge",
-    "@elizaos/plugin-telegram-disabled"
+    "@elizaos/plugin-telegram"
   ],
   "secrets": {
-    "TELEGRAM_BOT_TOKEN": "YOUR_TELEGRAM_BOT_TOKEN_HERE",
+    "TELEGRAM_BOT_TOKEN": "8258974878:AAFSAHju2RghN56i27ry5-5UEGCTAKMMBzI",
     "TELEGRAM_BOT_USERNAME": "RegenVoiceOfNatureBot"
   },
   "settings": {
