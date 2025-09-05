@@ -17,8 +17,10 @@
             margin-bottom: 30px;
         }
         
+        /* Match RegenAI dashboard colors */
         .stat-card {
-            background: white;
+            background: #f9f9f9;
+            color: #333;
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 20px;
@@ -27,19 +29,21 @@
         }
         
         .stat-card h3 {
+            color: #333;
             margin: 0 0 10px 0;
-            color: #0d47a1;
             font-size: 2.2em;
         }
         
         .stat-card p {
+            color: #333;
             margin: 0;
-            color: #666;
             font-weight: bold;
         }
         
+        /* Section cards with RegenAI styling */
         .section-card {
-            background: white;
+            background: #f9f9f9;
+            color: #333;
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 20px;
@@ -49,8 +53,8 @@
         
         .section-title {
             margin: 0 0 20px 0;
-            color: #0d47a1;
-            border-bottom: 2px solid #0d47a1;
+            color: #333;
+            border-bottom: 2px solid #417690;
             padding-bottom: 10px;
         }
         
@@ -69,8 +73,35 @@
         }
         
         .source-table th, .agent-matrix-table th, .activity-table th {
-            background-color: #f8f9fa;
+            background: #f0f0f0 !important;
+            color: #333 !important;
             font-weight: bold;
+        }
+        
+        /* RegenAI table styling */
+        .source-table, .agent-matrix-table, .activity-table {
+            background: white !important;
+            color: #333 !important;
+        }
+        
+        .source-table th, .source-table td,
+        .agent-matrix-table th, .agent-matrix-table td,
+        .activity-table th, .activity-table td {
+            color: #333 !important;
+            background: white !important;
+        }
+        
+        .source-table tr, .agent-matrix-table tr, .activity-table tr {
+            background: white !important;
+            color: #333 !important;
+        }
+        
+        .source-table a, .agent-matrix-table a, .activity-table a {
+            color: #417690 !important;
+        }
+        
+        .source-table a:hover, .agent-matrix-table a:hover, .activity-table a:hover {
+            color: #205683 !important;
         }
         
         .source-bar {
@@ -163,6 +194,66 @@
         .metric-row:last-child {
             border-bottom: none;
         }
+        
+        /* Dark mode support matching RegenAI */
+        @media (prefers-color-scheme: dark) {
+            body.theme-auto .stat-card,
+            body.theme-dark .stat-card,
+            body.theme-auto .section-card,
+            body.theme-dark .section-card {
+                background: #2b2b2b;
+                color: #ddd;
+            }
+            
+            body.theme-auto .stat-card h3,
+            body.theme-dark .stat-card h3,
+            body.theme-auto .stat-card p,
+            body.theme-dark .stat-card p,
+            body.theme-auto .section-title,
+            body.theme-dark .section-title {
+                color: #ddd;
+            }
+            
+            body.theme-auto .source-table,
+            body.theme-dark .source-table,
+            body.theme-auto .agent-matrix-table,
+            body.theme-dark .agent-matrix-table,
+            body.theme-auto .activity-table,
+            body.theme-dark .activity-table {
+                background: #1e1e1e !important;
+                color: #ddd !important;
+            }
+            
+            body.theme-auto .source-table th,
+            body.theme-dark .source-table th,
+            body.theme-auto .agent-matrix-table th,
+            body.theme-dark .agent-matrix-table th,
+            body.theme-auto .activity-table th,
+            body.theme-dark .activity-table th {
+                background: #2b2b2b !important;
+                color: #ddd !important;
+            }
+            
+            body.theme-auto .source-table td,
+            body.theme-dark .source-table td,
+            body.theme-auto .agent-matrix-table td,
+            body.theme-dark .agent-matrix-table td,
+            body.theme-auto .activity-table td,
+            body.theme-dark .activity-table td {
+                color: #ddd !important;
+                background: #1e1e1e !important;
+            }
+            
+            body.theme-auto .source-table tr,
+            body.theme-dark .source-table tr,
+            body.theme-auto .agent-matrix-table tr,
+            body.theme-dark .agent-matrix-table tr,
+            body.theme-auto .activity-table tr,
+            body.theme-dark .activity-table tr {
+                background: #1e1e1e !important;
+                color: #ddd !important;
+            }
+        }
     </style>
 {% endblock %}
 
@@ -186,9 +277,15 @@
     </script>
 {% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">Home</a>
+  &rsaquo; Knowledge Dashboard
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="dashboard-container">
-    <h1>{{ title }}</h1>
     
     <!-- High-level Statistics -->
     <div class="stats-grid">
@@ -401,29 +498,11 @@
     
     <!-- Navigation Links -->
     <div class="section-card">
-        <h2 class="section-title">Knowledge Management Tools</h2>
+        <h2 class="section-title">Knowledge Management</h2>
         
-        <p>
-            <a href="{% url 'knowledge:document_browser' %}" class="button">📄 Enhanced Document Browser</a>
-            <a href="{% url 'knowledge:processing_reports' %}" class="button">📊 Processing Reports</a>
-            <a href="{% url 'knowledge:retrieval_tester' %}" class="button">🔍 Retrieval Tester</a>
-            <a href="{% url 'knowledge:performance_monitor' %}" class="button">📈 Performance Monitor</a>
-        </p>
-        
-        <p style="margin-top: 15px;">
-            <a href="{% url 'admin:knowledge_knowledgememory_changelist' %}" class="button">Knowledge Memories</a>
-            <a href="{% url 'admin:knowledge_knowledgeembedding_changelist' %}" class="button">Embeddings</a>
-            <a href="{% url 'admin:knowledge_conversationmemory_changelist' %}" class="button">Conversations</a>
-            <a href="{% url 'admin:knowledge_agentconfiguration_changelist' %}" class="button">Agent Configurations</a>
-        </p>
-        
-        {% if processing_status %}
         <p>
             <a href="{% url 'admin:knowledge_koisource_changelist' %}" class="button">KOI Sources</a>
-            <a href="{% url 'admin:knowledge_koicontent_changelist' %}" class="button">KOI Content</a>
-            <a href="{% url 'admin:knowledge_koiprocessing_changelist' %}" class="button">KOI Processing</a>
         </p>
-        {% endif %}
     </div>
 </div>
 {% endblock %}

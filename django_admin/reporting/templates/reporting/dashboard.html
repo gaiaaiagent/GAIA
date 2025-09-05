@@ -96,6 +96,8 @@ Dashboard{% endblock %} {% block extrastyle %}
 <div class="breadcrumbs">
   <a href="{% url 'admin:index' %}">Home</a>
   &rsaquo; RegenAI Dashboard
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <a href="{% url 'knowledge:overview' %}" style="color: #417690;">📊 Knowledge Dashboard</a>
 </div>
 {% endblock %} {% block content %}
 <h1>RegenAI Dashboard</h1>

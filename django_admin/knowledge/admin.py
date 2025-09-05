@@ -30,7 +30,8 @@ from .models import (
 # Monitor query performance and usage patterns
 # ============================================================================
 
-@admin.register(KnowledgeQuery)
+# Temporarily hidden - not polished yet
+# @admin.register(KnowledgeQuery)
 class KnowledgeQueryAdmin(admin.ModelAdmin):
     list_display = ['query_preview', 'query_type', 'documents_retrieved', 'response_time_ms', 'embedding_model', 'accuracy_score', 'timestamp']
     list_filter = ['query_type', 'embedding_model', 'timestamp']
@@ -54,7 +55,8 @@ class KnowledgeQueryAdmin(admin.ModelAdmin):
 # Read-only interfaces for viewing what agents actually see
 # ============================================================================
 
-@admin.register(KnowledgeMemory)
+# Temporarily hidden - not polished yet
+# @admin.register(KnowledgeMemory)
 class KnowledgeMemoryAdmin(admin.ModelAdmin):
     """Admin interface for viewing ElizaOS knowledge memories"""
     list_display = ['id_short', 'type', 'text_preview', 'source', 'agent_short', 'text_length', 'created_at']
@@ -98,7 +100,8 @@ class KnowledgeMemoryAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs.filter(type__in=['documents', 'knowledge'])
 
-@admin.register(KnowledgeEmbedding)
+# Temporarily hidden - not polished yet
+# @admin.register(KnowledgeEmbedding)
 class KnowledgeEmbeddingAdmin(admin.ModelAdmin):
     """Admin interface for viewing vector embeddings"""
     list_display = ['id_short', 'memory_id_short', 'dimensions_available', 'created_at']
@@ -158,7 +161,8 @@ class KoiSourceAdmin(admin.ModelAdmin):
         return 'No metadata'
     formatted_metadata.short_description = 'Metadata (JSON)'
 
-@admin.register(KoiContent)
+# Temporarily hidden - not polished yet
+# @admin.register(KoiContent)
 class KoiContentAdmin(admin.ModelAdmin):
     """Admin interface for KOI content items"""
     list_display = ['rid_short', 'title', 'source_rid_short', 'url_display', 'created_at']
@@ -191,7 +195,8 @@ class KoiContentAdmin(admin.ModelAdmin):
         return 'No metadata'
     formatted_metadata.short_description = 'Metadata (JSON)'
 
-@admin.register(KoiProcessing)
+# Temporarily hidden - not polished yet
+# @admin.register(KoiProcessing)
 class KoiProcessingAdmin(admin.ModelAdmin):
     """
     Admin interface for KOI processing status.
@@ -277,7 +282,8 @@ class KoiProcessingAdmin(admin.ModelAdmin):
 # Additional admin interfaces for complete system visibility
 # ============================================================================
 
-@admin.register(ConversationMemory)
+# Temporarily hidden - not polished yet
+# @admin.register(ConversationMemory)
 class ConversationMemoryAdmin(admin.ModelAdmin):
     """Admin interface for conversation memories with RAG tracking"""
     list_display = ['id_short', 'text_preview', 'agent_short', 'knowledge_used_badge', 
@@ -334,7 +340,8 @@ class ConversationMemoryAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         return qs.filter(type='messages')
 
-@admin.register(AgentConfiguration)
+# Temporarily hidden - not polished yet
+# @admin.register(AgentConfiguration)
 class AgentConfigurationAdmin(admin.ModelAdmin):
     """Admin interface for agent configurations"""
     list_display = ['name', 'id_short', 'enabled', 'has_knowledge_plugin_badge', 'plugin_count', 'knowledge_count']

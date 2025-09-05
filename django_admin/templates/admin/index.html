@@ -1,0 +1,25 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+    {{ block.super }}
+    
+    <div class="app-dashboard">
+        <div class="app-dashboard module">
+            <table>
+                <caption>
+                    <a href="/regenai/" class="section" title="RegenAI Dashboard">
+                        📊 Dashboards
+                    </a>
+                </caption>
+                <tr class="model-reporting addlink">
+                    <th scope="row"><a href="/regenai/">RegenAI Dashboard</a></th>
+                    <td>View agent activity, interactions, and system metrics</td>
+                </tr>
+                <tr class="model-knowledge addlink">
+                    <th scope="row"><a href="/knowledge/">Knowledge Dashboard</a></th>
+                    <td>Explore the knowledge system with document browser and analytics</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}
