@@ -1947,36 +1947,23 @@ export class AgentRuntime implements IAgentRuntime {
       );
     }
     try {
-      // Check if embedding dimension is specified in environment
-      const envDimension = process.env.EMBEDDING_DIMENSION || process.env.TEXT_EMBEDDING_DIMENSIONS || process.env.OPENAI_EMBEDDING_DIMENSIONS;
-      
-      let dimension: number;
-      if (envDimension) {
-        dimension = parseInt(envDimension, 10);
-        this.logger.debug(
-          `[AgentRuntime][${this.character.name}] Using environment-specified embedding dimension: ${dimension}`
-        );
-      } else {
-        const model = this.getModel(ModelType.TEXT_EMBEDDING);
-        if (!model) {
-          throw new Error(
-            `[AgentRuntime][${this.character.name}] No TEXT_EMBEDDING model registered`
-          );
-        }
-
-        this.logger.debug(`[AgentRuntime][${this.character.name}] Getting embedding dimensions`);
-        const embedding = await this.useModel(ModelType.TEXT_EMBEDDING, null);
-        if (!embedding || !embedding.length) {
-          throw new Error(`[AgentRuntime][${this.character.name}] Invalid embedding received`);
-        }
-        
-        dimension = embedding.length;
-        this.logger.debug(
-          `[AgentRuntime][${this.character.name}] Setting embedding dimension from model: ${dimension}`
+      const model = this.getModel(ModelType.TEXT_EMBEDDING);
+      if (!model) {
+        throw new Error(
+          `[AgentRuntime][${this.character.name}] No TEXT_EMBEDDING model registered`
         );
       }
 
-      await this.adapter.ensureEmbeddingDimension(dimension);
+      this.logger.debug(`[AgentRuntime][${this.character.name}] Getting embedding dimensions`);
+      const embedding = await this.useModel(ModelType.TEXT_EMBEDDING, null);
+      if (!embedding || !embedding.length) {
+        throw new Error(`[AgentRuntime][${this.character.name}] Invalid embedding received`);
+      }
+
+      this.logger.debug(
+        `[AgentRuntime][${this.character.name}] Setting embedding dimension: ${embedding.length}`
+      );
+      await this.adapter.ensureEmbeddingDimension(embedding.length);
       this.logger.debug(
         `[AgentRuntime][${this.character.name}] Successfully set embedding dimension`
       );

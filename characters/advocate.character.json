@@ -7,15 +7,14 @@
     "@elizaos/plugin-ollama",
     "@elizaos/plugin-openai",
     "@elizaos/plugin-knowledge",
-    "@elizaos/plugin-telegram",
-    "@elizaos/plugin-mcp"
+        "@elizaos/plugin-telegram"
   ],
   "secrets": {
-    "TELEGRAM_BOT_TOKEN": "8434148933:AAEtlzMAemyt98pphih9_-btZdZqREYXPuU",
-    "TELEGRAM_BOT_USERNAME": "testRegen2Bot"
+    "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN_ADVOCATE}",
+    "TELEGRAM_BOT_USERNAME": "RegenAdvocacyBot"
   },
   "settings": {
-    "clients": ["telegram"],
+    "clients": [],
     "allowDirectMessages": true,
     "TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED": true,
     "TELEGRAM_RANDOM_RESPONSE_RATE": 0.01,
