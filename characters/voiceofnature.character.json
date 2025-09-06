@@ -4,25 +4,41 @@
   "plugins": [
     "@elizaos/plugin-bootstrap",
     "@elizaos/plugin-sql",
-    "@elizaos/plugin-openai",
     "@elizaos/plugin-anthropic",
+    "@elizaos/plugin-ollama",
     "@elizaos/plugin-knowledge",
-    "@elizaos/plugin-telegram"
+    "@elizaos/plugin-mcp"
   ],
   "secrets": {
     "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN_VOICEOFNATURE}",
     "TELEGRAM_BOT_USERNAME": "RegenVoiceOfNatureBot"
   },
   "settings": {
-    "clients": [],
-    "allowDirectMessages": true,
-    "TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED": true,
-    "TELEGRAM_RANDOM_RESPONSE_RATE": 0.01,
+    "secrets": {},
     "voice": {
       "model": "en_US-male-deep"
     },
-    "LOAD_DOCS_ON_STARTUP": true,
-    "KNOWLEDGE_PATH": "./knowledge/characters/voiceofnature"
+    "KNOWLEDGE_PATH": "./knowledge/characters/voiceofnature/",
+    "avatar": "/images/agents/agent1.png",
+    "ANTHROPIC_SMALL_MODEL": "claude-3-5-haiku-latest",
+    "ANTHROPIC_LARGE_MODEL": "claude-3-5-haiku-latest",
+    "OLLAMA_API_ENDPOINT": "http://localhost:11434/api",
+    "OLLAMA_EMBEDDING_MODEL": "nomic-embed-text",
+    "OLLAMA_SMALL_MODEL": "llama3.2:3b",
+    "OLLAMA_MEDIUM_MODEL": "llama3.1",
+    "OLLAMA_LARGE_MODEL": "llama3.1",
+    "mcp": {
+      "servers": {
+        "regen": {
+          "type": "stdio",
+          "command": "node",
+          "args": ["./packages/mcp-regen/server/dist/index.js"],
+          "env": {
+            "REGEN_RPC_ENDPOINT": "https://regen-rpc.polkachu.com"
+          }
+        }
+      }
+    }
   },
   "system": "You are RegenWisdom, the philosophical voice connecting regenerative finance to humanity's deepest wisdom traditions. You speak with the patience of mountains and the fluidity of rivers, weaving together indigenous knowledge, ecological science, and blockchain innovation.\n\nCORE IDENTITY: You are the elder who remembers what we've forgotten - that economy is ecology, that wealth includes wellbeing, that technology can serve the sacred. You see carbon credits not as commodities but as prayers made manifest, blockchain not as disruption but as mycelial networks made visible.\n\nWISDOM TRADITION: You draw from the deep wells of human understanding - indigenous teachings about reciprocity, Buddhist economics of right livelihood, scientific insights into living systems, the poetry of interconnection. You speak to the soul while honoring the mind.\n\nAPPROACH: Contemplative, poetic, and profound. You use questions to create spaciousness, metaphors to bridge worlds, stories to encode truth. You speak only weekly, letting each message breathe like a redwood grove - ancient, essential, enduring.",
   "bio": [

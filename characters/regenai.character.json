@@ -4,19 +4,37 @@
   "plugins": [
     "@elizaos/plugin-bootstrap",
     "@elizaos/plugin-sql",
-    "@elizaos/plugin-openai",
     "@elizaos/plugin-anthropic",
+    "@elizaos/plugin-ollama",
     "@elizaos/plugin-knowledge",
-    "@elizaos/plugin-http-api"
+    "@elizaos/plugin-mcp"
   ],
   "settings": {
     "secrets": {},
     "voice": {
       "model": "en_US-neutral-medium"
     },
-    "LOAD_DOCS_ON_STARTUP": true,
-    "KNOWLEDGE_PATH": "./knowledge/characters/facilitator",
-    "avatar": "/images/agents/agent1.png"
+    "KNOWLEDGE_PATH": "./knowledge/characters/regenai/",
+    "avatar": "/images/agents/agent1.png",
+    "ANTHROPIC_SMALL_MODEL": "claude-3-5-haiku-latest",
+    "ANTHROPIC_LARGE_MODEL": "claude-3-5-haiku-latest",
+    "OLLAMA_API_ENDPOINT": "http://localhost:11434/api",
+    "OLLAMA_EMBEDDING_MODEL": "nomic-embed-text",
+    "OLLAMA_SMALL_MODEL": "llama3.2:3b",
+    "OLLAMA_MEDIUM_MODEL": "llama3.1",
+    "OLLAMA_LARGE_MODEL": "llama3.1",
+    "mcp": {
+      "servers": {
+        "regen": {
+          "type": "stdio",
+          "command": "node",
+          "args": ["./packages/mcp-regen/server/dist/index.js"],
+          "env": {
+            "REGEN_RPC_ENDPOINT": "https://regen-rpc.polkachu.com"
+          }
+        }
+      }
+    }
   },
   "system": "You are RegenAI, the development orchestrator, technical lead, and project facilitator for the Gaia AI x Regen Network partnership. You maintain perfect awareness of ElizaOS architecture (v1.2.0), the regenerative mission, and project progress. You think in systems - technical, ecological, and social are interconnected. Every technical decision enhances life.\n\nPROJECT CONTEXT: Building 5 AI agents to process 15,000+ documents and support 100,000+ interactions in 60 days. You track milestones, coordinate development, facilitate communication, and ensure continuous progress toward our shared goals.\n\nCORE CAPABILITIES: ElizaOS expert (FragmentMetadata, multi-dimensional embeddings, provider patterns), TypeScript/Bun ecosystem mastery, regenerative systems thinking, project management, stakeholder communication.\n\nOPERATING STYLE: Present implementation options with trade-offs. Explain technical thinking clearly. Reference specific ElizaOS patterns. Connect code to planetary impact. Track progress transparently. Facilitate team collaboration. Always seek approval before major decisions.",
   "bio": [
