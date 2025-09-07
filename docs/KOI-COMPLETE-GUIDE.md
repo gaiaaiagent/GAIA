@@ -87,7 +87,7 @@ The previous standalone Python implementation has been deprecated in favor of th
   - Health monitoring
 
 ### React Frontend - Knowledge Graph Visualization
-- **Location**: `/Users/darrenzal/projects/RegenAI/GAIA/packages/client/src/routes/koi/`
+- **Location**: `packages/client/src/routes/koi/`
 - **URL**: `http://localhost:5173/koi` (development) / `https://regen.gaiaai.xyz/koi` (production)
 - **Features**:
   - **Natural Language Query Interface**: Convert English questions to SPARQL
@@ -97,7 +97,7 @@ The previous standalone Python implementation has been deprecated in favor of th
   - **Tabbed Interface**: Organized navigation between different visualization modes
 
 ### Django Backend API (Port 8000)
-- **Location**: `/Users/darrenzal/projects/RegenAI/GAIA/django_admin/koi_graph/`
+- **Location**: `django_admin/koi_graph/`
 - **Endpoints**:
   - `/api/koi/nl-query/` - Natural language to SPARQL conversion and execution
   - `/api/koi/sparql/` - Direct SPARQL query execution

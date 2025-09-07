@@ -33,7 +33,7 @@
       "servers": {
         "bge-search": {
           "type": "stdio",
-          "command": "/Users/darrenzal/projects/RegenAI/koi-processor/run-bge-mcp-ts.sh",
+          "command": "../koi-processor/run-bge-mcp-ts.sh",
           "args": [],
           "env": {
             "POSTGRES_URL": "postgresql://postgres:postgres@localhost:5433/eliza"

@@ -96,7 +96,7 @@ The KOI pipeline follows this complete flow from data collection to agent proces
 The KOI pipeline integrates three main repositories:
 
 ### 1. GAIA Repository (Main Orchestrator)
-**Location**: `/Users/darrenzal/projects/RegenAI/GAIA`
+**Location**: `~/projects/GAIA` (or your project directory)
 **Role**: Primary coordination, agent management, and user interfaces
 **Key Components**:
 - ElizaOS agents and character files
@@ -133,7 +133,7 @@ The KOI pipeline integrates three main repositories:
 
 ```bash
 # Main GAIA repository
-cd /Users/darrenzal/projects/RegenAI
+cd ~/projects  # Or your projects directory
 git clone https://github.com/gaiaaiagent/GAIA.git
 cd GAIA
 
@@ -149,7 +149,7 @@ mkdir -p /opt/projects/GAIA/knowledge
 
 ```bash
 # GAIA repository dependencies
-cd /Users/darrenzal/projects/RegenAI/GAIA
+cd GAIA
 bun install
 
 # Build client
@@ -164,7 +164,7 @@ cd /opt/projects/plugin-knowledge-standalone
 bun install
 
 # Django backend dependencies
-cd /Users/darrenzal/projects/RegenAI/GAIA/django_admin
+cd django_admin
 pip install poetry
 poetry install
 ```
@@ -175,7 +175,7 @@ poetry install
 
 ```bash
 # Start PostgreSQL container (if using Docker Compose)
-cd /Users/darrenzal/projects/RegenAI/GAIA
+cd GAIA
 docker compose up -d postgres
 
 # Verify connection
@@ -281,15 +281,15 @@ cd /opt/projects/plugin-knowledge-standalone
 bun scripts/koi-query-server.ts
 
 # Terminal 2: Start Django Backend
-cd /Users/darrenzal/projects/RegenAI/GAIA/django_admin
+cd django_admin
 poetry run python manage.py runserver 8000
 
 # Terminal 3: Start React Frontend (development)
-cd /Users/darrenzal/projects/RegenAI/GAIA/packages/client
+cd packages/client
 bun run dev
 
 # Terminal 4: Legacy Flask API (optional)
-cd /Users/darrenzal/projects/RegenAI/GAIA/koi-data
+cd koi-data
 python3 koi_api_server.py
 ```
 
@@ -441,7 +441,7 @@ Create MCP configuration for each agent:
       "command": "npx", 
       "args": ["@modelcontextprotocol/server-filesystem"],
       "env": {
-        "ALLOWED_DIRECTORIES": "/Users/darrenzal/projects/RegenAI/GAIA/knowledge"
+        "ALLOWED_DIRECTORIES": "./knowledge"
       }
     }
   }
@@ -454,7 +454,7 @@ Create MCP configuration for each agent:
 
 ```bash
 # Start agents with character files
-cd /Users/darrenzal/projects/RegenAI/GAIA
+cd GAIA
 
 bun packages/cli/dist/index.js start \
   --character characters/regenai.character.json \
@@ -825,8 +825,8 @@ docker logs nginx | grep -i error
 # 1. Restart all services in correct order
 docker start fuseki-koi
 cd /opt/projects/plugin-knowledge-standalone && bun scripts/koi-query-server.ts &
-cd /Users/darrenzal/projects/RegenAI/GAIA/django_admin && poetry run python manage.py runserver 8000 &
-cd /Users/darrenzal/projects/RegenAI/GAIA/packages/client && bun run dev &
+cd django_admin && poetry run python manage.py runserver 8000 &
+cd packages/client && bun run dev &
 
 # 2. Rebuild nginx configuration
 docker compose build nginx

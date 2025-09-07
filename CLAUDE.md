@@ -1173,8 +1173,8 @@ Agents can now perform semantic search using BGE embeddings (BAAI/bge-large-en-v
 
 ### Architecture
 **MCP Server**: TypeScript implementation using Anthropic's MCP SDK
-- Location: `/Users/darrenzal/projects/RegenAI/koi-processor/bge-mcp-ts/bge-server.ts`
-- Launcher: `/Users/darrenzal/projects/RegenAI/koi-processor/run-bge-mcp-ts.sh`
+- Location: `../koi-processor/bge-mcp-ts/bge-server.ts`
+- Launcher: `../koi-processor/run-bge-mcp-ts.sh`
 - Tools: `bge_search` (semantic search) and `bge_stats` (database statistics)
 
 **Database**: PostgreSQL with pgvector extension
@@ -1196,7 +1196,7 @@ Add MCP server configuration to character files:
       "servers": {
         "bge-search": {
           "type": "stdio",
-          "command": "/Users/darrenzal/projects/RegenAI/koi-processor/run-bge-mcp-ts.sh",
+          "command": "../koi-processor/run-bge-mcp-ts.sh",
           "args": [],
           "env": {
             "POSTGRES_URL": "postgresql://postgres:postgres@localhost:5433/eliza"
@@ -1242,11 +1242,11 @@ Agents can reference the BGE search capability in their message examples:
 
 ```bash
 # Test the TypeScript MCP server directly
-cd /Users/darrenzal/projects/RegenAI/koi-processor
+cd ../koi-processor
 bun run bge-mcp-ts/bge-server.ts
 
 # Start an agent with BGE MCP
-cd /Users/darrenzal/projects/RegenAI/GAIA
+cd ../GAIA
 POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza \
 bun packages/cli/dist/index.js start \
 --character characters/narrative-with-mcp.character.json \
