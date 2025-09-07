@@ -307,6 +307,12 @@ curl http://localhost:3030/$/ping               # Fuseki
 
 #### 5.1. Character File Configuration with MCP
 
+**Note**: The MCP plugin must be installed in your project:
+```bash
+# Install the MCP plugin (if not already in package.json)
+bun add @elizaos/plugin-mcp
+```
+
 Example character file with KOI integration:
 
 ```json

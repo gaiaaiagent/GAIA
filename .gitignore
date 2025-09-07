@@ -332,3 +332,4 @@ characters/test-*.character.json
 start-test-telegram.sh
 logs/test-*.log
 .env.test
+docs/archive/
