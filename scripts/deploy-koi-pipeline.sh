@@ -53,6 +53,13 @@ if ! command_exists docker; then
     exit 1
 fi
 
+# Check if Docker daemon is running
+if ! docker info >/dev/null 2>&1; then
+    echo -e "${RED}Error: Docker daemon is not running${NC}"
+    echo "Please start Docker and try again"
+    exit 1
+fi
+
 if ! command_exists psql; then
     echo -e "${YELLOW}Warning: PostgreSQL client not installed. Database checks will be skipped.${NC}"
 fi
@@ -296,22 +303,52 @@ echo
 
 # Check PostgreSQL
 echo "Checking PostgreSQL..."
-if docker ps | grep -q postgres; then
-    echo -e "${GREEN}✓ PostgreSQL container is running${NC}"
+# Look for any PostgreSQL container (could be named differently)
+POSTGRES_CONTAINER=$(docker ps --format "table {{.Names}}" | grep -E "postgres|pgvector" | head -1)
+
+if [ -n "$POSTGRES_CONTAINER" ]; then
+    echo -e "${GREEN}✓ PostgreSQL container is running: $POSTGRES_CONTAINER${NC}"
     
     # Check pgvector extension
     if command_exists psql; then
         echo "Checking pgvector extension..."
-        if docker exec gaia-postgres-1 psql -U postgres -d eliza -c "SELECT * FROM pg_extension WHERE extname='vector';" | grep -q vector; then
+        if docker exec $POSTGRES_CONTAINER psql -U postgres -d eliza -c "SELECT * FROM pg_extension WHERE extname='vector';" 2>/dev/null | grep -q vector; then
             echo -e "${GREEN}✓ pgvector extension is installed${NC}"
         else
             echo -e "${YELLOW}Installing pgvector extension...${NC}"
-            docker exec gaia-postgres-1 psql -U postgres -d eliza -c "CREATE EXTENSION IF NOT EXISTS vector;"
+            docker exec $POSTGRES_CONTAINER psql -U postgres -d eliza -c "CREATE EXTENSION IF NOT EXISTS vector;" 2>/dev/null || true
         fi
     fi
 else
-    echo -e "${RED}Warning: PostgreSQL container is not running${NC}"
-    echo "Please ensure PostgreSQL with pgvector is running before starting services"
+    echo -e "${YELLOW}Warning: No PostgreSQL container found${NC}"
+    echo "Attempting to start or create PostgreSQL container..."
+    
+    # Try to start existing container first
+    if docker start gaia-postgres-1 2>/dev/null; then
+        echo -e "${GREEN}✓ Started existing PostgreSQL container${NC}"
+    else
+        # Create new container with pgvector
+        echo "Creating new PostgreSQL container with pgvector..."
+        docker run -d \
+            --name gaia-postgres-1 \
+            -e POSTGRES_PASSWORD=postgres \
+            -e POSTGRES_DB=eliza \
+            -p 5433:5432 \
+            ankane/pgvector:latest || \
+        docker run -d \
+            --name gaia-postgres-1 \
+            -e POSTGRES_PASSWORD=postgres \
+            -e POSTGRES_DB=eliza \
+            -p 5433:5432 \
+            pgvector/pgvector:pg17
+        
+        # Wait for PostgreSQL to be ready
+        echo "Waiting for PostgreSQL to be ready..."
+        sleep 5
+        
+        # Create pgvector extension
+        docker exec gaia-postgres-1 psql -U postgres -d eliza -c "CREATE EXTENSION IF NOT EXISTS vector;" 2>/dev/null || true
+    fi
 fi
 
 echo
