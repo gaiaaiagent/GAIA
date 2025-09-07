@@ -29,18 +29,57 @@ GAIA/
 
 ## Key Features of Our Fork
 
-### 1. Knowledge Deduplication
-- Content-based SHA-256 hashing prevents duplicate document storage
-- Multiple agents can share the same knowledge base without duplication
+### 1. Content-Based Knowledge Deduplication (September 2, 2025)
+- SHA-256 hashing for document identification
+- Shared embeddings across multiple agents
+- Agent-scoped fragment references
+- ~90% storage reduction for multi-agent setups
 - First agent creates embeddings, subsequent agents create lightweight references
 
-### 2. Rate Limiting Fixes
+### 2. Ollama Embedding Support
+- Local embedding generation with nomic-embed-text model
+- 768-dimension embeddings (vs 1536 for OpenAI)
+- Zero-cost embeddings
+- ~2-3x faster than API calls
+
+### 3. Rate Limiting Fixes
 - Improved handling of large document batches
 - Prevents overwhelming the embedding API with too many concurrent requests
 
-### 3. Source Metadata Preservation
+### 4. Source Metadata Preservation
 - Automatically detects and preserves document sources (notion, twitter, discord, etc.)
 - Maintains provenance tracking through the KOI system
+- Enhanced source detection for KOI statistics
+
+## Critical Bug Fixes in Our Fork
+
+### createUniqueUuid Parameters (src/service.ts)
+```typescript
+// BEFORE (broken):
+id: createUniqueUuid() as UUID
+
+// AFTER (fixed):
+id: createUniqueUuid(this.runtime, originalFragment.id) as UUID
+```
+
+### Text Split Null Checks (src/document-processor.ts)
+```typescript
+// Added null/undefined checks
+if (!text || typeof text !== 'string') {
+  logger.warn(`[splitIntoChunks] Received invalid text: ${typeof text}`);
+  return [];
+}
+```
+
+### Report Generation Location (src/report-generator.ts)
+```typescript
+// BEFORE (caused recursive processing):
+this.reportPath = path.join(knowledgePath, '.processing-reports');
+
+// AFTER (proper location):
+const projectRoot = process.cwd();
+this.reportPath = path.join(projectRoot, 'logs', 'knowledge-processing-reports');
+```
 
 ## Setup Instructions
 
@@ -92,6 +131,14 @@ Add the plugin to your character configuration:
   }
 }
 ```
+
+## Implementation Status
+
+✅ **Completed**: Fork https://github.com/elizaos-plugins/plugin-knowledge to gaiaaiagent/plugin-knowledge  
+✅ **Completed**: Apply deduplication and Ollama fixes to the fork  
+✅ **Completed**: Update GAIA packages to use the forked version as git submodule  
+✅ **Completed**: Add KOI system integration for enhanced statistics and monitoring  
+✅ **Completed**: Test with multiple agents sharing knowledge base  
 
 ## Working with the Fork
 
@@ -188,6 +235,22 @@ bun run build
 3. **The fork is necessary** - It contains critical fixes not in the original
 4. **Keep the fork updated** - Regularly sync with upstream for security fixes
 5. **Document significant changes** - Update this guide when making major modifications
+
+## Changelog
+
+### September 2, 2025
+- Initial fork created with deduplication support
+- Added Ollama embedding integration
+- Fixed createUniqueUuid parameter bugs
+- Fixed text split null reference errors
+- Fixed report generation location to avoid recursive processing
+- Achieved ~90% storage reduction for multi-agent deployments
+
+### September 7, 2025
+- Consolidated documentation from PLUGIN-KNOWLEDGE-CHANGES.md
+- Clarified git submodule structure
+- Removed outdated BGE embedding attempts
+- Updated to use MCP server for BGE semantic search
 
 ## Related Documentation
 
