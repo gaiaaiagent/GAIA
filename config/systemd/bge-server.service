@@ -1,0 +1,32 @@
+[Unit]
+Description=BGE Embedding Server
+Documentation=https://github.com/gaiaaiagent/koi-processor
+After=network.target
+Wants=koi-event-bridge.service
+
+[Service]
+Type=simple
+User=koiops
+Group=koiops
+WorkingDirectory=/opt/projects/koi-processor
+Environment="PATH=/opt/projects/koi-processor/venv/bin:/usr/local/bin:/usr/bin:/bin"
+EnvironmentFile=/opt/projects/GAIA/config/koi-pipeline.env
+ExecStart=/opt/projects/koi-processor/venv/bin/python bge_server.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bge-server
+
+# Health check
+ExecStartPost=/bin/bash -c 'sleep 5 && curl -f http://localhost:8888/health || exit 1'
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/projects/koi-processor /var/log/koi
+
+[Install]
+WantedBy=multi-user.target

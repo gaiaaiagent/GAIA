@@ -1068,6 +1068,219 @@ journalctl -u koi-query-server > logs/$(date +%Y%m%d)/koi-query.log
 - [RAG Troubleshooting Guide](./RAG_TROUBLESHOOTING_GUIDE.md) - RAG system debugging
 - [Notion Integration](./NOTION-INTEGRATION.md) - Knowledge source integration
 
+## Phase 6: Production Server Deployment
+
+### Prerequisites
+
+- Ubuntu 20.04+ or similar Linux distribution
+- Python 3.11+
+- Node.js 18+ and npm
+- PostgreSQL 14+ with pgvector extension
+- Docker and Docker Compose
+- 8GB+ RAM minimum
+- Ports 8000, 8100, 8888 available
+
+### Server Directory Structure
+
+```bash
+/opt/projects/
+├── GAIA/                    # Main ElizaOS repository
+├── koi-sensors/             # KOI sensor network
+├── koi-processor/           # BGE processing pipeline
+└── plugin-knowledge-standalone/  # KOI query server
+```
+
+### User Permissions
+
+```bash
+# Create project user
+sudo useradd -m -s /bin/bash koiops
+sudo usermod -aG docker koiops
+
+# Set ownership
+sudo chown -R koiops:koiops /opt/projects
+
+# Grant sudo for systemd management
+echo "koiops ALL=(ALL) NOPASSWD: /bin/systemctl" | sudo tee /etc/sudoers.d/koiops
+```
+
+## Phase 7: Automated Deployment
+
+### Using the Deployment Script
+
+```bash
+# As koiops user
+su - koiops
+cd /opt/projects/GAIA
+
+# Run automated deployment
+bash scripts/deploy-koi-pipeline.sh
+
+# The script will:
+# 1. Clone required repositories
+# 2. Install dependencies
+# 3. Configure environment
+# 4. Set up systemd services
+# 5. Start all components
+```
+
+### Manual Deployment Steps
+
+If you prefer manual deployment:
+
+```bash
+# 1. Clone repositories
+cd /opt/projects
+git clone https://github.com/gaiaaiagent/GAIA.git
+git clone https://github.com/gaiaaiagent/koi-sensors.git
+git clone https://github.com/gaiaaiagent/koi-processor.git
+
+# 2. Install Python dependencies
+cd koi-sensors
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+cd ../koi-processor
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# 3. Configure environment
+cd ../GAIA
+cp config/koi-pipeline.env.template config/koi-pipeline.env
+# Edit config/koi-pipeline.env with your settings
+
+# 4. Install systemd services
+sudo cp config/systemd/*.service /etc/systemd/system/
+sudo systemctl daemon-reload
+
+# 5. Start services
+sudo systemctl enable --now koi-coordinator
+sudo systemctl enable --now koi-event-bridge
+sudo systemctl enable --now bge-server
+sudo systemctl enable --now website-sensor
+```
+
+## Phase 8: Process Management
+
+### Systemd Service Configuration
+
+Services are managed via systemd for automatic startup and restart:
+
+```bash
+# Check service status
+sudo systemctl status koi-coordinator
+sudo systemctl status koi-event-bridge
+sudo systemctl status bge-server
+sudo systemctl status website-sensor
+
+# View logs
+sudo journalctl -u koi-coordinator -f
+sudo journalctl -u koi-event-bridge -f
+sudo journalctl -u bge-server -f
+sudo journalctl -u website-sensor -f
+
+# Restart services
+sudo systemctl restart koi-coordinator
+sudo systemctl restart koi-event-bridge
+
+# Stop all KOI services
+sudo systemctl stop koi-*
+```
+
+### Log Management
+
+Logs are automatically managed by systemd and rotated:
+
+```bash
+# Configure log rotation
+sudo bash -c 'cat > /etc/systemd/journald.conf.d/koi.conf' <<EOF
+[Journal]
+MaxRetentionSec=7day
+SystemMaxUse=1G
+EOF
+
+sudo systemctl restart systemd-journald
+```
+
+### Monitoring
+
+```bash
+# Health check all components
+curl http://localhost:8000/status    # Coordinator
+curl http://localhost:8100/health    # Event Bridge
+curl http://localhost:8888/health    # BGE Server
+
+# Check database
+psql -U postgres -d eliza -c "SELECT COUNT(*) FROM memories WHERE type='koi_document';"
+
+# Monitor event flow
+curl http://localhost:8000/events/poll
+```
+
+### Auto-restart Configuration
+
+Services automatically restart on failure:
+
+```ini
+# In each .service file:
+[Service]
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+```
+
+## Server Deployment Quick Reference
+
+### One-Command Deployment
+
+```bash
+cd /opt/projects/GAIA && bash scripts/deploy-koi-pipeline.sh
+```
+
+### Verify Deployment
+
+```bash
+# Check all services are running
+systemctl status koi-* --no-pager
+
+# Test pipeline
+curl -X POST http://localhost:8000/test-event \
+  -H "Content-Type: application/json" \
+  -d '{"test": "data"}'
+
+# Check logs for any errors
+journalctl -u koi-* --since "10 minutes ago" --no-pager
+```
+
+### Common Issues and Solutions
+
+**Port conflicts:**
+```bash
+# Check what's using a port
+sudo lsof -i :8000
+# Kill process if needed
+sudo kill -9 <PID>
+```
+
+**Database connection issues:**
+```bash
+# Verify PostgreSQL is running
+docker ps | grep postgres
+# Check pgvector extension
+docker exec gaia-postgres-1 psql -U postgres -d eliza -c "SELECT * FROM pg_extension WHERE extname='vector';"
+```
+
+**Permission issues:**
+```bash
+# Fix ownership
+sudo chown -R koiops:koiops /opt/projects
+# Fix permissions
+sudo chmod -R 755 /opt/projects
+```
+
 ## Support and Maintenance
 
 For issues with the KOI pipeline integration:

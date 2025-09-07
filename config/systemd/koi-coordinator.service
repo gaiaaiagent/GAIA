@@ -1,0 +1,30 @@
+[Unit]
+Description=KOI Coordinator Service
+Documentation=https://github.com/gaiaaiagent/koi-sensors
+After=network.target postgresql.service
+Requires=network.target
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=koiops
+Group=koiops
+WorkingDirectory=/opt/projects/koi-sensors
+Environment="PATH=/opt/projects/koi-sensors/venv/bin:/usr/local/bin:/usr/bin:/bin"
+EnvironmentFile=/opt/projects/GAIA/config/koi-pipeline.env
+ExecStart=/opt/projects/koi-sensors/venv/bin/python koi_protocol/coordinator/run_coordinator.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=koi-coordinator
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/projects/koi-sensors /var/log/koi
+
+[Install]
+WantedBy=multi-user.target
