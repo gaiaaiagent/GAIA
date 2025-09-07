@@ -54,8 +54,6 @@ eliza.sig
 mcp-servers/
 knowledge copy/
 uuid-from-string.js
-create-grant-tables.sql
-grant-admin.html
 cleanup-plan.md
 *.service
 setup-systemd-service.sh
