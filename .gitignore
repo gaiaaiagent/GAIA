@@ -48,6 +48,17 @@ eliza.manifest.sgx
 eliza.sig
 
 # Configuration to exclude the extra and local_docs directories
+
+# Production server specific
+.env.backup.*
+mcp-servers/
+knowledge copy/
+uuid-from-string.js
+create-grant-tables.sql
+grant-admin.html
+cleanup-plan.md
+*.service
+setup-systemd-service.sh
 extra
 **/dist/**
 

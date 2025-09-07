@@ -29,7 +29,7 @@ pkill -f 'packages/cli/dist/index.js' 2>/dev/null
 echo -e "${GREEN}Starting all agents in single process mode...${NC}"
 
 # Use environment variables for bot tokens
-/home/darren/.bun/bin/bun packages/cli/dist/index.js start \
+bun packages/cli/dist/index.js start \
   --character characters/regenai.character.json \
   --character characters/advocate.character.json \
   --character characters/governor.character.json \
