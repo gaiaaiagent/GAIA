@@ -10,10 +10,6 @@
     "@elizaos/plugin-telegram",
     "@elizaos/plugin-mcp"	
   ],
-  "secrets": {
-    "TELEGRAM_BOT_TOKEN": "8280814835:AAE9oue7ZTGKPzVImeONCAcCJ1WBT5KICdI",
-    "TELEGRAM_BOT_USERNAME": "RegenAdvocacyBot"
-  },
   "settings": {
     "clients": [],
     "allowDirectMessages": true,
