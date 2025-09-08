@@ -5,13 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gaia AI x Regen Network REGEN IRL Grant Competition</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="enhanced-styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Gaia AI x Regen Network</h1>
-            <h2>REGEN IRL Grant Competition Application</h2>
-            <p class="subtitle">Apply for the REGEN IRL Grant to fund your on-the-ground project focused on Planetary Return on Investment (PROI). The winner receives $888 USDC, and all qualifying applicants receive $10 in $REGEN.</p>
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>Gaia AI x Regen Network</h1>
+                    <h2>REGEN IRL Grant Competition Application</h2>
+                    <p class="subtitle">Apply for the REGEN IRL Grant to fund your IRL project </br> Projects evaluated on Planetary Return on Investment (PROI).</br>The winner receives $888 USDC, and all qualifying applicants receive $10 in $REGEN.</p>
+                </div>
+                <div class="header-image">
+                    <img src="beach-cleanup.jpg" alt="Community beach cleanup with Gaia AI volunteers" />
+                </div>
+            </div>
         </header>
 
         <div class="main-content">
@@ -21,11 +29,7 @@
                     <p>I'm here to help you complete your grant application. Ask me anything!</p>
                 </div>
                 <div class="chat-container" id="chatContainer">
-                    <div class="chat-message agent-message">
-                        <div class="message-content">
-                            Hi! I'm your AI assistant for the REGEN IRL Grant application. I can help you understand the requirements, fill out the form, and ensure your application is complete. What would you like to know first?
-                        </div>
-                    </div>
+                    <!-- Chat messages will be added dynamically by JavaScript -->
                 </div>
                 <div class="chat-input-container">
                     <input type="text" id="chatInput" placeholder="Ask me about the grant or get help with the form...">
@@ -144,6 +148,12 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="projectUrl">Do you have a URL where we can find out more about your project?</label>
+                        <input type="url" id="projectUrl" name="projectUrl" placeholder="https://example.com">
+                        <small>Optional: Website, social media, or documentation link</small>
+                    </div>
+
+                    <div class="form-group">
                         <label for="email">Please provide your email address for communication regarding your application *</label>
                         <input type="email" id="email" name="email" required>
                     </div>
@@ -159,6 +169,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="enhanced-script-direct.js"></script>
 </body>
 </html>

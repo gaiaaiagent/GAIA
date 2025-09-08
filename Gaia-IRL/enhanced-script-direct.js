@@ -1,5 +1,5 @@
 // Enhanced Grant Application Form with Direct LLM API Calls
-const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3005' : '/api';
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3007' : '/api';
 
 // Form field definitions in order
 const FORM_FIELDS = [
@@ -12,6 +12,7 @@ const FORM_FIELDS = [
     { id: 'timeline', label: 'Timeline', type: 'textarea' },
     { id: 'grantImportance', label: 'Grant Importance (1-5)', type: 'radio' },
     { id: 'confidence', label: 'Confidence Level (1-10)', type: 'radio' },
+    { id: 'projectUrl', label: 'Project URL', type: 'url' },
     { id: 'email', label: 'Email Address', type: 'email' },
     { id: 'walletAddress', label: 'Wallet Address', type: 'text' }
 ];
@@ -44,7 +45,7 @@ function initializeChat() {
     console.log('Starting field index:', currentFieldIndex);
     
     // Add initial welcome message
-    addChatMessage('agent', "Hi! I'm here to help you apply for the $888 REGEN IRL Grant. Let's start by learning about your regenerative project. What's the name or title of your project, and what environmental challenge are you trying to solve?");
+    addChatMessage('agent', "Hi! I'm your AI assistant for the $888 REGEN IRL Grant application. We support all kinds of regenerative projects - from carbon sequestration and biodiversity to renewable energy and waste reduction. Tell me about your environmental project and I'll help you fill out the application step by step.");
     
     // Add helpful tip about optional fields
     setTimeout(() => {
@@ -54,10 +55,27 @@ function initializeChat() {
 
 function attachFormListeners() {
     // Track manual form changes
-    document.querySelectorAll('input[type="text"], input[type="email"], textarea, select').forEach(element => {
+    document.querySelectorAll('input[type="text"], input[type="email"], input[type="url"], textarea, select').forEach(element => {
         element.addEventListener('change', function() {
             updateFormProgress();
-            checkFieldCompletion(element.id || element.name);
+            
+            // Check if this is the field we're currently asking about
+            const fieldId = element.id || element.name;
+            const currentField = FORM_FIELDS[currentFieldIndex];
+            
+            // If user manually filled the current field we're asking about, move to next
+            if (currentField && currentField.id === fieldId && getFieldValue(fieldId)) {
+                // Add a brief acknowledgment
+                const value = getFieldValue(fieldId);
+                if (fieldId === 'projectCategory') {
+                    const categoryText = element.options[element.selectedIndex].text;
+                    addChatMessage('system', `✓ Selected: ${categoryText}`);
+                }
+                
+                setTimeout(() => {
+                    moveToNextField();
+                }, 300);
+            }
         });
         
         element.addEventListener('focus', function() {
@@ -69,8 +87,25 @@ function attachFormListeners() {
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', function() {
             updateFormProgress();
-            // Use the name attribute for radio groups
-            checkFieldCompletion(this.name);
+            
+            // Check if this is the field we're currently asking about
+            const fieldName = this.name;
+            const currentField = FORM_FIELDS[currentFieldIndex];
+            
+            // If user manually filled the current field we're asking about, move to next
+            if (currentField && currentField.id === fieldName) {
+                // Add acknowledgment for radio selections
+                const value = this.value;
+                if (fieldName === 'grantImportance') {
+                    addChatMessage('system', `✓ Selected grant importance: ${value}/5`);
+                } else if (fieldName === 'confidence') {
+                    addChatMessage('system', `✓ Selected confidence level: ${value}/10`);
+                }
+                
+                setTimeout(() => {
+                    moveToNextField();
+                }, 300);
+            }
         });
     });
     
@@ -166,8 +201,7 @@ function acceptSuggestion(fieldId) {
         const radio = document.querySelector(`input[name="${fieldId}"][value="${suggestion}"]`);
         if (radio) {
             radio.checked = true;
-            // Trigger change event for radio buttons
-            radio.dispatchEvent(new Event('change', { bubbles: true }));
+            // Don't trigger change event - we'll handle progression manually
         }
     } else {
         const field = document.getElementById(fieldId);
@@ -180,8 +214,7 @@ function acceptSuggestion(fieldId) {
             } else {
                 field.value = suggestion;
             }
-            // Trigger change event for other fields
-            field.dispatchEvent(new Event('change', { bubbles: true }));
+            // Don't trigger change event - we'll handle progression manually
         }
     }
     
@@ -190,16 +223,10 @@ function acceptSuggestion(fieldId) {
     
     addChatMessage('system', `✓ Accepted suggestion for ${getFieldLabel(fieldId)}`);
     
-    // Give time for the field value to be set, then move to next field
+    // Move to next field and ask about it
     setTimeout(() => {
         moveToNextField();
-        if (currentFieldIndex < FORM_FIELDS.length) {
-            const nextField = FORM_FIELDS[currentFieldIndex];
-            if (nextField) {
-                askAboutField(nextField);
-            }
-        }
-    }, 100); // Small delay to ensure field value is set
+    }, 200); // Small delay to ensure field value is set
 }
 
 function editSuggestion(fieldId) {
@@ -249,6 +276,7 @@ function removeSuggestionBox(fieldId) {
 }
 
 function moveToNextField() {
+    // Start from the next field after current
     for (let i = currentFieldIndex + 1; i < FORM_FIELDS.length; i++) {
         const field = FORM_FIELDS[i];
         
@@ -257,32 +285,23 @@ function moveToNextField() {
             if (category !== 'other') continue;
         }
         
-        // For radio buttons, check if any element with this name exists
-        let element = document.getElementById(field.id);
-        if (!element && field.type === 'radio') {
-            // Find first radio button with this name
-            element = document.querySelector(`input[name="${field.id}"]`);
-        }
-        
-        // Double-check the field value to avoid race conditions
+        // Check if field already has a value
         const fieldValue = getFieldValue(field.id);
-        if (element && !fieldValue) {
-            // One more check to prevent asking about a field we just filled
+        if (!fieldValue) {
+            // Found an empty field
+            currentFieldIndex = i;
+            highlightCurrentField(field.id);
+            
+            // Ask about the field after a short delay
             setTimeout(() => {
-                const recheckedValue = getFieldValue(field.id);
-                if (!recheckedValue) {
-                    currentFieldIndex = i;
-                    highlightCurrentField(field.id);
-                    askAboutField(field);
-                } else {
-                    // Field was filled, continue to next
-                    moveToNextField();
-                }
-            }, 50);
+                askAboutField(field);
+            }, 200);
             return;
         }
     }
     
+    // No more empty fields
+    currentFieldIndex = FORM_FIELDS.length;
     checkFormCompletion();
 }
 
@@ -336,7 +355,25 @@ async function handleUserQuestion(message) {
                 messages: [
                     {
                         role: 'system',
-                        content: `You are helping with the $888 REGEN IRL Grant application. The grant supports regenerative projects that create measurable environmental returns. Answer the user's question helpfully and concisely. Currently, we're working on the "${fieldName}" field. Keep responses under 3 sentences.`
+                        content: `You are helping with the $888 REGEN IRL Grant application for regenerative projects.
+
+ELIGIBLE PROJECTS:
+- Carbon Sequestration: Reforestation, afforestation, soil carbon projects, biochar initiatives
+- Biodiversity: Habitat restoration, wildlife corridors, pollinator gardens, native species protection
+- Regenerative Agriculture: Permaculture, agroforestry, rotational grazing, cover cropping, no-till farming
+- Water Conservation: Watershed restoration, rainwater harvesting, greywater systems, wetland creation
+- Soil Health: Composting initiatives, erosion control, mycorrhizal network restoration
+- Renewable Energy: Community solar, microgrids, biomass from waste, small-scale wind
+- Waste Reduction: Circular economy projects, upcycling, community composting, plastic alternatives
+- Other Environmental Projects: Ocean cleanup, urban greening, environmental education, eco-restoration
+
+GRANT DETAILS:
+- Award Amount: $888 USDC
+- Bonus: All qualifying applicants receive $10 in $REGEN tokens
+- Focus: Projects with measurable Planetary Return on Investment (PROI)
+- Stage: Any stage from idea to scaling (idea, planning, pilot, ongoing, scaling up)
+
+Currently helping with: "${fieldName}" field. Answer questions concisely (under 3 sentences) and be encouraging about their project ideas.`
                     },
                     {
                         role: 'user',
@@ -391,6 +428,9 @@ function askAboutField(field) {
             break;
         case 'confidence':
             question = "I appreciate your honesty! Based on your experience and planning, how confident are you (1-10) that you'll achieve the environmental impact you described? 10 being certain, 1 being hopeful.";
+            break;
+        case 'projectUrl':
+            question = "Do you have a website, social media page, or documentation where we can learn more about your project? Feel free to share a link, or type 'skip' if you don't have one yet.";
             break;
         case 'email':
             question = "Almost done! What's the best email to reach you at for updates about your application?";
@@ -470,11 +510,49 @@ async function handleSendMessage() {
 }
 
 async function processUserMessage(message) {
-    if (currentFieldIndex < 0 || currentFieldIndex >= FORM_FIELDS.length) {
-        currentFieldIndex = 0;
+    // Special handling for numeric inputs that might be for rating fields
+    const isNumericInput = /^\d+$/.test(message.trim());
+    
+    // Find the first empty field to work on, skipping conditional fields that shouldn't show
+    let targetField = null;
+    for (let i = 0; i < FORM_FIELDS.length; i++) {
+        const field = FORM_FIELDS[i];
+        
+        // Skip otherCategory field if not "other" selected
+        if (field.id === 'otherCategory') {
+            const category = document.getElementById('projectCategory').value;
+            if (category !== 'other') continue;
+        }
+        
+        // Skip already filled fields
+        const fieldValue = getFieldValue(field.id);
+        if (fieldValue) {
+            console.log(`Skipping filled field: ${field.id} = ${fieldValue}`);
+            continue;
+        }
+        
+        // If this is a numeric input and we found an empty radio field that expects numbers, prioritize it
+        if (isNumericInput && (field.id === 'grantImportance' || field.id === 'confidence')) {
+            console.log(`Found numeric field for input "${message}": ${field.id}`);
+            targetField = field;
+            currentFieldIndex = i;
+            break;
+        }
+        
+        // Otherwise, take the first empty field
+        if (!targetField) {
+            targetField = field;
+            currentFieldIndex = i;
+        }
     }
     
-    const currentField = FORM_FIELDS[currentFieldIndex];
+    if (!targetField) {
+        // All fields are filled
+        checkFormCompletion();
+        return;
+    }
+    
+    const currentField = targetField;
     const formState = getFormState();
     
     try {
@@ -511,8 +589,8 @@ async function getFieldSuggestion(userInput, field, formState) {
             
         case 'projectSummary':
             const title = getFieldValue('projectTitle') || 'the project';
-            systemPrompt = "Generate a 2-3 sentence project summary based on the user's input.";
-            userPrompt = `Project Title: "${title}"\nUser describes: "${userInput}"\nGenerate ONLY a 2-3 sentence summary describing what the project does, its goals, and impact. No title, no explanations.`;
+            systemPrompt = "Generate a plain text 2-3 sentence project summary. NO markdown, NO formatting, just simple text.";
+            userPrompt = `Project Title: "${title}"\nUser describes: "${userInput}"\nGenerate ONLY a 2-3 sentence summary in PLAIN TEXT. No markdown, no bold, no asterisks, no formatting. Just simple sentences describing what the project does, its goals, and impact.`;
             break;
             
         case 'projectCategory':
@@ -521,8 +599,8 @@ async function getFieldSuggestion(userInput, field, formState) {
             break;
             
         case 'proiGeneration':
-            systemPrompt = "Convert the user's input into a brief PROI description. Only use information the user provides - do NOT invent specific numbers or metrics they haven't mentioned.";
-            userPrompt = `User says: "${userInput}"\nCreate a brief description of their environmental impact using ONLY what they've stated. If they mention general areas like "CO2 capture" without numbers, keep it general. If they provide specific metrics, use those. Do NOT make up numbers, quantities, or metrics they haven't mentioned. Keep response under 3 sentences.`;
+            systemPrompt = "Convert the user's input into a brief PLAIN TEXT PROI description. NO markdown formatting.";
+            userPrompt = `User says: "${userInput}"\n\nCreate a brief description in PLAIN TEXT using ONLY what they stated. Rules:\n1. NO markdown, bold, italics, or any formatting\n2. If they give specific numbers, use those EXACT numbers\n3. If no numbers given, keep it general\n4. NEVER invent numbers they didn't provide\n5. Keep under 3 sentences of plain text\n\nExample: If user says "save 100 trees and reduce carbon by 50 tons", write plain text like "The project will protect 100 trees and reduce carbon emissions by 50 tons."`;
             break;
             
         case 'projectStage':
@@ -531,8 +609,8 @@ async function getFieldSuggestion(userInput, field, formState) {
             break;
             
         case 'timeline':
-            systemPrompt = "Generate a project timeline with specific milestones and dates. Focus on project implementation steps, NOT environmental metrics or impacts.";
-            userPrompt = `User describes their project plan as: "${userInput}"\nGenerate ONLY 3-4 implementation milestones with timeframes. Each should be a concrete project step like "Month 3: Complete site preparation", "Month 6: Begin planting phase", etc. Do NOT include environmental metrics. Format each as "Month X: [specific action/milestone]"`;
+            systemPrompt = "Generate a plain text project timeline with NO markdown, NO bold text, NO asterisks, NO formatting. Just simple bullet points.";
+            userPrompt = `User describes their project goals as: "${userInput}"\n\nCreate 3-4 milestones using their exact numbers. Rules:\n- NO markdown formatting\n- NO bold text or asterisks\n- Simple format: "Month X: [action with specific target]"\n- Use bullet points (•) or dashes (-)\n- Include their exact numbers distributed across milestones\n\nExample output:\n- Month 3: Protect first 2,500 trees\n- Month 6: Reach 5,000 trees protected\n- Month 9: Achieve 7,500 trees protected\n- Month 12: Complete 10,000 trees protected`;
             break;
             
         case 'grantImportance':
@@ -543,6 +621,11 @@ async function getFieldSuggestion(userInput, field, formState) {
         case 'confidence':
             systemPrompt = "Select a confidence level from 1-10 based on the user's input.";
             userPrompt = `User says: "${userInput}"\n1=hopeful, 10=certain\nReturn ONLY a number from 1 to 10.`;
+            break;
+            
+        case 'projectUrl':
+            systemPrompt = "Extract or format a valid URL from the user's input.";
+            userPrompt = `User says: "${userInput}"\nIf they provide a URL or website name, format it as a valid URL. If they say 'skip', 'none', 'no', or similar, return empty string. Return ONLY the URL or empty string, no explanations.`;
             break;
             
         case 'email':
@@ -594,6 +677,19 @@ async function getFieldSuggestion(userInput, field, formState) {
         // Remove surrounding quotes if present (LLM often adds them)
         if (suggestion.startsWith('"') && suggestion.endsWith('"')) {
             suggestion = suggestion.slice(1, -1);
+        }
+        
+        // Clean up markdown formatting for all text fields
+        if (field.type === 'textarea' || field.type === 'text' || field.id === 'timeline' || field.id === 'proiGeneration' || field.id === 'projectSummary') {
+            // Remove markdown bold syntax
+            suggestion = suggestion.replace(/\*\*/g, '');
+            suggestion = suggestion.replace(/\*/g, '');
+            suggestion = suggestion.replace(/#{1,6}\s/g, ''); // Remove headers
+            suggestion = suggestion.replace(/^\s*[-*+]\s/gm, '• '); // Standardize bullets (for lists)
+            suggestion = suggestion.replace(/\n\n+/g, '\n'); // Remove extra line breaks
+            suggestion = suggestion.replace(/^\s*>\s/gm, ''); // Remove blockquotes
+            suggestion = suggestion.replace(/`([^`]+)`/g, '$1'); // Remove inline code formatting
+            suggestion = suggestion.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'); // Remove links, keep text
         }
         
         // Validate based on field type
@@ -825,13 +921,22 @@ function shouldShowField(field) {
 }
 
 function getFieldValue(fieldId) {
-    const element = document.getElementById(fieldId);
-    if (!element) return null;
+    // Special handling for otherCategory - only consider it if category is "other"
+    if (fieldId === 'otherCategory') {
+        const category = document.getElementById('projectCategory').value;
+        if (category !== 'other') {
+            return 'N/A'; // Return a non-null value to skip this field
+        }
+    }
     
-    if (element.type === 'radio') {
-        const checked = document.querySelector(`input[name="${element.name}"]:checked`);
+    // For radio button groups, check by name attribute
+    if (fieldId === 'grantImportance' || fieldId === 'confidence') {
+        const checked = document.querySelector(`input[name="${fieldId}"]:checked`);
         return checked ? checked.value : null;
     }
+    
+    const element = document.getElementById(fieldId);
+    if (!element) return null;
     
     return element.value || null;
 }
@@ -855,29 +960,15 @@ function checkFieldCompletion(fieldId) {
         
         // If this is the current field we're asking about, move to next
         if (fieldIndex === currentFieldIndex) {
-            // Update current index to this field (in case we're behind)
-            currentFieldIndex = fieldIndex;
-            
+            // Just move to next field, don't ask again
             setTimeout(() => {
                 moveToNextField();
-                if (currentFieldIndex < FORM_FIELDS.length) {
-                    const nextField = FORM_FIELDS[currentFieldIndex];
-                    if (nextField) {
-                        askAboutField(nextField);
-                    }
-                }
             }, 500);
         } else if (fieldIndex > currentFieldIndex) {
-            // User filled a field ahead of where we are - catch up
+            // User filled a field ahead of where we are - update position
             currentFieldIndex = fieldIndex;
             setTimeout(() => {
                 moveToNextField();
-                if (currentFieldIndex < FORM_FIELDS.length) {
-                    const nextField = FORM_FIELDS[currentFieldIndex];
-                    if (nextField) {
-                        askAboutField(nextField);
-                    }
-                }
             }, 500);
         }
     }
@@ -924,7 +1015,7 @@ async function handleFormSubmit(e) {
     data.chatHistory = conversationHistory;
     
     try {
-        const response = await fetch('/api/grants/submit', {
+        const response = await fetch(`${API_BASE}/grants/submit`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

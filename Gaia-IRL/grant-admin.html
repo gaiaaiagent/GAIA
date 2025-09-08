@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #10f585 0%, #0eb563 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -40,7 +40,7 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #10f585 0%, #0eb563 100%);
             color: white;
             padding: 20px;
             border-radius: 8px;
@@ -73,14 +73,14 @@
         }
 
         .filters button {
-            background: #667eea;
+            background: #10f585;
             color: white;
             cursor: pointer;
             padding: 10px 20px;
         }
 
         .filters button:hover {
-            background: #5a67d8;
+            background: #0eb563;
         }
 
         table {
@@ -136,7 +136,7 @@
         }
 
         .view-btn {
-            background: #667eea;
+            background: #10f585;
             color: white;
             border: none;
             padding: 6px 12px;
@@ -146,7 +146,7 @@
         }
 
         .view-btn:hover {
-            background: #5a67d8;
+            background: #0eb563;
         }
 
         .modal {
@@ -453,11 +453,11 @@
                 </div>
                 <div class="field">
                     <div class="field-label">Email</div>
-                    <div class="field-value">${app.email}</div>
+                    <div class="field-value">${app.email || 'Not provided'}</div>
                 </div>
                 <div class="field">
                     <div class="field-label">Wallet Address</div>
-                    <div class="field-value">${app.wallet_address}</div>
+                    <div class="field-value" style="font-family: monospace; font-size: 0.9em;">${app.wallet_address || 'Not provided'}</div>
                 </div>
                 <div class="field">
                     <div class="field-label">Project Summary</div>
@@ -487,6 +487,17 @@
                     <div class="field-label">Grant Importance</div>
                     <div class="field-value">${app.grant_importance}/5</div>
                 </div>
+                ${app.project_url && app.project_url !== 'null' && app.project_url !== '' ? `
+                <div class="field">
+                    <div class="field-label">Project URL</div>
+                    <div class="field-value"><a href="${app.project_url}" target="_blank" style="color: #10f585; text-decoration: underline;">${app.project_url}</a></div>
+                </div>
+                ` : `
+                <div class="field">
+                    <div class="field-label">Project URL</div>
+                    <div class="field-value" style="color: #9ca3af;">Not provided</div>
+                </div>
+                `}
                 <div class="field">
                     <div class="field-label">Status</div>
                     <div class="field-value"><span class="status ${app.status}">${app.status}</span></div>
@@ -498,9 +509,7 @@
                 </div>
                 ` : ''}
                 <div class="actions">
-                    <button class="approve-btn" onclick="updateStatus('${app.id}', 'approved')">Approve</button>
-                    <button class="reject-btn" onclick="updateStatus('${app.id}', 'rejected')">Reject</button>
-                    <button onclick="closeModal()">Close</button>
+                    <button onclick="closeModal()" style="background: #6b7280; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">Close</button>
                 </div>
             `;
             

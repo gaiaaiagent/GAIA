@@ -43,7 +43,7 @@
 }
 
 .success-content h2 {
-    color: #42d4aa;
+    color: #10f585;
     font-size: 32px;
     margin-bottom: 15px;
 }
@@ -79,13 +79,13 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #42d4aa, #5fe4c0);
+    background: linear-gradient(135deg, #10f585, #0eb563);
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px rgba(16, 245, 133, 0.4);
 }
 
 .btn-secondary {
@@ -133,7 +133,7 @@
     gap: 10px;
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid rgba(102, 126, 234, 0.2);
+    border-top: 1px solid rgba(16, 245, 133, 0.2);
 }
 
 .chat-btn {
@@ -149,13 +149,13 @@
 }
 
 .chat-accept-btn {
-    background: linear-gradient(135deg, #42d4aa, #5fe4c0);
+    background: linear-gradient(135deg, #10f585, #0eb563);
     color: white;
 }
 
 .chat-accept-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(16, 245, 133, 0.4);
 }
 
 .chat-reject-btn {
@@ -180,10 +180,10 @@
 }
 
 .form-group.highlighted {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(16, 245, 133, 0.05) 0%, rgba(14, 181, 99, 0.05) 100%);
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 0 20px rgba(16, 245, 133, 0.2);
 }
 
 .form-group.has-suggestion {
@@ -197,10 +197,10 @@
     left: 10px;
     right: 10px;
     background: white;
-    border: 2px solid #42d4aa;
+    border: 2px solid #10f585;
     border-radius: 8px;
     padding: 15px;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(16, 245, 133, 0.3);
     animation: slideIn 0.3s ease;
     z-index: 10;
 }
@@ -222,7 +222,7 @@
     gap: 8px;
     margin-bottom: 10px;
     font-weight: 600;
-    color: #42d4aa;
+    color: #10f585;
 }
 
 .suggestion-icon {
@@ -275,13 +275,13 @@
 }
 
 .edit-btn {
-    background: linear-gradient(135deg, #42d4aa 0%, #5fe4c0 100%);
+    background: linear-gradient(135deg, #10f585 0%, #0eb563 100%);
     color: white;
 }
 
 .edit-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(16, 245, 133, 0.3);
 }
 
 .reject-btn {
@@ -343,7 +343,7 @@
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #42d4aa 0%, #5fe4c0 100%);
+    background: linear-gradient(90deg, #10f585 0%, #0eb563 100%);
     transition: width 0.5s ease;
 }
 
@@ -352,43 +352,76 @@ input:focus,
 textarea:focus,
 select:focus {
     outline: none;
-    border-color: #42d4aa;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #10f585;
+    box-shadow: 0 0 0 3px rgba(16, 245, 133, 0.1);
 }
 
 .form-group.highlighted input,
 .form-group.highlighted textarea,
 .form-group.highlighted select {
     background: white;
-    border-color: #42d4aa;
+    border-color: #10f585;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-    .main-content {
-        flex-direction: column;
+    .chat-message .message-content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        max-width: 100%;
     }
     
-    .chat-section {
-        width: 100%;
-        height: 400px;
-        margin-bottom: 20px;
+    .chat-message.agent-message .message-content {
+        white-space: normal;
+        font-size: 0.88rem;
+        line-height: 1.4;
     }
     
-    .form-section {
-        width: 100%;
+    .chat-suggestion-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+        padding-top: 8px;
+    }
+    
+    .chat-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+        flex: 1;
+        min-width: 45%;
     }
     
     .suggestion-box {
-        position: relative;
-        bottom: auto;
-        left: 0;
-        right: 0;
-        margin-top: 10px;
+        position: static;
+        margin: 10px 0;
+        padding: 12px;
     }
     
     .form-group.has-suggestion {
-        padding-bottom: 20px;
+        padding-bottom: 10px;
+    }
+    
+    .message-timestamp {
+        font-size: 10px;
+        margin-top: 2px;
+    }
+    
+    .typing-indicator {
+        font-size: 0.85rem;
+    }
+    
+    .success-modal {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    
+    .success-icon {
+        font-size: 60px;
+    }
+    
+    .success-content h2 {
+        font-size: 24px;
     }
 }
 
@@ -427,7 +460,7 @@ select:focus {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #42d4aa;
+    background: #10f585;
     margin: 0 2px;
     animation: bounce 1.4s infinite ease-in-out both;
 }

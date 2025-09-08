@@ -126,6 +126,7 @@ app.post('/api/grants/submit', rateLimitMiddleware, async (req, res) => {
       timeline,
       grantImportance,
       confidence,
+      projectUrl,
       email,
       walletAddress,
       supportingDocs,
@@ -160,10 +161,10 @@ app.post('/api/grants/submit', rateLimitMiddleware, async (req, res) => {
       INSERT INTO grant_applications (
         project_title, project_summary, project_category, other_category,
         proi_generation, project_stage, timeline,
-        grant_importance, confidence,
+        grant_importance, confidence, project_url,
         email, wallet_address,
         supporting_docs, ip_address, user_agent
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING id, submitted_at
     `;
     
@@ -177,6 +178,7 @@ app.post('/api/grants/submit', rateLimitMiddleware, async (req, res) => {
       timeline || null,
       grantImportance ? parseInt(grantImportance) : null, 
       confidence ? parseInt(confidence) : null,
+      projectUrl || null,
       email.toLowerCase(), 
       walletAddress || null,
       supportingDocs ? JSON.stringify(supportingDocs) : null,
