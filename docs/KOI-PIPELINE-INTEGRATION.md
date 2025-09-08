@@ -1232,6 +1232,122 @@ StandardOutput=journal
 StandardError=journal
 ```
 
+## Troubleshooting Guide
+
+### Common Issues and Solutions
+
+#### 1. Port Conflicts
+
+**Problem**: "Address already in use" error when starting services
+
+**Solution**: 
+- KOI Coordinator uses port 8200 (changed from 8000 to avoid Django conflict)
+- Check what's using ports:
+  ```bash
+  sudo netstat -tlnp | grep -E ":(8000|8100|8200|8888|8090)"
+  docker ps | grep -E ":(8000|8100|8200|8888|8090)"
+  ```
+- Update environment variables if needed:
+  ```bash
+  export KOI_COORDINATOR_PORT=8200  # Not 8000!
+  export BGE_SERVER_PORT=8090       # Sometimes defaults to 8090
+  ```
+
+#### 2. FastAPI Module Not Found
+
+**Problem**: `ModuleNotFoundError: No module named 'fastapi'`
+
+**Solution**:
+```bash
+cd /opt/projects/koi-processor
+source venv/bin/activate
+pip install fastapi uvicorn
+```
+
+#### 3. Services Not Starting with Systemd
+
+**Problem**: Permission denied or systemd not available
+
+**Solution**: Use screen sessions instead:
+```bash
+# Start with screen (alternative to systemd)
+screen -dmS koi-coordinator bash -c 'cd /opt/projects/koi-sensors && source venv/bin/activate && export KOI_COORDINATOR_PORT=8200 && python koi_protocol/coordinator/run_coordinator.py'
+
+screen -dmS koi-event-bridge bash -c 'cd /opt/projects/koi-processor && source venv/bin/activate && export POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza && python koi_event_bridge.py'
+
+screen -dmS bge-server bash -c 'cd /opt/projects/koi-processor && source venv/bin/activate && export BGE_SERVER_PORT=8090 && python bge_server.py'
+
+# List screens
+screen -ls
+
+# Attach to a screen
+screen -r koi-coordinator
+```
+
+#### 4. KOI Coordinator Not Using Environment Variable
+
+**Problem**: Coordinator always tries to use port 8000
+
+**Solution**: The koi-sensors repository needs to be updated to read from environment:
+```python
+# In koi_protocol/coordinator/run_coordinator.py
+import os
+
+coordinator = KOICoordinator(
+    node_name="koi-coordinator-main",
+    port=int(os.getenv("KOI_COORDINATOR_PORT", 8000))
+)
+```
+
+#### 5. BGE Server on Wrong Port
+
+**Problem**: BGE Server running on 8090 instead of 8888
+
+**Solution**: Check actual port and update configurations:
+```bash
+# Check where BGE is actually running
+curl -s http://localhost:8090/health
+curl -s http://localhost:8888/health
+
+# Update Event Bridge configuration to use correct BGE port
+```
+
+### Service Health Checks
+
+```bash
+# Quick health check for all services
+echo "KOI Coordinator (8200):"
+curl -s "http://localhost:8200/events/poll?node_id=test" | head -c 50
+
+echo "Event Bridge (8100):"
+curl -s http://localhost:8100/health
+
+echo "BGE Server (8090 or 8888):"
+curl -s http://localhost:8090/health || curl -s http://localhost:8888/health
+
+echo "PostgreSQL:"
+docker exec gaia-postgres-1 psql -U postgres -c '\l' | grep eliza
+```
+
+### Log Locations
+
+- **Screen sessions**: 
+  ```bash
+  # View logs in screen
+  screen -r koi-coordinator
+  # Or write to files
+  /tmp/koi-coordinator.log
+  /tmp/koi-event-bridge.log
+  /tmp/bge-server.log
+  ```
+
+- **Systemd services**:
+  ```bash
+  sudo journalctl -u koi-coordinator -f
+  sudo journalctl -u koi-event-bridge -f
+  sudo journalctl -u bge-server -f
+  ```
+
 ## Server Deployment Quick Reference
 
 ### One-Command Deployment
@@ -1243,13 +1359,14 @@ cd /opt/projects/GAIA && bash scripts/deploy-koi-pipeline.sh
 ### Verify Deployment
 
 ```bash
-# Check all services are running
+# Check all services are running (if using systemd)
 systemctl status koi-* --no-pager
 
-# Test pipeline
-curl -X POST http://localhost:8000/test-event \
-  -H "Content-Type: application/json" \
-  -d '{"test": "data"}'
+# Or check screen sessions
+screen -ls
+
+# Test pipeline (coordinator on port 8200)
+curl "http://localhost:8200/events/poll?node_id=test"
 
 # Check logs for any errors
 journalctl -u koi-* --since "10 minutes ago" --no-pager
