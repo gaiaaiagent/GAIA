@@ -16,6 +16,7 @@ PROJECT_DIR="/opt/projects"
 GAIA_REPO="https://github.com/gaiaaiagent/GAIA.git"
 KOI_SENSORS_REPO="https://github.com/gaiaaiagent/koi-sensors.git"
 KOI_PROCESSOR_REPO="https://github.com/gaiaaiagent/koi-processor.git"
+KOI_COORDINATOR_PORT=8200  # Changed from 8000 to avoid Django conflict
 
 echo -e "${GREEN}=== KOI Pipeline Deployment Script ===${NC}"
 echo
