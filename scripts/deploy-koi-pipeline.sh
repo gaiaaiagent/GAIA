@@ -132,6 +132,13 @@ fi
 source venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
+
+# Install website sensor specific dependencies
+if [ -f "sensors/websites/requirements.txt" ]; then
+    echo "Installing website sensor dependencies..."
+    pip install -r sensors/websites/requirements.txt
+fi
+
 deactivate
 
 # KOI Processor
@@ -404,6 +411,9 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         
         screen -dmS bge-server bash -c "cd $PROJECT_DIR/koi-processor && source venv/bin/activate && source $PROJECT_DIR/GAIA/config/koi-pipeline.env && python bge_server.py"
         echo "  Started bge-server in screen session"
+        
+        screen -dmS website-sensor bash -c "cd $PROJECT_DIR/koi-sensors/sensors/websites && source ../../venv/bin/activate && export KOI_COORDINATOR_URL=http://localhost:$KOI_COORDINATOR_PORT && python run_website_sensor.py"
+        echo "  Started website-sensor in screen session"
         
         echo
         echo "Services started in screen sessions. Use 'screen -ls' to list sessions."
