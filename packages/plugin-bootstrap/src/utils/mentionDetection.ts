@@ -81,7 +81,26 @@ export function detectTelegramMention(
     };
   }
 
-  // Check if the bot's name is mentioned anywhere in the message
+  // Check for exact case name mention (without @) - highest priority for exact matches
+  // This handles exact case matches like "TestBot what is the status?"
+  const originalText = message.content.text || '';
+  const originalWords = originalText.split(/\s+/);
+  for (const word of originalWords) {
+    // Remove punctuation for comparison but preserve case
+    const cleanWord = word.replace(/[^\w]/g, '');
+    if (cleanWord === runtime.character.name ||
+        (runtime.character.username && cleanWord === runtime.character.username) ||
+        (telegramBotUsername && cleanWord === telegramBotUsername.split('@')[0])) {
+      return {
+        isMentioned: true,
+        mentionType: 'name',
+        confidence: 0.9
+      };
+    }
+  }
+
+  // Check for case-insensitive username mention (without @) - lower priority
+  // This handles cases like "I think testbot can help with this"
   const words = messageText.split(/\s+/);
   for (const word of words) {
     // Remove punctuation for comparison
@@ -91,21 +110,20 @@ export function detectTelegramMention(
         (agentUsername && cleanWord === agentUsername)) {
       return {
         isMentioned: true,
-        mentionType: 'name',
-        confidence: 0.9
+        mentionType: 'username',
+        confidence: 0.7
       };
     }
   }
 
-  // Check for username mention (without @)
-  // This handles cases where people mention the bot without the @ symbol
-  if (messageText.includes(telegramBotUsername) ||
+  // Check if the bot's name is mentioned as substring (less specific)
+  if ((telegramBotUsername && messageText.includes(telegramBotUsername)) ||
       messageText.includes(agentName) || 
       (agentUsername && messageText.includes(agentUsername))) {
     return {
       isMentioned: true,
-      mentionType: 'username',
-      confidence: 0.7
+      mentionType: 'name',
+      confidence: 0.9
     };
   }
 

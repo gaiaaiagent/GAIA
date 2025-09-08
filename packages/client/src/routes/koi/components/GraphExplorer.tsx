@@ -65,7 +65,7 @@ export default function GraphExplorer() {
     setError(null);
 
     try {
-      const url = `http://localhost:8001/api/koi/graph-data/?max_nodes=1000&depth=2&show_metadata=${showMetadata}`;
+      const url = `/api/koi/graph-data/?max_nodes=1000&depth=2&show_metadata=${showMetadata}`;
       const response = await fetch(url);
       
       if (!response.ok) {

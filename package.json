@@ -78,6 +78,7 @@
     "@elizaos/plugin-bootstrap": "1.4.5",
     "@elizaos/plugin-coinbase": "^1.0.2",
     "@elizaos/plugin-e2b": "1.2.0",
+    "@elizaos/plugin-mcp": "^1.0.8",
     "@elizaos/plugin-ollama": "^1.2.4",
     "@elizaos/plugin-openai": "^1.0.9",
     "@elizaos/plugin-telegram": "https://github.com/gaiaaiagent/plugin-telegram.git#1.x",

@@ -9,12 +9,8 @@
     "@elizaos/plugin-knowledge",
     "@elizaos/plugin-telegram"
   ],
-  "secrets": {
-    "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN_NARRATIVE}",
-    "TELEGRAM_BOT_USERNAME": "RegenNarrativeBot"
-  },
   "settings": {
-    "clients": [],
+    "clients": ["telegram"],
     "allowDirectMessages": true,
     "TELEGRAM_ONLY_RESPOND_WHEN_MENTIONED": true,
     "TELEGRAM_RANDOM_RESPONSE_RATE": 0.01,

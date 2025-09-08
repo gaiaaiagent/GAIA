@@ -9,10 +9,6 @@
     "@elizaos/plugin-knowledge",
     "@elizaos/plugin-telegram"
   ],
-  "secrets": {
-    "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN_GOVERNOR}",
-    "TELEGRAM_BOT_USERNAME": "RegenGovernBot"
-  },
   "settings": {
     "clients": [],
     "allowDirectMessages": true,
