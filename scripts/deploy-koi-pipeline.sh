@@ -86,12 +86,12 @@ if [ -d "GAIA" ]; then
     echo "Updating GAIA repository..."
     cd GAIA
     git fetch origin
-    git checkout regen-knowledge-rag
-    git pull origin regen-knowledge-rag
+    git checkout regen-prod
+    git pull origin regen-prod
     cd ..
 else
     echo "Cloning GAIA repository..."
-    git clone "$GAIA_REPO" -b regen-knowledge-rag GAIA
+    git clone "$GAIA_REPO" -b regen-prod GAIA
 fi
 
 # KOI Sensors repository
