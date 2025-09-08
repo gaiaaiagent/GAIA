@@ -1,0 +1,33 @@
+[Unit]
+Description=KOI Event Bridge Service
+Documentation=https://github.com/gaiaaiagent/koi-processor
+After=network.target postgresql.service koi-coordinator.service
+Requires=network.target postgresql.service
+Wants=koi-coordinator.service
+
+[Service]
+Type=simple
+User=koiops
+Group=koiops
+WorkingDirectory=/opt/projects/koi-processor
+Environment="PATH=/opt/projects/koi-processor/venv/bin:/usr/local/bin:/usr/bin:/bin"
+EnvironmentFile=/opt/projects/GAIA/config/koi-pipeline.env
+ExecStart=/opt/projects/koi-processor/venv/bin/python koi_event_bridge.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=koi-event-bridge
+
+# Dependencies check
+ExecStartPre=/bin/bash -c 'until nc -z localhost 8000; do sleep 1; done'
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/projects/koi-processor /var/log/koi
+
+[Install]
+WantedBy=multi-user.target

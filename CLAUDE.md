@@ -1143,6 +1143,136 @@ cp -r dist/* ../server/dist/client/
 See `docs/KOI-SETUP-GUIDE.md` for complete installation and troubleshooting guide.
 
 
+## 🚀 KOI Sensor-to-Agent Pipeline (September 2025) - PRODUCTION READY
+
+### Complete Pipeline Integration 
+The full KOI sensor-to-agent pipeline is now 100% operational, providing real-time content flow from sensors through processing to Eliza agents:
+
+**Architecture:**
+```
+KOI Sensors → KOI Coordinator → KOI Event Bridge → BGE Embeddings → PostgreSQL → Eliza Agents
+   (Port 8000)    (Port 8100)       (Port 8888)       (pgvector)      (RAG queries)
+```
+
+**Key Components:**
+- **KOI Coordinator** (koi-sensors): Receives sensor events, forwards to processor
+- **KOI Event Bridge** (koi-processor): Processes events, generates embeddings 
+- **BGE Server** (koi-processor): Creates 1024-dimensional vectors
+- **PostgreSQL**: Stores embeddings with pgvector extension
+- **CAT Receipts**: Full provenance tracking through pipeline
+
+**Performance:**
+- End-to-end latency: 3-5 seconds from sensor to agent availability
+- BGE embeddings: BAAI/bge-large-en-v1.5 compatible
+- Tested with real content injection and verified in production
+
+## 🔍 BGE Semantic Search via MCP (September 2025)
+
+### Overview
+Agents can now perform semantic search using BGE embeddings (BAAI/bge-large-en-v1.5) through an MCP (Model Context Protocol) server integration. This provides high-quality semantic search capabilities across 48,151+ regenerative agriculture and Regen Network documents.
+
+### Architecture
+**MCP Server**: TypeScript implementation using Anthropic's MCP SDK
+- Location: `../koi-processor/bge-mcp-ts/bge-server.ts`
+- Launcher: `../koi-processor/run-bge-mcp-ts.sh`
+- Tools: `bge_search` (semantic search) and `bge_stats` (database statistics)
+
+**Database**: PostgreSQL with pgvector extension
+- 48,151 BGE embeddings (1024-dimensional vectors)
+- Stored in `embeddings` table with `dim_1024` column
+- Linked to `memories` table for content and metadata
+
+### Agent Configuration
+Add MCP server configuration to character files:
+
+```json
+{
+  "name": "YourAgent",
+  "plugins": [
+    "@elizaos/plugin-mcp"  // Required for MCP support
+  ],
+  "settings": {
+    "mcp": {
+      "servers": {
+        "bge-search": {
+          "type": "stdio",
+          "command": "../koi-processor/run-bge-mcp-ts.sh",
+          "args": [],
+          "env": {
+            "POSTGRES_URL": "postgresql://postgres:postgres@localhost:5433/eliza"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Using BGE Search in Character Messages
+Agents can reference the BGE search capability in their message examples:
+
+```json
+"messageExamples": [
+  {
+    "name": "{{user1}}",
+    "content": { "text": "What is regenerative agriculture?" }
+  },
+  {
+    "name": "Agent",
+    "content": { 
+      "text": "Let me search for information about regenerative agriculture. [Uses bge_search tool]\\n\\nRegenerative agriculture is a holistic approach to farming..."
+    }
+  }
+]
+```
+
+### MCP Tools Available
+
+**bge_search**: Semantic similarity search
+- `query`: Search query text
+- `top_k`: Number of results (default: 10)
+- `agent_id`: Filter by specific agent (optional)
+- `room_id`: Filter by specific room (optional)
+
+**bge_stats**: Database statistics
+- Returns total embeddings, unique agents/rooms/entities
+- Shows top agents by embedding count
+
+### Testing the MCP Server
+
+```bash
+# Test the TypeScript MCP server directly
+cd ../koi-processor
+bun run bge-mcp-ts/bge-server.ts
+
+# Start an agent with BGE MCP
+cd ../GAIA
+POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/eliza \
+bun packages/cli/dist/index.js start \
+--character characters/narrative-with-mcp.character.json \
+--port 3011
+```
+
+### Troubleshooting
+
+**MCP Connection Issues:**
+- Ensure PostgreSQL is running on port 5433
+- Verify BGE embeddings exist: Check for 48,151 embeddings
+- Check MCP server logs in agent output
+- Ensure `@elizaos/plugin-mcp` is installed
+
+**Search Not Working:**
+- Verify dim_1024 column has BGE embeddings
+- Check PostgreSQL connection string
+- Ensure pgvector extension is enabled
+- Test with bge_stats tool first
+
+### Implementation Details
+- Uses cosine similarity for vector search (<=> operator)
+- Falls back to mock embeddings if BGE API unavailable
+- Preserves document metadata (source_file, chunk_id, etc.)
+- TypeScript implementation avoids stdio compatibility issues
+
 ## 🔐 Security Configuration (September 2025)
 
 ### Environment Variables

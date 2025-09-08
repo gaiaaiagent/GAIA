@@ -1,0 +1,33 @@
+[Unit]
+Description=KOI Website Sensor
+Documentation=https://github.com/gaiaaiagent/koi-sensors
+After=network.target koi-coordinator.service
+Requires=koi-coordinator.service
+
+[Service]
+Type=simple
+User=koiops
+Group=koiops
+WorkingDirectory=/opt/projects/koi-sensors/sensors/websites
+Environment="PATH=/opt/projects/koi-sensors/venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/opt/projects/koi-sensors"
+EnvironmentFile=/opt/projects/GAIA/config/koi-pipeline.env
+ExecStart=/opt/projects/koi-sensors/venv/bin/python run_website_sensor.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=website-sensor
+
+# Wait for coordinator to be ready
+ExecStartPre=/bin/bash -c 'until curl -s http://localhost:8000/status; do sleep 2; done'
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/projects/koi-sensors /var/log/koi
+
+[Install]
+WantedBy=multi-user.target
