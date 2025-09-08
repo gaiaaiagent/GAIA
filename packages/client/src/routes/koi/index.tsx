@@ -17,6 +17,7 @@ import {
 import QueryInterface from './components/QueryInterface';
 import GraphExplorer from './components/GraphExplorer';
 import EssenceRadar from './components/EssenceRadar';
+import PipelineMonitor from './components/PipelineMonitor';
 
 /**
  * KOI Knowledge Graph Visualization Page
@@ -25,7 +26,7 @@ import EssenceRadar from './components/EssenceRadar';
  * Provides natural language querying, SPARQL interface, and interactive visualizations
  */
 export default function KOIPage() {
-  const [activeTab, setActiveTab] = useState('query');
+  const [activeTab, setActiveTab] = useState('monitor');
 
   return (
     <div className="flex flex-col h-full w-full bg-background">
@@ -62,24 +63,33 @@ export default function KOIPage() {
       <div className="flex-1 container mx-auto px-4 py-6 space-y-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
           {/* Tab navigation */}
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-5 mb-6">
+            <TabsTrigger value="monitor" className="flex items-center gap-2">
+              <Eye className="h-4 w-4" />
+              Pipeline Monitor
+            </TabsTrigger>
             <TabsTrigger value="query" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
-              Natural Language Query
+              Query
             </TabsTrigger>
             <TabsTrigger value="graph" className="flex items-center gap-2">
               <Network className="h-4 w-4" />
-              Graph Explorer
+              Graph
             </TabsTrigger>
             <TabsTrigger value="essence" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
-              Essence Patterns
+              Essence
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Analytics
             </TabsTrigger>
           </TabsList>
+
+          {/* Pipeline Monitor Tab */}
+          <TabsContent value="monitor" className="h-full">
+            <PipelineMonitor />
+          </TabsContent>
 
           {/* Query Interface Tab */}
           <TabsContent value="query" className="h-full">

@@ -16,6 +16,7 @@ import { audioRouter } from './audio';
 import { runtimeRouter } from './runtime';
 import { teeRouter } from './tee';
 import { systemRouter } from './system';
+import koiRouter from './koi';
 // NOTE: world router has been removed - functionality moved to messaging/spaces
 import { SocketIORouter } from '../socketio';
 import {
@@ -446,6 +447,9 @@ export function createApiRouter(
 
   // Mount system router at /system - handles system configuration, health checks, and environment
   router.use('/system', systemRouter());
+
+  // Mount KOI router at /koi - handles KOI pipeline monitoring and control
+  router.use('/koi', koiRouter);
 
   // NOTE: /world routes have been removed - functionality moved to messaging/spaces
 
