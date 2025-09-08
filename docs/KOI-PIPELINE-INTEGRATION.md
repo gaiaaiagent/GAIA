@@ -1208,7 +1208,7 @@ sudo systemctl restart systemd-journald
 
 ```bash
 # Health check all components
-curl http://localhost:8000/status    # Coordinator
+curl http://localhost:8200/status    # Coordinator
 curl http://localhost:8100/health    # Event Bridge
 curl http://localhost:8888/health    # BGE Server
 
@@ -1216,7 +1216,7 @@ curl http://localhost:8888/health    # BGE Server
 psql -U postgres -d eliza -c "SELECT COUNT(*) FROM memories WHERE type='koi_document';"
 
 # Monitor event flow
-curl http://localhost:8000/events/poll
+curl http://localhost:8200/events/poll
 ```
 
 ### Auto-restart Configuration
