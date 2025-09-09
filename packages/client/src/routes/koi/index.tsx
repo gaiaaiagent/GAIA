@@ -12,12 +12,14 @@ import {
   BarChart3, 
   Brain, 
   Eye,
-  Loader2 
+  Loader2,
+  Shield 
 } from 'lucide-react';
 import QueryInterface from './components/QueryInterface';
 import GraphExplorer from './components/GraphExplorer';
 import EssenceRadar from './components/EssenceRadar';
 import PipelineMonitorEnhanced from './components/PipelineMonitorEnhanced';
+import KnowledgeManager from './components/KnowledgeManager';
 
 /**
  * KOI Knowledge Graph Visualization Page
@@ -29,10 +31,10 @@ export default function KOIPage() {
   const [activeTab, setActiveTab] = useState('monitor');
 
   return (
-    <div className="flex flex-col h-full w-full bg-background">
-      {/* Header */}
-      <div className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
-        <div className="container mx-auto px-4 py-6">
+    <div className="flex w-full justify-center px-4 sm:px-6">
+      <div className="w-full py-6">
+        {/* Header */}
+        <div className="mb-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
@@ -57,13 +59,11 @@ export default function KOIPage() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main content */}
-      <div className="flex-1 container mx-auto px-4 py-6 space-y-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
+        {/* Main content */}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           {/* Tab navigation */}
-          <TabsList className="grid w-full grid-cols-5 mb-6">
+          <TabsList className="grid w-full grid-cols-6 mb-6">
             <TabsTrigger value="monitor" className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               Pipeline Monitor
@@ -84,15 +84,19 @@ export default function KOIPage() {
               <BarChart3 className="h-4 w-4" />
               Analytics
             </TabsTrigger>
+            <TabsTrigger value="knowledge" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Knowledge
+            </TabsTrigger>
           </TabsList>
 
           {/* Pipeline Monitor Tab */}
-          <TabsContent value="monitor" className="h-full">
+          <TabsContent value="monitor">
             <PipelineMonitorEnhanced />
           </TabsContent>
 
           {/* Query Interface Tab */}
-          <TabsContent value="query" className="h-full">
+          <TabsContent value="query">
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-full">
               {/* Query Interface */}
               <div className="xl:col-span-2 space-y-4">
@@ -158,7 +162,7 @@ export default function KOIPage() {
           </TabsContent>
 
           {/* Graph Explorer Tab */}
-          <TabsContent value="graph" className="h-full">
+          <TabsContent value="graph">
             <Card className="h-full">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -176,7 +180,7 @@ export default function KOIPage() {
           </TabsContent>
 
           {/* Essence Patterns Tab */}
-          <TabsContent value="essence" className="h-full">
+          <TabsContent value="essence">
             <Card className="h-full">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -194,7 +198,7 @@ export default function KOIPage() {
           </TabsContent>
 
           {/* Analytics Tab */}
-          <TabsContent value="analytics" className="h-full">
+          <TabsContent value="analytics">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
               <Card>
                 <CardHeader>
@@ -227,6 +231,11 @@ export default function KOIPage() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Knowledge Tab */}
+          <TabsContent value="knowledge">
+            <KnowledgeManager />
           </TabsContent>
         </Tabs>
       </div>

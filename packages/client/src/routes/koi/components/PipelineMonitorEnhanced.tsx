@@ -16,8 +16,8 @@ import {
   Wifi,
   WifiOff,
   GitBranch,
-  Timeline,
-  Eye
+  Eye,
+  Clock as Timeline
 } from 'lucide-react';
 import PipelineFlowGraph from './PipelineFlowGraph';
 import ProvenanceTimeline from './ProvenanceTimeline';

@@ -52,6 +52,9 @@ interface PipelineFlow {
     processed?: number;
     pending?: number;
     rate?: string;
+    vectors?: number;
+    triples?: number;
+    queries?: number;
   };
 }
 
@@ -81,14 +84,14 @@ export default function PipelineMonitor() {
         icon: Network,
         status: 'idle',
         description: 'Event coordination & routing',
-        metrics: { processed: 0, pending: 0 }
+        metrics: { processed: 0 }
       },
       {
         stage: 'Event Bridge',
         icon: Zap,
         status: 'idle',
         description: 'Event processing & transformation',
-        metrics: { processed: 0, pending: 0 }
+        metrics: { processed: 0 }
       },
       {
         stage: 'BGE Embeddings',
@@ -98,18 +101,18 @@ export default function PipelineMonitor() {
         metrics: { processed: 0, rate: '0/sec' }
       },
       {
-        stage: 'PostgreSQL',
+        stage: 'Data Storage',
         icon: Database,
         status: 'idle',
-        description: 'Vector storage with pgvector',
-        metrics: { processed: 0 }
+        description: 'PostgreSQL & Apache Jena',
+        metrics: { vectors: 0, triples: 0 }
       },
       {
         stage: 'Eliza Agents',
         icon: Activity,
         status: 'idle',
         description: 'Agent knowledge access',
-        metrics: { processed: 0 }
+        metrics: { queries: 0 }
       }
     ]);
   }, []);
@@ -288,12 +291,13 @@ export default function PipelineMonitor() {
                   rate: '0/sec'
                 }
               };
-            case 'PostgreSQL':
+            case 'Data Storage':
               return {
                 ...stage,
                 status: data.pipeline.database?.status === 'online' ? 'idle' : 'error',
                 metrics: {
-                  processed: data.pipeline.database?.vectors_stored || 0
+                  vectors: data.pipeline.database?.vectors_stored || 0,
+                  triples: data.pipeline.sparql?.triples_stored || 0
                 }
               };
             case 'Eliza Agents':
@@ -301,7 +305,7 @@ export default function PipelineMonitor() {
                 ...stage,
                 status: 'idle',
                 metrics: {
-                  processed: data.pipeline.database?.total_documents || 0
+                  queries: data.pipeline.agents?.queries_processed || 0
                 }
               };
             default:
@@ -453,6 +457,24 @@ export default function PipelineMonitor() {
                           <span className="text-muted-foreground"> processed</span>
                         </div>
                       )}
+                      {stage.metrics.vectors !== undefined && (
+                        <div className="text-center">
+                          <span className="font-mono">{stage.metrics.vectors}</span>
+                          <span className="text-muted-foreground"> vectors</span>
+                        </div>
+                      )}
+                      {stage.metrics.triples !== undefined && (
+                        <div className="text-center">
+                          <span className="font-mono">{stage.metrics.triples}</span>
+                          <span className="text-muted-foreground"> triples</span>
+                        </div>
+                      )}
+                      {stage.metrics.queries !== undefined && (
+                        <div className="text-center">
+                          <span className="font-mono">{stage.metrics.queries}</span>
+                          <span className="text-muted-foreground"> queries</span>
+                        </div>
+                      )}
                       {stage.metrics.pending !== undefined && stage.metrics.pending > 0 && (
                         <div className="text-center text-yellow-600">
                           <span className="font-mono">{stage.metrics.pending}</span>
@@ -536,7 +558,14 @@ export default function PipelineMonitor() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {pipelineFlow.reduce((acc, stage) => acc + (stage.metrics?.processed || 0), 0)}
+              {pipelineFlow.reduce((acc, stage) => {
+                // Only count processed from stages that actually process events
+                if (stage.stage === 'Sensors' || stage.stage === 'Coordinator' || 
+                    stage.stage === 'Event Bridge' || stage.stage === 'BGE Embeddings') {
+                  return acc + (stage.metrics?.processed || 0);
+                }
+                return acc;
+              }, 0)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Across all pipeline stages
