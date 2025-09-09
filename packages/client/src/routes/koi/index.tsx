@@ -17,7 +17,7 @@ import {
 import QueryInterface from './components/QueryInterface';
 import GraphExplorer from './components/GraphExplorer';
 import EssenceRadar from './components/EssenceRadar';
-import PipelineMonitor from './components/PipelineMonitor';
+import PipelineMonitorEnhanced from './components/PipelineMonitorEnhanced';
 
 /**
  * KOI Knowledge Graph Visualization Page
@@ -88,7 +88,7 @@ export default function KOIPage() {
 
           {/* Pipeline Monitor Tab */}
           <TabsContent value="monitor" className="h-full">
-            <PipelineMonitor />
+            <PipelineMonitorEnhanced />
           </TabsContent>
 
           {/* Query Interface Tab */}

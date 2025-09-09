@@ -46,7 +46,7 @@ interface SensorNode {
 interface PipelineFlow {
   stage: string;
   icon: any;
-  status: 'active' | 'idle' | 'processing';
+  status: 'active' | 'idle' | 'processing' | 'error';
   description: string;
   metrics?: {
     processed?: number;
@@ -156,7 +156,8 @@ export default function PipelineMonitor() {
             };
           }
           
-          const response = await fetch(service.endpoint);
+          const apiUrl = import.meta.env.VITE_KOI_API_URL || '';
+          const response = await fetch(`${apiUrl}${service.endpoint}`);
           const data = await response.json();
           
           return {
@@ -182,7 +183,8 @@ export default function PipelineMonitor() {
   // Fetch sensor status
   const fetchSensors = async () => {
     try {
-      const response = await fetch('/api/koi/sensors');
+      const apiUrl = import.meta.env.VITE_KOI_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/koi/sensors`);
       const data = await response.json();
       
       if (data.sensors && Array.isArray(data.sensors)) {
@@ -242,39 +244,74 @@ export default function PipelineMonitor() {
 
   // Update pipeline metrics
   const updatePipelineMetrics = async () => {
-    // In production, fetch real metrics from the pipeline
-    // For now, simulate with mock data
-    setPipelineFlow(prev => prev.map((stage, index) => {
-      const baseMetrics = stage.metrics || {};
-      
-      // Simulate activity
-      if (stage.stage === 'Sensors') {
-        return {
-          ...stage,
-          status: 'active',
-          metrics: {
-            ...baseMetrics,
-            processed: (baseMetrics.processed || 0) + Math.floor(Math.random() * 5),
-            pending: Math.floor(Math.random() * 10),
-            rate: `${Math.floor(Math.random() * 10)}/min`
+    // Fetch real metrics from the pipeline API
+    try {
+      const apiUrl = import.meta.env.VITE_KOI_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/koi/metrics`);
+      if (response.ok) {
+        const data = await response.json();
+        
+        setPipelineFlow(prev => prev.map(stage => {
+          switch (stage.stage) {
+            case 'Sensors':
+              return {
+                ...stage,
+                status: data.pipeline.sensors?.active > 0 ? 'active' : 'idle',
+                metrics: {
+                  processed: data.pipeline.sensors?.events_processed || 0,
+                  pending: data.pipeline.coordinator?.pending || 0,
+                  rate: data.pipeline.sensors?.rate || '0/min'
+                }
+              };
+            case 'Coordinator':
+              return {
+                ...stage,
+                status: data.pipeline.coordinator?.events_routed > 0 ? 'processing' : 'idle',
+                metrics: {
+                  processed: data.pipeline.coordinator?.events_routed || 0
+                }
+              };
+            case 'Event Bridge':
+              return {
+                ...stage,
+                status: data.pipeline.event_bridge?.events_processed > 0 ? 'processing' : 'idle',
+                metrics: {
+                  processed: data.pipeline.event_bridge?.events_processed || 0
+                }
+              };
+            case 'BGE Embeddings':
+              return {
+                ...stage,
+                status: data.pipeline.event_bridge?.transformations > 0 ? 'processing' : 'idle',
+                metrics: {
+                  processed: data.pipeline.event_bridge?.transformations || 0,
+                  rate: '0/sec'
+                }
+              };
+            case 'PostgreSQL':
+              return {
+                ...stage,
+                status: data.pipeline.database?.status === 'online' ? 'idle' : 'error',
+                metrics: {
+                  processed: data.pipeline.database?.vectors_stored || 0
+                }
+              };
+            case 'Eliza Agents':
+              return {
+                ...stage,
+                status: 'idle',
+                metrics: {
+                  processed: data.pipeline.database?.total_documents || 0
+                }
+              };
+            default:
+              return stage;
           }
-        };
+        }));
       }
-      
-      // Cascade activity through pipeline
-      if (index > 0 && Math.random() > 0.5) {
-        return {
-          ...stage,
-          status: 'processing',
-          metrics: {
-            ...baseMetrics,
-            processed: (baseMetrics.processed || 0) + Math.floor(Math.random() * 3)
-          }
-        };
-      }
-      
-      return stage;
-    }));
+    } catch (error) {
+      console.error('Failed to fetch metrics:', error);
+    }
   };
 
   // Initial load and refresh
