@@ -103,7 +103,7 @@ function AppContent() {
     <TooltipProvider delayDuration={0}>
       <SidebarProvider>
         <AppSidebar refreshHomePage={refreshHomePage} />
-        <SidebarInset className="h-screen flex flex-col md:ml-72 overflow-hidden">
+        <SidebarInset className="md:ml-72">
           {/* Mobile menu button */}
           <div className="md:hidden absolute top-4 left-4 z-50">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -123,7 +123,7 @@ function AppContent() {
               <ConnectionErrorBanner />
             </div>
           </div>
-          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+          <div className="flex-1 min-h-0 flex flex-col">
             <Routes>
               <Route path="/" element={<Home key={homeKey} />} />
               <Route
@@ -186,13 +186,15 @@ function AppContent() {
                   </div>
                 }
               />
-              <Route
-                path="koi"
+              <Route 
+                path="koi" 
                 element={
-                  <div className="flex-1 min-h-0 overflow-hidden">
-                    <KOIPage />
+                  <div className="flex w-full justify-center overflow-y-auto">
+                    <div className="w-full">
+                      <KOIPage />
+                    </div>
                   </div>
-                }
+                } 
               />
               {/* Catch-all route for 404 errors */}
               <Route path="*" element={<NotFound />} />
