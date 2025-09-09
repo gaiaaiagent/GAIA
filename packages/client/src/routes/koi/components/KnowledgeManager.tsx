@@ -152,11 +152,6 @@ export default function KnowledgeManager() {
       if (data.success) {
         // Reload agents to update permission counts
         await loadAgents();
-        // Update selected agent
-        const updatedAgent = agents.find(a => a.id === selectedAgent.id);
-        if (updatedAgent) {
-          setSelectedAgent(updatedAgent);
-        }
       }
     } catch (error) {
       console.error('Failed to save permissions:', error);
