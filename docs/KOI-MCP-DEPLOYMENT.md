@@ -7,7 +7,7 @@ This guide covers the deployment of the KOI (Knowledge Organization Infrastructu
 ## Architecture
 
 ```
-KOI Sensors → KOI Coordinator → KOI Event Bridge → BGE Embeddings → PostgreSQL → Eliza Agents
+KOI Sensors → KOI Coordinator → KOI Event Bridge v2 → BGE Embeddings → PostgreSQL → Eliza Agents
                                                                                          ↓
                                                                                     MCP Server
                                                                                          ↓
@@ -21,10 +21,11 @@ KOI Sensors → KOI Coordinator → KOI Event Bridge → BGE Embeddings → Post
    - Routes to processing pipeline
    - Manages sensor registration
 
-2. **KOI Event Bridge** (Port 8888)
-   - Processes incoming events
-   - Generates BGE embeddings
-   - Stores in PostgreSQL with pgvector
+2. **KOI Event Bridge v2** (Port 8100)
+   - Processes incoming events with RID-based deduplication
+   - Generates BGE embeddings (1024-dimensional)
+   - Stores in PostgreSQL with pgvector using isolated tables
+   - Version control for UPDATE events
 
 3. **KOI Permissions API** (Port 8300)
    - Manages agent knowledge access permissions
@@ -117,7 +118,7 @@ chmod +x start-all-koi-services.sh
 
 This will start:
 - KOI Coordinator on port 8100
-- KOI Event Bridge on port 8888
+- KOI Event Bridge v2 on port 8100
 - KOI Permissions API on port 8300
 
 ### Option 2: Start Services Individually
@@ -126,8 +127,8 @@ This will start:
 # Start Coordinator
 ./start-coordinator.sh
 
-# Start Event Bridge
-./start-event-bridge.sh
+# Start Event Bridge v2
+python koi_event_bridge_v2.py
 
 # Start Permissions API
 ./start-permissions-api.sh
@@ -138,7 +139,7 @@ This will start:
 ```bash
 # Check service health
 curl http://localhost:8100/health  # Coordinator
-curl http://localhost:8888/health  # Event Bridge
+curl http://localhost:8100/  # Event Bridge v2
 curl http://localhost:8300/health  # Permissions API
 
 # Check service status
@@ -258,12 +259,12 @@ cd koi-processor
 ```bash
 # By port
 lsof -ti:8100 | xargs kill  # Coordinator
-lsof -ti:8888 | xargs kill  # Event Bridge
+lsof -ti:8100 | xargs kill  # Event Bridge v2
 lsof -ti:8300 | xargs kill  # Permissions API
 
 # By process name
 pkill -f koi_coordinator
-pkill -f koi_event_bridge
+pkill -f koi_event_bridge_v2
 pkill -f koi_permissions_api
 ```
 

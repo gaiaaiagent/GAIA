@@ -313,7 +313,7 @@ This project is a collaboration between:
 
 ## Links
 
-- [Documentation](LOCAL-ACCESS.md)
+- [Documentation](docs/LOCAL-ACCESS.md)
 - [Contract Details](CLAUDE.md)
 - [Agent Personalities](characters/)
 - [Development Journal](.claude/journal/)
