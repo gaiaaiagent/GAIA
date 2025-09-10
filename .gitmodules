@@ -1,3 +1,6 @@
 [submodule ".cursor"]
 	path = .cursor
 	url = https://github.com/elizaOS/.cursor
+[submodule "mcp-servers/mcp-regen"]
+	path = mcp-servers/mcp-regen
+	url = https://github.com/regen-network/mcp
