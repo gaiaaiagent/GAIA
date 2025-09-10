@@ -51,7 +51,7 @@ eliza.sig
 
 # Production server specific
 .env.backup.*
-mcp-servers/
+# mcp-servers/  # Commented out to allow tracking the Regen MCP server
 knowledge copy/
 uuid-from-string.js
 cleanup-plan.md
