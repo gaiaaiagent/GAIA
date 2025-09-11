@@ -14,7 +14,7 @@ This proposal outlines the implementation of automated information pipelines for
 ## Daily Bot — *"Regen Daily"*
 
 - **Trigger:** 12:00 ET weekdays
-- **Sources:** All sources from operational KOI infrastructure (forum.regen.network, GitHub repos, Medium, websites, Discord, Twitter, Notion, podcasts) + live ledger/governance data via Regen MCP server
+- **Sources:** All sources from operational KOI infrastructure (forum.regen.network, GitHub repos, Medium, websites, Discord, Twitter, Notion [NOW ACTIVE], podcasts) + live ledger/governance data via Regen MCP server
 - **Output:** Thread (3–5 posts): headline, stat, 2 links, CTA
 - **Guardrails:** Draft-only week 1; style guide from David Fortson / Many Mangos; no speculation
 
@@ -60,7 +60,8 @@ Build on existing KOI infrastructure:
   - Websites (docs.regen.network, guides.regen.network, registry.regen.network, regen.foundation)
   - Medium blog (regen-network.medium.com)
   - Twitter (@regennetwork - add if not in sources.yaml)
-  - Discord, Notion, podcasts (when available)
+  - Notion (NOW ACTIVE with API integration)
+  - Discord, podcasts (when available)
 - **KOI Event Bridge**: Extend to capture live ledger activity and governance updates via existing Regen MCP server
 - **BGE Embeddings**: Utilize existing 1024-dimensional vectors for content similarity and curation
 - **PostgreSQL**: Query existing knowledge base for intelligent content selection
@@ -415,10 +416,16 @@ KOI Sensor Network (Full & Partial Nodes)
 - ✅ **Discourse** (Session 5) - Forum discussions and governance (10 topics, 44K chars)
 - ✅ **Medium** (Session 6) - Blog posts via RSS and scraping (10+ articles, 4.4K words per batch)
 
+### Additional Sensors Completed
+- ✅ **Notion** - COMPLETE: Full API integration with workspace monitoring (using provided integration secret)
+  - Database discovery and monitoring
+  - Content extraction with property handling  
+  - Change detection and KOI event emission
+  - Located in `/koi-sensors/sensors/notion/`
+
 ### Future Sensors (when resources available)
-- 🔴 **Discord** - Blocked: needs bot token
-- 🔴 **Notion** - Blocked: needs API access
-- 🔴 **Podcast** - Blocked: needs transcription service
+- 🔴 **Discord** - Blocked: waiting for bot channel approval
+- 🟡 **Podcast** - Partial: basic sensor exists, needs enhancement with transcription
 
 
 ### General info about our KOI system: /Users/darrenzal/projects/RegenAI/koi-research/docs/KOI_MASTER_IMPLEMENTATION_GUIDE.md
