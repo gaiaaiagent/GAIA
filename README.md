@@ -98,6 +98,13 @@ RegenAI is implementing the Knowledge Organization Infrastructure (KOI) protocol
 - **⚡ Real-time API**: Flask server connecting React UI to knowledge graph
 - **🔄 Provenance Tracking**: CAT receipts for all transformations
 
+### 📅 Milestone B: Information Pipelines (In Progress)
+Building automated content pipelines for daily X posts and weekly digests:
+- **Completed**: All data source sensors (Twitter, Ledger, GitHub, Websites, Forums, Medium)
+- **Current**: Architecting Daily Content Curator as processor component
+- **Upcoming**: Weekly aggregator, NotebookLM integration, X bot automation
+- **Details**: See [Milestone B Upgrade Proposal](docs/MILESTONE_B_UPGRADE_PROPOSAL.md)
+
 ### In Development
 - **Sensor Nodes**: Monitor websites, documents, and APIs for new content
 - **Processor Nodes**: Extract entities using metabolic ontology
