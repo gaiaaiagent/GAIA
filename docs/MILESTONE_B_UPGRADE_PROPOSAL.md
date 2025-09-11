@@ -416,17 +416,8 @@ KOI Sensor Network (Full & Partial Nodes)
 - ✅ **Websites** (Session 4) - docs, guides, registry, foundation sites (110 pages, 478K chars)
 - ✅ **Discourse** (Session 5) - Forum discussions and governance (10 topics, 44K chars)
 - ✅ **Medium** (Session 6) - Blog posts via RSS and scraping (10+ articles, 4.4K words per batch)
-
-### Additional Sensors Implemented
-- ✅ **Notion** - Full API integration with workspace monitoring
-  - Database discovery and monitoring
-  - Content extraction with property handling  
-  - Change detection and KOI event emission
-  - Located in `/koi-sensors/sensors/notion/`
-- ✅ **Podcast** - Enhanced sensor with transcription pipeline
-  - Uses yt-dlp + Whisper AI for audio download and transcription
-  - Located in `/koi-sensors/sensors/podcast/enhanced_podcast_sensor.py`
-  - Successfully processes Planetary Regeneration Podcast (68/70 episodes, 428,113+ words)
+- ✅ **Notion** - Full API integration with workspace monitoring (database discovery, content extraction)
+- ✅ **Podcast** - Planetary Regeneration Podcast with transcription (68/70 episodes, 428K+ words)
 
 ### Pending Sensors
 - 🔴 **Discord** - Awaiting bot channel approval
