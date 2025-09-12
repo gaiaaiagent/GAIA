@@ -342,3 +342,4 @@ start-test-telegram.sh
 logs/test-*.log
 .env.test
 docs/archive/
+config/koi-pipeline.env

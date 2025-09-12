@@ -1,0 +1,27 @@
+{
+  "name": "regen-mcp-server",
+  "version": "1.0.0",
+  "description": "Regen Network MCP server for blockchain data access",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "regen-mcp": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@regen-network/api": "^1.0.0-alpha7",
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
