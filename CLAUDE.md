@@ -328,7 +328,7 @@ curl -u regenai:regen2025 https://regen.gaiaai.xyz/
 ```
 
 ### Key Paths
-- **Agents run from**: `/opt/projects/GAIA` (symlinked to `/opt/projects/GAIA-direct`)
+- **Agents run from**: `/opt/projects/GAIA`
 - **Knowledge loaded from**: `/opt/projects/GAIA/knowledge`
 - **Characters**: `/opt/projects/GAIA/characters`
 - **Logs**: `/opt/projects/GAIA/logs/`
@@ -597,7 +597,7 @@ grep "Using model" /opt/projects/GAIA/logs/regenai.log | tail -10
 
 ### Working Directory
 - **Main**: `/opt/projects/GAIA` (Docker configs, characters, knowledge)
-- **Runtime**: `/opt/projects/GAIA` (symlinked from GAIA-direct)
+- **Runtime**: `/opt/projects/GAIA`
 - **Indexing**: `/home/regenai/project/indexing` (Notion crawler)
 
 ### Technology Stack
@@ -938,8 +938,8 @@ grep POSTGRES_URL /opt/projects/GAIA/scripts/start-all-agents.sh
 **2. Agents Not Appearing on Dashboard**
 ```bash
 # Check individual agent logs
-tail -f /opt/projects/GAIA-direct/logs/regenai.log
-tail -f /opt/projects/GAIA-direct/logs/facilitator.log
+tail -f /opt/projects/GAIA/logs/regenai.log
+tail -f /opt/projects/GAIA/logs/facilitator.log
 # Look for "Database connection verified" message
 ```
 
@@ -990,7 +990,7 @@ curl -u regenai:regen2025 https://regen.gaiaai.xyz/
 
 **Startup Configuration:**
 - `/opt/projects/GAIA/scripts/start-all-agents.sh` - Agent startup script with database config
-- `/opt/projects/GAIA-direct/.env` - Environment variables
+- `/opt/projects/GAIA/.env` - Environment variables
 
 **Nginx Configuration:**
 - `/opt/projects/GAIA/config/nginx-ssl.conf` - HTTPS config (production) 
@@ -1001,7 +1001,7 @@ curl -u regenai:regen2025 https://regen.gaiaai.xyz/
 - `/opt/projects/GAIA/characters/` - Agent character definitions
 
 **Log Files:**
-- `/opt/projects/GAIA-direct/logs/[agent-name].log` - Individual agent logs
+- `/opt/projects/GAIA/logs/[agent-name].log` - Individual agent logs
 
 ## Character Development
 
@@ -1076,7 +1076,7 @@ See [Django Admin Troubleshooting Guide](docs/DJANGO-ADMIN-TROUBLESHOOTING.md) f
 - Check logs: `docker logs gaia-postgres-1 | tail -50`
 
 ### Plugin not updating?
-- **Build plugin**: `cd /opt/projects/GAIA-direct/packages/plugin-knowledge && bun run build`
+- **Build plugin**: `cd /opt/projects/GAIA/packages/plugin-knowledge && bun run build`
 - **CRITICAL**: Copy to external dir: `cp -f dist/index.js /opt/projects/plugin-knowledge/dist/index.js`
 - **Restart agents**: `pkill -f 'packages/cli/dist' && bash start-agents-hybrid.sh`
 - **Test isolated**: `bun packages/cli/dist/index.js start --character /tmp/test-character.json`

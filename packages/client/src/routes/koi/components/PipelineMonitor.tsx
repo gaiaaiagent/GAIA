@@ -123,7 +123,7 @@ export default function PipelineMonitor() {
       {
         name: 'KOI Coordinator',
         status: 'loading',
-        port: 8200,
+        port: 8005,
         endpoint: '/api/koi/coordinator/health'
       },
       {
