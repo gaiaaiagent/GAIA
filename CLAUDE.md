@@ -6,6 +6,45 @@ Essential configuration for Claude Code when working with the RegenAI/GAIA codeb
 
 ## 🚨 CRITICAL DISCOVERIES & LESSONS LEARNED
 
+### Python Virtual Environments & Dependencies (September 13, 2025)
+
+**CRITICAL:** Always use virtual environments and requirements.txt for Python projects!
+
+**Problem:** Installing packages globally causes version conflicts and dependency issues.
+
+**Solution:** Use the existing venv and requirements files:
+
+**For KOI Processor (Milestone B):**
+```bash
+cd /Users/darrenzal/projects/RegenAI/koi-processor
+source venv/bin/activate  # ALWAYS activate venv first!
+pip install -r requirements.txt  # Install all dependencies
+
+# Additional requirements files for specific components:
+pip install -r requirements-audio.txt  # For podcast generation
+pip install -r requirements-weekly.txt  # For weekly aggregator
+```
+
+**For KOI Sensors:**
+```bash
+cd /Users/darrenzal/projects/RegenAI/koi-sensors
+source venv/bin/activate  # If venv exists
+pip install -r requirements.txt
+```
+
+**Key Points:**
+- **NEVER** install Python packages globally with pip
+- **ALWAYS** check for and use existing `venv` directory
+- **ALWAYS** activate venv before running Python scripts or installing packages
+- Multiple `requirements*.txt` files may exist for different components
+- If no venv exists, create one: `python -m venv venv`
+
+**Common Files to Check:**
+- `requirements.txt` - Main dependencies
+- `requirements-audio.txt` - Audio/podcast specific
+- `requirements-weekly.txt` - Weekly aggregator specific
+- `.env.example` - Environment variable template
+
 ### Security: Template-Based Character Configuration (August 29, 2025)
 
 **CRITICAL:** Never commit secrets to Git! Use template system for character files.
