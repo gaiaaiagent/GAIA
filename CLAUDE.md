@@ -1143,18 +1143,19 @@ If you see agents with unrealistic statistics (e.g., 13K+ pending):
 
 ### Complete Setup Successfully Deployed!
 
-The KOI knowledge graph visualization is now fully integrated with ElizaOS at https://regen.gaiaai.xyz/
+The KOI knowledge graph visualization is now fully integrated with ElizaOS at https://regen.gaiaai.xyz/koi
 
 **Key Components:**
 - **Apache Jena Fuseki** - SPARQL triplestore with 3,900+ triples (port 3030)
 - **KOI API Server** - Flask API connecting frontend to Fuseki (port 8001)
-- **React Frontend** - Interactive graph visualization with D3.js
-- **Nginx Proxy** - HTTPS access with `/api/koi/` endpoint
+- **React Frontend** - Interactive graph visualization with D3.js (served by ElizaOS on port 3000)
+- **Nginx Proxy** - HTTPS access with basic auth
 
 **Access Points:**
-- Graph button in sidebar footer (Network icon)
-- Direct URLs: `/koi` or `/KOI` (case-insensitive)
-- API: `https://regen.gaiaai.xyz/api/koi/health/`
+- Main dashboard: https://regen.gaiaai.xyz/ (ElizaOS client)
+- KOI visualization: https://regen.gaiaai.xyz/koi (part of ElizaOS client)
+- IRL Grant app: https://regen.gaiaai.xyz/irl/ (static files from Gaia-IRL)
+- API endpoints: `/api/koi/*` for various services
 
 **Critical Setup Notes:**
 1. **Client Build Location**: ElizaOS serves from `packages/server/dist/client/`, NOT `packages/client/dist/`
@@ -1181,6 +1182,24 @@ cp -r dist/* ../server/dist/client/
 
 See `docs/KOI-SETUP-GUIDE.md` for complete installation and troubleshooting guide.
 
+
+## 📡 Current Service Ports (September 14, 2025)
+
+**Web Services:**
+- Port 80/443: Nginx (HTTPS proxy)
+- Port 3000: ElizaOS/RegenAI main agent
+- Port 3007: Grant Submission API
+- Port 8000: Django Admin (Docker)
+- Port 5433: PostgreSQL (Docker)
+
+**KOI Pipeline:**
+- Port 8005: KOI Coordinator (sensor hub)
+- Port 8090: BGE Embedding Server
+- Port 8100: KOI Event Bridge v2
+- Port 8200: MCP Knowledge Server
+- Port 8400: Content Dashboard (Milestone B)
+- Port 8001: KOI API Server (SPARQL)
+- Port 3030: Apache Jena Fuseki
 
 ## 🚀 KOI Sensor-to-Agent Pipeline (September 2025) - PRODUCTION READY
 
