@@ -31,6 +31,22 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': 'http://localhost:3000',
+      '/api/koi/coordinator': {
+        target: 'http://localhost:8005',
+        rewrite: (path) => path.replace('/api/koi/coordinator', ''),
+      },
+      '/api/koi/event-bridge': {
+        target: 'http://localhost:8100',
+        rewrite: (path) => path.replace('/api/koi/event-bridge', ''),
+      },
+      '/api/koi/bge': {
+        target: 'http://localhost:8090',
+        rewrite: (path) => path.replace('/api/koi/bge', ''),
+      },
+      '/api/koi/mcp': {
+        target: 'http://localhost:8200',
+        rewrite: (path) => path.replace('/api/koi/mcp', ''),
+      },
       '/socket.io': {
         target: 'http://localhost:3000',
         ws: true,

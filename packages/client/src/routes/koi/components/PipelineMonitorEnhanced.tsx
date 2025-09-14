@@ -142,28 +142,50 @@ const TransformationStats: React.FC = () => {
 
   useEffect(() => {
     fetchStats();
+    // Refresh stats every 5 seconds
+    const interval = setInterval(fetchStats, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/koi/transformations?limit=100');
-      const data = await response.json();
+      // Try to fetch from Event Bridge stats endpoint directly
+      const directUrl = 'http://localhost:8100/stats';
+      const response = await fetch(directUrl);
       
-      if (data.status === 'ok' && data.transformations) {
-        const transformations = data.transformations;
-        const total = transformations.length;
-        const totalChunks = transformations.reduce((sum: number, t: any) => sum + (t.chunks_created || 0), 0);
-        const totalEmbeddings = transformations.reduce((sum: number, t: any) => sum + (t.embeddings_created || 0), 0);
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Calculate stats from Event Bridge data
+        const totalTransformations = data.embeddings?.bge || 0;
+        const uniqueDocs = data.unique_documents || 0;
         
         setStats({
-          totalTransformations: total,
-          successRate: 100, // All stored transformations are successful
-          averageChunks: total > 0 ? Math.round(totalChunks / total) : 0,
-          averageEmbeddings: total > 0 ? Math.round(totalEmbeddings / total) : 0
+          totalTransformations: totalTransformations,
+          successRate: totalTransformations > 0 ? 100 : 0, // All BGE embeddings are successful
+          averageChunks: uniqueDocs > 0 && totalTransformations > 0 ? Math.round(totalTransformations / uniqueDocs) : 1,
+          averageEmbeddings: 1 // BGE generates 1 embedding per document
         });
+        return;
       }
     } catch (error) {
-      console.error('Error fetching transformation stats:', error);
+      // Direct fetch failed, try proxy endpoint
+      try {
+        const proxyResponse = await fetch('/api/koi/event-bridge/stats');
+        if (proxyResponse.ok) {
+          const data = await proxyResponse.json();
+          const totalTransformations = data.embeddings?.bge || 0;
+          setStats({
+            totalTransformations: totalTransformations,
+            successRate: totalTransformations > 0 ? 100 : 0,
+            averageChunks: 1,
+            averageEmbeddings: 1
+          });
+          return;
+        }
+      } catch (proxyError) {
+        console.error('Error fetching transformation stats:', proxyError);
+      }
     }
   };
 

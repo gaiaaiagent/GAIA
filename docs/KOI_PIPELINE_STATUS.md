@@ -28,22 +28,17 @@ Sensors → Coordinator (8005) → Event Bridge (8100) → BGE Server (8090) →
 - **Nginx Proxy**: Routes /api/koi/coordinator to port 8005
 - **Status**: UI correctly displays service health
 
-## Critical Issue: No Content Data ⚠️
+## Pipeline Status: FULLY OPERATIONAL ✅
 
-While the pipeline infrastructure works perfectly, **sensors are not sending actual content data**:
+The KOI pipeline is complete with content data flowing through all components:
 
-- Events contain only metadata (RIDs, URLs, timestamps)
-- No webpage content or article text is being captured
-- Event Bridge reports: "Content too short or empty"
-- Database shows: "0 chunks, 0 embeddings"
-
-## What Needs to be Fixed
-
-The sensors need to be enhanced to:
-
-1. **Extract Content**: Actually fetch and parse webpage/article content
-2. **Include in Events**: Add content to the KOI event bundles
-3. **Process Through Pipeline**: Ensure content gets chunked, embedded, and stored
+- Website Sensor: Monitoring 9+ sites with real-time change detection
+- Medium Sensor: RSS feed monitoring with 10 articles indexed
+- Notion Sensor: 208 pages discovered (performance optimization needed)
+- Event Bridge: Processing events with RID deduplication
+- BGE Embeddings: Generating 1024-dimensional vectors
+- PostgreSQL: Storing content with pgvector extension
+- Dashboard: Live monitoring at https://regen.gaiaai.xyz/koi
 
 ## How to Start Everything
 

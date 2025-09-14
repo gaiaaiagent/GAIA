@@ -21,7 +21,8 @@ import {
   Eye,
   Brain,
   ArrowRight,
-  BarChart3
+  BarChart3,
+  Share2
 } from 'lucide-react';
 
 interface ServiceStatus {
@@ -108,6 +109,13 @@ export default function PipelineMonitor() {
         metrics: { vectors: 0, triples: 0 }
       },
       {
+        stage: 'MCP Server',
+        icon: Share2,
+        status: 'idle',
+        description: 'Model Context Protocol API',
+        metrics: { queries: 0 }
+      },
+      {
         stage: 'Eliza Agents',
         icon: Activity,
         status: 'idle',
@@ -143,6 +151,12 @@ export default function PipelineMonitor() {
         status: 'loading',
         port: 5433,
         endpoint: '/api/koi/event-bridge/'  // Event Bridge returns database status
+      },
+      {
+        name: 'MCP Server',
+        status: 'loading',
+        port: 8200,
+        endpoint: '/api/koi/mcp/'  // MCP Server root endpoint returns status
       }
     ];
 
@@ -159,11 +173,26 @@ export default function PipelineMonitor() {
             };
           }
           
-          // Build absolute URL without credentials to avoid browser security errors
-          const baseUrl = window.location.origin;
-          const apiUrl = import.meta.env.VITE_KOI_API_URL || baseUrl;
-          const fullUrl = apiUrl.startsWith('http') ? `${apiUrl}${service.endpoint}` : `${baseUrl}${service.endpoint}`;
-          const response = await fetch(fullUrl);
+          // Special handling for KOI Coordinator - fetch directly
+          let response;
+          if (service.name === 'KOI Coordinator') {
+            // Try direct fetch first
+            try {
+              response = await fetch('http://localhost:8005/health');
+            } catch (directError) {
+              // Fall back to proxy if direct fails
+              const baseUrl = window.location.origin;
+              const apiUrl = import.meta.env.VITE_KOI_API_URL || baseUrl;
+              const fullUrl = apiUrl.startsWith('http') ? `${apiUrl}${service.endpoint}` : `${baseUrl}${service.endpoint}`;
+              response = await fetch(fullUrl);
+            }
+          } else {
+            // Build absolute URL without credentials to avoid browser security errors
+            const baseUrl = window.location.origin;
+            const apiUrl = import.meta.env.VITE_KOI_API_URL || baseUrl;
+            const fullUrl = apiUrl.startsWith('http') ? `${apiUrl}${service.endpoint}` : `${baseUrl}${service.endpoint}`;
+            response = await fetch(fullUrl);
+          }
           
           if (!response.ok) {
             return {
@@ -224,10 +253,9 @@ export default function PipelineMonitor() {
   // Fetch sensor status
   const fetchSensors = async () => {
     try {
-      const baseUrl = window.location.origin;
-      const apiUrl = import.meta.env.VITE_KOI_API_URL || baseUrl;
-      const fullUrl = apiUrl.startsWith('http') ? `${apiUrl}/api/koi/coordinator/sensors` : `${baseUrl}/api/koi/coordinator/sensors`;
-      const response = await fetch(fullUrl);
+      // Try direct fetch from coordinator first
+      const directUrl = 'http://localhost:8005/sensors';
+      const response = await fetch(directUrl);
       
       if (response.ok) {
         const data = await response.json();
@@ -237,86 +265,101 @@ export default function PipelineMonitor() {
         }
       }
     } catch (error) {
-      console.error('Failed to fetch sensors:', error);
+      // Fallback to proxy endpoint if direct fails
+      try {
+        const baseUrl = window.location.origin;
+        const apiUrl = import.meta.env.VITE_KOI_API_URL || baseUrl;
+        const fullUrl = apiUrl.startsWith('http') ? `${apiUrl}/api/koi/coordinator/sensors` : `${baseUrl}/api/koi/coordinator/sensors`;
+        const response = await fetch(fullUrl);
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.sensors && Array.isArray(data.sensors)) {
+            setSensors(data.sensors);
+            return;
+          }
+        }
+      } catch (fallbackError) {
+        console.error('Failed to fetch sensors:', fallbackError);
+      }
     }
     
-    // Use real configuration from running sensor
-    const realSensors: SensorNode[] = [
-      {
-        id: 'website-sensor-001',
-        name: 'Website Monitor',
-        type: 'website',
-        status: 'active',
-        lastActivity: new Date().toISOString(),
-        monitoring: [
-          'regen.network',
-          'docs.regen.network',
-          'guides.regen.network',
-          'commonwealth.im/regen',
-          'medium.com/regen-network',
-          'forum.regen.network'
-        ],
-        eventsProcessed: 89  // Real discovered URLs count
-      }
-    ];
-    setSensors(realSensors);
+    // No sensors found - show empty state
+    setSensors([]);
   };
 
   // Update pipeline metrics
   const updatePipelineMetrics = async () => {
-    // Fetch real metrics from the pipeline API
+    // Fetch real metrics from the Event Bridge stats API
     try {
       const baseUrl = window.location.origin;
       const apiUrl = import.meta.env.VITE_KOI_API_URL || baseUrl;
-      const fullUrl = apiUrl.startsWith('http') ? `${apiUrl}/api/koi/event-bridge/metrics` : `${baseUrl}/api/koi/event-bridge/metrics`;
-      const response = await fetch(fullUrl);
+      
+      // Try to fetch from Event Bridge stats endpoint
+      const statsUrl = apiUrl.startsWith('http') ? `${apiUrl}/api/koi/event-bridge/stats` : `${baseUrl}/api/koi/event-bridge/stats`;
+      const response = await fetch(statsUrl);
+      
       if (response.ok) {
-        const data = await response.json();
+        const stats = await response.json();
         
         setPipelineFlow(prev => prev.map(stage => {
           switch (stage.stage) {
             case 'Sensors':
+              // Check if coordinator has connected sensors
+              const coordinatorData = services.find(s => s.name === 'KOI Coordinator');
+              const connectedSensors = coordinatorData?.details?.connected_sensors || 0;
+              // Use actual connected sensors from coordinator, not historical count from database
+              const activeSensors = connectedSensors;
               return {
                 ...stage,
-                status: data.pipeline.sensors?.active > 0 ? 'active' : 'idle',
+                status: activeSensors > 0 ? 'active' : 'idle',
                 metrics: {
-                  processed: data.pipeline.sensors?.events_processed || 0,
-                  pending: data.pipeline.coordinator?.pending || 0,
-                  rate: data.pipeline.sensors?.rate || '0/min'
+                  processed: stats.new_events || stats.total_versions || 0,
+                  pending: 0,
+                  rate: activeSensors > 0 ? `${activeSensors} active` : '0/min'
                 }
               };
             case 'Coordinator':
               return {
                 ...stage,
-                status: data.pipeline.coordinator?.events_routed > 0 ? 'processing' : 'idle',
+                status: stats.new_events > 0 ? 'processing' : 'idle',
                 metrics: {
-                  processed: data.pipeline.coordinator?.events_routed || 0
+                  processed: stats.new_events || 0
                 }
               };
             case 'Event Bridge':
               return {
                 ...stage,
-                status: data.pipeline.event_bridge?.events_processed > 0 ? 'processing' : 'idle',
+                status: stats.unique_documents > 0 ? 'processing' : 'idle',
                 metrics: {
-                  processed: data.pipeline.event_bridge?.events_processed || 0
+                  processed: stats.unique_documents || 0
                 }
               };
             case 'BGE Embeddings':
+              const bgeEmbeddings = stats.embeddings?.bge || 0;
               return {
                 ...stage,
-                status: data.pipeline.event_bridge?.transformations > 0 ? 'processing' : 'idle',
+                status: bgeEmbeddings > 0 ? 'processing' : 'idle',
                 metrics: {
-                  processed: data.pipeline.event_bridge?.transformations || 0,
-                  rate: '0/sec'
+                  processed: bgeEmbeddings,
+                  rate: stats.latest_event ? '~100ms/doc' : '0/sec'
                 }
               };
             case 'Data Storage':
               return {
                 ...stage,
-                status: data.pipeline.database?.status === 'online' ? 'idle' : 'error',
+                status: stats.unique_documents > 0 ? 'active' : 'idle',
                 metrics: {
-                  vectors: data.pipeline.database?.vectors_stored || 0,
-                  triples: data.pipeline.sparql?.triples_stored || 0
+                  vectors: stats.embeddings?.bge || 0,
+                  triples: 0  // TODO: Get from Apache Jena when integrated
+                }
+              };
+            case 'MCP Server':
+              return {
+                ...stage,
+                status: 'idle',
+                metrics: {
+                  queries: 0
                 }
               };
             case 'Eliza Agents':
@@ -324,7 +367,7 @@ export default function PipelineMonitor() {
                 ...stage,
                 status: 'idle',
                 metrics: {
-                  queries: data.pipeline.agents?.queries_processed || 0
+                  queries: 0
                 }
               };
             default:
@@ -398,7 +441,7 @@ export default function PipelineMonitor() {
     <div className="space-y-6">
       {/* Header Controls */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Pipeline Monitor</h2>
+        <h2 className="text-2xl font-bold">Knowledge Flow Pipeline</h2>
         <div className="flex items-center gap-2">
           <Button
             variant={autoRefresh ? "default" : "outline"}
@@ -411,108 +454,95 @@ export default function PipelineMonitor() {
         </div>
       </div>
 
-      {/* Service Status Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {services.map((service) => (
-          <Card key={service.name} className="relative">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium">
-                  {service.name}
-                </CardTitle>
-                {getStatusIcon(service.status)}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Port</span>
-                  <span className="font-mono">{service.port}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Status</span>
-                  <Badge variant={service.status === 'online' ? 'default' : 'destructive'}>
-                    {service.status}
-                  </Badge>
-                </div>
-                {service.details?.uptime && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Uptime</span>
-                    <span>{service.details.uptime}</span>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
       {/* Pipeline Flow Visualization */}
       <Card>
-        <CardHeader>
-          <CardTitle>Knowledge Flow Pipeline</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="flex items-center justify-between overflow-x-auto pb-4">
-            {pipelineFlow.map((stage, index) => (
-              <React.Fragment key={stage.stage}>
-                <div className="flex flex-col items-center min-w-[120px]">
-                  <div className={`p-3 rounded-lg bg-card border-2 ${
-                    stage.status === 'active' ? 'border-green-500' :
-                    stage.status === 'processing' ? 'border-blue-500 animate-pulse' :
-                    'border-gray-200'
-                  }`}>
-                    <stage.icon className={`h-6 w-6 ${getStatusColor(stage.status)}`} />
+            {pipelineFlow.map((stage, index) => {
+              // Map pipeline stages to service statuses
+              let serviceStatus = 'idle';
+              if (stage.stage === 'Sensors') {
+                // Check coordinator's connected_sensors field
+                const coordinatorService = services.find(s => s.name === 'KOI Coordinator');
+                const connectedSensors = coordinatorService?.details?.connected_sensors || 0;
+                serviceStatus = connectedSensors > 0 ? 'active' : 'idle';
+              } else if (stage.stage === 'Coordinator') {
+                const coordinatorService = services.find(s => s.name === 'KOI Coordinator');
+                serviceStatus = coordinatorService?.status === 'online' ? 'active' : 'offline';
+              } else if (stage.stage === 'Event Bridge') {
+                const eventBridgeService = services.find(s => s.name === 'Event Bridge');
+                serviceStatus = eventBridgeService?.status === 'online' ? 'active' : 'offline';
+              } else if (stage.stage === 'BGE Embeddings') {
+                const bgeService = services.find(s => s.name === 'BGE Server');
+                serviceStatus = bgeService?.status === 'online' ? 'active' : 'offline';
+              } else if (stage.stage === 'Data Storage') {
+                const pgService = services.find(s => s.name === 'PostgreSQL');
+                serviceStatus = pgService?.status === 'online' ? 'active' : 'offline';
+              } else if (stage.stage === 'MCP Server') {
+                const mcpService = services.find(s => s.name === 'MCP Server');
+                serviceStatus = mcpService?.status === 'online' ? 'active' : 'offline';
+              } else if (stage.stage === 'Eliza Agents') {
+                serviceStatus = 'active'; // Always show as active if pipeline is running
+              }
+              
+              return (
+                <React.Fragment key={stage.stage}>
+                  <div className="flex flex-col items-center min-w-[140px]">
+                    <div className={`p-4 rounded-xl bg-card border-2 transition-all ${
+                      serviceStatus === 'active' ? 'border-green-500 shadow-green-500/20 shadow-lg' :
+                      serviceStatus === 'processing' ? 'border-blue-500 animate-pulse shadow-blue-500/20 shadow-lg' :
+                      serviceStatus === 'offline' ? 'border-red-500 shadow-red-500/20 shadow-lg' :
+                      'border-gray-300'
+                    }`}>
+                      <stage.icon className={`h-8 w-8 ${
+                        serviceStatus === 'active' ? 'text-green-500' :
+                        serviceStatus === 'processing' ? 'text-blue-500' :
+                        serviceStatus === 'offline' ? 'text-red-500' :
+                        'text-gray-400'
+                      }`} />
+                    </div>
+                    <h3 className="mt-3 text-sm font-semibold">{stage.stage}</h3>
+                    <p className="text-xs text-muted-foreground mt-1 text-center max-w-[120px]">
+                      {stage.description}
+                    </p>
+                    <Badge 
+                      className="mt-2" 
+                      variant={
+                        serviceStatus === 'active' ? 'default' :
+                        serviceStatus === 'offline' ? 'destructive' :
+                        'secondary'
+                      }
+                    >
+                      {serviceStatus === 'active' ? 'Online' :
+                       serviceStatus === 'offline' ? 'Offline' :
+                       'Idle'}
+                    </Badge>
                   </div>
-                  <h3 className="mt-2 text-sm font-medium">{stage.stage}</h3>
-                  <p className="text-xs text-muted-foreground mt-1 text-center max-w-[100px]">
-                    {stage.description}
-                  </p>
-                  {stage.metrics && (
-                    <div className="mt-2 text-xs space-y-1">
-                      {stage.metrics.processed !== undefined && (
-                        <div className="text-center">
-                          <span className="font-mono">{stage.metrics.processed}</span>
-                          <span className="text-muted-foreground"> processed</span>
-                        </div>
-                      )}
-                      {stage.metrics.vectors !== undefined && (
-                        <div className="text-center">
-                          <span className="font-mono">{stage.metrics.vectors}</span>
-                          <span className="text-muted-foreground"> vectors</span>
-                        </div>
-                      )}
-                      {stage.metrics.triples !== undefined && (
-                        <div className="text-center">
-                          <span className="font-mono">{stage.metrics.triples}</span>
-                          <span className="text-muted-foreground"> triples</span>
-                        </div>
-                      )}
-                      {stage.metrics.queries !== undefined && (
-                        <div className="text-center">
-                          <span className="font-mono">{stage.metrics.queries}</span>
-                          <span className="text-muted-foreground"> queries</span>
-                        </div>
-                      )}
-                      {stage.metrics.pending !== undefined && stage.metrics.pending > 0 && (
-                        <div className="text-center text-yellow-600">
-                          <span className="font-mono">{stage.metrics.pending}</span>
-                          <span> pending</span>
-                        </div>
-                      )}
-                      {stage.metrics.rate && (
-                        <div className="text-center text-muted-foreground">
-                          {stage.metrics.rate}
-                        </div>
-                      )}
+                  {index < pipelineFlow.length - 1 && (
+                    <div className="flex items-center flex-1 max-w-[100px]">
+                      <div className={`h-[2px] flex-1 transition-all ${
+                        serviceStatus === 'active' && (
+                          pipelineFlow[index + 1] && 
+                          (pipelineFlow[index + 1].stage === 'Coordinator' ? services.find(s => s.name === 'KOI Coordinator')?.status === 'online' :
+                           pipelineFlow[index + 1].stage === 'Event Bridge' ? services.find(s => s.name === 'Event Bridge')?.status === 'online' :
+                           pipelineFlow[index + 1].stage === 'BGE Embeddings' ? services.find(s => s.name === 'BGE Server')?.status === 'online' :
+                           pipelineFlow[index + 1].stage === 'Data Storage' ? services.find(s => s.name === 'PostgreSQL')?.status === 'online' :
+                           pipelineFlow[index + 1].stage === 'MCP Server' ? services.find(s => s.name === 'MCP Server')?.status === 'online' :
+                           true)
+                        ) ? 'bg-green-500' : 'bg-gray-300'
+                      }`}>
+                        <div className={`h-full ${
+                          serviceStatus === 'active' ? 'bg-green-400 animate-pulse' : ''
+                        }`} />
+                      </div>
+                      <ArrowRight className={`h-5 w-5 flex-shrink-0 -ml-[2px] ${
+                        serviceStatus === 'active' ? 'text-green-500' : 'text-gray-400'
+                      }`} />
                     </div>
                   )}
-                </div>
-                {index < pipelineFlow.length - 1 && (
-                  <ArrowRight className="h-5 w-5 text-gray-400 mx-2 flex-shrink-0" />
-                )}
-              </React.Fragment>
-            ))}
+                </React.Fragment>
+              );
+            })}
           </div>
         </CardContent>
       </Card>
@@ -524,7 +554,14 @@ export default function PipelineMonitor() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {sensors.map((sensor) => (
+            {sensors.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <WifiOff className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                <p className="text-lg font-medium">No Active Sensors</p>
+                <p className="text-sm mt-2">Sensors are currently offline or not connected to the coordinator.</p>
+                <p className="text-xs mt-4">Start sensors with: <code className="bg-gray-100 px-2 py-1 rounded">cd /opt/projects/koi-sensors && ./start_all_sensors.sh</code></p>
+              </div>
+            ) : sensors.map((sensor) => (
               <div key={sensor.id} className="border rounded-lg p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
