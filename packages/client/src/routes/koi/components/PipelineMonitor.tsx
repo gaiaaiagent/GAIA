@@ -69,6 +69,7 @@ export default function PipelineMonitor() {
   const [pipelineFlow, setPipelineFlow] = useState<PipelineFlow[]>([]);
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Initialize pipeline flow stages
   useEffect(() => {
@@ -250,11 +251,11 @@ export default function PipelineMonitor() {
     setServices(updatedServices);
   };
 
-  // Fetch sensor status
-  const fetchSensors = async () => {
+  // Fetch sensor status with optional force refresh
+  const fetchSensors = async (forceRefresh = false) => {
     try {
-      // Try direct fetch from coordinator first
-      const directUrl = 'http://localhost:8005/sensors';
+      // Try direct fetch from coordinator first with smart ping
+      const directUrl = `http://localhost:8005/sensors${forceRefresh ? '?force_refresh=true' : ''}`;
       const response = await fetch(directUrl);
       
       if (response.ok) {
@@ -269,7 +270,9 @@ export default function PipelineMonitor() {
       try {
         const baseUrl = window.location.origin;
         const apiUrl = import.meta.env.VITE_KOI_API_URL || baseUrl;
-        const fullUrl = apiUrl.startsWith('http') ? `${apiUrl}/api/koi/coordinator/sensors` : `${baseUrl}/api/koi/coordinator/sensors`;
+        const fullUrl = apiUrl.startsWith('http')
+          ? `${apiUrl}/api/koi/coordinator/sensors${forceRefresh ? '?force_refresh=true' : ''}`
+          : `${baseUrl}/api/koi/coordinator/sensors${forceRefresh ? '?force_refresh=true' : ''}`;
         const response = await fetch(fullUrl);
         
         if (response.ok) {
@@ -386,7 +389,7 @@ export default function PipelineMonitor() {
       setLoading(true);
       await Promise.all([
         checkServices(),
-        fetchSensors(),
+        fetchSensors(false),  // Don't force refresh on auto-refresh
         updatePipelineMetrics()
       ]);
       setLoading(false);
@@ -444,11 +447,24 @@ export default function PipelineMonitor() {
         <h2 className="text-2xl font-bold">Knowledge Flow Pipeline</h2>
         <div className="flex items-center gap-2">
           <Button
+            variant="outline"
+            size="sm"
+            onClick={async () => {
+              setIsRefreshing(true);
+              await fetchSensors(true);  // Force ping all sensors
+              setIsRefreshing(false);
+            }}
+            disabled={isRefreshing}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Pinging...' : 'Refresh Status'}
+          </Button>
+          <Button
             variant={autoRefresh ? "default" : "outline"}
             size="sm"
             onClick={() => setAutoRefresh(!autoRefresh)}
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
+            <Clock className="h-4 w-4 mr-2" />
             {autoRefresh ? 'Auto-Refresh On' : 'Auto-Refresh Off'}
           </Button>
         </div>
@@ -573,8 +589,18 @@ export default function PipelineMonitor() {
                       </p>
                     </div>
                   </div>
-                  <Badge variant={sensor.status === 'active' ? 'default' : 'secondary'}>
-                    {sensor.status}
+                  <Badge
+                    variant={
+                      sensor.status === 'active' ? 'default' :
+                      sensor.status === 'idle' ? 'secondary' :
+                      sensor.status === 'offline' ? 'destructive' :
+                      'outline'
+                    }
+                  >
+                    {sensor.status === 'active' ? '🟢 Active' :
+                     sensor.status === 'idle' ? '🟡 Idle' :
+                     sensor.status === 'offline' ? '🔴 Offline' :
+                     sensor.status}
                   </Badge>
                 </div>
                 
