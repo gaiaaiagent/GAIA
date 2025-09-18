@@ -1,14 +1,14 @@
 # Milestone B: Automated Information Pipelines
 
-**Document Type**: Milestone Status Report  
-**Date Created**: 2025-09-13  
-**Last Updated**: 2025-09-14  
-**Status**: ✅ DEPLOYED TO PRODUCTION  
-**Version**: 4.0
+**Document Type**: Milestone Status Report
+**Date Created**: 2025-09-13
+**Last Updated**: 2025-09-18
+**Status**: 🔧 IN DEVELOPMENT
+**Version**: 5.0
 
 ## Executive Summary
 
-Milestone B delivers a fully automated content pipeline that monitors, processes, and distributes Regen Network information across multiple channels. The system is operational in production, processing content from 18+ sources in real-time with automated daily social media posts and weekly digest generation with podcasts.
+Milestone B is building an automated content pipeline to monitor, process, and distribute Regen Network information. Current development includes a functional sensor network collecting from multiple sources with database storage and URL attribution. The system requires additional work on content curation and distribution components.
 
 ## What is Milestone B?
 
@@ -24,76 +24,111 @@ Milestone B is an automated information pipeline system that:
 5. **Ensures Quality** - Style guide compliance and no-speculation guardrails
 6. **Distributes** - Scheduled publication across all channels
 
-## Current Production Status
+## Current System Status
 
-### ✅ FULLY OPERATIONAL (Text Extraction Fixed)
+### ✅ What's Working
 
-**Production Environment:**
-- **Server**: Production server at primary hosting location
-- **Database**: PostgreSQL with clean re-ingested data (481+ KOI memories)
-- **Services**: All core services running with fixed text extraction
-- **Endpoints**: Accessible via HTTPS at regen.gaiaai.xyz
+**Core Infrastructure:**
+- **Database**: PostgreSQL with pgvector (port 5433) - 600+ content records with proper URLs
+- **KOI Coordinator**: Receiving events from sensors (port 8005)
+- **Event Bridge v2**: Processing and storing content with URL attribution (port 8100)
+- **BGE Server**: Semantic embeddings operational (port 8090)
+- **MCP Server**: Agent knowledge access API (port 8200)
 
-### Performance Metrics (Post-Fix)
-- **Processing Speed**: 3-5 seconds end-to-end latency
-- **Content Sources**: 18 active sensors (all producing clean text)
-- **Embedding Generation**: ~100ms per document (BGE)
-- **Knowledge Search**: <200ms average response
-- **Text Quality**: 100% clean extraction (0% word-breaking)
-- **Validation**: All tests passing with clean data
+**Sensor Network (18 Active):**
+- GitHub Sensor - 199 repositories tracked with URLs
+- Website Sensors - Crawling Regen Network sites
+- Twitter Sensor - Monitoring social feeds
+- Discourse Sensor - Forum content extraction
+- Medium Sensor - Blog post collection
+- Ledger Sensor - Blockchain data monitoring
 
-### Core Services Running
+**Data Quality:**
+- URL attribution fixed - all content has real source URLs
+- Text extraction fixed - no word-breaking corruption
+- RID generation working - proper content hashing
+- Semantic embeddings - 1024-dimensional BGE vectors
 
-| Service | Port | Status | Description |
-|---------|------|--------|-------------|
-| KOI Coordinator | 8005 | ✅ Running | Event ingestion and routing |
-| Event Bridge v2 | 8100 | ✅ Running | RID deduplication and versioning |
-| BGE Server | 8090 | ✅ Running | Semantic embeddings (1024-dim) |
-| MCP Server | 8200 | ✅ Running | Agent knowledge access API |
-| PostgreSQL | 5433 | ✅ Running | Vector database with pgvector |
+### 🚧 What Needs Work
 
-## Acceptance Criteria Status
+**Content Generation:**
+- Daily Curator - Script exists but not scheduled
+- Weekly Aggregator - Script exists but not automated
+- Content Review Interface - Built but not integrated
+- Publishing Pipeline - Manual process, not automated
 
-### Daily Bot "Regen Daily" ✅
-- [x] 5 weekday drafts with stat + 2 links + CTA
-- [x] Valid links with no private data leaks
-- [x] Draft-only mode for week 1 review
-- [x] Style guide compliance (David Fortson/Many Mangos)
+**Scheduling & Automation:**
+- Cron jobs not configured
+- Auto-publish not enabled
+- Review workflow not implemented
+- Notification system not set up
 
-### Weekly Digest "Regen Weekly" ✅
-- [x] 800-1200 word briefs with citations
-- [x] 20-minute audio overviews via NotebookLM
-- [x] Quality review and auto-publish after week 1
-- [x] Permissions follow Regen Knowledge Commons Spec
+**User Interface:**
+- Web dashboard at https://regen.gaiaai.xyz/digests/ - Read-only display
+- No content management interface
+- No review/approval workflow
+- No analytics dashboard
 
-## Recent Critical Fixes (September 14, 2025)
+## Acceptance Criteria Progress
 
-### Text Extraction Corruption Fix ✅
-- **Issue**: 98% of website sensor data corrupted with word-breaking
-- **Root Cause**: `html2text` library inserting unwanted line breaks
-- **Solution**: Replaced with BeautifulSoup's `get_text()` method
-- **Impact**: 2,569 corrupted records cleaned and re-ingested
-- **Result**: 100% clean text extraction, daily curator now functional
+### Daily Bot "Regen Daily" 🚧
+- [x] Script can generate drafts with stats and links
+- [x] Valid URLs from real sources
+- [ ] Scheduled 12:00 ET daily posts not configured
+- [ ] Review workflow not implemented
+- [ ] Auto-publish not enabled
 
-## What Needs Updating
+### Weekly Digest "Regen Weekly" 🚧
+- [x] Script can generate 800-1200 word briefs
+- [x] Citations include real URLs
+- [ ] Friday scheduling not configured
+- [ ] Audio generation via NotebookLM not integrated
+- [ ] Auto-publish after review not implemented
 
-### Immediate Actions Required
+## Recent Development (September 18, 2025)
 
-1. **Schedule Configuration**
-   - Activate cron jobs for 12:00 ET daily posts
-   - Enable Friday weekly digest generation
-   - Configure auto-publish after initial review period
+### URL Attribution System ✅
+- **Issue**: Content stored without source URLs, only RID hashes
+- **Solution**: Modified Event Bridge to extract URLs from sensor bundles
+- **Impact**: Re-scraped 600+ documents with proper URLs
+- **Result**: All content now has clickable source attribution
 
-2. **Data Quality Monitoring**
-   - Monitor for text corruption patterns
-   - Verify CAT receipts are being generated
-   - Check embedding quality metrics
+### GitHub Sensor Fix ✅
+- **Issue**: Collected documents but didn't send to KOI
+- **Solution**: Added send_to_koi() calls and fixed document structure
+- **Impact**: 199 GitHub repositories now tracked with URLs
+- **Result**: GitHub content properly integrated in system
 
-3. **Documentation Updates**
-   - [x] Updated text extraction implementation
-   - [x] Fixed database configuration (port 5433)
-   - [ ] Document CAT receipt system usage
-   - [ ] Add data quality monitoring guide
+## Next Steps Required
+
+### Phase 1: Complete Automation (1-2 days)
+1. **Configure Scheduling**
+   - Set up cron jobs for daily curator (12:00 ET)
+   - Schedule weekly aggregator (Fridays)
+   - Test scheduled runs
+
+2. **Implement Review Workflow**
+   - Connect review interface to database
+   - Set up approval notifications
+   - Configure draft-to-publish pipeline
+
+### Phase 2: Publishing Integration (2-3 days)
+1. **X/Twitter Integration**
+   - Set up API credentials
+   - Test posting pipeline
+   - Configure thread formatting
+
+2. **Audio Generation**
+   - Integrate NotebookLM API
+   - Set up podcast generation workflow
+   - Configure audio file storage
+
+### Phase 3: Production Deployment (1 day)
+1. **Deploy to Production**
+   - Move from development to production server
+   - Configure production credentials
+   - Set up monitoring and alerts
+   - Enable auto-publish after review period
 
 ## Operational Documentation
 
@@ -219,4 +254,8 @@ python3 /opt/projects/koi-processor/src/content/review_interface.py
 
 ---
 
-**Status**: PRODUCTION READY ✅ - All systems operational and awaiting schedule activation
+**Status**: IN DEVELOPMENT 🔧
+- Core pipeline operational (sensors → database → embeddings)
+- Content generation scripts functional but not automated
+- URL attribution working with real source links
+- Requires scheduling, review workflow, and publishing integration
