@@ -27,6 +27,8 @@ interface GraphEdge {
   target: string | GraphNode;
   type: 'data' | 'control' | 'monitoring' | 'query';
   label?: string;
+  bidirectional?: boolean;
+  reverseLabel?: string;
 }
 
 const PipelineFlowGraphDynamic: React.FC = () => {
@@ -218,11 +220,34 @@ const PipelineFlowGraphDynamic: React.FC = () => {
 
         // Convert connections to edges
         pipelineData.connections.forEach((connection: any) => {
+          // Generate meaningful labels based on connection type and nodes
+          const sourceNode = graphNodes.find(n => n.id === connection.source);
+          const targetNode = graphNodes.find(n => n.id === connection.target);
+          let label = connection.label;
+
+          if (!label && sourceNode && targetNode) {
+            // Auto-generate label based on node types and relationship
+            if (connection.type === 'data') {
+              // More specific labels based on the nodes involved
+              if (sourceNode.id.includes('eliza') && targetNode.id.includes('postgres')) {
+                label = `${sourceNode.label} → writes memories → ${targetNode.label}`;
+              } else if (sourceNode.id.includes('postgres') && targetNode.id.includes('eliza')) {
+                label = `${sourceNode.label} → provides memories → ${targetNode.label}`;
+              } else {
+                label = `${sourceNode.label} → sends data → ${targetNode.label}`;
+              }
+            } else if (connection.type === 'monitoring') {
+              label = `${sourceNode.label} → monitors → ${targetNode.label}`;
+            } else if (connection.type === 'query') {
+              label = `${sourceNode.label} → queries → ${targetNode.label}`;
+            }
+          }
+
           graphEdges.push({
             source: connection.source,
             target: connection.target,
             type: connection.type,
-            label: connection.label
+            label: label
           });
         });
 
@@ -314,20 +339,24 @@ const PipelineFlowGraphDynamic: React.FC = () => {
             defaultEdges.push({
               source: sensor.id,
               target: 'coordinator',
-              type: 'data'
+              type: 'data',
+              label: `${sensor.label} → sends events → KOI Coordinator`
             });
           }
         });
 
         // Complete pipeline flow connections
         const pipelineFlow = [
-          { source: 'coordinator', target: 'event-bridge' },
-          { source: 'event-bridge', target: 'bge-embeddings' },
-          { source: 'bge-embeddings', target: 'postgresql' },
-          { source: 'event-bridge', target: 'apache-jena' },
-          { source: 'postgresql', target: 'mcp-server' },
-          { source: 'apache-jena', target: 'mcp-server' }, // Added missing connection
-          { source: 'mcp-server', target: 'eliza-agents' }
+          { source: 'coordinator', target: 'event-bridge', label: 'KOI Coordinator → forwards → Event Bridge' },
+          { source: 'event-bridge', target: 'bge-embeddings', label: 'Event Bridge → processes → BGE Embeddings' },
+          { source: 'bge-embeddings', target: 'postgresql', label: 'BGE Embeddings → stores vectors → PostgreSQL' },
+          { source: 'event-bridge', target: 'apache-jena', label: 'Event Bridge → stores RDF → Apache Jena' },
+          { source: 'postgresql', target: 'mcp-server', label: 'PostgreSQL → provides embeddings → MCP Server' },
+          { source: 'apache-jena', target: 'mcp-server', label: 'Apache Jena → provides graph → MCP Server' },
+          { source: 'mcp-server', target: 'eliza-agents', label: 'MCP Server → serves knowledge → Eliza Agents' },
+          // Add the reverse flow for agents reading from PostgreSQL
+          { source: 'eliza-agents', target: 'postgresql', label: 'Eliza Agents → queries → PostgreSQL' },
+          { source: 'eliza-agents', target: 'mcp-server', label: 'Eliza Agents → requests knowledge → MCP Server' }
         ];
 
         pipelineFlow.forEach(flow => {
@@ -337,7 +366,8 @@ const PipelineFlowGraphDynamic: React.FC = () => {
             defaultEdges.push({
               source: flow.source,
               target: flow.target,
-              type: 'data'
+              type: 'data',
+              label: flow.label
             });
           }
         });
@@ -390,7 +420,8 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           newEdges.push({
             source: nodeId,
             target: workspaceNode.id,
-            type: 'monitoring'
+            type: 'monitoring',
+            label: `${node.label} → monitors → ${workspaceNode.label}`
           });
 
           // Connect workspace to all pages
@@ -398,7 +429,8 @@ const PipelineFlowGraphDynamic: React.FC = () => {
             newEdges.push({
               source: workspaceNode.id,
               target: pageNode.id,
-              type: 'monitoring'
+              type: 'monitoring',
+              label: `${workspaceNode.label} → contains → ${pageNode.label}`
             });
           });
         } else if (node.icon === 'website' || node.icon === 'discourse') {
@@ -422,7 +454,8 @@ const PipelineFlowGraphDynamic: React.FC = () => {
             newEdges.push({
               source: nodeId,
               target: siteNode.id,
-              type: 'monitoring'
+              type: 'monitoring',
+              label: `${node.label} → monitors → ${siteNode.label}`
             });
           });
         } else {
@@ -450,7 +483,8 @@ const PipelineFlowGraphDynamic: React.FC = () => {
             newEdges.push({
               source: nodeId,
               target: sourceNode.id,
-              type: 'monitoring'
+              type: 'monitoring',
+              label: `${node.label} → monitors → ${sourceNode.label}`
             });
           });
         }
@@ -543,7 +577,8 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           newEdges.push({
             source: nodeId,
             target: pageNode.id,
-            type: 'monitoring'
+            type: 'monitoring',
+            label: `${node.label} → contains → ${pageNode.label}`
           });
         });
 
@@ -598,21 +633,50 @@ const PipelineFlowGraphDynamic: React.FC = () => {
     const edgeMapForSim = new Map<string, any>();
     const mergedEdgesForSim: any[] = [];
 
+    // Track edges by their actual direction to detect true bidirectional edges
+    const directedEdgeMap = new Map<string, any>();
+
     edges.forEach(edge => {
       const sourceId = typeof edge.source === 'object' ? edge.source.id : edge.source;
       const targetId = typeof edge.target === 'object' ? edge.target.id : edge.target;
-      // Create a consistent key regardless of direction
+      const directedKey = `${sourceId}->${targetId}`;
+      directedEdgeMap.set(directedKey, edge);
+    });
+
+    // Now merge edges, checking for true bidirectional pairs
+    const processedKeys = new Set<string>();
+
+    edges.forEach(edge => {
+      const sourceId = typeof edge.source === 'object' ? edge.source.id : edge.source;
+      const targetId = typeof edge.target === 'object' ? edge.target.id : edge.target;
+      const forwardKey = `${sourceId}->${targetId}`;
+      const reverseKey = `${targetId}->${sourceId}`;
       const [id1, id2] = [sourceId, targetId].sort();
       const pairKey = `${id1}|${id2}`;
 
-      if (edgeMapForSim.has(pairKey)) {
-        // We already have an edge for this pair, combine the labels
-        const existingEdge = edgeMapForSim.get(pairKey);
-        // Combine labels with bidirectional arrow
-        existingEdge.label = `${existingEdge.label || 'data'} ⟷ ${edge.label || 'data'}`;
-        existingEdge.bidirectional = true;
-      } else {
-        // First edge for this pair
+      if (processedKeys.has(forwardKey)) {
+        return; // Already processed
+      }
+
+      processedKeys.add(forwardKey);
+
+      // Check if there's a reverse edge
+      const reverseEdge = directedEdgeMap.get(reverseKey);
+
+      if (reverseEdge && !processedKeys.has(reverseKey)) {
+        // True bidirectional edge found
+        processedKeys.add(reverseKey);
+
+        const mergedEdge = {
+          ...edge,
+          bidirectional: true,
+          reverseLabel: reverseEdge.label
+        };
+
+        edgeMapForSim.set(pairKey, mergedEdge);
+        mergedEdgesForSim.push(mergedEdge);
+      } else if (!reverseEdge) {
+        // Unidirectional edge
         edgeMapForSim.set(pairKey, edge);
         mergedEdgesForSim.push(edge);
       }
@@ -649,28 +713,55 @@ const PipelineFlowGraphDynamic: React.FC = () => {
 
     simulationRef.current = simulation;
 
-    // Create arrow markers
-    svg.append('defs').selectAll('marker')
-      .data(['data', 'monitoring', 'control', 'query'])
-      .enter().append('marker')
-      .attr('id', d => `arrow-${d}`)
-      .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 25)
-      .attr('refY', 0)
-      .attr('markerWidth', 6)
-      .attr('markerHeight', 6)
-      .attr('orient', 'auto')
-      .append('path')
-      .attr('d', 'M0,-5L10,0L0,5')
-      .attr('fill', d => {
-        switch(d) {
-          case 'data': return '#3b82f6';
-          case 'monitoring': return '#10b981';
-          case 'control': return '#f59e0b';
-          case 'query': return '#8b5cf6';
-          default: return '#999';
-        }
-      });
+    // Create arrow markers for both directions
+    const markerTypes = ['data', 'monitoring', 'control', 'query'];
+    const defs = svg.append('defs');
+
+    // Forward arrows
+    markerTypes.forEach(type => {
+      defs.append('marker')
+        .attr('id', `arrow-${type}`)
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 25)
+        .attr('refY', 0)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('fill', () => {
+          switch(type) {
+            case 'data': return '#3b82f6';
+            case 'monitoring': return '#10b981';
+            case 'control': return '#f59e0b';
+            case 'query': return '#8b5cf6';
+            default: return '#999';
+          }
+        });
+    });
+
+    // Reverse arrows (for bidirectional edges)
+    markerTypes.forEach(type => {
+      defs.append('marker')
+        .attr('id', `arrow-reverse-${type}`)
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', -15)  // Negative refX for start marker
+        .attr('refY', 0)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M10,-5L0,0L10,5')  // Reversed arrow path
+        .attr('fill', () => {
+          switch(type) {
+            case 'data': return '#3b82f6';
+            case 'monitoring': return '#10b981';
+            case 'control': return '#f59e0b';
+            case 'query': return '#8b5cf6';
+            default: return '#999';
+          }
+        });
+    });
 
     // Use the merged edges from simulation for rendering
     const processedEdges = mergedEdgesForSim;
@@ -695,7 +786,43 @@ const PipelineFlowGraphDynamic: React.FC = () => {
       })
       .attr('stroke-width', d => d.type === 'monitoring' ? 1 : 2)
       .attr('stroke-opacity', d => d.type === 'monitoring' ? 0.6 : 0.8)
-      .attr('marker-end', d => d.bidirectional ? null : `url(#arrow-${d.type || 'data'})`);
+      .attr('marker-end', d => `url(#arrow-${d.type || 'data'})`)
+      .attr('marker-start', d => d.bidirectional ? `url(#arrow-reverse-${d.type || 'data'})` : null)
+      .style('cursor', 'pointer')
+      .on('mouseenter', function(event, d) {
+        // Create unique ID for this edge
+        const sourceId = typeof d.source === 'object' ? d.source.id : d.source;
+        const targetId = typeof d.target === 'object' ? d.target.id : d.target;
+        const edgeId = `${sourceId}-${targetId}`;
+        const reverseEdgeId = `${targetId}-${sourceId}`;
+
+        // Highlight the edge on hover
+        d3.select(this).attr('stroke-width', d.type === 'monitoring' ? 2 : 3);
+
+        // Show the label for this edge
+        g.selectAll('.edge-label-group').each(function(labelData: any) {
+          const labelSourceId = typeof labelData.source === 'object' ? labelData.source.id : labelData.source;
+          const labelTargetId = typeof labelData.target === 'object' ? labelData.target.id : labelData.target;
+          const labelEdgeId = `${labelSourceId}-${labelTargetId}`;
+
+          const isThisEdge = labelEdgeId === edgeId || labelEdgeId === reverseEdgeId;
+
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .style('opacity', isThisEdge ? 1 : 0);
+        });
+      })
+      .on('mouseleave', function(event, d) {
+        // Restore original width
+        d3.select(this).attr('stroke-width', d.type === 'monitoring' ? 1 : 2);
+
+        // Hide all labels
+        g.selectAll('.edge-label-group')
+          .transition()
+          .duration(200)
+          .style('opacity', 0);
+      });
 
     // Since we merged bidirectional edges, we don't need curves
     // All edges will be straight lines
@@ -704,42 +831,85 @@ const PipelineFlowGraphDynamic: React.FC = () => {
       edgeCurveDirection.set(edge, 0); // No curve for any edge
     });
 
-    // Add edge label groups (background + text)
+    // Add edge label groups (background + text) - initially hidden
     const linkLabelGroups = g.append('g')
       .selectAll('g')
       .data(processedEdges.filter(d => d.label))  // Only add labels for edges that have them
       .enter().append('g')
-      .attr('class', 'edge-label-group');
+      .attr('class', 'edge-label-group')
+      .style('opacity', 0)  // Hidden by default
+      .style('pointer-events', 'none');  // Don't block mouse events
 
     // Add white background rectangles for labels
     linkLabelGroups.append('rect')
       .attr('fill', 'white')
-      .attr('fill-opacity', 0.9)
-      .attr('stroke', '#e5e7eb')
-      .attr('stroke-width', 0.5)
-      .attr('rx', 3)
-      .attr('ry', 3);
+      .attr('fill-opacity', 0.95)
+      .attr('stroke', '#374151')
+      .attr('stroke-width', 1)
+      .attr('rx', 4)
+      .attr('ry', 4);
 
-    // Add edge label text
-    const linkLabels = linkLabelGroups.append('text')
-      .attr('class', 'edge-label')
-      .attr('font-size', '9px')
-      .attr('fill', '#4b5563')
-      .attr('text-anchor', 'middle')
-      .attr('dy', '0.3em')
-      .text(d => d.label || '');
+    // Function to format label with subject-predicate-object
+    const formatLabel = (d: any) => {
+      if (!d.label) return '';
 
-    // Size the background rectangles based on text size
+      // Parse the label to extract subject, predicate, object
+      const parts = d.label.split('→').map((s: string) => s.trim());
+
+      if (parts.length >= 3) {
+        // We have subject, predicate, object format
+        const subject = parts[0];
+        const predicate = parts[1];
+        const object = parts[2];
+
+        if (d.bidirectional && d.reverseLabel) {
+          // For bidirectional edges, show both directions
+          const reverseParts = d.reverseLabel.split('→').map((s: string) => s.trim());
+          if (reverseParts.length >= 3) {
+            // Format as two separate directional relationships with clearer labels
+            return `⇒ ${subject}\n   ${predicate}\n   ${object}\n\n⇐ ${reverseParts[0]}\n   ${reverseParts[1]}\n   ${reverseParts[2]}`;
+          }
+        }
+
+        return `${subject}\n→ ${predicate} →\n${object}`;
+      }
+
+      // Fallback to original label if not in expected format
+      return d.label;
+    };
+
+    // Add edge label text with multiline support
     linkLabelGroups.each(function(d) {
       const group = d3.select(this);
-      const text = group.select('text');
+      const formattedLabel = formatLabel(d);
+      const lines = formattedLabel.split('\n');
+
+      const text = group.append('text')
+        .attr('class', 'edge-label')
+        .attr('font-size', '10px')
+        .attr('fill', '#1f2937')
+        .attr('text-anchor', 'middle')
+        .style('font-weight', '500');
+
+      // Add each line as a tspan
+      lines.forEach((line, i) => {
+        text.append('tspan')
+          .attr('x', 0)
+          .attr('dy', i === 0 ? '0' : '1.2em')
+          .text(line);
+      });
+
+      // Size the background rectangle based on text size
       const bbox = (text.node() as SVGTextElement).getBBox();
       group.select('rect')
-        .attr('x', bbox.x - 3)
-        .attr('y', bbox.y - 2)
-        .attr('width', bbox.width + 6)
-        .attr('height', bbox.height + 4);
+        .attr('x', bbox.x - 8)
+        .attr('y', bbox.y - 5)
+        .attr('width', bbox.width + 16)
+        .attr('height', bbox.height + 10);
     });
+
+    // Labels visibility will be controlled directly by edge hover events
+    // No need for separate state management that causes re-renders
 
     // Create node groups
     const nodeGroups = g.append('g')
