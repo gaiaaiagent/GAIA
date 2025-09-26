@@ -25,7 +25,8 @@ interface GraphNode {
 interface GraphEdge {
   source: string | GraphNode;
   target: string | GraphNode;
-  type: 'data' | 'control' | 'monitoring';
+  type: 'data' | 'control' | 'monitoring' | 'query';
+  label?: string;
 }
 
 const PipelineFlowGraphDynamic: React.FC = () => {
@@ -168,97 +169,182 @@ const PipelineFlowGraphDynamic: React.FC = () => {
     if (!isRefreshing) setLoading(true);
 
     try {
-      // Fetch all data in parallel
-      const [sensorData, processedSources, serviceStatus] = await Promise.all([
-        fetchSensors(),
-        fetchProcessedSourcesData(),
-        fetchServiceStatus()
-      ]);
-
-      // Create sensor nodes from real data
-      const sensorNodes: GraphNode[] = sensorData.map((sensor: any) => {
-        // Normalize sensor data structure
-        const sensorId = sensor.id || sensor.node_id || sensor.type;
-        const sensorName = sensor.name || `${sensor.type.charAt(0).toUpperCase() + sensor.type.slice(1)} Sensor`;
-        const monitoring = sensor.monitoring || [];
-
-        return {
-          id: `sensor-${sensorId}`,
-          type: 'sensor' as const,
-          label: sensorName,
-          status: sensor.status === 'active' ? 'active' : 'idle',
-          icon: sensor.type,
-          monitoring: monitoring,
-          metadata: sensor
-        };
-      });
-
-      // Create service/processor nodes from real status
-      const pipelineNodes: GraphNode[] = serviceStatus.map((service: any) => {
-        let type: GraphNode['type'] = 'processor';
-        if (service.id.includes('database') || service.id.includes('jena')) {
-          type = 'storage';
-        } else if (service.id.includes('mcp')) {
-          type = 'service';
+      // Try to fetch from Pipeline Metadata API first
+      let pipelineData = null;
+      try {
+        // Try proxied endpoint (should work when properly configured)
+        const response = await fetch('/api/koi/graph/pipeline');
+        if (response.ok) {
+          pipelineData = await response.json();
+          console.log('Successfully fetched unified pipeline structure');
         }
+      } catch (e) {
+        // For development, you can also try localhost:8002 directly
+        console.log('Pipeline Metadata API not available via proxy, falling back to legacy method');
+      }
 
-        return {
-          id: service.id,
-          type,
-          label: service.name,
-          status: service.status,
-          icon: service.id
-        };
-      });
+      if (pipelineData) {
+        // Use unified pipeline data
+        const graphNodes: GraphNode[] = [];
+        const graphEdges: GraphEdge[] = [];
 
-      // Add Eliza Agents as final node
-      pipelineNodes.push({
-        id: 'eliza-agents',
-        type: 'service' as const,
-        label: 'Eliza Agents',
-        status: 'active',
-        icon: 'activity'
-      });
+        // Convert components to nodes
+        pipelineData.components.forEach((component: any) => {
+          // Skip the generic "pipeline" component
+          if (component.id === 'pipeline') return;
 
-      // Create edges based on actual pipeline flow
-      const defaultEdges: GraphEdge[] = [];
+          const node: GraphNode = {
+            id: component.id,
+            type: component.type as any,
+            label: component.label,
+            status: component.status || 'unknown',
+            icon: component.id,
+            metadata: {
+              rid: component.rid,
+              endpoint: component.endpoint,
+              port: component.port,
+              description: component.description,
+              ...component.metadata
+            }
+          };
 
-      // Connect all active sensors to coordinator
-      sensorNodes.forEach(sensor => {
-        if (sensor.status === 'active') {
-          defaultEdges.push({
-            source: sensor.id,
-            target: 'coordinator',
-            type: 'data'
+          // Add monitoring data for sensors
+          if (component.type === 'sensor' && component.metadata?.monitoring) {
+            node.monitoring = component.metadata.monitoring;
+          }
+
+          graphNodes.push(node);
+        });
+
+        // Convert connections to edges
+        pipelineData.connections.forEach((connection: any) => {
+          graphEdges.push({
+            source: connection.source,
+            target: connection.target,
+            type: connection.type,
+            label: connection.label
           });
-        }
-      });
+        });
 
-      // Pipeline flow connections (based on actual architecture)
-      const pipelineFlow = [
-        { source: 'coordinator', target: 'event-bridge' },
-        { source: 'event-bridge', target: 'bge-embeddings' },
-        { source: 'bge-embeddings', target: 'postgresql' },
-        { source: 'event-bridge', target: 'apache-jena' },
-        { source: 'postgresql', target: 'mcp-server' },
-        { source: 'mcp-server', target: 'eliza-agents' }
-      ];
+        // Fetch live sensor data to update sensor nodes
+        try {
+          const sensorData = await fetchSensors();
+          const sensorMap = new Map(sensorData.map((s: any) => [s.id, s]));
 
-      pipelineFlow.forEach(flow => {
-        // Only add edge if both nodes exist
-        const sourceExists = pipelineNodes.some(n => n.id === flow.source);
-        const targetExists = pipelineNodes.some(n => n.id === flow.target);
-        if (sourceExists && targetExists) {
-          defaultEdges.push({
-            source: flow.source,
-            target: flow.target,
-            type: 'data'
+          graphNodes.forEach(node => {
+            if (node.type === 'sensor') {
+              // Try to match sensor by various ID formats
+              const sensorId = node.id.replace('sensor-', '');
+              const sensor = sensorMap.get(sensorId) ||
+                           sensorMap.get(`${sensorId}-sensor`) ||
+                           Array.from(sensorMap.values()).find((s: any) =>
+                             s.type === sensorId.replace('-sensor', ''));
+
+              if (sensor) {
+                node.status = sensor.status === 'active' ? 'active' : 'idle';
+                node.monitoring = sensor.monitoring || [];
+                node.metadata = { ...node.metadata, ...sensor };
+              }
+            }
           });
+        } catch (e) {
+          console.log('Could not fetch live sensor data:', e);
         }
-      });
 
-      setNodes([...sensorNodes, ...pipelineNodes]);
-      setEdges(defaultEdges);
+        setNodes(graphNodes);
+        setEdges(graphEdges);
+      } else {
+        // Fallback to legacy method
+        const [sensorData, processedSources, serviceStatus] = await Promise.all([
+          fetchSensors(),
+          fetchProcessedSourcesData(),
+          fetchServiceStatus()
+        ]);
+
+        // Create sensor nodes from real data
+        const sensorNodes: GraphNode[] = sensorData.map((sensor: any) => {
+          const sensorId = sensor.id || sensor.node_id || sensor.type;
+          const sensorName = sensor.name || `${sensor.type.charAt(0).toUpperCase() + sensor.type.slice(1)} Sensor`;
+          const monitoring = sensor.monitoring || [];
+
+          return {
+            id: `sensor-${sensorId}`,
+            type: 'sensor' as const,
+            label: sensorName,
+            status: sensor.status === 'active' ? 'active' : 'idle',
+            icon: sensor.type,
+            monitoring: monitoring,
+            metadata: sensor
+          };
+        });
+
+        // Create service/processor nodes from real status
+        const pipelineNodes: GraphNode[] = serviceStatus.map((service: any) => {
+          let type: GraphNode['type'] = 'processor';
+          if (service.id.includes('database') || service.id.includes('jena')) {
+            type = 'storage';
+          } else if (service.id.includes('mcp')) {
+            type = 'service';
+          }
+
+          return {
+            id: service.id,
+            type,
+            label: service.name,
+            status: service.status,
+            icon: service.id
+          };
+        });
+
+        // Add Eliza Agents as final node
+        pipelineNodes.push({
+          id: 'eliza-agents',
+          type: 'service' as const,
+          label: 'Eliza Agents',
+          status: 'active',
+          icon: 'activity'
+        });
+
+        // Create edges with complete pipeline flow (including Jena → MCP)
+        const defaultEdges: GraphEdge[] = [];
+
+        // Connect all active sensors to coordinator
+        sensorNodes.forEach(sensor => {
+          if (sensor.status === 'active') {
+            defaultEdges.push({
+              source: sensor.id,
+              target: 'coordinator',
+              type: 'data'
+            });
+          }
+        });
+
+        // Complete pipeline flow connections
+        const pipelineFlow = [
+          { source: 'coordinator', target: 'event-bridge' },
+          { source: 'event-bridge', target: 'bge-embeddings' },
+          { source: 'bge-embeddings', target: 'postgresql' },
+          { source: 'event-bridge', target: 'apache-jena' },
+          { source: 'postgresql', target: 'mcp-server' },
+          { source: 'apache-jena', target: 'mcp-server' }, // Added missing connection
+          { source: 'mcp-server', target: 'eliza-agents' }
+        ];
+
+        pipelineFlow.forEach(flow => {
+          const sourceExists = pipelineNodes.some(n => n.id === flow.source);
+          const targetExists = pipelineNodes.some(n => n.id === flow.target);
+          if (sourceExists && targetExists) {
+            defaultEdges.push({
+              source: flow.source,
+              target: flow.target,
+              type: 'data'
+            });
+          }
+        });
+
+        setNodes([...sensorNodes, ...pipelineNodes]);
+        setEdges(defaultEdges);
+      }
     } catch (error) {
       console.error('Error initializing graph:', error);
     } finally {
@@ -269,6 +355,7 @@ const PipelineFlowGraphDynamic: React.FC = () => {
 
   // Handle node click to expand sources dynamically
   const handleNodeClick = useCallback(async (node: GraphNode) => {
+
     if (node.type === 'sensor' && node.monitoring && node.monitoring.length > 0) {
       const nodeId = node.id;
       const isExpanded = expandedNodes.has(nodeId);
@@ -340,13 +427,21 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           });
         } else {
           // For other sensors, directly add source nodes
-          const sourceNodes: GraphNode[] = node.monitoring.map((source: any, idx: number) => ({
-            id: `${nodeId}-source-${idx}`,
-            type: 'source',
-            label: typeof source === 'object' ? (source.title || source.name || source.url || `Source ${idx}`) : source,
-            status: 'active',
-            metadata: source
-          }));
+          const sourceNodes: GraphNode[] = node.monitoring.map((source: any, idx: number) => {
+            const label = typeof source === 'object' ? (source.title || source.name || source.url || `Source ${idx}`) : source;
+            // Ensure metadata is always an object with domain property
+            const metadata = typeof source === 'string'
+              ? { domain: source, url: source }
+              : source;
+
+            return {
+              id: `${nodeId}-source-${idx}`,
+              type: 'source',
+              label,
+              status: 'active',
+              metadata
+            };
+          });
 
           newNodes.push(...sourceNodes);
 
@@ -379,14 +474,18 @@ const PipelineFlowGraphDynamic: React.FC = () => {
         newExpanded.delete(nodeId);
         setExpandedNodes(newExpanded);
       }
-    } else if (node.type === 'source' && node.metadata?.domain) {
+    } else if (node.type === 'source' && node.metadata) {
       // For website sources, expand to show pages from this domain
       const nodeId = node.id;
       const isExpanded = expandedNodes.has(nodeId);
 
-      if (!isExpanded) {
+      // Handle both string metadata and object metadata with domain property
+      const domain = typeof node.metadata === 'string'
+        ? node.metadata
+        : node.metadata.domain || node.metadata.url;
+
+      if (!isExpanded && domain) {
         // Fetch real pages for this domain from the KOI Content API
-        const domain = node.metadata.domain;
 
         // Fetch real pages from the KOI Content API
         let pages: any[] = [];
@@ -396,9 +495,11 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           if (response.ok) {
             const data = await response.json();
             pages = data.pages || [];
+          } else {
+            console.error('[Debug] Failed to fetch pages:', response.status, response.statusText);
           }
         } catch (error) {
-          console.error('Error fetching pages for domain:', domain, error);
+          console.error('[Debug] Error fetching pages for domain:', domain, error);
         }
 
         // If no pages found, show a placeholder
@@ -433,6 +534,7 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           };
         });
 
+
         const newNodes = [...nodes, ...pageNodes];
         const newEdges = [...edges];
 
@@ -445,9 +547,11 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           });
         });
 
+
         setNodes(newNodes);
         setEdges(newEdges);
         setExpandedNodes(new Set([...expandedNodes, nodeId]));
+
       } else {
         // Collapse pages
         const nodesToRemove = nodes.filter(n => n.id.startsWith(`${nodeId}-page-`));
@@ -490,9 +594,33 @@ const PipelineFlowGraphDynamic: React.FC = () => {
 
     const g = svg.append('g');
 
-    // Create force simulation with better parameters for dynamic content
+    // First, merge bidirectional edges before creating simulation
+    const edgeMapForSim = new Map<string, any>();
+    const mergedEdgesForSim: any[] = [];
+
+    edges.forEach(edge => {
+      const sourceId = typeof edge.source === 'object' ? edge.source.id : edge.source;
+      const targetId = typeof edge.target === 'object' ? edge.target.id : edge.target;
+      // Create a consistent key regardless of direction
+      const [id1, id2] = [sourceId, targetId].sort();
+      const pairKey = `${id1}|${id2}`;
+
+      if (edgeMapForSim.has(pairKey)) {
+        // We already have an edge for this pair, combine the labels
+        const existingEdge = edgeMapForSim.get(pairKey);
+        // Combine labels with bidirectional arrow
+        existingEdge.label = `${existingEdge.label || 'data'} ⟷ ${edge.label || 'data'}`;
+        existingEdge.bidirectional = true;
+      } else {
+        // First edge for this pair
+        edgeMapForSim.set(pairKey, edge);
+        mergedEdgesForSim.push(edge);
+      }
+    });
+
+    // Create force simulation with merged edges
     const simulation = d3.forceSimulation<GraphNode>(nodes)
-      .force('link', d3.forceLink<GraphNode, GraphEdge>(edges)
+      .force('link', d3.forceLink<GraphNode, GraphEdge>(mergedEdgesForSim)
         .id(d => d.id)
         .distance(d => {
           const sourceNode = typeof d.source === 'object' ? d.source : nodes.find(n => n.id === d.source);
@@ -523,7 +651,7 @@ const PipelineFlowGraphDynamic: React.FC = () => {
 
     // Create arrow markers
     svg.append('defs').selectAll('marker')
-      .data(['data', 'monitoring', 'control'])
+      .data(['data', 'monitoring', 'control', 'query'])
       .enter().append('marker')
       .attr('id', d => `arrow-${d}`)
       .attr('viewBox', '0 -5 10 10')
@@ -539,26 +667,79 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           case 'data': return '#3b82f6';
           case 'monitoring': return '#10b981';
           case 'control': return '#f59e0b';
+          case 'query': return '#8b5cf6';
           default: return '#999';
         }
       });
 
-    // Create edges
+    // Use the merged edges from simulation for rendering
+    const processedEdges = mergedEdgesForSim;
+
+    // No bidirectional edges to curve anymore - all merged into single edges
+    const bidirectionalMap = new Map<string, boolean>();
+
+    // Create paths instead of lines for edges
     const link = g.append('g')
-      .selectAll('line')
-      .data(edges)
-      .enter().append('line')
+      .selectAll('path')
+      .data(processedEdges)
+      .enter().append('path')
+      .attr('fill', 'none')
       .attr('stroke', d => {
         switch(d.type) {
           case 'data': return '#3b82f6';
           case 'monitoring': return '#10b981';
           case 'control': return '#f59e0b';
+          case 'query': return '#8b5cf6';
           default: return '#999';
         }
       })
       .attr('stroke-width', d => d.type === 'monitoring' ? 1 : 2)
       .attr('stroke-opacity', d => d.type === 'monitoring' ? 0.6 : 0.8)
-      .attr('marker-end', d => `url(#arrow-${d.type})`);
+      .attr('marker-end', d => d.bidirectional ? null : `url(#arrow-${d.type || 'data'})`);
+
+    // Since we merged bidirectional edges, we don't need curves
+    // All edges will be straight lines
+    const edgeCurveDirection = new Map<any, number>();
+    processedEdges.forEach(edge => {
+      edgeCurveDirection.set(edge, 0); // No curve for any edge
+    });
+
+    // Add edge label groups (background + text)
+    const linkLabelGroups = g.append('g')
+      .selectAll('g')
+      .data(processedEdges.filter(d => d.label))  // Only add labels for edges that have them
+      .enter().append('g')
+      .attr('class', 'edge-label-group');
+
+    // Add white background rectangles for labels
+    linkLabelGroups.append('rect')
+      .attr('fill', 'white')
+      .attr('fill-opacity', 0.9)
+      .attr('stroke', '#e5e7eb')
+      .attr('stroke-width', 0.5)
+      .attr('rx', 3)
+      .attr('ry', 3);
+
+    // Add edge label text
+    const linkLabels = linkLabelGroups.append('text')
+      .attr('class', 'edge-label')
+      .attr('font-size', '9px')
+      .attr('fill', '#4b5563')
+      .attr('text-anchor', 'middle')
+      .attr('dy', '0.3em')
+      .text(d => d.label || '');
+
+    // Size the background rectangles based on text size
+    linkLabelGroups.each(function(d) {
+      const group = d3.select(this);
+      const text = group.select('text');
+      const bbox = (text.node() as SVGTextElement).getBBox();
+      group.select('rect')
+        .attr('x', bbox.x - 3)
+        .attr('y', bbox.y - 2)
+        .attr('width', bbox.width + 6)
+        .attr('height', bbox.height + 4);
+    });
 
     // Create node groups
     const nodeGroups = g.append('g')
@@ -629,11 +810,119 @@ const PipelineFlowGraphDynamic: React.FC = () => {
 
     // Update positions on tick
     simulation.on('tick', () => {
-      link
-        .attr('x1', d => (typeof d.source === 'object' ? d.source.x : 0) || 0)
-        .attr('y1', d => (typeof d.source === 'object' ? d.source.y : 0) || 0)
-        .attr('x2', d => (typeof d.target === 'object' ? d.target.x : 0) || 0)
-        .attr('y2', d => (typeof d.target === 'object' ? d.target.y : 0) || 0);
+      // Update edge paths with curves for bidirectional edges
+      link.attr('d', d => {
+        const sourceX = (typeof d.source === 'object' ? d.source.x : 0) || 0;
+        const sourceY = (typeof d.source === 'object' ? d.source.y : 0) || 0;
+        const targetX = (typeof d.target === 'object' ? d.target.x : 0) || 0;
+        const targetY = (typeof d.target === 'object' ? d.target.y : 0) || 0;
+
+        // Debug: Check if we're getting the right curve direction
+        const sourceId = typeof d.source === 'object' ? d.source.id : d.source;
+        const targetId = typeof d.target === 'object' ? d.target.id : d.target;
+
+        const curveDirection = edgeCurveDirection.get(d) || 0;
+
+
+        if (curveDirection !== 0) {
+          // Calculate control point for quadratic curve
+          const dx = targetX - sourceX;
+          const dy = targetY - sourceY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance > 0) {
+            // The perpendicular needs to be calculated consistently
+            // We always want to use the same "base" perpendicular direction
+            // regardless of which way the edge is pointing
+
+            // Sort the nodes to get consistent perpendicular
+            const node1Id = sourceId < targetId ? sourceId : targetId;
+            const node2Id = sourceId < targetId ? targetId : sourceId;
+            const node1X = node1Id === sourceId ? sourceX : targetX;
+            const node1Y = node1Id === sourceId ? sourceY : targetY;
+            const node2X = node1Id === sourceId ? targetX : sourceX;
+            const node2Y = node1Id === sourceId ? targetY : sourceY;
+
+            // Calculate perpendicular from consistent node order
+            const consistentDx = node2X - node1X;
+            const consistentDy = node2Y - node1Y;
+            const perpX = -consistentDy / distance;
+            const perpY = consistentDx / distance;
+
+            // Curve amount - increase offset for better separation
+            // Use 30% of distance or minimum 60 pixels for clear visual separation
+            const baseOffset = Math.max(60, Math.min(100, distance * 0.3));
+
+            // Apply the curve direction (+1 or -1) to determine which side
+            const offset = curveDirection * baseOffset;
+
+            // Control point at midpoint, offset perpendicular to line
+            const midX = (sourceX + targetX) / 2;
+            const midY = (sourceY + targetY) / 2;
+            const controlX = midX + perpX * offset;
+            const controlY = midY + perpY * offset;
+
+            // Return quadratic bezier path
+            return `M ${sourceX},${sourceY} Q ${controlX},${controlY} ${targetX},${targetY}`;
+          }
+        }
+
+        // Straight line for non-bidirectional edges
+        return `M ${sourceX},${sourceY} L ${targetX},${targetY}`;
+      });
+
+      // Update edge label positions along curves
+      linkLabelGroups
+        .attr('transform', (d: any) => {
+          const sourceX = (typeof d.source === 'object' ? d.source.x : 0) || 0;
+          const targetX = (typeof d.target === 'object' ? d.target.x : 0) || 0;
+          const sourceY = (typeof d.source === 'object' ? d.source.y : 0) || 0;
+          const targetY = (typeof d.target === 'object' ? d.target.y : 0) || 0;
+
+          const curveDirection = edgeCurveDirection.get(d) || 0;
+
+          if (curveDirection !== 0) {
+            // For curved edges, place label at the curve's midpoint
+            const dx = targetX - sourceX;
+            const dy = targetY - sourceY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance > 0) {
+              // Sort the nodes to get consistent perpendicular (same as edge calculation)
+              const sourceId = typeof d.source === 'object' ? d.source.id : d.source;
+              const targetId = typeof d.target === 'object' ? d.target.id : d.target;
+
+              const node1Id = sourceId < targetId ? sourceId : targetId;
+              const node2Id = sourceId < targetId ? targetId : sourceId;
+              const node1X = node1Id === sourceId ? sourceX : targetX;
+              const node1Y = node1Id === sourceId ? sourceY : targetY;
+              const node2X = node1Id === sourceId ? targetX : sourceX;
+              const node2Y = node1Id === sourceId ? targetY : sourceY;
+
+              // Calculate perpendicular from consistent node order
+              const consistentDx = node2X - node1X;
+              const consistentDy = node2Y - node1Y;
+              const perpX = -consistentDy / distance;
+              const perpY = consistentDx / distance;
+
+              // Use same offset calculation as edges for consistency
+              const baseOffset = Math.max(60, Math.min(100, distance * 0.3));
+              const offset = curveDirection * baseOffset;
+
+              const midX = (sourceX + targetX) / 2;
+              const midY = (sourceY + targetY) / 2;
+
+              // Place label at control point (peak of curve)
+              // Use full offset to ensure maximum separation between bidirectional labels
+              return `translate(${midX + perpX * offset}, ${midY + perpY * offset})`;
+            }
+          }
+
+          // Center label for straight edges
+          const midX = (sourceX + targetX) / 2;
+          const midY = (sourceY + targetY) / 2;
+          return `translate(${midX}, ${midY})`;
+        });
 
       nodeGroups.attr('transform', d => `translate(${d.x || 0}, ${d.y || 0})`);
     });

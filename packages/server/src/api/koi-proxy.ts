@@ -8,6 +8,8 @@ const KOI_SERVICES = {
   coordinator: { url: process.env.KOI_COORDINATOR_URL || 'http://localhost:8000', port: 8000 },
   eventBridge: { url: process.env.KOI_EVENT_BRIDGE_URL || 'http://localhost:8100', port: 8100 },
   bgeServer: { url: process.env.BGE_SERVER_URL || 'http://localhost:8090', port: 8090 },
+  pipelineMetadata: { url: process.env.KOI_METADATA_URL || 'http://localhost:8002', port: 8002 },
+  contentApi: { url: process.env.KOI_CONTENT_URL || 'http://localhost:8007', port: 8007 },
   database: { url: 'postgresql://postgres:postgres@localhost:5433/eliza', port: 5433 }
 };
 
@@ -59,6 +61,63 @@ router.get('/database/status', async (req, res) => {
     res.json({ status: 'ok', message: 'PostgreSQL accessible' });
   } catch (error) {
     res.status(503).json({ status: 'error', message: 'Database unavailable' });
+  }
+});
+
+// Pipeline Metadata endpoint - proxies to port 8002
+router.get('/graph/pipeline', async (req, res) => {
+  try {
+    const response = await axios.get(`${KOI_SERVICES.pipelineMetadata.url}/api/koi/graph/pipeline`, {
+      timeout: 5000
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Pipeline Metadata API error:', error.message);
+    res.status(503).json({
+      success: false,
+      error: {
+        message: 'Pipeline Metadata API unavailable',
+        code: 503
+      }
+    });
+  }
+});
+
+// Content API endpoints - proxy to port 8007
+router.get('/content/pages/:domain', async (req, res) => {
+  try {
+    const { domain } = req.params;
+    const response = await axios.get(`${KOI_SERVICES.contentApi.url}/api/koi/content/pages/${domain}`, {
+      timeout: 5000
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Content API error:', error.message);
+    res.status(503).json({
+      success: false,
+      error: {
+        message: 'Content API unavailable',
+        code: 503
+      }
+    });
+  }
+});
+
+router.get('/content/domains', async (req, res) => {
+  try {
+    const response = await axios.get(`${KOI_SERVICES.contentApi.url}/api/koi/content/domains`, {
+      timeout: 5000
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Content API error:', error.message);
+    res.status(503).json({
+      success: false,
+      error: {
+        message: 'Content API unavailable',
+        code: 503
+      }
+    });
   }
 });
 

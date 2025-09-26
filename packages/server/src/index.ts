@@ -440,7 +440,7 @@ export class AgentServer {
 
       // KOI API proxy routes - add before auth middleware
       try {
-        const koiProxy = require('./routes/koi-proxy').default;
+        const koiProxy = require('./api/koi-proxy').default;
         this.app.use('/api/koi', koiProxy);
         logger.info('KOI proxy routes mounted at /api/koi');
       } catch (error) {
