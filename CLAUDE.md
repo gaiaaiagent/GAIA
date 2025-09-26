@@ -1201,9 +1201,39 @@ See `docs/KOI-SETUP-GUIDE.md` for complete installation and troubleshooting guid
 - Port 8001: KOI API Server (SPARQL)
 - Port 3030: Apache Jena Fuseki
 
+## 🔍 Provenance Tracking & Nginx Configuration (September 26, 2025)
+
+### Critical Discovery: Nginx Location Block Priority
+**Problem:** `/api/koi/graph/` requests were being intercepted by ElizaOS instead of routing to the pipeline metadata API.
+
+**Root Cause:** Even with `^~` priority prefix, requests weren't reaching the specific service endpoints.
+
+**Solution:**
+1. Ensure nginx config file is in the correct location (`/opt/projects/GAIA/nginx-ssl.conf`)
+2. Add all specific API endpoints BEFORE the root location block
+3. Rebuild nginx container WITHOUT cache: `docker compose build nginx --no-cache`
+
+**Key Learning:** The Docker build was using a cached config file. Always verify which config file the Dockerfile is copying.
+
+### Provenance Tracking UI Implementation
+**Achievement:** Full end-to-end provenance tracking now accessible at https://regen.gaiaai.xyz/koi
+
+**Critical Fix:** Browser fetch API cannot handle credentials in URLs. Solution:
+```javascript
+// Strip credentials from URL before fetch
+const baseUrl = window.location.origin.replace(/\/\/[^@]+@/, '//');
+const response = await fetch(`${baseUrl}/api/koi/graph/provenance/${rid}`);
+```
+
+**Components:**
+- Pipeline Metadata API (port 8002) serving provenance data
+- CAT receipts tracked in PostgreSQL
+- Apache Jena ready for graph-based provenance storage
+- React UI displaying provenance timelines
+
 ## 🚀 KOI Sensor-to-Agent Pipeline (September 2025) - PRODUCTION READY
 
-### Complete Pipeline Integration 
+### Complete Pipeline Integration
 The full KOI sensor-to-agent pipeline is now 100% operational, providing real-time content flow from sensors through processing to Eliza agents:
 
 **Architecture:**

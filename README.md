@@ -19,8 +19,27 @@ Our agents serve as bridges between complex ecological data and human understand
   - Chat with 5 specialized AI agents about regenerative finance
 - **Admin Dashboard**: https://admin.regen.gaiaai.xyz/admin/
   - View interaction metrics and system status
+- **KOI Knowledge Graph**: https://regen.gaiaai.xyz/koi
+  - Interactive knowledge graph visualization
+  - **NEW: Provenance Tracking** - Trace complete transformation history of any content with CAT receipts
 
 ### 🚀 Quick Start for Developers
+
+#### Prerequisites
+
+**Node.js Version Requirement**: The client build requires Node.js v20.19.0+ or v22.12.0+
+
+```bash
+# Install Node Version Manager (nvm)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Install and use Node.js v20.19.5
+nvm install 20.19.5
+nvm use 20.19.5
+
+# Verify version
+node --version  # Should show v20.19.5 or higher
+```
 
 ```bash
 # Clone repository

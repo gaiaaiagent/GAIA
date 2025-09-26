@@ -47,6 +47,10 @@ export default defineConfig({
         target: 'http://localhost:8200',
         rewrite: (path) => path.replace('/api/koi/mcp', ''),
       },
+      '/api/koi/graph': {
+        target: 'http://localhost:8002',
+        rewrite: (path) => path.replace('/api/koi/graph', '/api/koi/graph'),
+      },
       '/socket.io': {
         target: 'http://localhost:3000',
         ws: true,

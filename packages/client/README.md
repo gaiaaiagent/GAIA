@@ -2,6 +2,39 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+## Prerequisites
+
+### Node.js Version Requirement
+**IMPORTANT:** Vite 7.x requires Node.js v20.19.0+ or v22.12.0+.
+
+We recommend using Node Version Manager (nvm) to manage Node.js versions:
+
+```bash
+# Install nvm (if not already installed)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Install and use Node.js v20.19.5
+nvm install 20.19.5
+nvm use 20.19.5
+
+# Verify Node.js version
+node --version  # Should show v20.19.5 or higher
+```
+
+### Bun Runtime
+This project uses Bun as the package manager and runtime:
+
+```bash
+# Install dependencies with Bun
+bun install
+
+# Build the project
+bun run build
+
+# Or build without TypeScript checking (useful for development)
+bun run build:no-tsc
+```
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh

@@ -3,11 +3,40 @@ import { Clock, ArrowRight, Database, Hash, FileText } from 'lucide-react';
 
 interface TransformationStep {
   receipt_id: string;
-  transformation_type: string;
+  type: string;
+  transformation_type?: string;
   input_rid: string;
   output_rid: string;
-  created_at: string;
-  metadata: any;
+  timestamp?: string;
+  created_at?: string;
+  details?: {
+    processor?: string;
+    chunks_created?: number;
+    embeddings_created?: number;
+    entities_extracted?: number;
+  };
+  metadata?: any;
+}
+
+interface ProvenanceData {
+  rid: string;
+  found: boolean;
+  document?: {
+    title?: string;
+    source_sensor?: string;
+    created_at?: string;
+    content_hash?: string;
+  };
+  provenance?: {
+    sensed_by: string[];
+    processed_by: string[];
+    stored_in: string[];
+    transformation_count: number;
+    first_seen?: string;
+    last_updated?: string;
+  };
+  timeline: TransformationStep[];
+  error?: string;
 }
 
 interface ProvenanceTimelineProps {
@@ -15,23 +44,42 @@ interface ProvenanceTimelineProps {
 }
 
 const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
+  const [provenanceData, setProvenanceData] = useState<ProvenanceData | null>(null);
   const [provenanceChain, setProvenanceChain] = useState<TransformationStep[]>([]);
+  const [availableRids, setAvailableRids] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchRid, setSearchRid] = useState(rid || '');
   const [error, setError] = useState<string | null>(null);
 
+  // Example RIDs from the real system
+  const exampleRids = [
+    { rid: 'orn:notion:demo:1758839966', title: 'Notion Demo Document' },
+    { rid: 'orn:web.page:registry.regen.network/953dfe65ada6b059', title: 'Regen Registry Page' },
+    { rid: 'orn:discourse.post:forum.regen.network/19/20', title: 'Discourse Forum Post' },
+    { rid: 'orn:web.page:forum.regen.network/e97430973a074f8f', title: 'Forum Discussion' },
+    { rid: 'orn:document:test:doc001', title: 'Test Document with Full Chain' }
+  ];
+
   const fetchProvenance = async (targetRid: string) => {
     if (!targetRid) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
-      const response = await fetch(`/api/koi/provenance/${encodeURIComponent(targetRid)}`);
-      const data = await response.json();
-      
-      if (data.status === 'ok') {
-        setProvenanceChain(data.transformations || []);
+      // Use relative URL to work through nginx proxy
+      // Strip credentials from current URL to avoid fetch API errors
+      const baseUrl = window.location.origin.replace(/\/\/[^@]+@/, '//');
+      const response = await fetch(`${baseUrl}/api/koi/graph/provenance/${encodeURIComponent(targetRid)}`);
+      const data: ProvenanceData = await response.json();
+
+      if (data.found) {
+        setProvenanceData(data);
+        setProvenanceChain(data.timeline || []);
+        setError(null);
+      } else if (data.error) {
+        setError(data.error);
+        setProvenanceChain([]);
       } else {
         setError('No provenance found for this RID');
         setProvenanceChain([]);
@@ -45,11 +93,31 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
     }
   };
 
+  const fetchAvailableRids = async () => {
+    try {
+      const baseUrl = window.location.origin.replace(/\/\/[^@]+@/, '//');
+      const response = await fetch(`${baseUrl}/api/koi/rids?limit=10`);
+      const data = await response.json();
+      if (data.rids) {
+        setAvailableRids(data.rids);
+      }
+    } catch (error) {
+      console.error('Error fetching RIDs:', error);
+    }
+  };
+
   useEffect(() => {
     if (rid) {
       fetchProvenance(rid);
     }
+    fetchAvailableRids();
   }, [rid]);
+
+  const handleTrace = () => {
+    if (searchRid.trim()) {
+      fetchProvenance(searchRid.trim());
+    }
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,13 +127,16 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
   };
 
   const getTransformationIcon = (type: string) => {
-    switch (type) {
-      case 'koi_to_bge_embedding':
-        return <Database className="w-4 h-4" />;
-      case 'sensor_capture':
-        return <FileText className="w-4 h-4" />;
-      default:
-        return <Hash className="w-4 h-4" />;
+    if (type.includes('embedding')) {
+      return <Database className="w-4 h-4" />;
+    } else if (type.includes('sensor') || type.includes('collection')) {
+      return <FileText className="w-4 h-4" />;
+    } else if (type.includes('memory')) {
+      return <Database className="w-4 h-4" />;
+    } else if (type.includes('processing') || type.includes('event')) {
+      return <ArrowRight className="w-4 h-4" />;
+    } else {
+      return <Hash className="w-4 h-4" />;
     }
   };
 
@@ -96,8 +167,9 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
           />
           <button
             type="submit"
+            onClick={handleTrace}
             disabled={loading || !searchRid}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400"
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400 transition-colors"
           >
             {loading ? 'Loading...' : 'Trace'}
           </button>
@@ -107,6 +179,81 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700">
           {error}
+        </div>
+      )}
+
+      {/* Document Information */}
+      {provenanceData?.document && (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h4 className="font-semibold text-sm mb-2">Document Information</h4>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            {provenanceData.document.title && (
+              <div><span className="text-gray-600">Title:</span> {provenanceData.document.title}</div>
+            )}
+            {provenanceData.document.source_sensor && (
+              <div><span className="text-gray-600">Source:</span> {provenanceData.document.source_sensor}</div>
+            )}
+            {provenanceData.document.created_at && (
+              <div><span className="text-gray-600">Created:</span> {formatTimestamp(provenanceData.document.created_at)}</div>
+            )}
+            {provenanceData.document.content_hash && (
+              <div><span className="text-gray-600">Hash:</span> {provenanceData.document.content_hash.substring(0, 16)}...</div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Provenance Summary */}
+      {provenanceData?.provenance && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <h4 className="font-semibold text-sm mb-2">Provenance Summary</h4>
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            {provenanceData.provenance.sensed_by.length > 0 && (
+              <div>
+                <span className="text-gray-600">Sensed by:</span>
+                <div className="mt-1">{provenanceData.provenance.sensed_by.join(', ')}</div>
+              </div>
+            )}
+            {provenanceData.provenance.processed_by.length > 0 && (
+              <div>
+                <span className="text-gray-600">Processed by:</span>
+                <div className="mt-1">{provenanceData.provenance.processed_by.join(', ')}</div>
+              </div>
+            )}
+            {provenanceData.provenance.stored_in.length > 0 && (
+              <div>
+                <span className="text-gray-600">Stored in:</span>
+                <div className="mt-1">{provenanceData.provenance.stored_in.join(', ')}</div>
+              </div>
+            )}
+          </div>
+          <div className="mt-2 text-xs text-gray-600">
+            Total transformations: {provenanceData.provenance.transformation_count}
+          </div>
+        </div>
+      )}
+
+      {/* Example RIDs or Available RIDs */}
+      {!provenanceData && !loading && (
+        <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+          <h4 className="font-semibold text-sm mb-2">
+            {availableRids.length > 0 ? 'Available RIDs' : 'Example RIDs'} (click to trace)
+          </h4>
+          <div className="space-y-1">
+            {(availableRids.length > 0 ? availableRids.slice(0, 5) : exampleRids).map((ridItem) => (
+              <button
+                key={ridItem.rid}
+                onClick={() => {
+                  setSearchRid(ridItem.rid);
+                  fetchProvenance(ridItem.rid);
+                }}
+                className="block w-full text-left p-2 hover:bg-gray-100 rounded text-xs transition-colors"
+              >
+                <div className="font-mono text-blue-600">{ridItem.rid}</div>
+                {ridItem.title && <div className="text-gray-600">{ridItem.title}</div>}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -127,22 +274,22 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
                   <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        {getTransformationIcon(step.transformation_type)}
+                        {getTransformationIcon(step.type || step.transformation_type || '')}
                         <span className="font-medium text-sm">
-                          {step.transformation_type.replace(/_/g, ' ').toUpperCase()}
+                          {(step.type || step.transformation_type || '').replace(/_/g, ' ').toUpperCase()}
                         </span>
                       </div>
                       <div className="flex items-center gap-1 text-xs text-gray-500">
                         <Clock className="w-3 h-3" />
-                        {formatTimestamp(step.created_at)}
+                        {formatTimestamp(step.timestamp || step.created_at || '')}
                       </div>
                     </div>
                     
                     <div className="text-xs space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="text-gray-500">Receipt:</span>
-                        <code className="bg-gray-100 px-1 py-0.5 rounded">
-                          {step.receipt_id}
+                        <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">
+                          {step.receipt_id?.substring(0, 16)}...
                         </code>
                       </div>
                       
@@ -163,6 +310,24 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
                         </div>
                       )}
                       
+                      {/* Show transformation details if available */}
+                      {step.details && (
+                        <div className="mt-2 pt-2 border-t border-gray-100 text-xs text-gray-600">
+                          {step.details.processor && (
+                            <div>Processor: {step.details.processor}</div>
+                          )}
+                          {step.details.chunks_created > 0 && (
+                            <div>Chunks created: {step.details.chunks_created}</div>
+                          )}
+                          {step.details.embeddings_created > 0 && (
+                            <div>Embeddings created: {step.details.embeddings_created}</div>
+                          )}
+                          {step.details.entities_extracted > 0 && (
+                            <div>Entities extracted: {step.details.entities_extracted}</div>
+                          )}
+                        </div>
+                      )}
+
                       {step.metadata && Object.keys(step.metadata).length > 0 && (
                         <details className="mt-2">
                           <summary className="cursor-pointer text-gray-500 hover:text-gray-700">
@@ -209,7 +374,8 @@ const RecentTransformations: React.FC<{ onSelectRid: (rid: string) => void }> = 
 
   const fetchRecentTransformations = async () => {
     try {
-      const response = await fetch('/api/koi/transformations?limit=5');
+      const baseUrl = window.location.origin.replace(/\/\/[^@]+@/, '//');
+      const response = await fetch(`${baseUrl}/api/koi/transformations?limit=5`);
       const data = await response.json();
       
       if (data.status === 'ok') {
