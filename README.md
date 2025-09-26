@@ -76,8 +76,10 @@ We provide a unified control script for all agent operations:
 | Script | Use Case | Web UI | Telegram |
 |--------|----------|--------|----------|
 | `start-all-agents-single-process.sh` | **RECOMMENDED** - Full functionality | ✅ All agents | ✅ All bots |
-| `start-all-agents-telegram.sh` | Independent agent control | ❌ Only RegenAI | ✅ All bots |
+| `start-all-agents-with-telegram.sh` | Independent agent control | ❌ Only RegenAI | ✅ All bots |
 | `start-all-agents-no-telegram.sh` | Testing/Development | ✅ All agents | ❌ Disabled |
+| `start-koi-stream-test.sh` | KOI Stream test agent | ✅ Port 3020 | ❌ Disabled |
+| `start-regen-mcp.sh` | MCP server for Regen Network | N/A | N/A |
 
 > **Note**: The `knowledge/` directory contains sensitive data and is not included in the repository. Agents will run without the knowledge base for testing purposes.
 
