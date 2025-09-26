@@ -19,7 +19,7 @@ import {
   Eye,
   Clock as Timeline
 } from 'lucide-react';
-import PipelineFlowGraph from './PipelineFlowGraph';
+import PipelineFlowGraphDynamic from './PipelineFlowGraphDynamic';
 import ProvenanceTimeline from './ProvenanceTimeline';
 import PipelineMonitor from './PipelineMonitor';
 
@@ -92,7 +92,7 @@ const PipelineMonitorEnhanced: React.FC = () => {
               </p>
             </CardHeader>
             <CardContent>
-              <PipelineFlowGraph />
+              <PipelineFlowGraphDynamic />
             </CardContent>
           </Card>
         </TabsContent>
@@ -116,15 +116,7 @@ const PipelineMonitorEnhanced: React.FC = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Summary Statistics */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Pipeline Statistics</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TransformationStats />
-        </CardContent>
-      </Card>
+      {/* Pipeline Statistics removed - data not currently available */}
     </div>
   );
 };
@@ -142,15 +134,13 @@ const TransformationStats: React.FC = () => {
 
   useEffect(() => {
     fetchStats();
-    // Refresh stats every 5 seconds
-    const interval = setInterval(fetchStats, 5000);
-    return () => clearInterval(interval);
+    // Removed auto-refresh to prevent graph from resetting
   }, []);
 
   const fetchStats = async () => {
     try {
-      // Try to fetch from Event Bridge stats endpoint directly
-      const directUrl = 'http://localhost:8100/stats';
+      // Try to fetch from Event Bridge stats endpoint through proxy
+      const directUrl = '/api/koi/event-bridge/stats';
       const response = await fetch(directUrl);
       
       if (response.ok) {

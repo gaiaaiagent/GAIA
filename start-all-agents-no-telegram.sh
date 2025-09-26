@@ -18,6 +18,9 @@ echo "========================================="
 # Kill any existing agents
 pkill -f 'packages/cli/dist/index.js' 2>/dev/null
 
+# Standardized to port 3001 to match nginx configuration
+export PORT=3001
+
 # Start all agents without telegram
 /home/darren/.bun/bin/bun packages/cli/dist/index.js start \
   --character characters/regenai.character.json \

@@ -24,7 +24,7 @@
         "regen": {
           "type": "stdio",
           "command": "bash",
-          "args": ["../../start-regen-mcp.sh"],
+          "args": ["./start-regen-mcp.sh"],
           "env": {
             "REGEN_RPC_ENDPOINT": "https://regen-rpc.polkachu.com",
             "REGEN_REST_ENDPOINT": "https://regen-rest.publicnode.com"

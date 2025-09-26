@@ -28,6 +28,9 @@ pkill -f 'packages/cli/dist/index.js' 2>/dev/null
 # Start all agents in a single process
 echo -e "${GREEN}Starting all agents in single process mode...${NC}"
 
+# Standardized to port 3001 to match nginx configuration
+export PORT=3001
+
 # Use environment variables for bot tokens
 bun packages/cli/dist/index.js start \
   --character characters/regenai.character.json \

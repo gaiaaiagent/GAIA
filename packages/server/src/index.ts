@@ -438,6 +438,15 @@ export class AgentServer {
       // File uploads are now handled by individual routes using multer
       // No global file upload middleware needed
 
+      // KOI API proxy routes - add before auth middleware
+      try {
+        const koiProxy = require('./routes/koi-proxy').default;
+        this.app.use('/api/koi', koiProxy);
+        logger.info('KOI proxy routes mounted at /api/koi');
+      } catch (error) {
+        logger.warn('KOI proxy routes not available:', error);
+      }
+
       // Optional Authentication Middleware
       const serverAuthToken = process.env.ELIZA_SERVER_AUTH_TOKEN;
       if (serverAuthToken) {

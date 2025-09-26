@@ -21,6 +21,9 @@ echo -e "${BLUE}==========================================${NC}"
 echo -e "${BLUE}Starting All RegenAI Agents with Telegram${NC}"
 echo -e "${BLUE}==========================================${NC}"
 
+# Standardized to port 3001 to match nginx configuration
+export PORT=3001
+
 # Kill any existing agents
 echo -e "${YELLOW}Stopping any existing agents...${NC}"
 pkill -f 'packages/cli/dist/index.js' 2>/dev/null
