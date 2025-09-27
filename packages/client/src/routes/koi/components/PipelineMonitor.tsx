@@ -25,7 +25,8 @@ import {
   Share2,
   ChevronDown,
   ChevronUp,
-  FileText
+  FileText,
+  GitBranch
 } from 'lucide-react';
 
 interface ServiceStatus {
@@ -93,6 +94,13 @@ export default function PipelineMonitor() {
         metrics: { processed: 0 }
       },
       {
+        stage: 'Forwarder',
+        icon: GitBranch,
+        status: 'active',
+        description: 'Event polling & forwarding',
+        metrics: { processed: 0 }
+      },
+      {
         stage: 'Event Bridge',
         icon: Zap,
         status: 'idle',
@@ -112,6 +120,13 @@ export default function PipelineMonitor() {
         status: 'idle',
         description: 'PostgreSQL & Apache Jena',
         metrics: { vectors: 0, triples: 0 }
+      },
+      {
+        stage: 'Daily/Weekly Curator',
+        icon: FileText,
+        status: 'idle',
+        description: 'Content curation & drafts',
+        metrics: { processed: 0 }
       },
       {
         stage: 'MCP Server',

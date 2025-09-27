@@ -1,5 +1,9 @@
 # KOI Pipeline Integration Guide
 
+**Last Updated**: September 27, 2025
+**Status**: PRODUCTION READY ✅
+**Version**: 2.0
+
 This guide documents the complete flow from sensors to agents in the KOI (Knowledge Organization Infrastructure) system, covering the entire pipeline architecture, setup, and integration procedures.
 
 ## Architecture Overview
@@ -96,7 +100,23 @@ The KOI pipeline implements **complete provenance tracking** from sensor data co
 
 ### Complete Provenance Architecture
 
-The KOI pipeline implements revolutionary **end-to-end provenance tracking** that provides complete transparency and accountability for all knowledge transformations:
+The KOI pipeline implements revolutionary **end-to-end provenance tracking** that provides complete transparency and accountability for all knowledge transformations.
+
+#### Recent Enhancements (September 27, 2025)
+
+**Parent-Child Document Relationships**:
+- Discourse sensor now creates parent topic documents with `is_parent: true` metadata
+- Child post documents include `parent_rid` and `parent_url` references
+- Curators use provenance API to resolve URLs through parent chain
+- Ensures forum posts always link to complete topic discussions
+
+**Provenance Chain Resolution**:
+1. Direct URL in metadata (fastest)
+2. `parent_url` field for child documents
+3. Provenance API lookup via `parent_rid`
+4. Fallback to RID parsing (last resort)
+
+The complete architecture:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐

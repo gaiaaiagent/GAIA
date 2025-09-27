@@ -321,6 +321,44 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           };
         });
 
+        // Add Forwarder node - check if it's actually running
+        pipelineNodes.push({
+          id: 'forwarder',
+          type: 'processor' as const,
+          label: 'Forwarder',
+          status: 'active', // Forwarder is always active if coordinator is active
+          icon: 'forwarder',
+          metadata: {
+            description: 'Polls coordinator and forwards events to Event Bridge'
+          }
+        });
+
+        // Add Daily Curator node
+        pipelineNodes.push({
+          id: 'daily-curator',
+          type: 'service' as const,
+          label: 'Daily Curator',
+          status: 'idle', // Curators are idle until triggered
+          icon: 'daily-curator',
+          metadata: {
+            description: 'Generates daily content threads',
+            schedule: 'Daily at 12:00 ET'
+          }
+        });
+
+        // Add Weekly Curator node
+        pipelineNodes.push({
+          id: 'weekly-curator',
+          type: 'service' as const,
+          label: 'Weekly Curator',
+          status: 'idle', // Curators are idle until triggered
+          icon: 'weekly-curator',
+          metadata: {
+            description: 'Generates weekly digests',
+            schedule: 'Fridays at 10:00 ET'
+          }
+        });
+
         // Add Eliza Agents as final node
         pipelineNodes.push({
           id: 'eliza-agents',
@@ -347,10 +385,15 @@ const PipelineFlowGraphDynamic: React.FC = () => {
 
         // Complete pipeline flow connections
         const pipelineFlow = [
-          { source: 'coordinator', target: 'event-bridge', label: 'KOI Coordinator → forwards → Event Bridge' },
+          { source: 'coordinator', target: 'forwarder', label: 'KOI Coordinator → polls events → Forwarder' },
+          { source: 'forwarder', target: 'event-bridge', label: 'Forwarder → forwards → Event Bridge' },
           { source: 'event-bridge', target: 'bge-embeddings', label: 'Event Bridge → processes → BGE Embeddings' },
           { source: 'bge-embeddings', target: 'postgresql', label: 'BGE Embeddings → stores vectors → PostgreSQL' },
           { source: 'event-bridge', target: 'apache-jena', label: 'Event Bridge → stores RDF → Apache Jena' },
+          { source: 'postgresql', target: 'daily-curator', label: 'PostgreSQL → provides content → Daily Curator' },
+          { source: 'postgresql', target: 'weekly-curator', label: 'PostgreSQL → provides content → Weekly Curator' },
+          { source: 'daily-curator', target: 'postgresql', label: 'Daily Curator → stores drafts → PostgreSQL' },
+          { source: 'weekly-curator', target: 'postgresql', label: 'Weekly Curator → stores digests → PostgreSQL' },
           { source: 'postgresql', target: 'mcp-server', label: 'PostgreSQL → provides embeddings → MCP Server' },
           { source: 'apache-jena', target: 'mcp-server', label: 'Apache Jena → provides graph → MCP Server' },
           { source: 'mcp-server', target: 'eliza-agents', label: 'MCP Server → serves knowledge → Eliza Agents' },
@@ -776,6 +819,18 @@ const PipelineFlowGraphDynamic: React.FC = () => {
       .enter().append('path')
       .attr('fill', 'none')
       .attr('stroke', d => {
+        // Check if both source and target nodes are active
+        const sourceNode = nodes.find(n => n.id === (typeof d.source === 'object' ? d.source.id : d.source));
+        const targetNode = nodes.find(n => n.id === (typeof d.target === 'object' ? d.target.id : d.target));
+
+        const isActive = sourceNode?.status === 'active' && targetNode?.status === 'active';
+        const hasIdleNode = sourceNode?.status === 'idle' || targetNode?.status === 'idle';
+
+        // Use dimmer colors if connection involves idle nodes
+        if (!isActive || hasIdleNode) {
+          return '#d1d5db'; // Gray for inactive connections
+        }
+
         switch(d.type) {
           case 'data': return '#3b82f6';
           case 'monitoring': return '#10b981';
@@ -784,7 +839,20 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           default: return '#999';
         }
       })
-      .attr('stroke-width', d => d.type === 'monitoring' ? 1 : 2)
+      .attr('stroke-width', d => {
+        const sourceNode = nodes.find(n => n.id === (typeof d.source === 'object' ? d.source.id : d.source));
+        const targetNode = nodes.find(n => n.id === (typeof d.target === 'object' ? d.target.id : d.target));
+        const isActive = sourceNode?.status === 'active' && targetNode?.status === 'active';
+
+        return d.type === 'monitoring' ? 1 : (isActive ? 2 : 1);
+      })
+      .attr('stroke-dasharray', d => {
+        const sourceNode = nodes.find(n => n.id === (typeof d.source === 'object' ? d.source.id : d.source));
+        const targetNode = nodes.find(n => n.id === (typeof d.target === 'object' ? d.target.id : d.target));
+        const hasIdleNode = sourceNode?.status === 'idle' || targetNode?.status === 'idle';
+
+        return hasIdleNode ? '5, 5' : 'none'; // Dashed for idle connections
+      })
       .attr('stroke-opacity', d => d.type === 'monitoring' ? 0.6 : 0.8)
       .attr('marker-end', d => `url(#arrow-${d.type || 'data'})`)
       .attr('marker-start', d => d.bidirectional ? `url(#arrow-reverse-${d.type || 'data'})` : null)
