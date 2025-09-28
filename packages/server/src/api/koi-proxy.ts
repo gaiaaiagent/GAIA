@@ -1,7 +1,13 @@
 import { Router } from 'express';
 import axios from 'axios';
+import { Pool } from 'pg';
 
 const router = Router();
+
+// Database connection
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL || 'postgresql://postgres:postgres@localhost:5433/eliza'
+});
 
 // KOI service endpoints
 const KOI_SERVICES = {
@@ -139,6 +145,63 @@ router.get('/graph-data', async (req, res) => {
       { id: 'e4', source: '4', target: '5', label: 'query' }
     ]
   });
+});
+
+// Get available RIDs from the database
+router.get('/rids', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    // Query real RIDs from koi_memories table, filtering out test and heartbeat data
+    const result = await pool.query(`
+      SELECT DISTINCT rid, source_sensor, event_type, created_at
+      FROM koi_memories
+      WHERE superseded_at IS NULL
+        AND rid NOT LIKE '%heartbeat%'
+        AND rid NOT LIKE '%test_%'
+        AND source_sensor NOT LIKE '%test-%'
+      ORDER BY created_at DESC
+      LIMIT $1
+    `, [limit]);
+
+    // Format the RIDs with additional info
+    const rids = result.rows.map(row => {
+      let title = '';
+      let description = '';
+
+      // Add context based on RID patterns
+      if (row.rid.includes('forum')) {
+        title = 'Forum Discussion';
+        description = 'Forum post → text extraction → chunking → embeddings';
+      } else if (row.rid.includes('web.page')) {
+        title = 'Web Page Content';
+        description = 'Web crawl → content extraction → structured data';
+      } else if (row.rid.includes('github')) {
+        title = 'GitHub Activity';
+        description = 'Repository → issues/PRs → structured extraction';
+      } else if (row.rid.includes('notion')) {
+        title = 'Notion Page';
+        description = 'Page sync → content extraction → knowledge graph';
+      }
+
+      return {
+        rid: row.rid,
+        title: title || `${row.source_sensor} Content`,
+        description: description || `Processed via ${row.event_type} event`,
+        source: row.source_sensor,
+        timestamp: row.created_at
+      };
+    });
+
+    res.json({ rids, count: rids.length, success: true });
+  } catch (error) {
+    console.error('Error fetching RIDs:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch RIDs',
+      rids: []
+    });
+  }
 });
 
 export default router;

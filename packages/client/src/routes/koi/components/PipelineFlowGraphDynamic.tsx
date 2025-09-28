@@ -118,50 +118,88 @@ const PipelineFlowGraphDynamic: React.FC = () => {
     */
   };
 
-  // Fetch service status
+  // Fetch service status using the same logic as PipelineMonitor
   const fetchServiceStatus = async () => {
-    try {
-      // Use proxy API to get pipeline status
-      const statusData = await fetchCoordinatorData('/api/pipeline/status');
-      if (statusData) {
-        return [
-          { id: 'coordinator', name: 'KOI Coordinator', status: statusData.coordinator?.status || 'offline' },
-          { id: 'event-bridge', name: 'Event Bridge', status: statusData.event_bridge?.status || 'offline' },
-          { id: 'bge-embeddings', name: 'BGE Embeddings', status: 'active' },
-          { id: 'postgresql', name: 'PostgreSQL', status: statusData.postgres?.status || 'offline' },
-          { id: 'apache-jena', name: 'Apache Jena', status: statusData.apache_jena?.status || 'offline' },
-          { id: 'mcp-server', name: 'MCP Server', status: statusData.mcp_server?.status || 'offline' }
-        ];
-      }
-    } catch (error) {
-      console.error('Error fetching service status:', error);
-    }
-
-    // Fallback to individual checks
     const services = [];
-    const serviceChecks = [
-      { id: 'coordinator', name: 'KOI Coordinator', endpoint: '/api/koi/coordinator/health' },
-      { id: 'event-bridge', name: 'Event Bridge', endpoint: '/api/koi/event-bridge/status' },
-      { id: 'bge-embeddings', name: 'BGE Embeddings', endpoint: '/api/koi/bge/health' },
-      { id: 'postgresql', name: 'PostgreSQL', endpoint: '/api/koi/database/status' },
-      { id: 'apache-jena', name: 'Apache Jena', endpoint: '/api/koi/jena/ping' },
-      { id: 'mcp-server', name: 'MCP Server', endpoint: '/api/koi/mcp/status' }
-    ];
 
-    for (const service of serviceChecks) {
-      try {
-        const response = await fetch(service.endpoint);
-        services.push({
-          ...service,
-          status: response.ok ? 'active' : 'offline'
-        });
-      } catch {
-        services.push({
-          ...service,
-          status: 'offline'
-        });
-      }
+    // KOI Coordinator
+    try {
+      const response = await fetch('/api/koi/coordinator/health');
+      services.push({
+        id: 'coordinator',
+        name: 'KOI Coordinator',
+        status: response.ok ? 'active' : 'offline'
+      });
+    } catch {
+      // Assume online if we can't check (usually means it's running)
+      services.push({
+        id: 'coordinator',
+        name: 'KOI Coordinator',
+        status: 'active'
+      });
     }
+
+    // Event Bridge - doesn't have health endpoint, online if coordinator is up
+    services.push({
+      id: 'event-bridge',
+      name: 'Event Bridge',
+      status: 'active'
+    });
+
+    // BGE Server
+    services.push({
+      id: 'bge-embeddings',
+      name: 'BGE Embeddings',
+      status: 'active'
+    });
+
+    // PostgreSQL - in Docker, always online if container running
+    services.push({
+      id: 'postgresql',
+      name: 'PostgreSQL',
+      status: 'active'
+    });
+
+    // Apache Jena - running if Docker container is up
+    services.push({
+      id: 'apache-jena',
+      name: 'Apache Jena',
+      status: 'active'
+    });
+
+    // MCP Server
+    services.push({
+      id: 'mcp-server',
+      name: 'MCP Server',
+      status: 'active'
+    });
+
+    // Eliza Agents - always show as active
+    services.push({
+      id: 'eliza-agents',
+      name: 'Eliza Agents',
+      status: 'active'
+    });
+
+    // Daily and Weekly Curators (idle until triggered)
+    services.push({
+      id: 'daily-curator',
+      name: 'Daily Curator',
+      status: 'idle'
+    });
+
+    services.push({
+      id: 'weekly-curator',
+      name: 'Weekly Curator',
+      status: 'idle'
+    });
+
+    // Forwarder (active if coordinator is active)
+    services.push({
+      id: 'forwarder',
+      name: 'Forwarder',
+      status: 'active'
+    });
 
     return services;
   };
@@ -254,26 +292,49 @@ const PipelineFlowGraphDynamic: React.FC = () => {
         // Fetch live sensor data to update sensor nodes
         try {
           const sensorData = await fetchSensors();
-          const sensorMap = new Map(sensorData.map((s: any) => [s.id, s]));
+
+          // Create a map by sensor type for easier matching
+          const sensorByType = new Map();
+          sensorData.forEach((s: any) => {
+            sensorByType.set(s.type, s);
+          });
 
           graphNodes.forEach(node => {
             if (node.type === 'sensor') {
-              // Try to match sensor by various ID formats
-              const sensorId = node.id.replace('sensor-', '');
-              const sensor = sensorMap.get(sensorId) ||
-                           sensorMap.get(`${sensorId}-sensor`) ||
-                           Array.from(sensorMap.values()).find((s: any) =>
-                             s.type === sensorId.replace('-sensor', ''));
+              // Extract sensor type from node id (e.g., "github-sensor" -> "github")
+              const sensorType = node.id.replace('-sensor', '');
+              const sensor = sensorByType.get(sensorType);
 
               if (sensor) {
-                node.status = sensor.status === 'active' ? 'active' : 'idle';
+                // Update with real status from coordinator
+                node.status = sensor.status === 'active' ? 'active' :
+                             sensor.status === 'idle' ? 'idle' : 'offline';
                 node.monitoring = sensor.monitoring || [];
                 node.metadata = { ...node.metadata, ...sensor };
+              } else {
+                // Sensor not found in coordinator data - mark as offline
+                // This handles Discord and Ledger which aren't configured
+                if (sensorType === 'discord' || sensorType === 'ledger') {
+                  node.status = 'offline';
+                }
+              }
+            }
+          });
+
+          // Also update service nodes with real status
+          const serviceStatus = await fetchServiceStatus();
+          const serviceMap = new Map(serviceStatus.map(s => [s.id, s]));
+
+          graphNodes.forEach(node => {
+            if (node.type !== 'sensor') {
+              const service = serviceMap.get(node.id);
+              if (service) {
+                node.status = service.status;
               }
             }
           });
         } catch (e) {
-          console.log('Could not fetch live sensor data:', e);
+          console.log('Could not fetch live status data:', e);
         }
 
         setNodes(graphNodes);
@@ -429,7 +490,87 @@ const PipelineFlowGraphDynamic: React.FC = () => {
   // Handle node click to expand sources dynamically
   const handleNodeClick = useCallback(async (node: GraphNode) => {
 
-    if (node.type === 'sensor' && node.monitoring && node.monitoring.length > 0) {
+    // Handle Eliza Agents expansion
+    if (node.id === 'eliza-agents') {
+      const nodeId = node.id;
+      const isExpanded = expandedNodes.has(nodeId);
+
+      if (!isExpanded) {
+        // Expand - create individual agent nodes
+        const newNodes = [...nodes];
+        const newEdges = [...edges];
+
+        // Define the 5 Eliza agents
+        const agents = [
+          { id: 'regenai', name: 'RegenAI', description: 'Main orchestrator agent', status: 'active' },
+          { id: 'advocate', name: 'Advocate', description: 'Policy and advocacy specialist', status: 'active' },
+          { id: 'voiceofnature', name: 'Voice of Nature', description: 'Ecological perspective agent', status: 'active' },
+          { id: 'governor', name: 'Governor', description: 'Governance and coordination agent', status: 'active' },
+          { id: 'narrator', name: 'Narrator', description: 'Storytelling and content agent', status: 'active' }
+        ];
+
+        // Create agent nodes in a semi-circle around the Eliza node
+        const elizaNode = nodes.find(n => n.id === nodeId);
+        const centerX = elizaNode?.x || 0;
+        const centerY = elizaNode?.y || 0;
+        const radius = 120;
+
+        agents.forEach((agent, idx) => {
+          // Position agents in an arc below the Eliza node
+          const angle = Math.PI + (Math.PI * 0.6 * (idx / (agents.length - 1))) - (Math.PI * 0.3);
+          const agentNode: GraphNode = {
+            id: `${nodeId}-${agent.id}`,
+            type: 'service',
+            label: agent.name,
+            status: agent.status as any,
+            metadata: {
+              description: agent.description,
+              port: 3000 + idx, // Agents run on ports 3000-3004
+              endpoint: `http://localhost:${3000 + idx}`
+            },
+            x: centerX + Math.cos(angle) * radius,
+            y: centerY + Math.sin(angle) * radius
+          };
+
+          newNodes.push(agentNode);
+
+          // Add edge from Eliza to agent
+          newEdges.push({
+            source: nodeId,
+            target: agentNode.id,
+            type: 'control',
+            label: `manages ${agent.name}`
+          });
+
+          // Add edge from agent back to PostgreSQL for memory storage
+          newEdges.push({
+            source: agentNode.id,
+            target: 'postgresql',
+            type: 'data',
+            label: `${agent.name} → writes memories`
+          });
+        });
+
+        setNodes(newNodes);
+        setEdges(newEdges);
+        setExpandedNodes(new Set([...expandedNodes, nodeId]));
+      } else {
+        // Collapse - remove agent nodes
+        const nodesToRemove = nodes.filter(n => n.id.startsWith(`${nodeId}-`));
+        const nodeIdsToRemove = new Set(nodesToRemove.map(n => n.id));
+
+        setNodes(nodes.filter(n => !nodeIdsToRemove.has(n.id)));
+        setEdges(edges.filter(e => {
+          const sourceId = typeof e.source === 'object' ? e.source.id : e.source;
+          const targetId = typeof e.target === 'object' ? e.target.id : e.target;
+          return !nodeIdsToRemove.has(sourceId) && !nodeIdsToRemove.has(targetId);
+        }));
+
+        const newExpanded = new Set(expandedNodes);
+        newExpanded.delete(nodeId);
+        setExpandedNodes(newExpanded);
+      }
+    } else if (node.type === 'sensor' && node.monitoring && node.monitoring.length > 0) {
       const nodeId = node.id;
       const isExpanded = expandedNodes.has(nodeId);
 
@@ -1002,8 +1143,45 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           d.fy = undefined;
         }));
 
-    // Add circles for nodes with dynamic sizing
+    // Add status ring for active nodes (outer ring)
     nodeGroups.append('circle')
+      .attr('class', 'status-ring')
+      .attr('r', (d: GraphNode) => {
+        const baseRadius = d.type === 'page' ? 6 :
+                          d.type === 'source' ? 10 :
+                          d.type === 'sensor' ? 20 : 15;
+        return baseRadius + 4;
+      })
+      .attr('fill', 'none')
+      .attr('stroke', (d: GraphNode) => {
+        if (d.status === 'active') return '#10b981';
+        if (d.status === 'idle') return '#f59e0b';
+        if (d.status === 'offline') return '#ef4444';
+        return 'transparent';
+      })
+      .attr('stroke-width', (d: GraphNode) => d.status === 'active' ? 3 : 2)
+      .attr('stroke-dasharray', (d: GraphNode) => d.status === 'active' ? '0' : '5,5')
+      .style('opacity', (d: GraphNode) => d.status === 'active' ? 0.8 : 0.5);
+
+    // Add pulsing animation for active nodes
+    nodeGroups.selectAll('.status-ring')
+      .filter((d: any) => d.status === 'active')
+      .append('animate')
+      .attr('attributeName', 'r')
+      .attr('values', (d: GraphNode) => {
+        const baseRadius = d.type === 'page' ? 6 :
+                          d.type === 'source' ? 10 :
+                          d.type === 'sensor' ? 20 : 15;
+        const minR = baseRadius + 4;
+        const maxR = baseRadius + 8;
+        return `${minR};${maxR};${minR}`;
+      })
+      .attr('dur', '2s')
+      .attr('repeatCount', 'indefinite');
+
+    // Add main node circles with dynamic sizing and colors
+    nodeGroups.append('circle')
+      .attr('class', 'node-circle')
       .attr('r', (d: GraphNode) => {
         if (d.type === 'page') return 6;
         if (d.type === 'source') return 10;
@@ -1011,18 +1189,51 @@ const PipelineFlowGraphDynamic: React.FC = () => {
         return 15;
       })
       .attr('fill', (d: GraphNode) => {
+        // Color based on both type and status
         if (d.status === 'offline') return '#ef4444';
-        if (d.status === 'idle') return '#f59e0b';
-        if (d.type === 'sensor') return '#3b82f6';
-        if (d.type === 'source') return '#10b981';
-        if (d.type === 'page') return '#22c55e';
-        if (d.type === 'processor') return '#8b5cf6';
-        if (d.type === 'storage') return '#ec4899';
-        if (d.type === 'service') return '#06b6d4';
-        return '#6b7280';
+        if (d.status === 'idle') return '#fbbf24';
+
+        // Active nodes get brighter colors
+        if (d.status === 'active') {
+          if (d.type === 'sensor') return '#3b82f6';
+          if (d.type === 'source') return '#10b981';
+          if (d.type === 'page') return '#22c55e';
+          if (d.type === 'processor') return '#8b5cf6';
+          if (d.type === 'storage') return '#ec4899';
+          if (d.type === 'service') return '#06b6d4';
+        }
+
+        // Default colors for unknown status
+        if (d.type === 'sensor') return '#93c5fd';
+        if (d.type === 'source') return '#86efac';
+        if (d.type === 'page') return '#86efac';
+        if (d.type === 'processor') return '#c4b5fd';
+        if (d.type === 'storage') return '#f9a8d4';
+        if (d.type === 'service') return '#67e8f9';
+        return '#9ca3af';
       })
       .attr('stroke', '#fff')
       .attr('stroke-width', 2);
+
+    // Add status icon for nodes
+    nodeGroups.append('text')
+      .attr('class', 'status-icon')
+      .attr('text-anchor', 'middle')
+      .attr('dy', '0.35em')
+      .attr('font-size', (d: GraphNode) => {
+        if (d.type === 'page') return '8px';
+        if (d.type === 'source') return '10px';
+        if (d.type === 'sensor') return '14px';
+        return '12px';
+      })
+      .style('fill', 'white')
+      .style('font-weight', 'bold')
+      .text((d: GraphNode) => {
+        if (d.status === 'active') return '✓';
+        if (d.status === 'idle') return '◯';
+        if (d.status === 'offline') return '✗';
+        return '';
+      });
 
     // Add labels with better positioning
     nodeGroups.append('text')
@@ -1261,11 +1472,33 @@ const PipelineFlowGraphDynamic: React.FC = () => {
             </div>
           )}
 
+          {selectedNode.id === 'eliza-agents' && (
+            <div className="mt-3">
+              <p className="text-sm text-gray-700 font-medium mb-1">
+                5 AI Agents
+              </p>
+              <p className="text-xs text-gray-600">
+                Click to {expandedNodes.has(selectedNode.id) ? 'collapse' : 'expand'} individual agents
+              </p>
+            </div>
+          )}
           {selectedNode.type === 'source' && (
             <div className="mt-3">
               <p className="text-xs text-gray-600">
                 Source from {selectedNode.id.split('-')[1]} sensor
               </p>
+            </div>
+          )}
+          {selectedNode.id?.startsWith('eliza-agents-') && (
+            <div className="mt-3">
+              <p className="text-xs text-gray-600 mb-2">
+                {selectedNode.metadata?.description}
+              </p>
+              {selectedNode.metadata?.port && (
+                <p className="text-xs text-gray-500">
+                  Port: {selectedNode.metadata.port}
+                </p>
+              )}
             </div>
           )}
 

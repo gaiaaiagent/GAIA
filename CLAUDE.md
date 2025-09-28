@@ -1231,6 +1231,34 @@ const response = await fetch(`${baseUrl}/api/koi/graph/provenance/${rid}`);
 - Apache Jena ready for graph-based provenance storage
 - React UI displaying provenance timelines
 
+## 📊 KOI Pipeline Enhancements (September 28, 2025)
+
+### Content Deduplication & Event Filtering
+**Problem:** Excessive duplicate processing and non-content events clogging the pipeline.
+
+**Solutions Implemented:**
+1. **Content-Based Deduplication**: SHA-256 hashes prevent reprocessing unchanged web pages
+2. **Event Filtering**: Heartbeats and test data filtered at Event Bridge entry point
+3. **URL-Based Versioning**: Web pages tracked by URL with `superseded_at` timestamps
+4. **Database Cleanup**: Removed 1,794 heartbeat memories and 1,683 test entries
+
+**Key Files:**
+- `/opt/projects/koi-processor/src/core/koi_event_filter.py` - Filters non-content events
+- `/opt/projects/koi-processor/src/core/koi_event_bridge_v2.py` - Deduplication logic
+
+### UI Improvements
+**Fixed Issues:**
+- White text on white background in Provenance Timeline
+- Removed flashing example RIDs before real data loads
+- Consolidated Sensor Status into Overview tab
+- Added proper loading states with spinners
+
+### GitHub Activity Sensor
+**Added:** Comprehensive GitHub activity tracking for daily/weekly curation
+- Monitors commits, issues, and PRs from configured repositories
+- 30-minute collection cycles for Milestone B curator use
+- Integrated into pipeline metadata and Overview graph
+
 ## 🚀 KOI Sensor-to-Agent Pipeline (September 2025) - PRODUCTION READY
 
 ### Complete Pipeline Integration

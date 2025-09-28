@@ -533,7 +533,7 @@ export default function PipelineMonitor() {
     <div className="space-y-6">
       {/* Header Controls */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Knowledge Flow Pipeline</h2>
+        <h2 className="text-2xl font-bold">Pipeline Status</h2>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
