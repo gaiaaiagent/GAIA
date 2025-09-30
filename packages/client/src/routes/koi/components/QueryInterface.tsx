@@ -70,7 +70,7 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
       try {
         const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '';
         
-        const response = await fetch('http://localhost:8300/api/koi/query', {
+        const response = await fetch('http://localhost:8301/api/koi/query', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
