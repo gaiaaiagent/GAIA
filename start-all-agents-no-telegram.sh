@@ -1,33 +1,31 @@
 #!/bin/bash
 
-# Load environment variables (but ignore telegram tokens)
-if [ -f .env ]; then
-    set -a
-    source .env
-    set +a
-    # Unset telegram tokens
-    unset $(env | grep TELEGRAM | cut -d= -f1)
-else
-    echo "Error: .env file not found!"
-    exit 1
-fi
+echo "Starting all agents without Telegram..."
 
-echo "Starting All RegenAI Agents (No Telegram)"
-echo "========================================="
+# Start RegenAI on port 3000
+echo "Starting RegenAI..."
+bun packages/cli/dist/index.js start --character characters/regenai.character.json --port 3000 &
 
-# Kill any existing agents
-pkill -f 'packages/cli/dist/index.js' 2>/dev/null
+# Start Advocate on port 3001
+echo "Starting Advocate..."
+bun packages/cli/dist/index.js start --character characters/advocate.character.json --port 3001 &
 
-# Standardized to port 3001 to match nginx configuration
-export PORT=3001
+# Start Governor on port 3002
+echo "Starting Governor..."
+bun packages/cli/dist/index.js start --character characters/governor.character.json --port 3002 &
 
-# Start all agents without telegram
-/home/darren/.bun/bin/bun packages/cli/dist/index.js start \
-  --character characters/regenai.character.json \
-  --character characters/advocate.character.json \
-  --character characters/governor.character.json \
-  --character characters/narrative.character.json \
-  --character characters/voiceofnature.character.json \
-  2>&1 | tee logs/all-agents-no-telegram.log &
+# Start Voice of Nature on port 3003
+echo "Starting Voice of Nature..."
+bun packages/cli/dist/index.js start --character characters/voiceofnature.character.json --port 3003 &
 
-echo "All agents started (web-only mode)"
+# Start Narrative on port 3004
+echo "Starting Narrative..."
+bun packages/cli/dist/index.js start --character characters/narrative.character.json --port 3004 &
+
+echo "All agents started!"
+echo "Access them at:"
+echo "  RegenAI:         http://localhost:3000"
+echo "  Advocate:        http://localhost:3001"
+echo "  Governor:        http://localhost:3002"
+echo "  Voice of Nature: http://localhost:3003"
+echo "  Narrative:       http://localhost:3004"

@@ -14,7 +14,8 @@ import {
   XCircle,
   Loader2,
   Eye,
-  EyeOff
+  EyeOff,
+  GitBranch
 } from 'lucide-react';
 
 interface QueryResult {
@@ -38,6 +39,7 @@ interface QueryResult {
 
 interface QueryInterfaceProps {
   onVisualizationData?: (data: { nodes: any[]; edges: any[] }) => void;
+  onNavigateToProvenance?: (rid: string) => void;
 }
 
 /**
@@ -48,7 +50,7 @@ interface QueryInterfaceProps {
  * - Query execution results
  * - Formatted visualization data
  */
-export default function QueryInterface({ onVisualizationData }: QueryInterfaceProps) {
+export default function QueryInterface({ onVisualizationData, onNavigateToProvenance }: QueryInterfaceProps) {
   const [naturalQuery, setNaturalQuery] = useState('');
   const [showSparqlEditor, setShowSparqlEditor] = useState(false);
   const [sparqlQuery, setSparqlQuery] = useState('');
@@ -56,6 +58,7 @@ export default function QueryInterface({ onVisualizationData }: QueryInterfacePr
   const [result, setResult] = useState<QueryResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [queryHistory, setQueryHistory] = useState<string[]>([]);
+  const [rawApiResults, setRawApiResults] = useState<any[]>([]);
 
   const executeNaturalQuery = useCallback(async (question: string) => {
     setLoading(true);
@@ -67,11 +70,10 @@ export default function QueryInterface({ onVisualizationData }: QueryInterfacePr
       try {
         const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '';
         
-        const response = await fetch('/api/koi/nl-query/', {
+        const response = await fetch('http://localhost:8300/api/koi/query', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
           },
           body: JSON.stringify({ question })
         });
@@ -80,7 +82,43 @@ export default function QueryInterface({ onVisualizationData }: QueryInterfacePr
           throw new Error('API not available');
         }
 
-        queryResult = await response.json();
+        const apiResult = await response.json();
+        
+        // Store raw API results for provenance display
+        setRawApiResults(apiResult.results || []);
+        
+        // Transform API response to QueryResult format
+        queryResult = {
+          originalQuestion: apiResult.question,
+          generatedSparql: `-- Hybrid RAG Query (Vector + Graph + Adaptive)
+-- Question: "${apiResult.question}"
+-- Confidence: ${apiResult.confidence.toFixed(3)}
+-- Results: ${apiResult.total_results}
+-- Extraction Triggered: ${apiResult.triggered_extraction}`,
+          isValidSparql: true,
+          executionResult: {
+            success: true,
+            results: {
+              results: {
+                bindings: apiResult.results.map((r: any, i: number) => ({
+                  [`result${i}`]: { value: r.content, type: 'literal' }
+                }))
+              }
+            },
+            executionTime: apiResult.execution_time,
+            fromCache: false
+          },
+          visualizationData: {
+            nodes: apiResult.results.slice(0, 5).map((r: any, i: number) => ({
+              id: r.rid || `node-${i}`,
+              label: r.title,
+              type: r.source
+            })),
+            edges: []
+          },
+          modelUsed: 'Hybrid RAG (RRF + BGE + Adaptive)',
+          validationMessage: `Query processed successfully. Confidence: ${apiResult.confidence.toFixed(3)}`
+        };
       } catch (apiError) {
         // Fallback to mock response for testing
         console.log('Using mock natural language query response for testing');
@@ -373,10 +411,11 @@ Example: 'Show me documents about regenerative agriculture with high confidence'
             </div>
 
             <Tabs defaultValue="summary" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="summary">Summary</TabsTrigger>
                 <TabsTrigger value="sparql">Generated SPARQL</TabsTrigger>
                 <TabsTrigger value="results">Raw Results</TabsTrigger>
+                <TabsTrigger value="provenance">Provenance</TabsTrigger>
               </TabsList>
 
               <TabsContent value="summary" className="space-y-3">
@@ -454,6 +493,45 @@ Example: 'Show me documents about regenerative agriculture with high confidence'
                         {result.executionResult.error}
                       </AlertDescription>
                     </Alert>
+                  )}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="provenance">
+                <div className="space-y-3">
+                  <div className="text-sm font-medium">Result RIDs for Provenance Tracing</div>
+                  <div className="text-xs text-muted-foreground mb-3">
+                    Click "Trace" on any RID below to automatically navigate to its transformation provenance
+                  </div>
+                  {result.executionResult.success && rawApiResults.length > 0 ? (
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {rawApiResults.map((item: any, index: number) => (
+                        <div key={index} className="bg-muted p-2 rounded text-xs">
+                          <div className="flex items-center justify-between">
+                            <div className="font-mono text-blue-600 break-all">
+                              {item.rid}
+                            </div>
+                            <Button
+                              size="sm" 
+                              variant="ghost"
+                              className="h-6 px-2 text-xs"
+                              onClick={() => onNavigateToProvenance?.(item.rid)}
+                            >
+                              <GitBranch className="h-3 w-3 mr-1" />
+                              Trace
+                            </Button>
+                          </div>
+                          <div className="text-muted-foreground mt-1 line-clamp-2">
+                            {item.content}
+                          </div>
+                          <div className="text-xs text-blue-500 mt-1">
+                            Score: {item.score?.toFixed(3)} | Source: {item.source}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-muted-foreground text-sm">No RIDs available</div>
                   )}
                 </div>
               </TabsContent>

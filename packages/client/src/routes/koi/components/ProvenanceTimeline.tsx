@@ -34,7 +34,7 @@ interface ProvenanceData {
     transformation_count: number;
     first_seen?: string;
     last_updated?: string;
-  };
+  } | null;
   timeline: TransformationStep[];
   error?: string;
 }
@@ -57,29 +57,56 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
 
     setLoading(true);
     setError(null);
+    setProvenanceData(null);
+    setProvenanceChain([]);
 
     try {
-      // Use relative URL to work through nginx proxy
-      // Strip credentials from current URL to avoid fetch API errors
-      const baseUrl = window.location.origin.replace(/\/\/[^@]+@/, '//');
-      const response = await fetch(`${baseUrl}/api/koi/graph/provenance/${encodeURIComponent(targetRid)}`);
+      // For development, connect directly to pipeline metadata API
+      // In production, this goes through nginx proxy
+      const isDevelopment = window.location.hostname === 'localhost';
+      const apiUrl = isDevelopment 
+        ? `http://localhost:8002/api/koi/graph/provenance/${encodeURIComponent(targetRid)}`
+        : `/api/koi/graph/provenance/${encodeURIComponent(targetRid)}`;
+      
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data: ProvenanceData = await response.json();
 
-      if (data.found) {
-        setProvenanceData(data);
-        setProvenanceChain(data.timeline || []);
-        setError(null);
-      } else if (data.error) {
-        setError(data.error);
-        setProvenanceChain([]);
+      // Ensure data structure is valid before setting state
+      if (data && typeof data === 'object') {
+        // Validate and sanitize provenance data
+        const sanitizedData = {
+          ...data,
+          provenance: data.provenance ? {
+            sensed_by: Array.isArray(data.provenance.sensed_by) ? data.provenance.sensed_by : [],
+            processed_by: Array.isArray(data.provenance.processed_by) ? data.provenance.processed_by : [],
+            stored_in: Array.isArray(data.provenance.stored_in) ? data.provenance.stored_in : [],
+            transformation_count: data.provenance.transformation_count || 0,
+            first_seen: data.provenance.first_seen,
+            last_updated: data.provenance.last_updated
+          } : null,
+          timeline: Array.isArray(data.timeline) ? data.timeline : []
+        };
+
+        if (sanitizedData.found) {
+          setProvenanceData(sanitizedData);
+          setProvenanceChain(sanitizedData.timeline);
+          setError(null);
+        } else if (sanitizedData.error) {
+          setError(sanitizedData.error);
+        } else {
+          setError('No provenance found for this RID');
+        }
       } else {
-        setError('No provenance found for this RID');
-        setProvenanceChain([]);
+        setError('Invalid response format');
       }
     } catch (error) {
       console.error('Error fetching provenance:', error);
-      setError('Failed to fetch provenance data');
-      setProvenanceChain([]);
+      setError(`Failed to fetch provenance data: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
@@ -88,8 +115,12 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
   const fetchAvailableRids = async () => {
     setLoadingRids(true);
     try {
-      const baseUrl = window.location.origin.replace(/\/\/[^@]+@/, '//');
-      const response = await fetch(`${baseUrl}/api/koi/rids?limit=10`);
+      const isDevelopment = window.location.hostname === 'localhost';
+      const apiUrl = isDevelopment 
+        ? 'http://localhost:8002/api/koi/rids?limit=10'
+        : '/api/koi/rids?limit=10';
+      
+      const response = await fetch(apiUrl);
       const data = await response.json();
       if (data.rids && data.rids.length > 0) {
         // Enhance system RIDs with descriptions based on their patterns
@@ -136,6 +167,7 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
 
   useEffect(() => {
     if (rid) {
+      setSearchRid(rid);
       fetchProvenance(rid);
     }
     // Fetch real RIDs from clean database
@@ -255,19 +287,19 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
           <h4 className="font-semibold text-sm mb-2 text-gray-900">Provenance Summary</h4>
           <div className="grid grid-cols-3 gap-2 text-xs">
-            {provenanceData.provenance.sensed_by.length > 0 && (
+            {provenanceData.provenance.sensed_by && provenanceData.provenance.sensed_by.length > 0 && (
               <div className="text-gray-800">
                 <span className="text-gray-600 font-medium">Sensed by:</span>
                 <div className="mt-1">{provenanceData.provenance.sensed_by.join(', ')}</div>
               </div>
             )}
-            {provenanceData.provenance.processed_by.length > 0 && (
+            {provenanceData.provenance.processed_by && provenanceData.provenance.processed_by.length > 0 && (
               <div className="text-gray-800">
                 <span className="text-gray-600 font-medium">Processed by:</span>
                 <div className="mt-1">{provenanceData.provenance.processed_by.join(', ')}</div>
               </div>
             )}
-            {provenanceData.provenance.stored_in.length > 0 && (
+            {provenanceData.provenance.stored_in && provenanceData.provenance.stored_in.length > 0 && (
               <div className="text-gray-800">
                 <span className="text-gray-600 font-medium">Stored in:</span>
                 <div className="mt-1">{provenanceData.provenance.stored_in.join(', ')}</div>
@@ -275,7 +307,7 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
             )}
           </div>
           <div className="mt-2 text-xs text-gray-700">
-            Total transformations: {provenanceData.provenance.transformation_count}
+            Total transformations: {provenanceData.provenance.transformation_count || 0}
           </div>
         </div>
       )}
@@ -458,8 +490,12 @@ const RecentTransformations: React.FC<{ onSelectRid: (rid: string) => void }> = 
 
   const fetchRecentTransformations = async () => {
     try {
-      const baseUrl = window.location.origin.replace(/\/\/[^@]+@/, '//');
-      const response = await fetch(`${baseUrl}/api/koi/transformations?limit=5`);
+      const isDevelopment = window.location.hostname === 'localhost';
+      const apiUrl = isDevelopment 
+        ? 'http://localhost:8002/api/koi/transformations?limit=5'
+        : '/api/koi/transformations?limit=5';
+      
+      const response = await fetch(apiUrl);
       const data = await response.json();
       
       if (data.status === 'ok') {
