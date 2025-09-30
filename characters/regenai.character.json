@@ -6,8 +6,7 @@
     "@elizaos/plugin-sql",
     "@elizaos/plugin-openai",
     "@elizaos/plugin-anthropic",
-    "@elizaos/plugin-knowledge",
-    "@elizaos/plugin-http-api"
+    "@elizaos/plugin-knowledge"
   ],
   "settings": {
     "secrets": {},
