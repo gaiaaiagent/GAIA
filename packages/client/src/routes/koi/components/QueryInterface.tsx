@@ -43,7 +43,7 @@ interface QueryInterfaceProps {
 }
 
 /**
- * Natural Language to SPARQL Query Interface
+ * Hybrid RAG Query Interface
  * 
  * Allows users to input natural language questions and see:
  * - Generated SPARQL query
