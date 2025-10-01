@@ -24,6 +24,7 @@ interface ProvenanceData {
   document?: {
     title?: string;
     source_sensor?: string;
+    source_url?: string;
     created_at?: string;
     content_hash?: string;
   };
@@ -268,6 +269,12 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
           <div className="grid grid-cols-2 gap-2 text-xs">
             {provenanceData.document.title && (
               <div className="text-gray-800"><span className="text-gray-600 font-medium">Title:</span> {provenanceData.document.title}</div>
+            )}
+            {provenanceData.document.source_url && (
+              <div className="text-gray-800 col-span-2">
+                <span className="text-gray-600 font-medium">Source URL:</span>{" "}
+                <a href={provenanceData.document.source_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">{provenanceData.document.source_url}</a>
+              </div>
             )}
             {provenanceData.document.source_sensor && (
               <div className="text-gray-800"><span className="text-gray-600 font-medium">Source:</span> {provenanceData.document.source_sensor}</div>
