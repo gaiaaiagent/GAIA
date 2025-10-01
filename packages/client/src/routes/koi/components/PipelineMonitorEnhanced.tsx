@@ -29,9 +29,23 @@ import PipelineMonitor from './PipelineMonitor';
 /**
  * Enhanced Pipeline Monitor with Flow Visualization and Provenance Tracking
  */
-const PipelineMonitorEnhanced: React.FC = () => {
-  const [activeView, setActiveView] = useState('overview');
+interface PipelineMonitorEnhancedProps {
+  rid?: string;
+  subView?: string;
+}
+
+const PipelineMonitorEnhanced: React.FC<PipelineMonitorEnhancedProps> = ({ rid, subView }) => {
+  const [activeView, setActiveView] = useState(subView || 'overview');
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Switch to provenance tab when RID is provided or subView changes
+  useEffect(() => {
+    if (rid) {
+      setActiveView('provenance');
+    } else if (subView) {
+      setActiveView(subView);
+    }
+  }, [rid, subView]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -104,7 +118,7 @@ const PipelineMonitorEnhanced: React.FC = () => {
               </p>
             </CardHeader>
             <CardContent>
-              <ProvenanceTimeline />
+              <ProvenanceTimeline rid={rid} />
             </CardContent>
           </Card>
         </TabsContent>

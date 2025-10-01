@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Search, 
-  Database, 
-  Network, 
-  BarChart3, 
-  Brain, 
+import {
+  Search,
+  Database,
+  Network,
+  BarChart3,
+  Brain,
   Eye,
   Loader2,
-  Shield 
+  Shield
 } from 'lucide-react';
 import QueryInterface from './components/QueryInterface';
 import GraphExplorer from './components/GraphExplorer';
@@ -23,12 +24,50 @@ import KnowledgeManager from './components/KnowledgeManager';
 
 /**
  * KOI Knowledge Graph Visualization Page
- * 
+ *
  * Main page for the KOI (Knowledge Organization Infrastructure) system
  * Provides natural language querying, SPARQL interface, and interactive visualizations
+ *
+ * URL Structure:
+ * - /koi - Default view (Pipeline Monitor)
+ * - /koi/query/:question - Query view with pre-filled question
+ * - /koi/monitor/:view/:rid - Pipeline Monitor with specific view and RID
+ * - /koi/graph - Graph Explorer
+ * - /koi/essence - Essence Radar
+ * - /koi/analytics - Analytics
+ * - /koi/knowledge - Knowledge Manager
  */
 export default function KOIPage() {
-  const [activeTab, setActiveTab] = useState('monitor');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params = useParams();
+
+  // Parse URL to determine active tab and subtab
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const urlTab = pathParts[1] || 'monitor'; // /koi/[tab]
+  const urlSubView = pathParts[2]; // /koi/monitor/[subview]
+  const urlRid = pathParts[3] ? decodeURIComponent(pathParts.slice(3).join('/')) : undefined; // /koi/monitor/provenance/[rid]
+
+  const [activeTab, setActiveTab] = useState(urlTab);
+  const [selectedRid, setSelectedRid] = useState<string | undefined>(urlRid);
+  const [exampleQuery, setExampleQuery] = useState<string>('');
+
+  // Update state when URL changes
+  useEffect(() => {
+    setActiveTab(urlTab);
+    setSelectedRid(urlRid);
+  }, [urlTab, urlRid]);
+
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    navigate(`/koi/${newTab}`);
+  };
+
+  const handleNavigateToProvenance = (rid: string) => {
+    setSelectedRid(rid);
+    setActiveTab('monitor');
+    navigate(`/koi/monitor/provenance/${encodeURIComponent(rid)}`);
+  };
 
   return (
     <div className="flex w-full justify-center px-4 sm:px-6">
@@ -61,7 +100,7 @@ export default function KOIPage() {
         </div>
 
         {/* Main content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <Tabs value={activeTab} onValueChange={handleTabChange}>
           {/* Tab navigation */}
           <TabsList className="grid w-full grid-cols-6 mb-6">
             <TabsTrigger value="monitor" className="flex items-center gap-2">
@@ -92,7 +131,7 @@ export default function KOIPage() {
 
           {/* Pipeline Monitor Tab */}
           <TabsContent value="monitor">
-            <PipelineMonitorEnhanced />
+            <PipelineMonitorEnhanced rid={selectedRid} subView={urlSubView} />
           </TabsContent>
 
           {/* Query Interface Tab */}
@@ -104,14 +143,18 @@ export default function KOIPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Search className="h-5 w-5" />
-                      Natural Language to SPARQL
+                      Hybrid RAG Query Interface
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Ask questions about the knowledge graph in plain English
+                      Semantic search combining vector embeddings, keyword matching, and adaptive ranking
                     </p>
                   </CardHeader>
                   <CardContent className="h-full">
-                    <QueryInterface />
+                    <QueryInterface
+                      onNavigateToProvenance={handleNavigateToProvenance}
+                      initialQuestion={exampleQuery || (urlSubView ? decodeURIComponent(urlSubView.replace(/_/g, ' ')) : undefined)}
+                      onQueryChange={(query: string) => setExampleQuery(query)}
+                    />
                   </CardContent>
                 </Card>
               </div>
@@ -143,17 +186,37 @@ export default function KOIPage() {
                     <CardTitle className="text-lg">Example Queries</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <Button variant="ghost" size="sm" className="w-full text-left justify-start">
-                      Show me documents about regenerative agriculture
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-left justify-start"
+                      onClick={() => setExampleQuery("What are jaguar credits?")}
+                    >
+                      What are jaguar credits?
                     </Button>
-                    <Button variant="ghost" size="sm" className="w-full text-left justify-start">
-                      Find high confidence essence alignments
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-left justify-start"
+                      onClick={() => setExampleQuery("What is the Regen Ledger?")}
+                    >
+                      What is the Regen Ledger?
                     </Button>
-                    <Button variant="ghost" size="sm" className="w-full text-left justify-start">
-                      What are the main metabolic processes?
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-left justify-start"
+                      onClick={() => setExampleQuery("How does ecological credit verification work?")}
+                    >
+                      How does ecological credit verification work?
                     </Button>
-                    <Button variant="ghost" size="sm" className="w-full text-left justify-start">
-                      Show transformation provenance chains
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-left justify-start"
+                      onClick={() => setExampleQuery("What is regenerative agriculture?")}
+                    >
+                      What is regenerative agriculture?
                     </Button>
                   </CardContent>
                 </Card>

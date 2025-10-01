@@ -186,15 +186,15 @@ function AppContent() {
                   </div>
                 }
               />
-              <Route 
-                path="koi" 
+              <Route
+                path="koi/*"
                 element={
                   <div className="flex w-full justify-center overflow-y-auto">
                     <div className="w-full">
                       <KOIPage />
                     </div>
                   </div>
-                } 
+                }
               />
               {/* Catch-all route for 404 errors */}
               <Route path="*" element={<NotFound />} />

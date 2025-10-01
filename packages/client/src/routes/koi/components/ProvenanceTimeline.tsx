@@ -405,14 +405,15 @@ const ProvenanceTimeline: React.FC<ProvenanceTimelineProps> = ({ rid }) => {
                       <div className="flex items-start gap-2">
                         <span className="text-gray-600 font-medium">Input:</span>
                         <div className="flex-1">
-                          <code className="bg-blue-50 border border-blue-200 px-2 py-1 rounded text-xs text-gray-800 block">
-                            {step.input_rid}
-                          </code>
-                          {index === provenanceChain.length - 1 && step.input_rid?.includes('http') && (
+                          {step.input_rid?.startsWith('http') ? (
                             <a href={step.input_rid} target="_blank" rel="noopener noreferrer"
-                               className="text-blue-600 hover:underline text-xs mt-1 inline-block">
-                              🔗 View original source
+                               className="text-blue-600 hover:underline text-xs break-all inline-block">
+                              {step.input_rid}
                             </a>
+                          ) : (
+                            <code className="bg-blue-50 border border-blue-200 px-2 py-1 rounded text-xs text-gray-800 block">
+                              {step.input_rid}
+                            </code>
                           )}
                         </div>
                       </div>

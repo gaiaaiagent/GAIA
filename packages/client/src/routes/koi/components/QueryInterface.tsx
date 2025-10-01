@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
@@ -40,18 +40,20 @@ interface QueryResult {
 interface QueryInterfaceProps {
   onVisualizationData?: (data: { nodes: any[]; edges: any[] }) => void;
   onNavigateToProvenance?: (rid: string) => void;
+  initialQuestion?: string;
+  onQueryChange?: (query: string) => void;
 }
 
 /**
  * Hybrid RAG Query Interface
- * 
+ *
  * Allows users to input natural language questions and see:
  * - Generated SPARQL query
  * - Query execution results
  * - Formatted visualization data
  */
-export default function QueryInterface({ onVisualizationData, onNavigateToProvenance }: QueryInterfaceProps) {
-  const [naturalQuery, setNaturalQuery] = useState('');
+export default function QueryInterface({ onVisualizationData, onNavigateToProvenance, initialQuestion, onQueryChange }: QueryInterfaceProps) {
+  const [naturalQuery, setNaturalQuery] = useState(initialQuestion || '');
   const [showSparqlEditor, setShowSparqlEditor] = useState(false);
   const [sparqlQuery, setSparqlQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -59,6 +61,14 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
   const [error, setError] = useState<string | null>(null);
   const [queryHistory, setQueryHistory] = useState<string[]>([]);
   const [rawApiResults, setRawApiResults] = useState<any[]>([]);
+
+  // Auto-execute query if initialQuestion is provided
+  useEffect(() => {
+    if (initialQuestion && initialQuestion.trim()) {
+      setNaturalQuery(initialQuestion);
+      executeNaturalQuery(initialQuestion.trim());
+    }
+  }, [initialQuestion]);
 
   const executeNaturalQuery = useCallback(async (question: string) => {
     setLoading(true);
@@ -70,7 +80,7 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
       try {
         const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '';
         
-        const response = await fetch('http://localhost:8301/api/koi/query', {
+        const response = await fetch('/api/koi/query', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -411,10 +421,9 @@ Example: 'Show me documents about regenerative agriculture with high confidence'
             </div>
 
             <Tabs defaultValue="summary" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="summary">Summary</TabsTrigger>
-                <TabsTrigger value="sparql">Generated SPARQL</TabsTrigger>
-                <TabsTrigger value="results">Raw Results</TabsTrigger>
+                <TabsTrigger value="results">Results</TabsTrigger>
                 <TabsTrigger value="provenance">Provenance</TabsTrigger>
               </TabsList>
 
@@ -464,33 +473,41 @@ Example: 'Show me documents about regenerative agriculture with high confidence'
                 )}
               </TabsContent>
 
-              <TabsContent value="sparql">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Generated SPARQL Query</span>
-                    {result.modelUsed && (
-                      <Badge variant="outline" className="text-xs">
-                        {result.modelUsed}
-                      </Badge>
-                    )}
-                  </div>
-                  <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
-                    <code>{result.generatedSparql}</code>
-                  </pre>
-                </div>
-              </TabsContent>
-
               <TabsContent value="results">
                 <div className="space-y-3">
-                  <div className="text-sm font-medium">Raw SPARQL Results</div>
-                  {result.executionResult.success ? (
-                    <pre className="bg-muted p-3 rounded text-xs overflow-x-auto max-h-64 overflow-y-auto">
-                      <code>{JSON.stringify(result.executionResult.results, null, 2)}</code>
-                    </pre>
+                  <div className="text-sm font-medium">Search Results</div>
+                  {result.executionResult.success && rawApiResults.length > 0 ? (
+                    <div className="space-y-2 max-h-96 overflow-y-auto">
+                      {rawApiResults.map((item: any, index: number) => (
+                        <div key={index} className="bg-muted p-3 rounded">
+                          <div className="flex items-center justify-between mb-2">
+                            <Badge variant="secondary" className="text-xs">
+                              Score: {item.score?.toFixed(3)}
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              {item.source}
+                            </Badge>
+                          </div>
+                          <div className="text-sm mb-2 line-clamp-3">
+                            {item.content}
+                          </div>
+                          {item.metadata?.url && (
+                            <a
+                              href={item.metadata.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-500 hover:underline"
+                            >
+                              {item.metadata.url}
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   ) : (
                     <Alert variant="destructive">
                       <AlertDescription>
-                        {result.executionResult.error}
+                        {result.executionResult.error || 'No results found'}
                       </AlertDescription>
                     </Alert>
                   )}
