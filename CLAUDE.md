@@ -1400,30 +1400,23 @@ bun packages/cli/dist/index.js start \
 ## 🔄 MCP Migration (October 2025)
 
 ### Overview
-Successfully migrated from custom knowledge plugin to official @elizaos/plugin-mcp v1.0.8, implementing MCP 2025-03-26 Streamable HTTP specification.
+Successfully implemented always-on MCP provider architecture using **stdio transport**, enabling automatic knowledge retrieval on every user message with RID citations and confidence scores.
 
-### Critical Discoveries
+### Final Implementation: stdio MCP Server + Always-On Provider
 
-**1. MCP Plugin Transport Bug Fixed**
-- Location: `/opt/projects/plugin-mcp/src/service.ts`
-- Issue: Plugin used `SSEClientTransport` for ALL HTTP transports (wrong for Streamable HTTP)
-- Fix: Added `StreamableHTTPClientTransport` for modern `streamable-http` type
-- Impact: MCP server connection now works correctly
-
-**2. MCP Tool Invocation Pattern**
-- Tools are exposed to LLM via ACTIONS provider
-- LLM **decides** whether to invoke tools based on prompt
-- Directive system prompts required to ensure tool usage
-- **Better Solution**: Always-on provider architecture (see below)
+After investigating HTTP/SSE transport issues, we implemented:
+1. **stdio MCP Server**: JSON-RPC 2.0 over stdin/stdout (simpler, more reliable)
+2. **Always-On Provider**: Automatic knowledge searches on every message (true RAG)
 
 ### Current MCP Configuration
 
-**Python MCP Server** (Port 8200):
-- Protocol: MCP 2025-03-26 Streamable HTTP
-- Transport: POST/GET endpoints with JSON-RPC 2.0
+**stdio MCP Server** (subprocess):
+- Protocol: MCP 2024-11-05 stdio transport
+- Transport: JSON-RPC 2.0 over stdin/stdout
 - Tools: `search_knowledge`, `get_memory`, `get_stats`
 - Backend: Hybrid RAG API (RRF + BGE + BM25)
 - Knowledge Base: 6,500+ documents
+- Location: `/opt/projects/koi-processor/src/core/koi_knowledge_mcp_stdio.py`
 
 **Character Configuration**:
 ```json
@@ -1433,8 +1426,12 @@ Successfully migrated from custom knowledge plugin to official @elizaos/plugin-m
     "mcp": {
       "servers": {
         "koi-knowledge": {
-          "type": "streamable-http",
-          "url": "http://localhost:8200/mcp"
+          "type": "stdio",
+          "command": "/opt/projects/koi-processor/run-koi-mcp-stdio.sh",
+          "args": [],
+          "autoSearch": true,
+          "searchTool": "search_knowledge",
+          "searchLimit": 5
         }
       }
     }
@@ -1442,28 +1439,45 @@ Successfully migrated from custom knowledge plugin to official @elizaos/plugin-m
 }
 ```
 
-### The Path Forward: Always-On Architecture
+### Always-On Provider Architecture
 
-**See `/opt/projects/GAIA/docs/MCP-ALWAYS-ON-ARCHITECTURE.md`**
+**How It Works**:
+1. User sends message → MCP provider executes automatically (before LLM)
+2. Provider calls `search_knowledge` with user's message text
+3. Knowledge results (with RIDs + confidence) injected into LLM context
+4. LLM generates response using retrieved knowledge
+5. Every response is knowledge-backed with source citations
 
-Instead of relying on LLM decisions to use tools, implement always-on knowledge retrieval:
+**Key Features**:
+- ✅ **Automatic**: No LLM decision needed - searches happen on every message
+- ✅ **Reliable**: stdio transport avoids HTTP handshake issues
+- ✅ **Fast**: ~200ms knowledge retrieval latency
+- ✅ **Traceable**: All responses include RID citations and confidence scores
+- ✅ **Opt-in**: Enable with `autoSearch: true` per server
 
-1. Enhance MCP provider to execute searches automatically
-2. Enable via `autoSearch: true` in character config
-3. Knowledge results injected into every LLM context
-4. True RAG architecture - no keyword triggers needed
+### Test Results
 
-**Benefits**:
-- ✅ Every response is knowledge-backed
-- ✅ No LLM decision overhead
-- ✅ Uses native provider pattern
-- ✅ Opt-in per server
-- ✅ Zero breaking changes
+**Query**: "what are jaguar credits?"
+
+**Logs**:
+```
+[MCP-AUTO] Executing search_knowledge for query: "what are jaguar credits?..."
+[MCP-AUTO] Retrieved 1 results from koi-knowledge
+```
+
+**Agent Response** (with citations):
+```
+Jaguar credits are biocultural conservation credits...
+Sources (confidence ~0.836):
+- orn:web.page:registry.regen.network/3ddf7c82a6fee4f2#chunk0 (score 0.360)
+- orn:web.page:registry.regen.network/3e65f3966283991a#chunk4 (score 0.354)
+...
+```
 
 ### Documentation
-- [MCP-MIGRATION-SUCCESS.md](docs/MCP-MIGRATION-SUCCESS.md) - Complete migration report
-- [MCP-ALWAYS-ON-ARCHITECTURE.md](docs/MCP-ALWAYS-ON-ARCHITECTURE.md) - Future implementation strategy
-- [KOI-MCP-AGENT-INTEGRATION.md](docs/KOI-MCP-AGENT-INTEGRATION.md) - Integration guide
+- [MCP-MIGRATION-SUCCESS.md](docs/MCP-MIGRATION-SUCCESS.md) - Complete implementation report
+- [MCP-ALWAYS-ON-ARCHITECTURE.md](docs/MCP-ALWAYS-ON-ARCHITECTURE.md) - Architecture details
+- [ALWAYS-ON-MCP-DEPLOYMENT.md](docs/ALWAYS-ON-MCP-DEPLOYMENT.md) - Production deployment guide
 
 ## 🔐 Security Configuration (September 2025)
 

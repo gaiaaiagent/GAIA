@@ -17,9 +17,12 @@
     "mcp": {
       "servers": {
         "koi-knowledge": {
-          "type": "streamable-http",
-          "url": "http://localhost:8200/mcp",
-          "description": "KOI Knowledge Graph - Search 6,500+ documents about regenerative agriculture, Regen Network governance, methodologies, and ecological credits using Hybrid RAG (RRF + BGE embeddings + keyword search) with confidence-based results. Access to Notion pages, GitLab documentation, governance proposals, and community discussions."
+          "type": "stdio",
+          "command": "/Users/darrenzal/projects/RegenAI/koi-processor/run-koi-mcp-stdio.sh",
+          "args": [],
+          "autoSearch": true,
+          "searchTool": "search_knowledge",
+          "searchLimit": 5
         }
       }
     }
