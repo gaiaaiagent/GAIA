@@ -1397,6 +1397,74 @@ bun packages/cli/dist/index.js start \
 - Preserves document metadata (source_file, chunk_id, etc.)
 - TypeScript implementation avoids stdio compatibility issues
 
+## 🔄 MCP Migration (October 2025)
+
+### Overview
+Successfully migrated from custom knowledge plugin to official @elizaos/plugin-mcp v1.0.8, implementing MCP 2025-03-26 Streamable HTTP specification.
+
+### Critical Discoveries
+
+**1. MCP Plugin Transport Bug Fixed**
+- Location: `/opt/projects/plugin-mcp/src/service.ts`
+- Issue: Plugin used `SSEClientTransport` for ALL HTTP transports (wrong for Streamable HTTP)
+- Fix: Added `StreamableHTTPClientTransport` for modern `streamable-http` type
+- Impact: MCP server connection now works correctly
+
+**2. MCP Tool Invocation Pattern**
+- Tools are exposed to LLM via ACTIONS provider
+- LLM **decides** whether to invoke tools based on prompt
+- Directive system prompts required to ensure tool usage
+- **Better Solution**: Always-on provider architecture (see below)
+
+### Current MCP Configuration
+
+**Python MCP Server** (Port 8200):
+- Protocol: MCP 2025-03-26 Streamable HTTP
+- Transport: POST/GET endpoints with JSON-RPC 2.0
+- Tools: `search_knowledge`, `get_memory`, `get_stats`
+- Backend: Hybrid RAG API (RRF + BGE + BM25)
+- Knowledge Base: 6,500+ documents
+
+**Character Configuration**:
+```json
+{
+  "plugins": ["@elizaos/plugin-mcp"],
+  "settings": {
+    "mcp": {
+      "servers": {
+        "koi-knowledge": {
+          "type": "streamable-http",
+          "url": "http://localhost:8200/mcp"
+        }
+      }
+    }
+  }
+}
+```
+
+### The Path Forward: Always-On Architecture
+
+**See `/opt/projects/GAIA/docs/MCP-ALWAYS-ON-ARCHITECTURE.md`**
+
+Instead of relying on LLM decisions to use tools, implement always-on knowledge retrieval:
+
+1. Enhance MCP provider to execute searches automatically
+2. Enable via `autoSearch: true` in character config
+3. Knowledge results injected into every LLM context
+4. True RAG architecture - no keyword triggers needed
+
+**Benefits**:
+- ✅ Every response is knowledge-backed
+- ✅ No LLM decision overhead
+- ✅ Uses native provider pattern
+- ✅ Opt-in per server
+- ✅ Zero breaking changes
+
+### Documentation
+- [MCP-MIGRATION-SUCCESS.md](docs/MCP-MIGRATION-SUCCESS.md) - Complete migration report
+- [MCP-ALWAYS-ON-ARCHITECTURE.md](docs/MCP-ALWAYS-ON-ARCHITECTURE.md) - Future implementation strategy
+- [KOI-MCP-AGENT-INTEGRATION.md](docs/KOI-MCP-AGENT-INTEGRATION.md) - Integration guide
+
 ## 🔐 Security Configuration (September 2025)
 
 ### Environment Variables

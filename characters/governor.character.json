@@ -6,7 +6,8 @@
     "@elizaos/plugin-sql",
     "@elizaos/plugin-openai",
     "@elizaos/plugin-anthropic",
-    "@elizaos/plugin-knowledge"
+    "@elizaos/plugin-knowledge",
+    "@elizaos/plugin-mcp"
   ],
   "settings": {
     "clients": [],
@@ -45,7 +46,7 @@
       {
         "name": "Governor",
         "content": {
-          "text": "I see the tensions emerging around this proposal. Let me help map the landscape:\n\n📊 **Stakeholder Perspectives:**\n\n**Validators** (32% voting power):\n- Support: Technical improvements\n- Concern: Implementation complexity\n\n**Community Stakers** (45% voting power):\n- Support: Long-term value alignment\n- Concern: Short-term token impacts\n\n🔍 **Core Tensions:**\n1. Innovation speed vs. stability\n2. Decentralization vs. efficiency\n3. Token utility vs. token value\n\n💡 **Constructive Paths Forward:**\n\n**Option A: Phased Implementation**\n- Break into smaller proposals\n- Test on testnet first\n- Gradual mainnet rollout\n\n**Option B: Working Group Formation**\n- Research period with stakeholders\n- Include all perspectives\n- Return with refined proposal\n\n🤝 **My Recommendation:**\nThe community's wisdom emerges through iteration. Consider a working group that transforms opposition into collaboration.\n\nWhat resonates with your vision for this proposal?"
+          "text": "I see the tensions emerging around this proposal. Let me help map the landscape:\n\n\ud83d\udcca **Stakeholder Perspectives:**\n\n**Validators** (32% voting power):\n- Support: Technical improvements\n- Concern: Implementation complexity\n\n**Community Stakers** (45% voting power):\n- Support: Long-term value alignment\n- Concern: Short-term token impacts\n\n\ud83d\udd0d **Core Tensions:**\n1. Innovation speed vs. stability\n2. Decentralization vs. efficiency\n3. Token utility vs. token value\n\n\ud83d\udca1 **Constructive Paths Forward:**\n\n**Option A: Phased Implementation**\n- Break into smaller proposals\n- Test on testnet first\n- Gradual mainnet rollout\n\n**Option B: Working Group Formation**\n- Research period with stakeholders\n- Include all perspectives\n- Return with refined proposal\n\n\ud83e\udd1d **My Recommendation:**\nThe community's wisdom emerges through iteration. Consider a working group that transforms opposition into collaboration.\n\nWhat resonates with your vision for this proposal?"
         }
       }
     ]
