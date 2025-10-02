@@ -1479,6 +1479,48 @@ Sources (confidence ~0.836):
 - [MCP-ALWAYS-ON-ARCHITECTURE.md](docs/MCP-ALWAYS-ON-ARCHITECTURE.md) - Architecture details
 - [ALWAYS-ON-MCP-DEPLOYMENT.md](docs/ALWAYS-ON-MCP-DEPLOYMENT.md) - Production deployment guide
 
+### MCP Knowledge Retrieval Improvements (October 3, 2025)
+
+**SUCCESS:** Enhanced MCP content snippets and fixed plugin logging for better RAG transparency!
+
+**Improvements Made:**
+1. **Increased Content Snippet Size**: 500 → 2000 characters in MCP server formatting
+   - **File**: `/opt/projects/koi-processor/src/core/koi_knowledge_mcp_stdio.py` line 206
+   - **Impact**: Agents now receive complete context with full names, details, and citations
+   - **Before**: Truncated mid-sentence cutting off "Zargham" and "Gregory"
+   - **After**: Full context like "Zargham, the founder of Blockscience" with RID citations
+
+2. **Fixed Plugin Logging Bug**: Corrected misleading result count logs
+   - **File**: `/opt/projects/plugin-mcp/src/provider.ts` line 52-54
+   - **Issue**: Logged "Retrieved 1 results" (counted MCP content blocks, not actual results)
+   - **Fix**: Added regex parsing to count actual search results: `(resultText.match(/^## Result \d+/gm) || []).length`
+   - **New Log Format**: `[MCP-AUTO] Retrieved 15 results from koi-knowledge (1 content blocks)` ✅
+
+**Test Results:**
+- Query: "What is the Regen Foundation?"
+- MCP Server: Returns 15 results (verified via direct testing)
+- Plugin: Correctly logs "Retrieved 15 results from koi-knowledge (1 content blocks)"
+- Agent Response: Uses retrieved knowledge with proper citations
+
+**Key Findings:**
+- ✅ MCP RAG pipeline working correctly end-to-end
+- ✅ Hybrid search (RRF + BGE + BM25) returning 15 relevant results per query
+- ✅ Agents receiving and using all 15 results (LLMs summarize most relevant info)
+- ✅ Previous "Retrieved 1 results" was just misleading logging, not a retrieval problem
+
+**Configuration:**
+```json
+{
+  "mcp": {
+    "servers": {
+      "koi-knowledge": {
+        "searchLimit": 15  // Now correctly retrieves and logs 15 results
+      }
+    }
+  }
+}
+```
+
 ## 🔐 Security Configuration (September 2025)
 
 ### Environment Variables
