@@ -732,14 +732,14 @@ export default function PipelineMonitor() {
                           )}
                         </div>
                         {/* Show monitoring items with toggle for expansion */}
-                        {expandedSensors[sensor.id] && (
+                        {expandedSensors.has(sensor.id) && (
                           <div className="max-h-96 overflow-y-auto border rounded-md p-2 bg-muted/30">
                             <div className="space-y-1">
                               {sensor.monitoring.map((item, idx) => {
                               // Handle both string and object formats
                               const isObject = typeof item === 'object' && item !== null;
                               const title = isObject ? item.title : item;
-                              const url = isObject ? item.url : (item.startsWith('https://') ? item : null);
+                              const url = isObject ? item.url : (typeof item === 'string' && item.startsWith('https://') ? item : null);
 
                               return (
                                 <div key={idx} className="flex items-start gap-2 text-sm py-1">
@@ -747,10 +747,10 @@ export default function PipelineMonitor() {
                                   {url ? (
                                     <a href={url} target="_blank" rel="noopener noreferrer"
                                        className="text-blue-500 hover:underline break-words">
-                                      {title || url.replace('https://www.notion.so/', '')}
+                                      {title || (typeof url === 'string' ? url.replace('https://www.notion.so/', '') : url)}
                                     </a>
                                   ) : (
-                                    <span className="break-words">{title}</span>
+                                    <span className="break-words">{title || item}</span>
                                   )}
                                 </div>
                               );

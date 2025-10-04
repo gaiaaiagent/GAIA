@@ -200,18 +200,18 @@ export default function GraphExplorer() {
         )}
 
         {/* D3 Force Graph container */}
-        <div 
-          ref={containerRef} 
+        <div
+          ref={containerRef}
           className="w-full h-full bg-muted/20"
-          style={{ minHeight: '400px' }}
+          style={{ minHeight: '600px', height: '100%' }}
         >
           {/* D3.js Force-Directed Graph */}
           {!loading && !error && graphData && graphData.nodes.length > 0 && (
             <D3ForceGraph
               nodes={graphData.nodes}
               edges={graphData.edges}
-              width={containerRef.current?.clientWidth || 800}
-              height={containerRef.current?.clientHeight || 600}
+              width={containerRef.current?.clientWidth || 1200}
+              height={containerRef.current?.clientHeight || 800}
               onNodeClick={(node) => handleNodeSelect(node.id)}
             />
           )}

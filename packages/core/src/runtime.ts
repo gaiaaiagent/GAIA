@@ -1523,6 +1523,21 @@ export class AgentRuntime implements IAgentRuntime {
       },
       text: providersText,
     } as State;
+
+    // DEBUG: Log provider text that will be injected into LLM context
+    if (providersText && providersText.length > 0) {
+      this.logger.info(`[PROVIDER-DEBUG] Total provider text length: ${providersText.length} chars`);
+      this.logger.info(`[PROVIDER-DEBUG] Provider text preview (first 1000 chars):\n${providersText.substring(0, 1000)}`);
+      this.logger.info(`[PROVIDER-DEBUG] Provider text preview (last 1000 chars):\n${providersText.substring(Math.max(0, providersText.length - 1000))}`);
+
+      // Check if MCP knowledge is included
+      if (providersText.includes('Retrieved Knowledge')) {
+        this.logger.info(`[PROVIDER-DEBUG] ✓ MCP Retrieved Knowledge IS included in provider text`);
+      } else {
+        this.logger.warn(`[PROVIDER-DEBUG] ✗ MCP Retrieved Knowledge NOT found in provider text`);
+      }
+    }
+
     if (message.id) {
       this.stateCache.set(message.id, newState);
     }

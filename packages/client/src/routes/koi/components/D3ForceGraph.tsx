@@ -35,6 +35,8 @@ export default function D3ForceGraph({
   useEffect(() => {
     if (!svgRef.current || nodes.length === 0) return;
 
+    console.log('[D3ForceGraph] Rendering with dimensions:', { width, height, nodeCount: nodes.length });
+
     // Clear previous graph
     d3.select(svgRef.current).selectAll("*").remove();
 
@@ -55,14 +57,16 @@ export default function D3ForceGraph({
 
     svg.call(zoom as any);
 
-    // Create force simulation
+    // Create force simulation with tighter clustering
     const simulation = d3.forceSimulation(nodes as any)
       .force("link", d3.forceLink(edges)
         .id((d: any) => d.id)
-        .distance(100))
-      .force("charge", d3.forceManyBody().strength(-300))
+        .distance(50))  // Shorter links for tighter clustering
+      .force("charge", d3.forceManyBody().strength(-100))  // Weaker repulsion
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide().radius(30));
+      .force("collision", d3.forceCollide().radius(20))  // Smaller collision radius
+      .force("x", d3.forceX(width / 2).strength(0.1))  // Pull nodes toward center X
+      .force("y", d3.forceY(height / 2).strength(0.1));  // Pull nodes toward center Y
 
     // Create arrow markers for directed edges
     svg.append("defs").selectAll("marker")
@@ -89,13 +93,15 @@ export default function D3ForceGraph({
       .attr("stroke-width", 1)
       .attr("marker-end", "url(#arrow)");
 
-    // Create link labels
+    // Create link labels (hidden by default, shown on hover)
     const linkLabel = g.append("g")
       .selectAll("text")
       .data(edges)
       .join("text")
       .attr("font-size", 10)
       .attr("fill", "#666")
+      .attr("opacity", 0)
+      .style("pointer-events", "none")
       .text((d: any) => d.label);
 
     // Create nodes
@@ -152,12 +158,17 @@ export default function D3ForceGraph({
         .transition()
         .duration(200)
         .attr("r", (d.size || 8) * 1.5);
-      
-      // Highlight connected edges
+
+      // Highlight connected edges and show their labels
       link.style("stroke", (l: any) => {
         return l.source.id === d.id || l.target.id === d.id ? "#ff6b6b" : "#999";
       }).style("stroke-width", (l: any) => {
         return l.source.id === d.id || l.target.id === d.id ? 2 : 1;
+      });
+
+      // Show labels for connected edges
+      linkLabel.attr("opacity", (l: any) => {
+        return l.source.id === d.id || l.target.id === d.id ? 1 : 0;
       });
     });
 
@@ -166,9 +177,15 @@ export default function D3ForceGraph({
         .transition()
         .duration(200)
         .attr("r", d.size || 8);
-      
+
       link.style("stroke", "#999").style("stroke-width", 1);
+
+      // Hide all edge labels
+      linkLabel.attr("opacity", 0);
     });
+
+    // Track if we've auto-fitted the view
+    let hasAutoFitted = false;
 
     // Update positions on simulation tick
     simulation.on("tick", () => {
@@ -190,6 +207,49 @@ export default function D3ForceGraph({
         .attr("x", (d: any) => d.x)
         .attr("y", (d: any) => d.y);
     });
+
+    // Auto-fit function
+    const autoFit = () => {
+      if (hasAutoFitted || nodes.length === 0) return;
+
+      // Calculate bounding box of all nodes
+      const padding = 50;
+      const xExtent = d3.extent(nodes, (d: any) => d.x) as [number, number];
+      const yExtent = d3.extent(nodes, (d: any) => d.y) as [number, number];
+
+      const bounds = {
+        x: xExtent[0] - padding,
+        y: yExtent[0] - padding,
+        width: xExtent[1] - xExtent[0] + padding * 2,
+        height: yExtent[1] - yExtent[0] + padding * 2
+      };
+
+      // Calculate scale to fit all nodes
+      const scale = Math.min(
+        width / bounds.width,
+        height / bounds.height,
+        1  // Don't zoom in more than 1x
+      );
+
+      // Calculate translation to center the graph
+      const translateX = (width - bounds.width * scale) / 2 - bounds.x * scale;
+      const translateY = (height - bounds.height * scale) / 2 - bounds.y * scale;
+
+      // Apply transform
+      svg.transition()
+        .duration(750)
+        .call(zoom.transform as any, d3.zoomIdentity
+          .translate(translateX, translateY)
+          .scale(scale));
+
+      hasAutoFitted = true;
+    };
+
+    // Auto-fit after a brief delay (don't wait for full simulation end)
+    setTimeout(() => autoFit(), 1000);
+
+    // Also auto-fit when simulation ends
+    simulation.on("end", () => autoFit());
 
     // Cleanup on unmount
     return () => {

@@ -341,7 +341,7 @@ const SensorStatusView: React.FC = () => {
                             {sensor.monitoring.map((item: any, idx: number) => {
                               const isObject = typeof item === 'object' && item !== null;
                               const title = isObject ? item.title : item;
-                              const url = isObject ? item.url : (item.startsWith('https://') ? item : null);
+                              const url = isObject ? item.url : (typeof item === 'string' && item.startsWith('https://') ? item : null);
 
                               return (
                                 <div key={idx} className="flex items-start gap-2 text-sm py-1">
@@ -349,10 +349,10 @@ const SensorStatusView: React.FC = () => {
                                   {url ? (
                                     <a href={url} target="_blank" rel="noopener noreferrer"
                                        className="text-blue-500 hover:underline break-words">
-                                      {title || url.replace('https://www.notion.so/', '')}
+                                      {title || (typeof url === 'string' ? url.replace('https://www.notion.so/', '') : url)}
                                     </a>
                                   ) : (
-                                    <span className="break-words">{title}</span>
+                                    <span className="break-words">{title || item}</span>
                                   )}
                                 </div>
                               );

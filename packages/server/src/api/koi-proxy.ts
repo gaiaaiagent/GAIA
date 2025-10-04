@@ -89,21 +89,46 @@ router.get('/graph/pipeline', async (req, res) => {
   }
 });
 
-// Content API endpoints - proxy to port 8007
+// Content API endpoints - query database directly
 router.get('/content/pages/:domain', async (req, res) => {
   try {
     const { domain } = req.params;
-    const response = await axios.get(`${KOI_SERVICES.contentApi.url}/api/koi/content/pages/${domain}`, {
-      timeout: 5000
+
+    // Query koi_content table for pages from this domain
+    const result = await pool.query(
+      `SELECT
+        rid,
+        url,
+        title,
+        content_type,
+        scraped_at,
+        metadata
+       FROM koi_content
+       WHERE url LIKE $1
+       ORDER BY scraped_at DESC
+       LIMIT 100`,
+      [`%${domain}%`]
+    );
+
+    res.json({
+      success: true,
+      domain: domain,
+      pages: result.rows.map(row => ({
+        rid: row.rid,
+        url: row.url,
+        title: row.title || 'Untitled Page',
+        content_type: row.content_type,
+        scraped_at: row.scraped_at,
+        metadata: row.metadata
+      }))
     });
-    res.json(response.data);
   } catch (error) {
-    console.error('Content API error:', error.message);
-    res.status(503).json({
+    console.error('Database error fetching pages:', error.message);
+    res.status(500).json({
       success: false,
       error: {
-        message: 'Content API unavailable',
-        code: 503
+        message: 'Database error',
+        code: 500
       }
     });
   }
@@ -127,24 +152,25 @@ router.get('/content/domains', async (req, res) => {
   }
 });
 
-// Graph data endpoint
+// Graph data endpoint - proxy to KOI API Server (port 8001) which connects to Fuseki
 router.get('/graph-data', async (req, res) => {
-  // Return mock data for now
-  res.json({
-    nodes: [
-      { id: '1', label: 'KOI Coordinator', type: 'service', x: 100, y: 100 },
-      { id: '2', label: 'Event Bridge', type: 'service', x: 300, y: 100 },
-      { id: '3', label: 'BGE Server', type: 'service', x: 500, y: 100 },
-      { id: '4', label: 'PostgreSQL', type: 'database', x: 300, y: 300 },
-      { id: '5', label: 'Eliza Agent', type: 'agent', x: 500, y: 300 }
-    ],
-    edges: [
-      { id: 'e1', source: '1', target: '2', label: 'events' },
-      { id: 'e2', source: '2', target: '3', label: 'process' },
-      { id: 'e3', source: '3', target: '4', label: 'store' },
-      { id: 'e4', source: '4', target: '5', label: 'query' }
-    ]
-  });
+  try {
+    // Forward request to KOI API Server with query parameters
+    const queryString = req.url.split('?')[1] || '';
+    const apiUrl = `http://localhost:8001/api/koi/graph-data/?${queryString}`;
+
+    const response = await axios.get(apiUrl, { timeout: 5000 });
+    res.json(response.data);
+  } catch (error) {
+    console.error('KOI API Server error:', error.message);
+    res.status(503).json({
+      success: false,
+      error: {
+        message: 'KOI API Server unavailable',
+        code: 503
+      }
+    });
+  }
 });
 
 // Get available RIDs from the database

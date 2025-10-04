@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import clientLogger from '../lib/logger';
+import { safeFetch } from '@/utils/fetch';
 
 export interface ServerVersionInfo {
   version: string;
@@ -17,7 +18,7 @@ export function useServerVersion() {
     queryKey: ['server-version'],
     queryFn: async () => {
       try {
-        const response = await fetch('/api/system/version');
+        const response = await safeFetch('/api/system/version');
 
         if (!response.ok) {
           throw new Error(

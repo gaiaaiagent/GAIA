@@ -80,7 +80,6 @@
     "@elizaos/plugin-e2b": "1.2.0",
     "@elizaos/plugin-mcp": "github:gaiaaiagent/plugin-mcp#1.x",
     "@elizaos/plugin-ollama": "^1.2.4",
-    "@elizaos/plugin-openai": "^1.0.9",
     "@elizaos/plugin-telegram": "https://github.com/gaiaaiagent/plugin-telegram.git#1.x",
     "chalk": "^5.4.1",
     "cors": "^2.8.5",

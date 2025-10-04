@@ -55,44 +55,55 @@ def health():
 
 @app.route('/api/koi/graph-data/', methods=['GET'])
 def graph_data():
-    """Get graph data for visualization"""
-    max_nodes = request.args.get('max_nodes', 1000, type=int)
+    """Get graph data for visualization - shows extracted knowledge entities"""
+    max_nodes = request.args.get('max_nodes', 500, type=int)
     show_metadata = request.args.get('show_metadata', 'false').lower() == 'true'
-    
-    # Build filter for metadata nodes
-    metadata_filter = ""
+
+    # Query extracted knowledge entities (Agents, Organizations, Concepts, SemanticAssets)
+    # Exclude pipeline infrastructure (Transformations, Activities, Receipts) unless requested
+    entity_types_filter = ""
     if not show_metadata:
-        # Exclude ontology and CID nodes unless explicitly requested
-        metadata_filter = """
-        FILTER(
-            !STRSTARTS(STR(?subject), "orn:regen.ontology:") &&
-            !STRSTARTS(STR(?subject), "cid:") &&
-            !STRSTARTS(STR(?object), "orn:regen.ontology:") &&
-            !STRSTARTS(STR(?object), "cid:")
-        )
+        entity_types_filter = """
+        FILTER(?type IN (
+            regen:Agent,
+            regen:Organization,
+            regen:Concept,
+            regen:SemanticAsset,
+            regen:Resource,
+            regen:MetabolicProcess,
+            regen:Product,
+            regen:Technology,
+            regen:Location
+        ))
         """
-    
-    # Get diverse sample of entities with relationships
+
+    # Get knowledge entities with their properties
     query = f"""
     PREFIX regen: <http://regen.network/ontology#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-    
-    SELECT ?subject ?predicate ?object ?subjectType ?objectType ?subjectLabel ?objectLabel
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+
+    SELECT DISTINCT ?entity ?type ?label ?essence ?source
     WHERE {{
-        ?subject ?predicate ?object .
-        OPTIONAL {{ ?subject rdf:type ?subjectType }}
-        OPTIONAL {{ ?object rdf:type ?objectType }}
-        OPTIONAL {{ ?subject rdfs:label ?subjectLabel }}
-        OPTIONAL {{ ?object rdfs:label ?objectLabel }}
-        
-        # Focus on meaningful relationships, include orn: URIs
-        FILTER(?predicate != rdf:type && 
-               ?predicate != rdfs:label &&
-               (STRSTARTS(STR(?subject), "orn:") || 
-                STRSTARTS(STR(?subject), "http://regen.network/")))
-        
-        {metadata_filter}
+        # Get entities with their type
+        ?entity rdf:type ?type .
+
+        # Get labels (names)
+        OPTIONAL {{ ?entity rdfs:label ?label }}
+
+        # Get essence alignment
+        OPTIONAL {{ ?entity regen:alignsWith ?essence }}
+
+        # Get source document
+        OPTIONAL {{ ?entity prov:wasDerivedFrom ?source }}
+
+        # Filter to knowledge entities only (not pipeline infrastructure)
+        {entity_types_filter}
+
+        # Exclude CID and ontology URIs
+        FILTER(!STRSTARTS(STR(?entity), "cid:"))
+        FILTER(!STRSTARTS(STR(?entity), "orn:regen.ontology:"))
     }}
     LIMIT {max_nodes}
     """
@@ -120,48 +131,47 @@ def graph_data():
         'Location': '#8BC34A'          # Light Green
     }
     
+    # Group entities by source document to create edges
+    source_groups = {}
+
     for binding in result.get("results", {}).get("bindings", []):
-        # Add subject node
-        subject_uri = binding["subject"]["value"]
-        subject_id = subject_uri.split("/")[-1]
-        
-        if subject_id not in nodes:
-            subject_type = binding.get("subjectType", {}).get("value", "").split("#")[-1]
-            subject_label = binding.get("subjectLabel", {}).get("value", subject_id)
-            
-            nodes[subject_id] = {
-                "id": subject_id,
-                "label": subject_label[:30] + "..." if len(subject_label) > 30 else subject_label,
-                "type": subject_type or "Unknown",
-                "color": color_map.get(subject_type, "#9E9E9E"),
-                "size": 10
+        # Extract entity data
+        entity_uri = binding["entity"]["value"]
+        entity_id = entity_uri.split(":")[-1]  # Get last part after colon
+        entity_type = binding.get("type", {}).get("value", "").split("#")[-1]
+        entity_label = binding.get("label", {}).get("value", entity_id)
+        entity_essence = binding.get("essence", {}).get("value", "")
+        source_uri = binding.get("source", {}).get("value", "")
+
+        # Create node
+        if entity_id not in nodes:
+            nodes[entity_id] = {
+                "id": entity_id,
+                "label": entity_label[:40] + "..." if len(entity_label) > 40 else entity_label,
+                "type": entity_type or "Unknown",
+                "color": color_map.get(entity_type, "#9E9E9E"),
+                "size": 12,
+                "essence": entity_essence
             }
-        
-        # Add object node if it's a URI
-        if binding["object"]["type"] == "uri":
-            object_uri = binding["object"]["value"]
-            object_id = object_uri.split("/")[-1]
-            
-            if object_id not in nodes:
-                object_type = binding.get("objectType", {}).get("value", "").split("#")[-1]
-                object_label = binding.get("objectLabel", {}).get("value", object_id)
-                
-                nodes[object_id] = {
-                    "id": object_id,
-                    "label": object_label[:30] + "..." if len(object_label) > 30 else object_label,
-                    "type": object_type or "Unknown",
-                    "color": color_map.get(object_type, "#9E9E9E"),
-                    "size": 10
-                }
-            
-            # Add edge
-            predicate = binding["predicate"]["value"].split("#")[-1].split("/")[-1]
-            edges.append({
-                "source": subject_id,
-                "target": object_id,
-                "label": predicate,
-                "id": f"{subject_id}-{predicate}-{object_id}"
-            })
+
+        # Group by source for creating relationship edges
+        if source_uri:
+            source_id = source_uri.split("/")[-1].split(".md")[0]
+            if source_id not in source_groups:
+                source_groups[source_id] = []
+            source_groups[source_id].append(entity_id)
+
+    # Create edges between entities from the same source document
+    for source_id, entity_ids in source_groups.items():
+        # Connect entities that come from the same document
+        for i, entity_id in enumerate(entity_ids):
+            for other_id in entity_ids[i+1:]:
+                edges.append({
+                    "source": entity_id,
+                    "target": other_id,
+                    "label": "relatedThrough",
+                    "id": f"{entity_id}-related-{other_id}"
+                })
     
     return jsonify({
         "nodes": list(nodes.values()),

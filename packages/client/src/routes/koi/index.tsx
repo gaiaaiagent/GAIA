@@ -102,7 +102,7 @@ export default function KOIPage() {
         {/* Main content */}
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           {/* Tab navigation */}
-          <TabsList className="grid w-full grid-cols-6 mb-6">
+          <TabsList className="grid w-full grid-cols-5 mb-6">
             <TabsTrigger value="monitor" className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               Pipeline Monitor
@@ -118,10 +118,6 @@ export default function KOIPage() {
             <TabsTrigger value="essence" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
               Essence
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Analytics
             </TabsTrigger>
             <TabsTrigger value="knowledge" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
@@ -225,7 +221,7 @@ export default function KOIPage() {
           </TabsContent>
 
           {/* Graph Explorer Tab */}
-          <TabsContent value="graph">
+          <TabsContent value="graph" className="h-[calc(100vh-280px)]">
             <Card className="h-full">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -236,7 +232,7 @@ export default function KOIPage() {
                   Explore the knowledge graph through interactive network visualization
                 </p>
               </CardHeader>
-              <CardContent className="h-full p-0">
+              <CardContent className="h-[calc(100%-120px)] p-0">
                 <GraphExplorer />
               </CardContent>
             </Card>
@@ -258,42 +254,6 @@ export default function KOIPage() {
                 <EssenceRadar />
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* Analytics Tab */}
-          <TabsContent value="analytics">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5" />
-                    Query Performance
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="text-center text-muted-foreground">
-                      <Eye className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                      <p>Analytics dashboard coming soon</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Knowledge Graph Statistics</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="text-center text-muted-foreground">
-                      <Database className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                      <p>Graph statistics loading...</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
           </TabsContent>
 
           {/* Knowledge Tab */}

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Database, Zap, Network, Brain, Activity, Eye, GitBranch, Twitter, FileText, MessageSquare, Radio, BookOpen, Gitlab, Monitor, Globe, Loader2, RefreshCw } from 'lucide-react';
 import { fetchCoordinatorData, fetchProcessedSources } from '../api/coordinator-proxy';
 import { notionPages } from '../data/notionPages';
+import { safeFetch } from '@/utils/fetch';
 
 interface GraphNode {
   id: string;
@@ -51,7 +52,7 @@ const PipelineFlowGraphDynamic: React.FC = () => {
 
       for (const endpoint of endpoints) {
         try {
-          const response = await fetch(endpoint);
+          const response = await safeFetch(endpoint);
           if (response.ok) {
             const data = await response.json();
             if (data.sensors && data.sensors.length > 0) {
@@ -72,7 +73,7 @@ const PipelineFlowGraphDynamic: React.FC = () => {
       }
 
       // If all fail, try coordinator status
-      const statusResponse = await fetch('/api/koi/coordinator/status');
+      const statusResponse = await safeFetch('/api/koi/coordinator/status');
       if (statusResponse.ok) {
         const statusData = await statusResponse.json();
         if (statusData.broadcast_sensors) {
@@ -293,30 +294,36 @@ const PipelineFlowGraphDynamic: React.FC = () => {
         try {
           const sensorData = await fetchSensors();
 
-          // Create a map by sensor type for easier matching
+          // Create maps by both sensor type AND id for flexible matching
           const sensorByType = new Map();
+          const sensorById = new Map();
           sensorData.forEach((s: any) => {
             sensorByType.set(s.type, s);
+            // Extract base id (e.g., "github-activity-sensor" from "github-activity-sensor-1234567")
+            const baseId = s.id.replace(/-\d+\.\d+$/, '');
+            sensorById.set(baseId, s);
           });
 
           graphNodes.forEach(node => {
             if (node.type === 'sensor') {
-              // Extract sensor type from node id (e.g., "github-sensor" -> "github")
-              const sensorType = node.id.replace('-sensor', '');
-              const sensor = sensorByType.get(sensorType);
+              // Try to match by ID first (more specific), then fall back to type
+              let sensor = sensorById.get(node.id);
+              if (!sensor) {
+                // Extract sensor type from node id (e.g., "github-sensor" -> "github")
+                const sensorType = node.id.replace('-sensor', '');
+                sensor = sensorByType.get(sensorType);
+              }
 
               if (sensor) {
-                // Update with real status from coordinator
+                // Update with real status from coordinator - mark as ACTIVE
                 node.status = sensor.status === 'active' ? 'active' :
                              sensor.status === 'idle' ? 'idle' : 'offline';
                 node.monitoring = sensor.monitoring || [];
                 node.metadata = { ...node.metadata, ...sensor };
               } else {
-                // Sensor not found in coordinator data - mark as offline
-                // This handles Discord and Ledger which aren't configured
-                if (sensorType === 'discord' || sensorType === 'ledger') {
-                  node.status = 'offline';
-                }
+                // Sensor not found in coordinator data - mark as OFFLINE
+                node.status = 'offline';
+                node.monitoring = [];
               }
             }
           });
@@ -709,7 +716,7 @@ const PipelineFlowGraphDynamic: React.FC = () => {
         let pages: any[] = [];
 
         try {
-          const response = await fetch(`/api/koi/content/pages/${domain}`);
+          const response = await safeFetch(`/api/koi/content/pages/${domain}`);
           if (response.ok) {
             const data = await response.json();
             pages = data.pages || [];
@@ -1414,10 +1421,10 @@ const PipelineFlowGraphDynamic: React.FC = () => {
         <button
           onClick={handleManualRefresh}
           disabled={isRefreshing || loading}
-          className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md border hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-900"
         >
-          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          <span className="text-sm font-medium">
+          <RefreshCw className={`w-4 h-4 text-gray-900 ${isRefreshing ? 'animate-spin' : ''}`} />
+          <span className="text-sm font-medium text-gray-900">
             {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </span>
         </button>
