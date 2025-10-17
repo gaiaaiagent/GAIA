@@ -1183,7 +1183,7 @@ cp -r dist/* ../server/dist/client/
 See `docs/KOI-SETUP-GUIDE.md` for complete installation and troubleshooting guide.
 
 
-## 📡 Current Service Ports (September 14, 2025)
+## 📡 Current Service Ports (October 17, 2025)
 
 **Web Services:**
 - Port 80/443: Nginx (HTTPS proxy)
@@ -1194,12 +1194,25 @@ See `docs/KOI-SETUP-GUIDE.md` for complete installation and troubleshooting guid
 
 **KOI Pipeline:**
 - Port 8005: KOI Coordinator (sensor hub)
-- Port 8090: BGE Embedding Server
+- Port 8090: BGE Embedding Server (OpenAI text-embedding-3-large)
 - Port 8100: KOI Event Bridge v2
-- Port 8200: MCP Knowledge Server
-- Port 8400: Content Dashboard (Milestone B)
-- Port 8001: KOI API Server (SPARQL)
+- Port 8200: MCP Knowledge Server (FastAPI)
+- Port 8301: Hybrid RAG API (Express/Bun - RRF + BGE + Adaptive)
+- Port 8400: Content Dashboard (Milestone B - Flask)
+- Port 8001: KOI API Server (SPARQL - Flask)
 - Port 3030: Apache Jena Fuseki
+
+**Startup Commands:**
+```bash
+# MCP Knowledge Server (port 8200)
+cd /opt/projects/koi-processor && source venv/bin/activate && python3 src/core/koi_knowledge_mcp_server.py &
+
+# Hybrid RAG API (port 8301) - REQUIRED for semantic search
+cd /opt/projects/koi-processor && bun koi-query-api.ts &
+
+# BGE Embedding Server (port 8090) - auto-started, check with:
+curl http://localhost:8090/health
+```
 
 ## 🔍 Provenance Tracking & Nginx Configuration (September 26, 2025)
 

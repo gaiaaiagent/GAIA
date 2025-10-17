@@ -79,13 +79,16 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
       let queryResult: QueryResult;
       try {
         const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '';
-        
-        const response = await fetch('/api/koi/query', {
+
+        // Strip credentials from URL to avoid fetch error
+        const baseUrl = window.location.origin.replace(/\/\/[^@]+@/, '//');
+
+        const response = await fetch(`${baseUrl}/api/koi/query`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ question })
+          body: JSON.stringify({ query: question })
         });
 
         if (!response.ok) {
@@ -93,41 +96,41 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
         }
 
         const apiResult = await response.json();
-        
+
         // Store raw API results for provenance display
-        setRawApiResults(apiResult.results || []);
-        
+        setRawApiResults(apiResult.memories || []);
+
         // Transform API response to QueryResult format
         queryResult = {
-          originalQuestion: apiResult.question,
+          originalQuestion: question,
           generatedSparql: `-- Hybrid RAG Query (Vector + Graph + Adaptive)
--- Question: "${apiResult.question}"
--- Confidence: ${apiResult.confidence.toFixed(3)}
--- Results: ${apiResult.total_results}
--- Extraction Triggered: ${apiResult.triggered_extraction}`,
+-- Question: "${question}"
+-- Search Method: ${apiResult.search_method || 'hybrid'}
+-- Results: ${apiResult.count || 0}
+-- Query Embedding: ${apiResult.query_embedding_generated ? 'Generated' : 'Not generated'}`,
           isValidSparql: true,
           executionResult: {
-            success: true,
+            success: apiResult.success || false,
             results: {
               results: {
-                bindings: apiResult.results.map((r: any, i: number) => ({
+                bindings: (apiResult.memories || []).map((r: any, i: number) => ({
                   [`result${i}`]: { value: r.content, type: 'literal' }
                 }))
               }
             },
-            executionTime: apiResult.execution_time,
+            executionTime: apiResult.execution_time || 0,
             fromCache: false
           },
           visualizationData: {
-            nodes: apiResult.results.slice(0, 5).map((r: any, i: number) => ({
+            nodes: (apiResult.memories || []).slice(0, 5).map((r: any, i: number) => ({
               id: r.rid || `node-${i}`,
-              label: r.title,
-              type: r.source
+              label: r.rid || `Result ${i + 1}`,
+              type: 'memory'
             })),
             edges: []
           },
           modelUsed: 'Hybrid RAG (RRF + BGE + Adaptive)',
-          validationMessage: `Query processed successfully. Confidence: ${apiResult.confidence.toFixed(3)}`
+          validationMessage: `Query processed successfully. Search method: ${apiResult.search_method || 'hybrid'}`
         };
       } catch (apiError) {
         // Fallback to mock response for testing
