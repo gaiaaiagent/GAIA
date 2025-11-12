@@ -77,7 +77,7 @@ prefetchInitialData();
 
 // Component containing the core application logic and routing
 function AppContent() {
-  useVersion();
+  // useVersion(); // Disabled version check notification
   const { status } = useConnection();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [homeKey, setHomeKey] = useState(Date.now());

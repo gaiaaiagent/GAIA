@@ -590,12 +590,7 @@ export function AppSidebar({
                   className="px-4 py-2 h-full sidebar-logo no-underline cursor-pointer"
                 >
                   <div className="flex flex-col pt-2 gap-1 items-start justify-center">
-                    <img
-                      alt="elizaos-logo"
-                      src="/elizaos-logo-light.png"
-                      className="w-32 max-w-full"
-                    />
-                    <span className="text-xs font-mono text-muted-foreground">v{version}</span>
+                    <span className="text-2xl font-bold text-foreground">RegenAI</span>
                   </div>
                 </a>
               </SidebarMenuButton>
