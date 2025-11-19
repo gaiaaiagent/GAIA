@@ -87,7 +87,7 @@
     "@elizaos/api-client": "workspace:*",
     "@elizaos/core": "workspace:*",
     "@elizaos/plugin-bootstrap": "workspace:*",
-    "@elizaos/plugin-openai": "1.5.15",
+    "@elizaos/plugin-openai": "^1.5.18",
     "@elizaos/plugin-sql": "workspace:*",
     "@elizaos/server": "workspace:*",
     "bun": "^1.2.21",

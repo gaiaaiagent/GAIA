@@ -827,6 +827,27 @@ export class DefaultMessageService implements IMessageService {
     let retries = 0;
 
     while (retries < opts.maxRetries && (!responseContent?.thought || !responseContent?.actions)) {
+      // Log the hydrated prompt being sent to the LLM
+      runtime.logger.info('[MessageService] ====== HYDRATED PROMPT BEING SENT TO LLM ======');
+      runtime.logger.info(prompt);
+      runtime.logger.info('[MessageService] ====== END HYDRATED PROMPT ======');
+
+      // Also write to file for detailed analysis
+      try {
+        const fs = await import('fs');
+        const path = await import('path');
+        const logDir = path.join(process.cwd(), '.eliza', 'logs');
+        await fs.promises.mkdir(logDir, { recursive: true });
+        const logFile = path.join(logDir, 'prompts.log');
+        const timestamp = new Date().toISOString();
+        await fs.promises.appendFile(
+          logFile,
+          `\n\n========== PROMPT AT ${timestamp} ==========\n${prompt}\n========== END PROMPT ==========\n`
+        );
+      } catch (err: unknown) {
+        runtime.logger.warn('Failed to write prompt to file:', err instanceof Error ? err.message : String(err));
+      }
+
       const response = await runtime.useModel(ModelType.TEXT_LARGE, { prompt });
 
       runtime.logger.debug({ response }, '[MessageService] *** Raw LLM Response ***');
@@ -934,6 +955,11 @@ export class DefaultMessageService implements IMessageService {
         template:
           runtime.character.templates?.multiStepDecisionTemplate || multiStepDecisionTemplate,
       });
+
+      // Log the hydrated prompt being sent to the LLM
+      runtime.logger.info(`[MultiStep] ====== HYDRATED PROMPT FOR ITERATION ${iterationCount} ======`);
+      runtime.logger.info(prompt);
+      runtime.logger.info('[MultiStep] ====== END HYDRATED PROMPT ======');
 
       const stepResultRaw = await runtime.useModel(ModelType.TEXT_LARGE, { prompt });
       const parsedStep = parseKeyValueXml(stepResultRaw);
@@ -1076,6 +1102,11 @@ export class DefaultMessageService implements IMessageService {
       state: accumulatedState,
       template: runtime.character.templates?.multiStepSummaryTemplate || multiStepSummaryTemplate,
     });
+
+    // Log the hydrated summary prompt being sent to the LLM
+    runtime.logger.info('[MultiStep] ====== HYDRATED SUMMARY PROMPT ======');
+    runtime.logger.info(summaryPrompt);
+    runtime.logger.info('[MultiStep] ====== END HYDRATED SUMMARY PROMPT ======');
 
     const finalOutput = await runtime.useModel(ModelType.TEXT_LARGE, { prompt: summaryPrompt });
     const summary = parseKeyValueXml(finalOutput);

@@ -226,10 +226,13 @@ export function MessageContent({
                 message.attachments?.map((att) => att.url).filter(Boolean) || []
               );
               const uniqueMediaInfos = mediaInfos.filter((media) => !attachmentUrls.has(media.url));
-              const textWithoutUrls = removeMediaUrlsFromText(message.text, mediaInfos);
+              let textWithoutUrls = removeMediaUrlsFromText(message.text, mediaInfos);
+
+              // Clean excessive newlines: replace 3+ newlines with double newline (paragraph break)
+              textWithoutUrls = textWithoutUrls.replace(/\n{3,}/g, '\n\n');
 
               return (
-                <div className="space-y-3">
+                <div>
                   {textWithoutUrls.trim() && (
                     <div>
                       {isUser ? (
@@ -245,7 +248,7 @@ export function MessageContent({
                   )}
 
                   {uniqueMediaInfos.length > 0 && (
-                    <div className="space-y-2">
+                    <div>
                       {uniqueMediaInfos.map((media, index) => (
                         <div key={`${media.url}-${index}`}>
                           <MediaContent url={media.url} title="Shared media" />

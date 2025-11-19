@@ -88,8 +88,11 @@
     "utf-8-validate"
   ],
   "dependencies": {
+    "@elizaos/plugin-anthropic": "^1.5.12",
+    "@elizaos/plugin-mcp": "^1.2.0",
     "helmet": "^8.1.0",
     "js-yaml": "^4.1.0",
+    "minipass": "^7.1.2",
     "zod": "4.1.11"
   }
 }
