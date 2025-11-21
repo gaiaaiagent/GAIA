@@ -143,6 +143,26 @@ export const registryDiscoverAction: Action = {
         if (resultContent.content && Array.isArray(resultContent.content)) {
           const firstContent = resultContent.content[0];
           if (firstContent.type === 'text' && firstContent.text) {
+            // Check for error messages
+            if (firstContent.text.includes('SessionNotFoundError') || firstContent.text.includes('Session not found')) {
+              const errorMsg = `Session \`${sessionId}\` not found. Please verify the session ID or create a new session first.`;
+              logger.error(`[REGISTRY_DISCOVER_DOCUMENTS] ${errorMsg}`);
+
+              await callback?.({
+                text: `❌ ${errorMsg}`,
+                action: 'REGISTRY_DISCOVER_DOCUMENTS',
+              });
+
+              return {
+                success: false,
+                error: errorMsg,
+                data: {
+                  actionName: 'REGISTRY_DISCOVER_DOCUMENTS',
+                  error: errorMsg,
+                },
+              };
+            }
+
             try {
               discoveryData = JSON.parse(firstContent.text);
               rawData = firstContent.text;
@@ -155,7 +175,46 @@ export const registryDiscoverAction: Action = {
           rawData = JSON.stringify(resultContent);
         }
 
-        logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Found ${discoveryData.total_count || 0} documents`);
+        const newDocsFound = discoveryData.documents_found || discoveryData.total_count || 0;
+        const duplicatesSkipped = discoveryData.duplicates_skipped || 0;
+
+        logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Found ${newDocsFound} new documents, ${duplicatesSkipped} duplicates skipped`);
+
+        // If no new documents were found but duplicates were skipped, load the session to get existing documents
+        if (newDocsFound === 0 && duplicatesSkipped > 0) {
+          logger.info('[REGISTRY_DISCOVER_DOCUMENTS] No new documents, loading session to get existing documents');
+
+          const sessionResult = await (mcpService as any).callTool(
+            'registry-review',
+            'load_session',
+            { session_id: sessionId }
+          );
+
+          // Parse session result
+          let sessionData: any = {};
+          if (sessionResult.content && Array.isArray(sessionResult.content)) {
+            const firstContent = sessionResult.content[0];
+            if (firstContent.type === 'text' && firstContent.text) {
+              try {
+                sessionData = JSON.parse(firstContent.text);
+              } catch (e) {
+                logger.error('[REGISTRY_DISCOVER_DOCUMENTS] Error parsing session data:', e);
+              }
+            }
+          }
+
+          // Update discoveryData with session documents
+          if (sessionData.documents && sessionData.documents.length > 0) {
+            discoveryData = {
+              documents: sessionData.documents,
+              total_count: sessionData.documents.length,
+              classification_summary: sessionData.classification_summary || {},
+              already_discovered: true,
+              duplicates_skipped: duplicatesSkipped
+            };
+            logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Loaded ${sessionData.documents.length} existing documents from session`);
+          }
+        }
 
       } catch (parseError) {
         logger.error('[REGISTRY_DISCOVER_DOCUMENTS] Error parsing MCP result:', parseError);
@@ -266,6 +325,8 @@ function formatDiscoveryResult(data: any, sessionId: string): string {
   const totalCount = data.total_count || documents.length;
   const classificationSummary = data.classification_summary || {};
   const errors = data.errors || [];
+  const alreadyDiscovered = data.already_discovered || false;
+  const duplicatesSkipped = data.duplicates_skipped || 0;
 
   if (totalCount === 0) {
     return `📄 No documents found for session \`${sessionId}\`.`;
@@ -273,8 +334,15 @@ function formatDiscoveryResult(data: any, sessionId: string): string {
 
   const lines: string[] = [];
 
-  // Header
-  lines.push(`✅ Successfully discovered **${totalCount} document${totalCount === 1 ? '' : 's'}** for session \`${sessionId}\``);
+  // Header - different message if already discovered
+  if (alreadyDiscovered) {
+    lines.push(`📋 **${totalCount} document${totalCount === 1 ? '' : 's'}** already discovered for session \`${sessionId}\``);
+    if (duplicatesSkipped > 0) {
+      lines.push(`   *(${duplicatesSkipped} duplicate${duplicatesSkipped === 1 ? '' : 's'} skipped in this scan)*`);
+    }
+  } else {
+    lines.push(`✅ Successfully discovered **${totalCount} document${totalCount === 1 ? '' : 's'}** for session \`${sessionId}\``);
+  }
   lines.push(''); // Blank line after header
 
   // Document types summary
