@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'elizaos',       # Read-only ElizaOS models
     'metrics',       # Our tracking tables
     'knowledge',     # Knowledge indexing progress
+    'koi_graph',     # KG visualization and SPARQL API
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,6 +44,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'eliza_admin.urls'
+
+# KOI Graph / Apache Jena Configuration
+# Use host.docker.internal or 172.17.0.1 to reach host from container
+KOI_SPARQL_ENDPOINT = os.getenv('KOI_SPARQL_ENDPOINT', 'http://172.17.0.1:3030/koi/sparql')
+KOI_SPARQL_UPDATE_ENDPOINT = os.getenv('KOI_SPARQL_UPDATE_ENDPOINT', 'http://172.17.0.1:3030/koi/update')
+KOI_FUSEKI_AUTH = ('admin', 'admin')  # Fuseki basic auth
 
 TEMPLATES = [
     {

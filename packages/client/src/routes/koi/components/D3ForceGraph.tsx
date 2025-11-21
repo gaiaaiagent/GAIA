@@ -113,6 +113,7 @@ export default function D3ForceGraph({
       .join("circle")
       .attr("r", (d: any) => d.size || 8)
       .attr("fill", (d: any) => d.color || "#69b3a2")
+      .attr("fill-opacity", 0.85)
       .style("cursor", "pointer");
 
     // Create node labels

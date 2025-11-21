@@ -344,8 +344,19 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           console.log('Could not fetch live status data:', e);
         }
 
-        setNodes(graphNodes);
-        setEdges(graphEdges);
+        // Deduplicate nodes by ID before setting
+        const uniqueNodes = Array.from(
+          new Map(graphNodes.map(node => [node.id, node])).values()
+        );
+
+        // Deduplicate edges by source-target pairs
+        const edgeKey = (edge: GraphEdge) => `${edge.source}-${edge.target}`;
+        const uniqueEdges = Array.from(
+          new Map(graphEdges.map(edge => [edgeKey(edge), edge])).values()
+        );
+
+        setNodes(uniqueNodes);
+        setEdges(uniqueEdges);
       } else {
         // Fallback to legacy method
         const [sensorData, processedSources, serviceStatus] = await Promise.all([
@@ -483,8 +494,20 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           }
         });
 
-        setNodes([...sensorNodes, ...pipelineNodes]);
-        setEdges(defaultEdges);
+        // Deduplicate nodes by ID
+        const allNodes = [...sensorNodes, ...pipelineNodes];
+        const uniqueNodes = Array.from(
+          new Map(allNodes.map(node => [node.id, node])).values()
+        );
+
+        // Deduplicate edges by source-target pairs
+        const edgeKey = (edge: GraphEdge) => `${edge.source}-${edge.target}`;
+        const uniqueEdges = Array.from(
+          new Map(defaultEdges.map(edge => [edgeKey(edge), edge])).values()
+        );
+
+        setNodes(uniqueNodes);
+        setEdges(uniqueEdges);
       }
     } catch (error) {
       console.error('Error initializing graph:', error);

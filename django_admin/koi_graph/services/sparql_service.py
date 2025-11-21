@@ -192,14 +192,34 @@ class SPARQLService:
             LIMIT {max_nodes}
             """
         else:
-            # Get general graph overview
+            # Get general graph overview from KG extractions
+            # Show entities connected via direct semantic relationships
             query = f"""
-            PREFIX regen: <http://regen.network/ontology#>
+            PREFIX schema: <http://schema.org/>
+            PREFIX regx: <https://regen.network/ontology/experimental#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            SELECT ?subject ?predicate ?object ?subjectType ?objectType WHERE {{
-                ?subject ?predicate ?object .
-                OPTIONAL {{ ?subject rdf:type ?subjectType }}
-                OPTIONAL {{ ?object rdf:type ?objectType }}
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+
+            SELECT DISTINCT ?entity1 ?entity1Label ?entity1Type ?predicate ?predicateLabel ?entity2 ?entity2Label ?entity2Type WHERE {{
+                # Get entities with direct relationships (entity-to-entity)
+                ?entity1 a ?entity1Type .
+                FILTER(?entity1Type IN (schema:Organization, schema:Project, schema:Person))
+                ?entity1 rdfs:label ?entity1Label .
+
+                # Direct relationship to another entity
+                ?entity1 ?predicate ?entity2 .
+                FILTER(isURI(?entity2))
+
+                ?entity2 a ?entity2Type .
+                FILTER(?entity2Type IN (schema:Organization, schema:Project, schema:Person))
+                ?entity2 rdfs:label ?entity2Label .
+
+                # Get predicate label (if available, otherwise use local name)
+                OPTIONAL {{ ?predicate rdfs:label ?predicateLabel }}
+
+                # Filter out system properties
+                FILTER(?predicate NOT IN (rdf:type, rdfs:label, prov:wasGeneratedBy, prov:hadPrimarySource, regx:confidence, regx:entityType))
             }}
             LIMIT {max_nodes}
             """

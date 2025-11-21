@@ -32,43 +32,103 @@ def format_for_visualization(sparql_result: Dict[str, Any]) -> Dict[str, Any]:
         node_ids = set()
         
         for binding in bindings:
-            # Extract nodes and relationships from SPARQL results
-            if 'subject' in binding and 'object' in binding:
-                # This is a triple pattern - create nodes and edges
-                subject = binding['subject']['value']
-                predicate = binding.get('predicate', {}).get('value', 'relatesTo')
-                obj = binding['object']['value']
-                
-                # Add subject node
-                if subject not in node_ids:
+            # Handle direct relationship edges (entity1/predicate/entity2 pattern)
+            if 'entity1' in binding and 'entity2' in binding and 'predicate' in binding:
+                # Two entities connected via semantic relationship
+                entity1_uri = binding['entity1']['value']
+                entity1_label = binding.get('entity1Label', {}).get('value', entity1_uri.split('/')[-1])
+                entity1_type = binding.get('entity1Type', {}).get('value', '')
+                entity1_type_clean = entity1_type.split('/')[-1] if entity1_type else 'unknown'
+
+                entity2_uri = binding['entity2']['value']
+                entity2_label = binding.get('entity2Label', {}).get('value', entity2_uri.split('/')[-1])
+                entity2_type = binding.get('entity2Type', {}).get('value', '')
+                entity2_type_clean = entity2_type.split('/')[-1] if entity2_type else 'unknown'
+
+                # Get predicate (relationship type)
+                predicate_uri = binding['predicate']['value']
+                predicate_label = binding.get('predicateLabel', {}).get('value')
+                if not predicate_label:
+                    # Extract local name from URI (e.g., "develops" from "regx:develops")
+                    predicate_label = predicate_uri.split('#')[-1].split('/')[-1]
+                    # Convert camelCase to readable format
+                    import re
+                    predicate_label = re.sub(r'([a-z])([A-Z])', r'\1 \2', predicate_label).lower()
+
+                # Add entity1 node
+                if entity1_uri not in node_ids:
                     nodes.append({
-                        'id': subject,
-                        'label': subject.split('/')[-1] if '/' in subject else subject,
-                        'type': binding.get('subjectType', {}).get('value', 'unknown').split('#')[-1],
-                        'size': 10,
-                        'color': _get_node_color(binding.get('subjectType', {}).get('value', ''))
+                        'id': entity1_uri,
+                        'label': entity1_label,
+                        'type': entity1_type_clean,
+                        'size': 12,
+                        'color': _get_node_color(entity1_type_clean)
                     })
-                    node_ids.add(subject)
-                
-                # Add object node  
-                if obj not in node_ids:
+                    node_ids.add(entity1_uri)
+
+                # Add entity2 node
+                if entity2_uri not in node_ids:
                     nodes.append({
-                        'id': obj,
-                        'label': obj.split('/')[-1] if '/' in obj else obj,
-                        'type': binding.get('objectType', {}).get('value', 'unknown').split('#')[-1],
-                        'size': 10,
-                        'color': _get_node_color(binding.get('objectType', {}).get('value', ''))
+                        'id': entity2_uri,
+                        'label': entity2_label,
+                        'type': entity2_type_clean,
+                        'size': 12,
+                        'color': _get_node_color(entity2_type_clean)
                     })
-                    node_ids.add(obj)
-                
-                # Add edge
+                    node_ids.add(entity2_uri)
+
+                # Add edge with semantic relationship
                 edges.append({
-                    'source': subject,
-                    'target': obj,
-                    'label': predicate.split('#')[-1] if '#' in predicate else predicate,
-                    'weight': 1,
-                    'color': '#999'
+                    'source': entity1_uri,
+                    'target': entity2_uri,
+                    'label': predicate_label,
+                    'weight': 2,  # Higher weight for direct relationships
+                    'color': _get_edge_color(predicate_label)
                 })
+
+            # Handle traditional subject/object pattern (for backward compatibility)
+            elif 'subject' in binding and 'object' in binding:
+                subject_uri = binding['subject']['value']
+                object_uri = binding['object']['value']
+                predicate = binding.get('predicate', {}).get('value', 'relatesTo')
+
+                subject_label = binding.get('subjectLabel', {}).get('value', subject_uri.split('/')[-1])
+                object_label = binding.get('objectLabel', {}).get('value', object_uri.split('/')[-1])
+
+                subject_type = binding.get('subjectType', {}).get('value', '')
+                subject_type_clean = subject_type.split('/')[-1] if subject_type else 'unknown'
+
+                object_type = binding.get('objectType', {}).get('value', '')
+                object_type_clean = object_type.split('/')[-1] if object_type else 'unknown'
+
+                if subject_uri not in node_ids and subject_type:
+                    nodes.append({
+                        'id': subject_uri,
+                        'label': subject_label,
+                        'type': subject_type_clean,
+                        'size': 12,
+                        'color': _get_node_color(subject_type_clean)
+                    })
+                    node_ids.add(subject_uri)
+
+                if object_uri not in node_ids and object_type:
+                    nodes.append({
+                        'id': object_uri,
+                        'label': object_label,
+                        'type': object_type_clean,
+                        'size': 12,
+                        'color': _get_node_color(object_type_clean)
+                    })
+                    node_ids.add(object_uri)
+
+                if subject_type and object_type:
+                    edges.append({
+                        'source': subject_uri,
+                        'target': object_uri,
+                        'label': predicate.split('#')[-1].split('/')[-1],
+                        'weight': 1,
+                        'color': '#999'
+                    })
             
             elif 'doc' in binding:
                 # This is a document query - create document nodes
@@ -91,20 +151,35 @@ def format_for_visualization(sparql_result: Dict[str, Any]) -> Dict[str, Any]:
         return {'nodes': [], 'edges': []}
 
 
+def _get_edge_color(predicate_label: str) -> str:
+    """Get color for edge based on relationship type"""
+    if 'develop' in predicate_label:
+        return '#34a853'  # Green for development relationships
+    elif 'partner' in predicate_label or 'work' in predicate_label:
+        return '#4285f4'  # Blue for partnerships
+    elif 'founder' in predicate_label or 'member' in predicate_label:
+        return '#ea4335'  # Red for organizational relationships
+    else:
+        return '#fbbc04'  # Yellow for other relationships
+
+
 def _get_node_color(node_type: str) -> str:
     """Get color for node based on its type"""
     color_map = {
-        'Document': '#4285f4',
-        'Concept': '#34a853', 
+        'Organization': '#4285f4',  # Blue for organizations
+        'Person': '#34a853',        # Green for people
+        'Project': '#fbbc04',       # Yellow for projects
+        'Document': '#9c27b0',      # Purple for documents
+        'Concept': '#ea4335',       # Red for concepts
         'EssenceAlignment': '#ea4335',
-        'MetabolicProcess': '#fbbc04',
-        'CATReceipt': '#9c27b0'
+        'MetabolicProcess': '#ff6d00',
+        'CATReceipt': '#00bcd4'
     }
-    
+
     for type_key, color in color_map.items():
         if type_key.lower() in node_type.lower():
             return color
-    
+
     return '#999'  # Default gray
 
 

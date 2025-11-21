@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'elizaos',       # Read-only ElizaOS models
     'metrics',       # Our tracking tables
     'knowledge',     # Knowledge indexing progress
+    'koi_graph',     # KG visualization and SPARQL API
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
