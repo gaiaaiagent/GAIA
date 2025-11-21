@@ -7,12 +7,18 @@
 
 export { registryListAction } from './registryListAction';
 export { registryDiscoverAction } from './registryDiscoverAction';
+export { registryStartReviewAction } from './registryStartReview';
+export { registryReviewUploadAction } from './registryReviewUpload';
 
 // Export all actions as an array for easy plugin integration
 import { registryListAction } from './registryListAction';
 import { registryDiscoverAction } from './registryDiscoverAction';
+import { registryStartReviewAction } from './registryStartReview';
+import { registryReviewUploadAction } from './registryReviewUpload';
 
 export const registryActions = [
   registryListAction,
   registryDiscoverAction,
+  registryStartReviewAction,
+  registryReviewUploadAction,
 ];

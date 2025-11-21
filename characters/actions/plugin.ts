@@ -8,13 +8,17 @@
 import type { Plugin } from '@elizaos/core';
 import { registryListAction } from './registryListAction';
 import { registryDiscoverAction } from './registryDiscoverAction';
+import { registryStartReviewAction } from './registryStartReview';
+import { registryReviewUploadAction } from './registryReviewUpload';
 
 export const registryActionsPlugin: Plugin = {
   name: 'registry-actions',
-  description: 'Custom actions for Regen Registry review operations',
+  description: 'Custom actions for Regen Registry review operations with file upload support',
   actions: [
     registryListAction,
     registryDiscoverAction,
+    registryStartReviewAction,
+    registryReviewUploadAction,
   ],
 };
 
