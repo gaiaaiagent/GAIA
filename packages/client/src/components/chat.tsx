@@ -228,9 +228,6 @@ export function MessageContent({
               const uniqueMediaInfos = mediaInfos.filter((media) => !attachmentUrls.has(media.url));
               let textWithoutUrls = removeMediaUrlsFromText(message.text, mediaInfos);
 
-              // Clean excessive newlines: replace 3+ newlines with double newline (paragraph break)
-              textWithoutUrls = textWithoutUrls.replace(/\n{3,}/g, '\n\n');
-
               return (
                 <div>
                   {textWithoutUrls.trim() && (

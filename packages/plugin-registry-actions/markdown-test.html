@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Rendering Test - ElizaOS Registry</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #60a5fa;
+    }
+
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .test-case {
+      background: #2a2a2a;
+      border: 1px solid #404040;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .test-header {
+      background: #333;
+      padding: 12px 16px;
+      border-bottom: 1px solid #404040;
+    }
+
+    .test-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: #60a5fa;
+      margin-bottom: 4px;
+    }
+
+    .test-description {
+      font-size: 12px;
+      color: #a0a0a0;
+    }
+
+    .test-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .markdown-source, .markdown-rendered {
+      padding: 16px;
+    }
+
+    .markdown-source {
+      background: #1e1e1e;
+      border-right: 1px solid #404040;
+    }
+
+    .markdown-source h3 {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .markdown-source pre {
+      background: #151515;
+      padding: 12px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #d0d0d0;
+    }
+
+    .markdown-rendered h3 {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Base markdown styling - mimics ElizaOS */
+    .markdown-content {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Strategy 1: Default browser rendering */
+    .strategy-default .markdown-content {
+      /* Minimal CSS - let browser handle everything */
+    }
+
+    .strategy-default .markdown-content ul,
+    .strategy-default .markdown-content ol {
+      margin-left: 20px;
+    }
+
+    .strategy-default .markdown-content ul {
+      list-style-type: disc;
+    }
+
+    .strategy-default .markdown-content ol {
+      list-style-type: decimal;
+    }
+
+    /* Strategy 2: Space-y utility (Tailwind-like) */
+    .strategy-spacey .markdown-content > * + * {
+      margin-top: 1rem;
+    }
+
+    .strategy-spacey .markdown-content ul,
+    .strategy-spacey .markdown-content ol {
+      margin-left: 20px;
+    }
+
+    .strategy-spacey .markdown-content ul {
+      list-style-type: disc;
+    }
+
+    .strategy-spacey .markdown-content ol {
+      list-style-type: decimal;
+    }
+
+    /* Strategy 3: Explicit margins on all elements */
+    .strategy-explicit .markdown-content p {
+      margin-bottom: 1rem;
+    }
+
+    .strategy-explicit .markdown-content ul,
+    .strategy-explicit .markdown-content ol {
+      margin-bottom: 1rem;
+      margin-left: 20px;
+    }
+
+    .strategy-explicit .markdown-content ul {
+      list-style-type: disc;
+    }
+
+    .strategy-explicit .markdown-content ol {
+      list-style-type: decimal;
+    }
+
+    .strategy-explicit .markdown-content li {
+      margin-bottom: 0.25rem;
+    }
+
+    .strategy-explicit .markdown-content h2 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .strategy-explicit .markdown-content strong {
+      font-weight: 600;
+    }
+
+    /* Strategy 4: Streamdown-like (space-y-0 override) */
+    .strategy-streamdown .markdown-content {
+      /* Force no vertical spacing */
+    }
+
+    .strategy-streamdown .markdown-content.space-y-0 > * + * {
+      margin-top: 0 !important;
+    }
+
+    .strategy-streamdown .markdown-content ul,
+    .strategy-streamdown .markdown-content ol {
+      margin-left: 20px;
+    }
+
+    .strategy-streamdown .markdown-content ul {
+      list-style-type: disc;
+    }
+
+    .strategy-streamdown .markdown-content ol {
+      list-style-type: decimal;
+    }
+
+    /* Common styles for all strategies */
+    .markdown-content code {
+      background: #333;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    .markdown-content strong {
+      color: #fff;
+    }
+
+    .comparison-section {
+      margin-top: 40px;
+      background: #2a2a2a;
+      border: 1px solid #404040;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .comparison-section h2 {
+      color: #60a5fa;
+      margin-bottom: 20px;
+    }
+
+    .reference-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .reference-item {
+      background: #1e1e1e;
+      padding: 16px;
+      border-radius: 4px;
+    }
+
+    .reference-item h3 {
+      font-size: 14px;
+      color: #60a5fa;
+      margin-bottom: 12px;
+    }
+
+    .observations {
+      margin-top: 40px;
+      background: #2a2a2a;
+      border: 1px solid #404040;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .observations h2 {
+      color: #60a5fa;
+      margin-bottom: 16px;
+    }
+
+    .observations ul {
+      list-style-type: disc;
+      margin-left: 20px;
+    }
+
+    .observations li {
+      margin-bottom: 8px;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .status-pass {
+      background: #166534;
+      color: #86efac;
+    }
+
+    .status-fail {
+      background: #7f1d1d;
+      color: #fca5a5;
+    }
+
+    .status-partial {
+      background: #713f12;
+      color: #fcd34d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Markdown Rendering Test Suite - ElizaOS Registry</h1>
+
+    <div class="test-grid" id="test-grid">
+      <!-- Tests will be inserted here by JavaScript -->
+    </div>
+
+    <div class="comparison-section">
+      <h2>Reference Implementations</h2>
+      <div class="reference-grid">
+        <div class="reference-item">
+          <h3>GitHub Markdown</h3>
+          <ul>
+            <li>Uses blank lines between paragraphs and lists</li>
+            <li>Lists automatically get proper spacing</li>
+            <li>No blank lines needed between list items</li>
+            <li>Bold/strong works inline in headings and lists</li>
+          </ul>
+        </div>
+        <div class="reference-item">
+          <h3>CommonMark Spec</h3>
+          <ul>
+            <li>Blank line required to separate blocks</li>
+            <li>Lists are block-level elements</li>
+            <li>List items can contain multiple paragraphs</li>
+            <li>Tight vs loose lists determined by blank lines</li>
+          </ul>
+        </div>
+        <div class="reference-item">
+          <h3>Claude.ai</h3>
+          <ul>
+            <li>Uses markdown-it or similar parser</li>
+            <li>Handles lists with and without spacing</li>
+            <li>Good inline formatting support</li>
+            <li>Consistent paragraph spacing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="observations">
+      <h2>Key Observations</h2>
+      <ul id="observations-list">
+        <!-- Observations will be added by JavaScript -->
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Test cases covering various markdown patterns
+    const testCases = [
+      {
+        title: 'Original Registry Output',
+        description: 'The exact markdown from registryCreateSession.ts (lines 237-249)',
+        markdown: `
+✅ **Registry Review Session Created** (Stage 1: Initialize)
+* **Session ID:** \`abc-123\`
+* **Project:** Test Project
+* **Methodology:** soil-carbon-v1.2.2
+* **Status:** Initialized
+
+**Next Steps (Stage 2: Document Discovery):**
+* **Upload files** - Click the attachment button (📎) to upload
+
+Once you upload files, I'll automatically discover and classify them.
+
+💡 *You can also list all sessions with: "List all sessions"*`,
+        strategies: ['default', 'spacey', 'explicit', 'streamdown']
+      },
+      {
+        title: 'With Blank Lines Between Items',
+        description: 'Adding blank lines between all major elements',
+        markdown: `
+✅ **Registry Review Session Created** (Stage 1: Initialize)
+
+* **Session ID:** \`abc-123\`
+* **Project:** Test Project
+* **Methodology:** soil-carbon-v1.2.2
+* **Status:** Initialized
+
+**Next Steps (Stage 2: Document Discovery):**
+
+* **Upload files** - Click the attachment button (📎) to upload
+
+Once you upload files, I'll automatically discover and classify them.
+
+💡 *You can also list all sessions with: "List all sessions"*`,
+        strategies: ['default', 'spacey', 'explicit', 'streamdown']
+      },
+      {
+        title: 'Using <br> Tags',
+        description: 'Using HTML line breaks instead of blank lines',
+        markdown: `
+✅ **Registry Review Session Created** (Stage 1: Initialize)<br>
+* **Session ID:** \`abc-123\`
+* **Project:** Test Project
+* **Methodology:** soil-carbon-v1.2.2
+* **Status:** Initialized
+<br>
+**Next Steps (Stage 2: Document Discovery):**<br>
+* **Upload files** - Click the attachment button (📎) to upload
+<br>
+Once you upload files, I'll automatically discover and classify them.
+<br>
+💡 *You can also list all sessions with: "List all sessions"*`,
+        strategies: ['default', 'spacey', 'explicit']
+      },
+      {
+        title: 'Paragraph Wrapper Pattern',
+        description: 'Wrapping each section in proper paragraph blocks',
+        markdown: `
+✅ **Registry Review Session Created** (Stage 1: Initialize)
+
+* **Session ID:** \`abc-123\`
+* **Project:** Test Project
+* **Methodology:** soil-carbon-v1.2.2
+* **Status:** Initialized
+
+**Next Steps (Stage 2: Document Discovery):**
+
+* **Upload files** - Click the attachment button (📎) to upload
+
+Once you upload files, I'll automatically discover and classify them.
+
+💡 *You can also list all sessions with: "List all sessions"*`,
+        strategies: ['default', 'spacey', 'explicit']
+      },
+      {
+        title: 'Simple List Test',
+        description: 'Basic unordered list without any formatting',
+        markdown: `
+## Simple List
+
+* Item one
+* Item two
+* Item three`,
+        strategies: ['default', 'spacey', 'explicit', 'streamdown']
+      },
+      {
+        title: 'List with Bold Items',
+        description: 'List items with bold formatting',
+        markdown: `
+## List with Bold
+
+* **First item:** Description here
+* **Second item:** Another description
+* **Third item:** More content`,
+        strategies: ['default', 'spacey', 'explicit', 'streamdown']
+      },
+      {
+        title: 'Mixed Content',
+        description: 'Paragraphs, headings, lists, and code mixed together',
+        markdown: `
+## Heading
+
+This is a paragraph with some text.
+
+* List item one
+* List item two
+* List item three
+
+Another paragraph with \`inline code\`.
+
+* More list items
+* With **bold** text
+* And *italic* text`,
+        strategies: ['default', 'spacey', 'explicit', 'streamdown']
+      },
+      {
+        title: 'Tight vs Loose Lists',
+        description: 'Testing CommonMark tight/loose list distinction',
+        markdown: `
+## Tight List (no blank lines)
+* Item A
+* Item B
+* Item C
+
+## Loose List (with blank lines)
+* Item X
+
+* Item Y
+
+* Item Z`,
+        strategies: ['default', 'spacey', 'explicit']
+      },
+      {
+        title: 'Nested Lists',
+        description: 'Lists within lists',
+        markdown: `
+## Nested Structure
+
+* Parent item one
+  * Child item A
+  * Child item B
+* Parent item two
+  * Child item C
+  * Child item D`,
+        strategies: ['default', 'spacey', 'explicit']
+      },
+      {
+        title: 'Two-Space Line Breaks',
+        description: 'Using markdown two-space line break syntax',
+        markdown: `
+✅ **Registry Review Session Created** (Stage 1: Initialize)
+
+* **Session ID:** \`abc-123\`
+* **Project:** Test Project
+* **Methodology:** soil-carbon-v1.2.2
+* **Status:** Initialized
+
+**Next Steps (Stage 2: Document Discovery):**
+
+* **Upload files** - Click the attachment button (📎) to upload
+
+Once you upload files, I'll automatically discover and classify them.
+
+💡 *You can also list all sessions with: "List all sessions"*`,
+        strategies: ['default', 'spacey', 'explicit']
+      }
+    ];
+
+    // Render all test cases
+    const testGrid = document.getElementById('test-grid');
+
+    testCases.forEach((testCase, index) => {
+      testCase.strategies.forEach(strategy => {
+        const testDiv = document.createElement('div');
+        testDiv.className = `test-case strategy-${strategy}`;
+
+        const status = evaluateRendering(testCase.markdown, strategy);
+        const statusClass = status.includes('PASS') ? 'status-pass' :
+                           status.includes('PARTIAL') ? 'status-partial' : 'status-fail';
+
+        testDiv.innerHTML = `
+          <div class="test-header">
+            <div class="test-title">
+              ${testCase.title} - ${strategy.toUpperCase()}
+              <span class="status-indicator ${statusClass}">${status}</span>
+            </div>
+            <div class="test-description">${testCase.description}</div>
+          </div>
+          <div class="test-content">
+            <div class="markdown-source">
+              <h3>Source</h3>
+              <pre>${escapeHtml(testCase.markdown)}</pre>
+            </div>
+            <div class="markdown-rendered">
+              <h3>Rendered</h3>
+              <div class="markdown-content">
+                ${marked.parse(testCase.markdown)}
+              </div>
+            </div>
+          </div>
+        `;
+
+        testGrid.appendChild(testDiv);
+      });
+    });
+
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Helper function to evaluate rendering quality
+    function evaluateRendering(markdown, strategy) {
+      // Simple heuristics - in real implementation, we'd inspect the DOM
+      const hasBlankLines = markdown.includes('\n\n');
+      const hasLineBreaks = markdown.includes('<br>');
+      const hasTwoSpaces = /  \n/.test(markdown);
+
+      if (strategy === 'streamdown' && !hasBlankLines) {
+        return 'FAIL';
+      }
+
+      if (strategy === 'explicit' && hasBlankLines) {
+        return 'PASS';
+      }
+
+      if (strategy === 'spacey' && hasBlankLines) {
+        return 'PASS';
+      }
+
+      if (strategy === 'default') {
+        return hasBlankLines ? 'PASS' : 'PARTIAL';
+      }
+
+      return 'PARTIAL';
+    }
+
+    // Add observations
+    const observations = [
+      'Blank lines are REQUIRED between block elements (paragraphs, lists, headings)',
+      'Markdown parsers treat consecutive lines without blank lines as a single block',
+      'Lists immediately following text without a blank line may not render properly',
+      'The "space-y-0" class removes all vertical spacing, making blank lines critical',
+      'Two trailing spaces create a <br> tag, but this is fragile and not recommended',
+      'HTML <br> tags work but break markdown portability',
+      'Bold formatting (**text**) works inline in any context',
+      'Inline code (`text`) works in paragraphs, lists, and headings',
+      'Tight lists (no blank lines between items) vs loose lists (blank lines) affect paragraph wrapping',
+      'The original registry output needs blank lines added between major sections'
+    ];
+
+    const observationsList = document.getElementById('observations-list');
+    observations.forEach(obs => {
+      const li = document.createElement('li');
+      li.textContent = obs;
+      observationsList.appendChild(li);
+    });
+  </script>
+</body>
+</html>

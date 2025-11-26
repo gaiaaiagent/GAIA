@@ -1,0 +1,21 @@
+{
+  "name": "@elizaos/plugin-registry-actions",
+  "version": "1.0.0",
+  "description": "ElizaOS plugin for Regen Registry review operations",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "bun run build.ts",
+    "dev": "bun run build.ts --watch"
+  },
+  "dependencies": {
+    "@elizaos/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "@elizaos/core": "workspace:*"
+  }
+}

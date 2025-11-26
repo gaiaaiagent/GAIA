@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Visual Test - Before/After Comparison</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #0f0f0f;
+      color: #e0e0e0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #60a5fa;
+      font-size: 32px;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .side {
+      background: #1a1a1a;
+      border: 2px solid #333;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .side.wrong {
+      border-color: #991b1b;
+    }
+
+    .side.correct {
+      border-color: #166534;
+    }
+
+    .side-header {
+      padding: 16px 20px;
+      background: #252525;
+      border-bottom: 1px solid #333;
+    }
+
+    .side.wrong .side-header {
+      background: #1f1412;
+      border-bottom-color: #991b1b;
+    }
+
+    .side.correct .side-header {
+      background: #121f14;
+      border-bottom-color: #166534;
+    }
+
+    .side-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .side.wrong .side-title {
+      color: #fca5a5;
+    }
+
+    .side.correct .side-title {
+      color: #86efac;
+    }
+
+    .side-subtitle {
+      font-size: 13px;
+      color: #999;
+    }
+
+    .content-section {
+      padding: 20px;
+    }
+
+    .content-section h3 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .source-code {
+      background: #0d0d0d;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 16px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+      color: #d4d4d4;
+    }
+
+    .rendered-output {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 20px;
+      min-height: 200px;
+    }
+
+    /* Mimic ElizaOS space-y-0 behavior */
+    .rendered-output.space-y-0 > * + * {
+      margin-top: 0 !important;
+    }
+
+    /* Basic markdown styling */
+    .rendered-output {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .rendered-output strong {
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .rendered-output em {
+      font-style: italic;
+      color: #d0d0d0;
+    }
+
+    .rendered-output code {
+      background: #2a2a2a;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      color: #fca5a5;
+    }
+
+    .rendered-output ul,
+    .rendered-output ol {
+      margin-left: 20px;
+    }
+
+    .rendered-output ul {
+      list-style-type: disc;
+    }
+
+    .rendered-output ol {
+      list-style-type: decimal;
+    }
+
+    .rendered-output li {
+      margin: 4px 0;
+    }
+
+    .rendered-output p {
+      margin: 8px 0;
+    }
+
+    .rendered-output h1,
+    .rendered-output h2,
+    .rendered-output h3 {
+      margin: 16px 0 8px 0;
+      font-weight: 600;
+    }
+
+    .html-output {
+      background: #0d0d0d;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 16px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin-top: 20px;
+      color: #888;
+    }
+
+    .html-output .tag {
+      color: #60a5fa;
+    }
+
+    .html-output .attr {
+      color: #a78bfa;
+    }
+
+    .html-output .text {
+      color: #d4d4d4;
+    }
+
+    .explanation {
+      background: #1a1a1a;
+      border: 2px solid #404040;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+
+    .explanation h2 {
+      color: #60a5fa;
+      margin-bottom: 16px;
+      font-size: 24px;
+    }
+
+    .explanation ul {
+      list-style-type: disc;
+      margin-left: 24px;
+    }
+
+    .explanation li {
+      margin: 12px 0;
+      line-height: 1.7;
+    }
+
+    .explanation strong {
+      color: #fff;
+    }
+
+    .explanation code {
+      background: #2a2a2a;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      color: #fca5a5;
+    }
+
+    .key-findings {
+      background: #1a1a1a;
+      border: 2px solid #eab308;
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 40px;
+    }
+
+    .key-findings h2 {
+      color: #fbbf24;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .finding {
+      background: #1f1e0f;
+      border-left: 4px solid #eab308;
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 4px;
+    }
+
+    .finding-title {
+      font-weight: 600;
+      color: #fbbf24;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .finding-content {
+      color: #d4d4d4;
+      line-height: 1.6;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-fail {
+      background: #991b1b;
+      color: #fca5a5;
+    }
+
+    .badge-pass {
+      background: #166534;
+      color: #86efac;
+    }
+
+    .diff {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 16px;
+      margin: 16px 0;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+    }
+
+    .diff-line {
+      padding: 2px 0;
+      line-height: 1.5;
+    }
+
+    .diff-add {
+      background: rgba(34, 197, 94, 0.1);
+      color: #86efac;
+    }
+
+    .diff-remove {
+      background: rgba(239, 68, 68, 0.1);
+      color: #fca5a5;
+    }
+
+    .diff-context {
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Markdown Rendering: Before vs After</h1>
+
+    <div class="explanation">
+      <h2>The Problem</h2>
+      <ul>
+        <li>ElizaOS uses <strong>Streamdown</strong> (a React markdown renderer)</li>
+        <li>The Response component applies <code>!space-y-0</code> which removes all vertical spacing</li>
+        <li>Without blank lines, markdown parsers <strong>don't recognize lists</strong></li>
+        <li>Result: Lists render as plain text instead of <code>&lt;ul&gt;</code> elements</li>
+      </ul>
+    </div>
+
+    <div class="comparison">
+      <!-- WRONG SIDE -->
+      <div class="side wrong">
+        <div class="side-header">
+          <div class="side-title">
+            ❌ WRONG - Current Implementation
+            <span class="badge badge-fail">Lists Don't Parse</span>
+          </div>
+          <div class="side-subtitle">No blank lines between blocks</div>
+        </div>
+
+        <div class="content-section">
+          <h3>Markdown Source</h3>
+          <div class="source-code" id="wrong-source"></div>
+
+          <h3>Rendered Output (space-y-0)</h3>
+          <div class="rendered-output space-y-0" id="wrong-rendered"></div>
+
+          <h3>Actual HTML Generated</h3>
+          <div class="html-output" id="wrong-html"></div>
+        </div>
+      </div>
+
+      <!-- CORRECT SIDE -->
+      <div class="side correct">
+        <div class="side-header">
+          <div class="side-title">
+            ✅ CORRECT - Fixed Implementation
+            <span class="badge badge-pass">Lists Parse Properly</span>
+          </div>
+          <div class="side-subtitle">Blank lines between all blocks</div>
+        </div>
+
+        <div class="content-section">
+          <h3>Markdown Source</h3>
+          <div class="source-code" id="correct-source"></div>
+
+          <h3>Rendered Output (space-y-0)</h3>
+          <div class="rendered-output space-y-0" id="correct-rendered"></div>
+
+          <h3>Actual HTML Generated</h3>
+          <div class="html-output" id="correct-html"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="explanation">
+      <h2>What Changed?</h2>
+      <div class="diff">
+        <div class="diff-line diff-context">const responseText = `</div>
+        <div class="diff-line diff-context">✅ **Registry Review Session Created** (Stage 1: Initialize)</div>
+        <div class="diff-line diff-add">+                                    &lt;-- BLANK LINE ADDED</div>
+        <div class="diff-line diff-context">* **Session ID:** \`${sessionId}\`</div>
+        <div class="diff-line diff-context">* **Project:** ${projectName}</div>
+        <div class="diff-line diff-context">* **Methodology:** ${methodology}</div>
+        <div class="diff-line diff-context">* **Status:** Initialized</div>
+        <div class="diff-line diff-context"></div>
+        <div class="diff-line diff-context">**Next Steps (Stage 2: Document Discovery):**</div>
+        <div class="diff-line diff-add">+                                    &lt;-- BLANK LINE ADDED</div>
+        <div class="diff-line diff-context">* **Upload files** - Click the attachment button (📎) to upload</div>
+        <div class="diff-line diff-context"></div>
+        <div class="diff-line diff-context">Once you upload files, I'll automatically discover and classify them.</div>
+      </div>
+    </div>
+
+    <div class="key-findings">
+      <h2>Key Findings</h2>
+
+      <div class="finding">
+        <div class="finding-title">1. Blank Lines Are Required for Block Separation</div>
+        <div class="finding-content">
+          According to the CommonMark specification, lists MUST be preceded by a blank line (unless at document start).
+          Without it, the markdown parser treats the list markers (*) as literal text within the paragraph.
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding-title">2. The space-y-0 Class Amplifies the Problem</div>
+        <div class="finding-content">
+          Even if lists parse correctly, <code>!space-y-0</code> removes all margins between elements.
+          This means proper block structure is CRITICAL - you can't rely on CSS spacing to fix bad markdown.
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding-title">3. Two-Space Line Breaks Don't Help</div>
+        <div class="finding-content">
+          Adding two spaces at the end of a line creates a <code>&lt;br&gt;</code> tag, but this doesn't create
+          block-level separation. Lists still won't parse correctly.
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding-title">4. HTML &lt;br&gt; Tags Break Portability</div>
+        <div class="finding-content">
+          While <code>&lt;br&gt;</code> tags technically work in Streamdown, they make the markdown non-portable
+          (won't render correctly on GitHub, in Slack, etc.) and reduce accessibility.
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding-title">5. Solution: Add Blank Lines Between ALL Block Elements</div>
+        <div class="finding-content">
+          The fix is simple and spec-compliant: Add a blank line before every list, after every list,
+          and between any block-level elements (paragraphs, headings, lists).
+        </div>
+      </div>
+    </div>
+
+    <div class="explanation">
+      <h2>Implementation Guide</h2>
+      <ul>
+        <li><strong>Step 1:</strong> Identify all block elements (headings, paragraphs, lists)</li>
+        <li><strong>Step 2:</strong> Ensure blank line before and after each list</li>
+        <li><strong>Step 3:</strong> Test in browser dev tools - verify <code>&lt;ul&gt;</code> elements exist</li>
+        <li><strong>Step 4:</strong> Optionally use the MarkdownBuilder utility class for automatic spacing</li>
+        <li><strong>Step 5:</strong> Copy/paste to GitHub markdown preview to verify portability</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Define test cases
+    const wrongMarkdown = `✅ **Registry Review Session Created** (Stage 1: Initialize)
+* **Session ID:** \`abc-123\`
+* **Project:** Test Project
+* **Methodology:** soil-carbon-v1.2.2
+* **Status:** Initialized
+
+**Next Steps (Stage 2: Document Discovery):**
+* **Upload files** - Click the attachment button (📎) to upload
+
+Once you upload files, I'll automatically discover and classify them.
+
+💡 *You can also list all sessions with: "List all sessions"*`;
+
+    const correctMarkdown = `✅ **Registry Review Session Created** (Stage 1: Initialize)
+
+* **Session ID:** \`abc-123\`
+* **Project:** Test Project
+* **Methodology:** soil-carbon-v1.2.2
+* **Status:** Initialized
+
+**Next Steps (Stage 2: Document Discovery):**
+
+* **Upload files** - Click the attachment button (📎) to upload
+
+Once you upload files, I'll automatically discover and classify them.
+
+💡 *You can also list all sessions with: "List all sessions"*`;
+
+    // Render markdown and display
+    function renderComparison() {
+      // Parse both versions
+      const wrongHtml = marked.parse(wrongMarkdown);
+      const correctHtml = marked.parse(correctMarkdown);
+
+      // Display sources
+      document.getElementById('wrong-source').textContent = wrongMarkdown;
+      document.getElementById('correct-source').textContent = correctMarkdown;
+
+      // Display rendered outputs
+      document.getElementById('wrong-rendered').innerHTML = wrongHtml;
+      document.getElementById('correct-rendered').innerHTML = correctHtml;
+
+      // Display HTML with syntax highlighting
+      document.getElementById('wrong-html').innerHTML = syntaxHighlightHtml(wrongHtml);
+      document.getElementById('correct-html').innerHTML = syntaxHighlightHtml(correctHtml);
+    }
+
+    // Simple HTML syntax highlighter
+    function syntaxHighlightHtml(html) {
+      return html
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/&lt;(\/?[\w]+)/g, '<span class="tag">&lt;$1</span>')
+        .replace(/&gt;/g, '<span class="tag">&gt;</span>');
+    }
+
+    // Run on load
+    renderComparison();
+
+    // Add console analysis
+    console.log('=== WRONG VERSION ANALYSIS ===');
+    const wrongHtml = marked.parse(wrongMarkdown);
+    console.log('Has <ul> tags:', wrongHtml.includes('<ul>'));
+    console.log('Has <li> tags:', wrongHtml.includes('<li>'));
+    console.log('Number of <ul> elements:', (wrongHtml.match(/<ul>/g) || []).length);
+    console.log('HTML output:', wrongHtml);
+
+    console.log('\n=== CORRECT VERSION ANALYSIS ===');
+    const correctHtml = marked.parse(correctMarkdown);
+    console.log('Has <ul> tags:', correctHtml.includes('<ul>'));
+    console.log('Has <li> tags:', correctHtml.includes('<li>'));
+    console.log('Number of <ul> elements:', (correctHtml.match(/<ul>/g) || []).length);
+    console.log('HTML output:', correctHtml);
+  </script>
+</body>
+</html>

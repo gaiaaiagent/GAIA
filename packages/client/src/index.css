@@ -248,6 +248,7 @@
 
   /* Bullet items: 2px spacing, 1.4 line-height */
   .markdown-content ul li {
+    display: list-item !important;
     margin-bottom: 2px !important;
     line-height: 1.4 !important;
     padding-left: 4px !important;
