@@ -11,14 +11,12 @@ import {
   Database,
   Network,
   BarChart3,
-  Brain,
   Eye,
   Loader2,
   Shield
 } from 'lucide-react';
 import QueryInterface from './components/QueryInterface';
 import GraphExplorer from './components/GraphExplorer';
-import EssenceRadar from './components/EssenceRadar';
 import PipelineMonitorEnhanced from './components/PipelineMonitorEnhanced';
 import KnowledgeManager from './components/KnowledgeManager';
 
@@ -33,8 +31,6 @@ import KnowledgeManager from './components/KnowledgeManager';
  * - /koi/query/:question - Query view with pre-filled question
  * - /koi/monitor/:view/:rid - Pipeline Monitor with specific view and RID
  * - /koi/graph - Graph Explorer
- * - /koi/essence - Essence Radar
- * - /koi/analytics - Analytics
  * - /koi/knowledge - Knowledge Manager
  */
 export default function KOIPage() {
@@ -102,7 +98,7 @@ export default function KOIPage() {
         {/* Main content */}
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           {/* Tab navigation */}
-          <TabsList className="grid w-full grid-cols-5 mb-6">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="monitor" className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               Pipeline Monitor
@@ -114,10 +110,6 @@ export default function KOIPage() {
             <TabsTrigger value="graph" className="flex items-center gap-2">
               <Network className="h-4 w-4" />
               Graph
-            </TabsTrigger>
-            <TabsTrigger value="essence" className="flex items-center gap-2">
-              <Brain className="h-4 w-4" />
-              Essence
             </TabsTrigger>
             <TabsTrigger value="knowledge" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
@@ -234,24 +226,6 @@ export default function KOIPage() {
               </CardHeader>
               <CardContent className="h-[calc(100%-120px)] p-0">
                 <GraphExplorer />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Essence Patterns Tab */}
-          <TabsContent value="essence">
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="h-5 w-5" />
-                  Essence Alignment Patterns
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Visualize Re-Whole Value, Nest Caring, and Harmonize Agency alignments
-                </p>
-              </CardHeader>
-              <CardContent className="h-full">
-                <EssenceRadar />
               </CardContent>
             </Card>
           </TabsContent>
