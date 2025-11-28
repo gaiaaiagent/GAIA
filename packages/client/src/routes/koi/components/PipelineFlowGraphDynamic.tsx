@@ -154,10 +154,31 @@ const PipelineFlowGraphDynamic: React.FC = () => {
       status: 'active'
     });
 
+    // Tree-sitter AST Parser - for code processing
+    services.push({
+      id: 'tree-sitter',
+      name: 'Tree-sitter AST Parser',
+      status: 'active'
+    });
+
     // PostgreSQL - in Docker, always online if container running
     services.push({
       id: 'postgresql',
       name: 'PostgreSQL',
+      status: 'active'
+    });
+
+    // pgvector - PostgreSQL extension for vector storage
+    services.push({
+      id: 'pgvector',
+      name: 'PostgreSQL: pgvector',
+      status: 'active'
+    });
+
+    // Apache AGE - PostgreSQL extension for code graph
+    services.push({
+      id: 'apache-age',
+      name: 'PostgreSQL: Apache AGE',
       status: 'active'
     });
 
@@ -385,10 +406,12 @@ const PipelineFlowGraphDynamic: React.FC = () => {
         // Create service/processor nodes from real status
         const pipelineNodes: GraphNode[] = serviceStatus.map((service: any) => {
           let type: GraphNode['type'] = 'processor';
-          if (service.id.includes('database') || service.id.includes('jena')) {
+          if (service.id.includes('database') || service.id.includes('jena') || service.id.includes('postgresql') || service.id.includes('apache-age') || service.id.includes('pgvector')) {
             type = 'storage';
           } else if (service.id.includes('mcp')) {
             type = 'service';
+          } else if (service.id.includes('tree-sitter') || service.id.includes('bge') || service.id.includes('forwarder')) {
+            type = 'processor';
           }
 
           return {
@@ -466,18 +489,22 @@ const PipelineFlowGraphDynamic: React.FC = () => {
         const pipelineFlow = [
           { source: 'coordinator', target: 'forwarder', label: 'KOI Coordinator → polls events → Forwarder' },
           { source: 'forwarder', target: 'event-bridge', label: 'Forwarder → forwards → Event Bridge' },
-          { source: 'event-bridge', target: 'bge-embeddings', label: 'Event Bridge → processes → BGE Embeddings' },
-          { source: 'bge-embeddings', target: 'postgresql', label: 'BGE Embeddings → stores vectors → PostgreSQL' },
+          { source: 'event-bridge', target: 'postgresql', label: 'Event Bridge → stores raw events → PostgreSQL' },
+          { source: 'event-bridge', target: 'bge-embeddings', label: 'Event Bridge → processes docs → BGE Embeddings' },
+          { source: 'bge-embeddings', target: 'pgvector', label: 'BGE Embeddings → stores vectors → pgvector' },
+          { source: 'event-bridge', target: 'tree-sitter', label: 'Event Bridge → parses code → Tree-sitter' },
+          { source: 'tree-sitter', target: 'apache-age', label: 'Tree-sitter → stores entities → Apache AGE' },
           { source: 'event-bridge', target: 'apache-jena', label: 'Event Bridge → stores RDF → Apache Jena' },
           { source: 'postgresql', target: 'daily-curator', label: 'PostgreSQL → provides content → Daily Curator' },
           { source: 'postgresql', target: 'weekly-curator', label: 'PostgreSQL → provides content → Weekly Curator' },
           { source: 'daily-curator', target: 'postgresql', label: 'Daily Curator → stores drafts → PostgreSQL' },
           { source: 'weekly-curator', target: 'postgresql', label: 'Weekly Curator → stores digests → PostgreSQL' },
-          { source: 'postgresql', target: 'mcp-server', label: 'PostgreSQL → provides embeddings → MCP Server' },
-          { source: 'apache-jena', target: 'mcp-server', label: 'Apache Jena → provides graph → MCP Server' },
+          { source: 'pgvector', target: 'mcp-server', label: 'pgvector → provides vectors → MCP Server' },
+          { source: 'apache-age', target: 'mcp-server', label: 'Apache AGE → provides code graph → MCP Server' },
+          { source: 'apache-jena', target: 'mcp-server', label: 'Apache Jena → provides RDF graph → MCP Server' },
           { source: 'mcp-server', target: 'eliza-agents', label: 'MCP Server → serves knowledge → Eliza Agents' },
           // Add the reverse flow for agents reading from PostgreSQL
-          { source: 'eliza-agents', target: 'postgresql', label: 'Eliza Agents → queries → PostgreSQL' },
+          { source: 'eliza-agents', target: 'postgresql', label: 'Eliza Agents → writes memories → PostgreSQL' },
           { source: 'eliza-agents', target: 'mcp-server', label: 'Eliza Agents → requests knowledge → MCP Server' }
         ];
 
