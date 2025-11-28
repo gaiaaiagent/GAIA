@@ -10,15 +10,11 @@ import {
   Search,
   Database,
   Network,
-  BarChart3,
-  Eye,
-  Loader2,
-  Shield
+  Eye
 } from 'lucide-react';
 import QueryInterface from './components/QueryInterface';
 import GraphExplorer from './components/GraphExplorer';
 import PipelineMonitorEnhanced from './components/PipelineMonitorEnhanced';
-import KnowledgeManager from './components/KnowledgeManager';
 
 /**
  * KOI Knowledge Graph Visualization Page
@@ -31,7 +27,6 @@ import KnowledgeManager from './components/KnowledgeManager';
  * - /koi/query/:question - Query view with pre-filled question
  * - /koi/monitor/:view/:rid - Pipeline Monitor with specific view and RID
  * - /koi/graph - Graph Explorer
- * - /koi/knowledge - Knowledge Manager
  */
 export default function KOIPage() {
   const navigate = useNavigate();
@@ -98,7 +93,7 @@ export default function KOIPage() {
         {/* Main content */}
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           {/* Tab navigation */}
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="monitor" className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               Pipeline Monitor
@@ -110,10 +105,6 @@ export default function KOIPage() {
             <TabsTrigger value="graph" className="flex items-center gap-2">
               <Network className="h-4 w-4" />
               Graph
-            </TabsTrigger>
-            <TabsTrigger value="knowledge" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Knowledge
             </TabsTrigger>
           </TabsList>
 
@@ -228,11 +219,6 @@ export default function KOIPage() {
                 <GraphExplorer />
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* Knowledge Tab */}
-          <TabsContent value="knowledge">
-            <KnowledgeManager />
           </TabsContent>
         </Tabs>
       </div>
