@@ -18,7 +18,8 @@ interface FileAttachment {
 
 interface UploadFile {
     filename: string;
-    content_base64: string;
+    content_base64?: string;  // Optional: base64-encoded file content
+    path?: string;            // Optional: absolute path to file on server
     mime_type: string;
 }
 

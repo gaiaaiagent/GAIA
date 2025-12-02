@@ -5,6 +5,7 @@ import type {
     Memory,
     State,
 } from '@elizaos/core';
+import { getUploadsAgentsDir } from '@elizaos/core';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -18,19 +19,25 @@ interface FileAttachment {
 
 interface UploadFile {
     filename: string;
-    content_base64: string;
+    content_base64?: string;  // Optional: base64-encoded file content
+    path?: string;            // Optional: absolute path to file on server
     mime_type: string;
 }
 
 export const registryReviewUploadAction: Action = {
     name: 'REGISTRY_REVIEW_UPLOAD',
     description:
-        'Process file uploads and create a registry review session using the registry-review MCP',
+        'REQUIRED ACTION for PDF file uploads in registry review workflow. Use this action whenever the user uploads PDF files - DO NOT use CALL_MCP_TOOL for file uploads as this action provides optimized file handling, automatic base64 encoding, session detection, and proper error handling. Works for both new sessions and adding files to existing sessions.',
     similes: [
         'START_REGISTRY_REVIEW',
         'REVIEW_UPLOADED_FILES',
         'CREATE_REVIEW_SESSION',
         'ANALYZE_PROJECT_FILES',
+        'ADD_FILES_TO_SESSION',
+        'UPLOAD_DOCUMENTS',
+        'PROCESS_UPLOADED_FILES',
+        'HANDLE_PDF_UPLOAD',
+        'UPLOAD_FILES',
     ],
     examples: [[
         {
@@ -55,19 +62,55 @@ export const registryReviewUploadAction: Action = {
         },
     ]],
     validate: async (runtime: IAgentRuntime, message: Memory) => {
-        // Check if message has attachments
-        const attachments = (message.content as any)?.attachments;
-        if (!attachments || !Array.isArray(attachments) || attachments.length === 0) {
+        // CRITICAL: This action has EXCLUSIVE rights to handle PDF file uploads
+        // Mutual exclusion with REGISTRY_DISCOVER_DOCUMENTS ensures deterministic selection
+
+        // CRITICAL FIX: Check BOTH content.attachments AND metadata.attachments
+        // ElizaOS stores attachments in metadata.attachments with FULL info (contentType, title)
+        // content.attachments only has id and url - MUST prefer metadata.attachments for PDF detection!
+        const contentAttachments = (message.content as any)?.attachments;
+        const metadataAttachments = (message.metadata as any)?.attachments;
+        // CRITICAL: Prefer metadataAttachments as it has contentType and title needed for PDF detection
+        const attachments = metadataAttachments || contentAttachments;
+
+        const hasAttachments = attachments && Array.isArray(attachments) && attachments.length > 0;
+
+        runtime.logger.debug(`[REGISTRY_REVIEW_UPLOAD] ========== VALIDATION START ==========`);
+        runtime.logger.debug(`[REGISTRY_REVIEW_UPLOAD] Content attachments: ${JSON.stringify(contentAttachments)}`);
+        runtime.logger.debug(`[REGISTRY_REVIEW_UPLOAD] Metadata attachments: ${JSON.stringify(metadataAttachments)}`);
+        runtime.logger.debug(`[REGISTRY_REVIEW_UPLOAD] Final attachments: ${JSON.stringify(attachments)}`);
+        runtime.logger.debug(`[REGISTRY_REVIEW_UPLOAD] hasAttachments: ${hasAttachments}`);
+
+        if (!hasAttachments) {
+            runtime.logger.debug('[REGISTRY_REVIEW_UPLOAD] No attachments - validation FAILED');
+            runtime.logger.debug(`[REGISTRY_REVIEW_UPLOAD] ========== VALIDATION END (FALSE) ==========`);
             return false;
         }
 
-        // Check if at least one attachment is a PDF
-        const hasPdf = attachments.some(
-            (att: FileAttachment) =>
-                att.contentType === 'document' &&
-                (att.title?.toLowerCase().endsWith('.pdf') || att.url?.toLowerCase().endsWith('.pdf'))
+        // Debug log the attachments
+        runtime.logger.debug(
+            `[REGISTRY_REVIEW_UPLOAD] Attachments: ${JSON.stringify(
+                attachments.map(a => ({ title: a.title, contentType: a.contentType, url: a.url }))
+            )}`
         );
 
+        // Check if at least one attachment is a PDF
+        const hasPdf = attachments.some(
+            (att: FileAttachment) => {
+                const isPdf = att.contentType === 'document' &&
+                    (att.title?.toLowerCase().endsWith('.pdf') || att.url?.toLowerCase().endsWith('.pdf'));
+                runtime.logger.debug(
+                    `[REGISTRY_REVIEW_UPLOAD] Checking ${att.title}: contentType=${att.contentType}, isPdf=${isPdf}`
+                );
+                return isPdf;
+            }
+        );
+
+        runtime.logger.debug(`[REGISTRY_REVIEW_UPLOAD] Final validation: ${hasPdf ? 'PASSED' : 'FAILED'}`);
+        runtime.logger.debug(`[REGISTRY_REVIEW_UPLOAD] ========== VALIDATION END (${hasPdf}) ==========`);
+
+        // Only validate true for PDF uploads to registry review
+        // If true, this action will be the ONLY one that validates (due to mutual exclusion)
         return hasPdf;
     },
     handler: async (
@@ -78,7 +121,11 @@ export const registryReviewUploadAction: Action = {
         callback: (response: any) => void
     ): Promise<ActionResult> => {
         try {
-            const attachments = (message.content as any)?.attachments as FileAttachment[];
+            // CRITICAL FIX: Check BOTH content.attachments AND metadata.attachments
+            // MUST prefer metadataAttachments as it has title needed for filename extraction!
+            const contentAttachments = (message.content as any)?.attachments;
+            const metadataAttachments = (message.metadata as any)?.attachments;
+            const attachments = (metadataAttachments || contentAttachments) as FileAttachment[];
 
             if (!attachments || attachments.length === 0) {
                 await callback({
@@ -91,52 +138,21 @@ export const registryReviewUploadAction: Action = {
                 };
             }
 
-            // Convert file URLs to base64-encoded content
+            // Convert file URLs to MCP file format
+            // The MCP server now handles path resolution and base64 encoding automatically
             const files: UploadFile[] = [];
-            const serverRoot = process.cwd();
 
             for (const attachment of attachments) {
                 try {
-                    // Convert URL path to filesystem path
-                    // URL format: /media/uploads/agents/{agentId}/{filename}
-                    // File location: packages/server/dist{url}
-                    let filePath = attachment.url;
-
-                    // Try multiple possible locations
-                    const possiblePaths = [
-                        join(serverRoot, 'packages/server/dist', filePath),
-                        join(serverRoot, 'packages/server', filePath),
-                        join(serverRoot, filePath.startsWith('/') ? filePath.slice(1) : filePath),
-                    ];
-
-                    let fileContent: Buffer | null = null;
-                    let successPath: string | null = null;
-
-                    for (const path of possiblePaths) {
-                        try {
-                            fileContent = readFileSync(path);
-                            successPath = path;
-                            break;
-                        } catch (err) {
-                            // Try next path
-                            continue;
-                        }
-                    }
-
-                    if (!fileContent) {
-                        console.error(`Failed to read file from any path:`, possiblePaths);
-                        continue;
-                    }
-
-                    const base64Content = fileContent.toString('base64');
-
+                    // The MCP server's _resolve_file_path() can handle ElizaOS URLs directly
+                    // It will automatically convert /media/uploads/... to the correct filesystem path
                     files.push({
-                        filename: attachment.title || 'document.pdf',
-                        content_base64: base64Content,
+                        filename: attachment.title || attachment.url.split('/').pop() || 'document.pdf',
+                        path: attachment.url,  // Pass URL directly - MCP server will resolve it
                         mime_type: 'application/pdf',
                     });
 
-                    console.log(`Successfully encoded file: ${attachment.title} (${successPath})`);
+                    console.log(`Prepared file for MCP: ${attachment.title} (${attachment.url})`);
                 } catch (error) {
                     console.error(`Error processing attachment ${attachment.title}:`, error);
                 }
@@ -153,26 +169,67 @@ export const registryReviewUploadAction: Action = {
                 };
             }
 
-            // Extract project name from files or use default
+            // Get MCP service
+            const mcpService = runtime.getService('mcp');
+            if (!mcpService) {
+                await callback({
+                    text: '❌ MCP service not available',
+                    error: true,
+                });
+                return {
+                    success: false,
+                    error: 'MCP service not available',
+                };
+            }
+
+            // Check if there's an existing session in recent conversation
+            // Look for session ID in the last few messages
+            let existingSessionId: string | null = null;
+            if (state?.recentMessages) {
+                const recentText = state.recentMessages.join(' ');
+                const sessionMatch = recentText.match(/session-[a-f0-9]+/i);
+                if (sessionMatch) {
+                    existingSessionId = sessionMatch[0];
+                }
+            }
+
+            let mcpResult: any;
+            // Define projectName outside the if/else block so it's accessible in the return statement
             const projectName = extractProjectName(attachments) || 'Registry Review Project';
 
-            // Send status update
-            await callback({
-                text: `Processing ${files.length} file(s) for registry review. Creating session for "${projectName}"...`,
-            });
+            if (existingSessionId) {
+                // Add files to existing session
+                await callback({
+                    text: `Adding ${files.length} file(s) to session ${existingSessionId}...`,
+                });
 
-            // Call the MCP tool via runtime
-            const mcpResult = await runtime.callMCPTool({
-                serverName: 'registry-review',
-                toolName: 'start_review_from_uploads',
-                params: {
-                    project_name: projectName,
-                    files: files,
-                    methodology: 'soil-carbon-v1.2.2',
-                    auto_extract: true,
-                    deduplicate: true,
-                },
-            });
+                mcpResult = await (mcpService as any).callTool(
+                    'registry-review',
+                    'upload_additional_files',
+                    {
+                        session_id: existingSessionId,
+                        files: files,
+                    }
+                );
+            } else {
+                // Create new session with files
+
+                await callback({
+                    text: `Processing ${files.length} file(s) for registry review. Creating session for "${projectName}"...`,
+                });
+
+                mcpResult = await (mcpService as any).callTool(
+                    'registry-review',
+                    'start_review_from_uploads',
+                    {
+                        project_name: projectName,
+                        files: files,
+                        methodology: 'soil-carbon-v1.2.2',
+                        auto_extract: true,
+                        deduplicate: true,
+                    }
+                );
+            }
 
             // Parse and format the result
             const resultText = formatReviewResult(mcpResult);

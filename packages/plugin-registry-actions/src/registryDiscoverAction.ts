@@ -25,6 +25,41 @@ export const registryDiscoverAction: Action = {
     message: Memory,
     state?: State
   ): Promise<boolean> => {
+    // CRITICAL: Mutual exclusion with REGISTRY_REVIEW_UPLOAD
+    // If attachments are present, user is uploading files - REGISTRY_REVIEW_UPLOAD should handle it
+
+    // Enhanced debugging - log the full message structure
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] ========== VALIDATION START ==========`);
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Message content type: ${typeof message.content}`);
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Message content: ${JSON.stringify(message.content)}`);
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Message text: ${message.content?.text}`);
+
+    // CRITICAL FIX: Check BOTH content.attachments AND metadata.attachments
+    // ElizaOS stores attachments in metadata.attachments with FULL info (contentType, title)
+    // content.attachments only has id and url - prefer metadata.attachments for consistency
+    const contentAttachments = (message.content as any)?.attachments;
+    const metadataAttachments = (message.metadata as any)?.attachments;
+    const attachments = metadataAttachments || contentAttachments;
+
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Content attachments: ${JSON.stringify(contentAttachments)}`);
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Metadata attachments: ${JSON.stringify(metadataAttachments)}`);
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Final attachments: ${JSON.stringify(attachments)}`);
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Attachments type: ${typeof attachments}`);
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Is array: ${Array.isArray(attachments)}`);
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Length: ${attachments?.length}`);
+
+    const hasAttachments = attachments && Array.isArray(attachments) && attachments.length > 0;
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] hasAttachments: ${hasAttachments}`);
+
+    if (hasAttachments) {
+      // Defer to REGISTRY_REVIEW_UPLOAD for file uploads
+      logger.info('[REGISTRY_DISCOVER_DOCUMENTS] ⛔ Attachments present - deferring to REGISTRY_REVIEW_UPLOAD - VALIDATION FALSE');
+      logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] ========== VALIDATION END (FALSE) ==========`);
+      return false;
+    }
+
+    logger.info('[REGISTRY_DISCOVER_DOCUMENTS] No attachments detected, continuing validation...');
+
     // Validate if message is requesting document discovery
     const text = message.content.text.toLowerCase();
 
@@ -49,12 +84,23 @@ export const registryDiscoverAction: Action = {
     // Check for session ID pattern (e.g., "session-xxxxx")
     const hasSessionId = text.match(/session-[a-f0-9]{12}/);
 
+    // REQUIRE session ID - without it, files likely haven't been uploaded yet
+    if (!hasSessionId) {
+      logger.debug('[REGISTRY_DISCOVER_DOCUMENTS] No session ID - validation failed');
+      return false;
+    }
+
     const hasDiscoverKeyword = discoverKeywords.some(kw => text.includes(kw));
     const hasDocumentKeyword = documentKeywords.some(kw => text.includes(kw));
 
-    // Validate if this is a document discovery request
-    // Even if documents were already discovered, return true so LLM can choose this action
-    return (hasDiscoverKeyword && hasDocumentKeyword) || (hasDiscoverKeyword && hasSessionId);
+    // Validate if this is a document discovery request for an EXISTING session
+    const isValid = hasDiscoverKeyword || hasDocumentKeyword;
+
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Keyword check - discover: ${hasDiscoverKeyword}, document: ${hasDocumentKeyword}`);
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Final validation result: ${isValid ? '✅ PASSED' : '❌ FAILED'}`);
+    logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] ========== VALIDATION END (${isValid}) ==========`);
+
+    return isValid;
   },
 
   handler: async (

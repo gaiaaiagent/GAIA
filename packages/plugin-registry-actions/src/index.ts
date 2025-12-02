@@ -10,6 +10,7 @@ import { registryListAction } from './registryListAction.js';
 import { registryCreateSessionAction } from './registryCreateSession.js';
 import { registryDiscoverAction } from './registryDiscoverAction.js';
 import { registryReviewUploadAction } from './registryReviewUpload.js';
+import { registryFilesProvider } from './registryFilesProvider.js';
 
 export const registryActionsPlugin: Plugin = {
     name: 'registry-actions',
@@ -20,15 +21,18 @@ export const registryActionsPlugin: Plugin = {
         registryDiscoverAction,
         registryReviewUploadAction,
     ],
-    providers: [],
+    providers: [
+        registryFilesProvider,
+    ],
     evaluators: [],
     services: [],
 };
 
 export default registryActionsPlugin;
 
-// Export individual actions for direct import
+// Export individual actions and providers for direct import
 export { registryListAction } from './registryListAction.js';
 export { registryCreateSessionAction } from './registryCreateSession.js';
 export { registryDiscoverAction } from './registryDiscoverAction.js';
 export { registryReviewUploadAction } from './registryReviewUpload.js';
+export { registryFilesProvider } from './registryFilesProvider.js';
