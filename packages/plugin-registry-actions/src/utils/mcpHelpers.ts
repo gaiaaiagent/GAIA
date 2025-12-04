@@ -5,10 +5,16 @@
  * - Structured error types
  * - Timeout protection (30s default)
  * - Exponential backoff retry (3 attempts)
- * - Comprehensive logging
+ * - Circuit breaker pattern
+ * - Error pattern persistence for cross-restart learning
+ * - Robust service loading with getServiceLoadPromise()
+ *
+ * Phase 1: Core resilience (timeout, retry, circuit breaker) ✅
+ * Phase 2: Database persistence, service load promises ✅
  */
 
-import { type IAgentRuntime, logger } from '@elizaos/core';
+import { type IAgentRuntime, type Service, logger } from '@elizaos/core';
+import { recordErrorPattern, analyzeErrorPattern, loadPatternsFromDb } from './errorPatternPersistence.js';
 
 // ============================================================================
 // ERROR TYPES
@@ -314,13 +320,69 @@ function parseMCPResult(mcpResult: unknown, toolName: string): unknown {
 }
 
 // ============================================================================
-// MAIN FUNCTION
+// SERVICE LOADING WITH PROMISE
 // ============================================================================
 
 /**
- * Get MCP service from runtime with availability check
+ * Default timeout for service load promise (5 seconds)
  */
-export function getMCPService(runtime: IAgentRuntime): any {
+const SERVICE_LOAD_TIMEOUT_MS = 5000;
+
+/**
+ * Get MCP service from runtime using getServiceLoadPromise for robust loading.
+ *
+ * Per ElizaOS research: Using getServiceLoadPromise() ensures the service
+ * is fully initialized before use, preventing race conditions during startup.
+ *
+ * @param runtime - ElizaOS agent runtime
+ * @param timeoutMs - Timeout for service loading (default: 5000ms)
+ * @returns The MCP service
+ * @throws MCPServiceUnavailableError if service not available or timeout
+ */
+export async function getMCPServiceAsync(
+  runtime: IAgentRuntime,
+  timeoutMs: number = SERVICE_LOAD_TIMEOUT_MS
+): Promise<Service> {
+  try {
+    // First try synchronous access (fast path for already-loaded service)
+    const immediateService = runtime.getService('mcp');
+    if (immediateService) {
+      return immediateService;
+    }
+
+    // Fall back to promise-based loading with timeout
+    const servicePromise = runtime.getServiceLoadPromise('mcp');
+
+    const service = await Promise.race([
+      servicePromise,
+      new Promise<never>((_, reject) =>
+        setTimeout(
+          () => reject(new MCPServiceUnavailableError('MCP service load timed out')),
+          timeoutMs
+        )
+      ),
+    ]);
+
+    if (!service) {
+      throw new MCPServiceUnavailableError('MCP service not available');
+    }
+
+    return service;
+  } catch (error) {
+    if (error instanceof MCPServiceUnavailableError) {
+      throw error;
+    }
+    throw new MCPServiceUnavailableError(
+      `Failed to load MCP service: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
+}
+
+/**
+ * Get MCP service from runtime with availability check (synchronous version)
+ * @deprecated Use getMCPServiceAsync for better reliability
+ */
+export function getMCPService(runtime: IAgentRuntime): Service {
   const mcpService = runtime.getService('mcp');
   if (!mcpService) {
     throw new MCPServiceUnavailableError();
@@ -328,8 +390,12 @@ export function getMCPService(runtime: IAgentRuntime): any {
   return mcpService;
 }
 
+// ============================================================================
+// MAIN FUNCTION
+// ============================================================================
+
 /**
- * Call MCP tool with timeout, retry, and circuit breaker protection
+ * Call MCP tool with timeout, retry, circuit breaker, and error pattern tracking
  *
  * @param runtime - ElizaOS agent runtime
  * @param serverName - MCP server name (e.g., 'registry-review')
@@ -360,10 +426,24 @@ export async function callMCPTool<T = unknown>(
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const startTime = Date.now();
 
+  // Load error patterns from database on first call (async, non-blocking)
+  loadPatternsFromDb(runtime).catch((err) =>
+    logger.debug(`[MCP] Error loading patterns: ${err}`)
+  );
+
   // Check circuit breaker
   if (isCircuitOpen(serverName)) {
     const cb = getCircuitBreaker(serverName);
     const remainingMs = cb.openUntil - Date.now();
+
+    // Record error pattern for circuit open
+    recordErrorPattern(runtime, {
+      code: 'MCP_CIRCUIT_OPEN',
+      message: `Circuit breaker open - retry in ${Math.ceil(remainingMs / 1000)}s`,
+      actionName: opts.actionName,
+      toolName,
+    }).catch(() => {});
+
     throw new MCPError(
       `Circuit breaker open for '${serverName}' - retry in ${Math.ceil(remainingMs / 1000)}s`,
       'MCP_CIRCUIT_OPEN',
@@ -371,8 +451,20 @@ export async function callMCPTool<T = unknown>(
     );
   }
 
-  // Get MCP service
-  const mcpService = getMCPService(runtime);
+  // Get MCP service using async method with timeout (Phase 2 improvement)
+  let mcpService: Service;
+  try {
+    mcpService = await getMCPServiceAsync(runtime);
+  } catch (error) {
+    // Record service unavailable pattern
+    recordErrorPattern(runtime, {
+      code: 'MCP_SERVICE_UNAVAILABLE',
+      message: error instanceof Error ? error.message : String(error),
+      actionName: opts.actionName,
+      toolName,
+    }).catch(() => {});
+    throw error;
+  }
 
   let lastError: Error | null = null;
   let attempt = 0;
@@ -413,6 +505,15 @@ export async function callMCPTool<T = unknown>(
 
       // Don't retry non-retryable errors
       if (!isRetryableError(error)) {
+        // Record error pattern for non-retryable errors
+        const errorCode = error instanceof MCPError ? error.code : 'MCP_ERROR';
+        recordErrorPattern(runtime, {
+          code: errorCode,
+          message: lastError.message,
+          actionName: opts.actionName,
+          toolName,
+        }).catch(() => {});
+
         // Application errors and session not found are not retryable
         if (
           error instanceof MCPSessionNotFoundError ||
@@ -443,7 +544,14 @@ export async function callMCPTool<T = unknown>(
     }
   }
 
-  // All retries exhausted
+  // All retries exhausted - record pattern
+  recordErrorPattern(runtime, {
+    code: 'MCP_RETRY_EXHAUSTED',
+    message: `Failed after ${opts.maxRetries} attempts: ${lastError?.message}`,
+    actionName: opts.actionName,
+    toolName,
+  }).catch(() => {});
+
   recordFailure(serverName);
   throw new MCPRetryExhaustedError(toolName, opts.maxRetries, lastError!);
 }

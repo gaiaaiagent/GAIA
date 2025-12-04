@@ -8,6 +8,9 @@
  * - Semantic validation for intent-based action matching
  * - Session context tracking via REGISTRY_SESSION provider
  * - Performance monitoring via REGISTRY_PERFORMANCE evaluator
+ * - Action outcome recording for cross-restart learning (Phase 2)
+ * - Error pattern persistence and recovery suggestions (Phase 2)
+ * - Robust MCP service loading with getServiceLoadPromise() (Phase 2)
  */
 
 import type { Plugin } from '@elizaos/core';
@@ -24,10 +27,11 @@ import { registryGenerateReportAction } from './registryGenerateReport.js';
 import { registryFilesProvider } from './registryFilesProvider.js';
 import { registrySessionProvider } from './registrySessionProvider.js';
 import { registryPerformanceEvaluator } from './registryPerformanceEvaluator.js';
+import { actionOutcomeRecorderEvaluator } from './evaluators/actionOutcomeRecorder.js';
 
 export const registryActionsPlugin: Plugin = {
     name: 'registry-actions',
-    description: 'Custom actions for Regen Registry review operations following 8-stage workflow with semantic validation and performance monitoring',
+    description: 'Custom actions for Regen Registry review operations following 8-stage workflow with semantic validation, performance monitoring, and cross-restart learning',
     actions: [
         // Stage 1: Initialize
         registryCreateSessionAction,
@@ -52,7 +56,10 @@ export const registryActionsPlugin: Plugin = {
         registrySessionProvider,
     ],
     evaluators: [
+        // Performance monitoring (in-memory metrics)
         registryPerformanceEvaluator,
+        // Action outcome recording (database persistence for learning)
+        actionOutcomeRecorderEvaluator,
     ],
     services: [],
 };
@@ -85,6 +92,38 @@ export {
 
 // Export evaluators
 export { registryPerformanceEvaluator, recordActionExecution, getPerformanceSummary } from './registryPerformanceEvaluator.js';
+export {
+    actionOutcomeRecorderEvaluator,
+    getRecentOutcomes,
+    getPersistedSuccessRate,
+} from './evaluators/actionOutcomeRecorder.js';
+
+// Export error pattern utilities
+export {
+    recordErrorPattern,
+    analyzeErrorPattern,
+    getErrorPattern,
+    getRecentErrorPatterns,
+    getHighSeverityPatterns,
+    loadPatternsFromDb,
+    type ErrorPatternRecord,
+    type ErrorPatternAnalysis,
+} from './utils/errorPatternPersistence.js';
+
+// Export MCP helpers
+export {
+    callMCPTool,
+    callRegistryMCP,
+    getMCPService,
+    getMCPServiceAsync,
+    formatMCPErrorForUser,
+    MCPError,
+    MCPServiceUnavailableError,
+    MCPTimeoutError,
+    MCPSessionNotFoundError,
+    MCPRetryExhaustedError,
+    MCPApplicationError,
+} from './utils/mcpHelpers.js';
 
 // Export semantic validation utilities
 export {
