@@ -6,8 +6,9 @@ import type {
     State,
 } from '@elizaos/core';
 import { getUploadsAgentsDir } from '@elizaos/core';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import { getActiveSessionAsync, setActiveSessionAsync } from './registrySessionProvider.js';
 
 interface FileAttachment {
     id: string;
@@ -139,20 +140,69 @@ export const registryReviewUploadAction: Action = {
             }
 
             // Convert file URLs to MCP file format
-            // The MCP server now handles path resolution and base64 encoding automatically
+            // We need to resolve the file path on the ElizaOS side
             const files: UploadFile[] = [];
+
+            // Get the agent's upload directory
+            // getUploadsAgentsDir() returns: {cwd}/.eliza/data/uploads/agents
+            const uploadsAgentsDir = getUploadsAgentsDir();
+            // Get the parent uploads dir by removing /agents from the end
+            const uploadsDir = uploadsAgentsDir.replace(/\/agents$/, '');
+            console.log(`[REGISTRY_UPLOAD] Uploads directory: ${uploadsDir}`);
+            console.log(`[REGISTRY_UPLOAD] Uploads agents directory: ${uploadsAgentsDir}`);
 
             for (const attachment of attachments) {
                 try {
-                    // The MCP server's _resolve_file_path() can handle ElizaOS URLs directly
-                    // It will automatically convert /media/uploads/... to the correct filesystem path
-                    files.push({
-                        filename: attachment.title || attachment.url.split('/').pop() || 'document.pdf',
-                        path: attachment.url,  // Pass URL directly - MCP server will resolve it
-                        mime_type: 'application/pdf',
-                    });
+                    // Resolve the file path from the URL
+                    // URL format: /media/uploads/agents/{agent-id}/{filename}
+                    let resolvedPath: string | null = null;
+                    const url = attachment.url;
 
-                    console.log(`Prepared file for MCP: ${attachment.title} (${attachment.url})`);
+                    if (url.startsWith('/media/uploads/')) {
+                        // Extract path after /media/uploads/
+                        // This gives us: agents/{agent-id}/{filename}
+                        const relativePath = url.replace('/media/uploads/', '');
+                        // Join with base uploads dir (NOT uploadsAgentsDir to avoid doubling)
+                        resolvedPath = join(uploadsDir, relativePath);
+                    } else if (url.startsWith('/uploads/')) {
+                        // Extract path after /uploads/
+                        const relativePath = url.replace('/uploads/', '');
+                        resolvedPath = join(uploadsDir, relativePath);
+                    } else if (url.startsWith('/')) {
+                        // Absolute path from root - extract the full path after media if present
+                        const filename = url.split('/').pop() || '';
+                        resolvedPath = join(uploadsAgentsDir, filename);
+                    } else {
+                        // Assume it's already a path or use URL directly
+                        resolvedPath = url;
+                    }
+
+                    console.log(`[REGISTRY_UPLOAD] URL: ${url}`);
+                    console.log(`[REGISTRY_UPLOAD] Resolved path for ${attachment.title}: ${resolvedPath}`);
+
+                    // Check if file exists and read as base64
+                    // MCP server expects base64-encoded content, not file paths
+                    if (resolvedPath && existsSync(resolvedPath)) {
+                        const fileContent = readFileSync(resolvedPath);
+                        const base64Content = fileContent.toString('base64');
+                        console.log(`[REGISTRY_UPLOAD] File exists, encoded ${fileContent.length} bytes to base64`);
+
+                        files.push({
+                            filename: attachment.title || attachment.url.split('/').pop() || 'document.pdf',
+                            content_base64: base64Content,
+                            mime_type: 'application/pdf',
+                        });
+
+                        console.log(`Prepared file for MCP (base64): ${attachment.title}`);
+                    } else {
+                        // Fallback: try to pass the path (for backward compatibility)
+                        console.log(`[REGISTRY_UPLOAD] File not found at ${resolvedPath}, trying path mode`);
+                        files.push({
+                            filename: attachment.title || attachment.url.split('/').pop() || 'document.pdf',
+                            path: resolvedPath,
+                            mime_type: 'application/pdf',
+                        });
+                    }
                 } catch (error) {
                     console.error(`Error processing attachment ${attachment.title}:`, error);
                 }
@@ -182,37 +232,176 @@ export const registryReviewUploadAction: Action = {
                 };
             }
 
-            // Check if there's an existing session in recent conversation
-            // Look for session ID in the last few messages
+            // Check if there's an existing session to add files to
+            // Smart session detection strategy (PRIORITY ORDER):
+            // 0. Check session cache (set by REGISTRY_LOAD_SESSION) - HIGHEST PRIORITY
+            // 1. Check user's message for explicit session ID
+            // 2. Parse conversation history to find the MOST RECENT session mentioned (active session)
+            // 3. Validate that session exists and is suitable for file upload
             let existingSessionId: string | null = null;
-            if (state?.recentMessages) {
-                const recentText = state.recentMessages.join(' ');
-                const sessionMatch = recentText.match(/session-[a-f0-9]+/i);
-                if (sessionMatch) {
-                    existingSessionId = sessionMatch[0];
+            let existingSessionName: string | null = null;
+            const roomId = message.roomId.toString();
+
+            // PRIORITY 0: Check the session cache (set by REGISTRY_LOAD_SESSION)
+            // This is the most reliable way to find the "active" session
+            // Uses async version to recover session from database if not in memory
+            const cachedSession = await getActiveSessionAsync(runtime, roomId);
+            if (cachedSession && cachedSession.sessionId) {
+                existingSessionId = cachedSession.sessionId;
+                existingSessionName = cachedSession.projectName;
+                console.log(`[REGISTRY_UPLOAD] Found session in cache: ${existingSessionId} (${existingSessionName})`);
+            }
+
+            // PRIORITY 1: Check the user's message for explicit session reference
+            if (!existingSessionId) {
+                const userText = message.content?.text || '';
+                const userSessionMatch = userText.match(/session-[a-f0-9]{12}/i);
+                if (userSessionMatch) {
+                    existingSessionId = userSessionMatch[0].toLowerCase();
+                    console.log(`[REGISTRY_UPLOAD] Found session ID in user message: ${existingSessionId}`);
+                }
+            }
+
+            // If not in user message, intelligently parse conversation history
+            // Find the LAST (most recent) session mentioned - that's the "active" session
+            if (!existingSessionId && state?.recentMessages) {
+                const recentText = Array.isArray(state.recentMessages)
+                    ? state.recentMessages.join(' ')
+                    : String(state.recentMessages);
+
+                // Find ALL session IDs mentioned, then take the LAST one (most recent in conversation)
+                const allSessionMatches = recentText.match(/session-[a-f0-9]{12}/gi) || [];
+                if (allSessionMatches.length > 0) {
+                    // Last mentioned session is the active one
+                    existingSessionId = allSessionMatches[allSessionMatches.length - 1].toLowerCase();
+                    console.log(`[REGISTRY_UPLOAD] Found active session from conversation: ${existingSessionId} (last of ${allSessionMatches.length} mentioned)`);
+                }
+            }
+
+            // Validate the session exists and get its name
+            if (existingSessionId) {
+                console.log(`[REGISTRY_UPLOAD] Validating session ${existingSessionId} exists...`);
+                try {
+                    const listResult = await (mcpService as any).callTool(
+                        'registry-review',
+                        'list_sessions',
+                        {}
+                    );
+
+                    let sessions: any[] = [];
+                    if (listResult?.content?.[0]?.text) {
+                        sessions = JSON.parse(listResult.content[0].text);
+                    } else if (Array.isArray(listResult)) {
+                        sessions = listResult;
+                    }
+
+                    const matchingSession = sessions.find((s: any) =>
+                        s.session_id.toLowerCase() === existingSessionId
+                    );
+
+                    if (matchingSession) {
+                        existingSessionName = matchingSession.project_name;
+                        console.log(`[REGISTRY_UPLOAD] Validated session: ${existingSessionId} (${existingSessionName})`);
+                    } else {
+                        console.log(`[REGISTRY_UPLOAD] Session ${existingSessionId} not found, will create new session`);
+                        existingSessionId = null;
+                    }
+                } catch (e) {
+                    console.log(`[REGISTRY_UPLOAD] Error validating session: ${e}`);
+                    // Keep the session ID and try anyway
+                }
+            }
+
+            // If still no session from conversation, look for empty sessions as fallback
+            if (!existingSessionId) {
+                console.log(`[REGISTRY_UPLOAD] No session in conversation context, checking for empty sessions...`);
+                try {
+                    const listResult = await (mcpService as any).callTool(
+                        'registry-review',
+                        'list_sessions',
+                        {}
+                    );
+
+                    let sessions: any[] = [];
+                    if (listResult?.content?.[0]?.text) {
+                        sessions = JSON.parse(listResult.content[0].text);
+                    } else if (Array.isArray(listResult)) {
+                        sessions = listResult;
+                    }
+
+                    // Find empty sessions (0 documents) - prefer most recently created
+                    const emptySessions = sessions.filter((s: any) =>
+                        (s.statistics?.documents_found || 0) === 0
+                    );
+
+                    if (emptySessions.length > 0) {
+                        // Sort by creation date, most recent first
+                        emptySessions.sort((a: any, b: any) =>
+                            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                        );
+
+                        // Use the most recently created empty session
+                        existingSessionId = emptySessions[0].session_id;
+                        existingSessionName = emptySessions[0].project_name;
+                        console.log(`[REGISTRY_UPLOAD] Using most recent empty session: ${existingSessionId} (${existingSessionName})`);
+                    } else {
+                        console.log(`[REGISTRY_UPLOAD] No empty sessions found, will create new session`);
+                    }
+                } catch (e) {
+                    console.log(`[REGISTRY_UPLOAD] Error checking for empty sessions: ${e}`);
                 }
             }
 
             let mcpResult: any;
+            let discoveryResult: any = null;
+            let sessionId: string | null = null;
             // Define projectName outside the if/else block so it's accessible in the return statement
             const projectName = extractProjectName(attachments) || 'Registry Review Project';
 
             if (existingSessionId) {
                 // Add files to existing session
+                sessionId = existingSessionId;
+                const sessionLabel = existingSessionName
+                    ? `"${existingSessionName}" (${existingSessionId})`
+                    : existingSessionId;
                 await callback({
-                    text: `Adding ${files.length} file(s) to session ${existingSessionId}...`,
+                    text: `Adding ${files.length} file(s) to existing session ${sessionLabel}...`,
                 });
 
+                // Use add_documents with source format expected by MCP server
+                // Format: source: {"type": "upload", "files": [{"filename": "...", "content_base64": "..."}]}
                 mcpResult = await (mcpService as any).callTool(
                     'registry-review',
-                    'upload_additional_files',
+                    'add_documents',
                     {
                         session_id: existingSessionId,
-                        files: files,
+                        source: {
+                            type: 'upload',
+                            files: files,
+                        }
                     }
                 );
+
+                // Automatically trigger document discovery after upload
+                console.log(`[REGISTRY_UPLOAD] Files uploaded, triggering automatic document discovery for ${existingSessionId}...`);
+                await callback({
+                    text: `Files uploaded. Running document discovery...`,
+                });
+
+                try {
+                    discoveryResult = await (mcpService as any).callTool(
+                        'registry-review',
+                        'discover_documents',
+                        { session_id: existingSessionId }
+                    );
+                    console.log(`[REGISTRY_UPLOAD] Document discovery completed for ${existingSessionId}`);
+                } catch (discoverError) {
+                    console.error(`[REGISTRY_UPLOAD] Error during document discovery:`, discoverError);
+                    // Continue with the upload result even if discovery fails
+                }
             } else {
                 // Create new session with files
+                // start_review_from_uploads handles discovery automatically with auto_extract: true
 
                 await callback({
                     text: `Processing ${files.length} file(s) for registry review. Creating session for "${projectName}"...`,
@@ -229,10 +418,35 @@ export const registryReviewUploadAction: Action = {
                         deduplicate: true,
                     }
                 );
+
+                // Extract session ID from result for return value
+                try {
+                    const parsed = typeof mcpResult === 'string' ? JSON.parse(mcpResult) : mcpResult;
+                    if (parsed?.content?.[0]?.text) {
+                        const innerData = JSON.parse(parsed.content[0].text);
+                        sessionId = innerData.session_id;
+                    } else if (parsed?.session_id) {
+                        sessionId = parsed.session_id;
+                    }
+                } catch (e) {
+                    console.log(`[REGISTRY_UPLOAD] Could not extract session ID from result`);
+                }
             }
 
             // Parse and format the result
-            const resultText = formatReviewResult(mcpResult);
+            const resultText = formatReviewResult(mcpResult, discoveryResult, existingSessionId, existingSessionName);
+
+            // Update session cache so subsequent actions can find this session
+            // Uses async version to persist session to database for recovery after restarts
+            const finalSessionId = sessionId || existingSessionId;
+            if (finalSessionId) {
+                await setActiveSessionAsync(runtime, roomId, {
+                    sessionId: finalSessionId,
+                    projectName: existingSessionName || projectName,
+                    source: 'explicit',
+                });
+                console.log(`[REGISTRY_UPLOAD] Updated session cache (persisted): ${finalSessionId}`);
+            }
 
             await callback({
                 text: resultText,
@@ -244,12 +458,15 @@ export const registryReviewUploadAction: Action = {
                 text: 'Registry review session created successfully',
                 values: {
                     projectName,
+                    sessionId: sessionId || existingSessionId,
                     filesProcessed: files.length,
+                    documentsDiscovered: discoveryResult ? true : false,
                     result: mcpResult,
                 },
                 data: {
                     actionName: 'REGISTRY_REVIEW_UPLOAD',
                     mcpResult,
+                    discoveryResult,
                 },
             };
         } catch (error) {
@@ -283,37 +500,114 @@ function extractProjectName(attachments: FileAttachment[]): string | null {
     return firstFile.replace(/\.[^/.]+$/, '');
 }
 
-function formatReviewResult(mcpResult: any): string {
+function formatReviewResult(
+    mcpResult: any,
+    discoveryResult?: any,
+    existingSessionId?: string | null,
+    existingSessionName?: string | null
+): string {
     try {
         // Parse the JSON result from MCP
-        const result = typeof mcpResult === 'string' ? JSON.parse(mcpResult) : mcpResult;
+        let result = typeof mcpResult === 'string' ? JSON.parse(mcpResult) : mcpResult;
 
-        let formatted = '✅ Registry review session created successfully!\n\n';
-
-        if (result.session_id) {
-            formatted += `**Session ID:** ${result.session_id}\n`;
+        // Handle MCP content wrapper
+        if (result?.content?.[0]?.text) {
+            result = JSON.parse(result.content[0].text);
         }
 
-        if (result.project_name) {
-            formatted += `**Project:** ${result.project_name}\n`;
+        const lines: string[] = [];
+
+        // Different header for existing session vs new session
+        if (existingSessionId) {
+            const sessionLabel = existingSessionName
+                ? `"${existingSessionName}" (${existingSessionId})`
+                : existingSessionId;
+            lines.push(`✅ Files added to session ${sessionLabel}`);
+        } else {
+            lines.push('✅ Registry review session created successfully!');
+        }
+        lines.push('');
+
+        if (result.session_id && !existingSessionId) {
+            lines.push(`**Session ID:** \`${result.session_id}\``);
         }
 
-        if (result.documents_discovered) {
-            formatted += `**Documents:** ${result.documents_discovered} files processed\n`;
+        if (result.project_name && !existingSessionId) {
+            lines.push(`**Project:** ${result.project_name}`);
+        }
+
+        // Files uploaded info
+        if (result.files_added) {
+            lines.push(`**Files Added:** ${result.files_added}`);
+        }
+
+        // Parse discovery result if present
+        let discoveryData: any = null;
+        if (discoveryResult) {
+            try {
+                let parsed = typeof discoveryResult === 'string' ? JSON.parse(discoveryResult) : discoveryResult;
+                if (parsed?.content?.[0]?.text) {
+                    discoveryData = JSON.parse(parsed.content[0].text);
+                } else {
+                    discoveryData = parsed;
+                }
+            } catch (e) {
+                console.log(`[FORMAT] Could not parse discovery result`);
+            }
+        }
+
+        // Show discovery results
+        if (discoveryData) {
+            const docCount = discoveryData.documents_found || discoveryData.total_count || 0;
+            lines.push(`**Documents Discovered:** ${docCount}`);
+            lines.push('');
+
+            // Classification summary
+            if (discoveryData.classification_summary && Object.keys(discoveryData.classification_summary).length > 0) {
+                lines.push('**📋 Document Types:**');
+                Object.entries(discoveryData.classification_summary).forEach(([type, count]) => {
+                    const readableType = type
+                        .split('_')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ');
+                    lines.push(`- ${count}× ${readableType}`);
+                });
+                lines.push('');
+            }
+
+            // Document list (if not too many)
+            if (discoveryData.documents && discoveryData.documents.length > 0 && discoveryData.documents.length <= 10) {
+                lines.push('**📄 Documents:**');
+                discoveryData.documents.forEach((doc: any, idx: number) => {
+                    const confidence = doc.confidence ? `(${Math.round(doc.confidence * 100)}%)` : '';
+                    const docType = doc.classification || 'unknown';
+                    lines.push(`${idx + 1}. ${doc.filename || 'Unknown'} — ${docType} ${confidence}`);
+                });
+                lines.push('');
+            }
+        } else if (result.documents_discovered) {
+            lines.push(`**Documents:** ${result.documents_discovered} files processed`);
         }
 
         if (result.evidence_extracted !== undefined) {
-            formatted += `**Evidence Extraction:** ${result.evidence_extracted ? 'Completed' : 'Pending'}\n`;
+            lines.push(`**Evidence Extraction:** ${result.evidence_extracted ? 'Completed' : 'Pending'}`);
         }
 
-        if (result.next_steps) {
-            formatted += `\n**Next Steps:**\n${result.next_steps}\n`;
+        // Next steps
+        lines.push('');
+        lines.push('**💡 Next Steps:**');
+        if (discoveryData && (discoveryData.documents_found || discoveryData.total_count)) {
+            lines.push('- Map requirements to documents: "Map requirements"');
+            lines.push('- Extract evidence: "Extract evidence"');
+        } else {
+            lines.push('- Run document discovery if needed');
+            lines.push('- Then map requirements and extract evidence');
         }
 
-        return formatted;
+        return lines.join('\n');
     } catch (error) {
         // Fallback to raw result if parsing fails
-        return `✅ Registry review session created\n\n${JSON.stringify(mcpResult, null, 2)}`;
+        return `✅ Files processed\n\n${JSON.stringify(mcpResult, null, 2)}`;
     }
 }
 

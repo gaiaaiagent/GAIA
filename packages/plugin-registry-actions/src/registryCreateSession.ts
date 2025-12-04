@@ -11,6 +11,7 @@ import {
   ModelType,
   parseKeyValueXml,
 } from '@elizaos/core';
+import { setActiveSessionAsync } from './registrySessionProvider.js';
 
 /**
  * Template for extracting project information from user messages
@@ -232,6 +233,18 @@ export const registryCreateSessionAction: Action = {
       }
 
       const sessionId = sessionData.session_id || sessionData.sessionId;
+      const roomId = message.roomId.toString();
+
+      // Cache the new session so subsequent actions (like upload) can find it
+      if (sessionId) {
+        await setActiveSessionAsync(runtime, roomId, {
+          sessionId,
+          projectName,
+          status: 'Initialized',
+          source: 'explicit',
+        });
+        logger.info(`[REGISTRY_CREATE_SESSION] Cached session: ${sessionId}`);
+      }
 
       // Format success message
       const responseText = `✅ **Registry Review Session Created** (Stage 1: Initialize)

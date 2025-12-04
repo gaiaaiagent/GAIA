@@ -249,16 +249,21 @@ export const registryDiscoverAction: Action = {
             }
           }
 
-          // Update discoveryData with session documents
-          if (sessionData.documents && sessionData.documents.length > 0) {
+          // Check if session already has discovered documents using statistics.documents_found
+          // Note: Documents are NOT in sessionData.documents - they're in a separate documents.json file
+          // or available via discover_documents result. We use statistics to check if discovery was done.
+          const discoveredCount = sessionData.statistics?.documents_found || 0;
+          if (discoveredCount > 0 && !discoveryData.documents) {
+            // Session has documents but we didn't get them from discover_documents
+            // This means documents were already discovered previously
             discoveryData = {
-              documents: sessionData.documents,
-              total_count: sessionData.documents.length,
+              documents: [],  // Would need separate call to get actual documents
+              total_count: discoveredCount,
               classification_summary: sessionData.classification_summary || {},
               already_discovered: true,
               duplicates_skipped: duplicatesSkipped
             };
-            logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Loaded ${sessionData.documents.length} existing documents from session`);
+            logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Session has ${discoveredCount} previously discovered documents`);
           }
         }
 
