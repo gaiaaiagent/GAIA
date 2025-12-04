@@ -8,6 +8,12 @@ import {
   type State,
   logger,
 } from '@elizaos/core';
+import {
+  callRegistryMCP,
+  formatMCPErrorForUser,
+  MCPError,
+  MCPSessionNotFoundError,
+} from './utils/mcpHelpers.js';
 
 /**
  * REGISTRY_DISCOVER_DOCUMENTS Action
@@ -139,87 +145,21 @@ export const registryDiscoverAction: Action = {
       const sessionId = sessionIdMatch[0];
       logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Session ID: ${sessionId}`);
 
-      // Get MCP service
-      const mcpService = runtime.getService('mcp');
-      if (!mcpService) {
-        const errorMsg = 'MCP service not available. Ensure MCP plugin is loaded.';
-        logger.error(`[REGISTRY_DISCOVER_DOCUMENTS] ${errorMsg}`);
-
-        await callback?.({
-          text: `❌ ${errorMsg}`,
-          action: 'REGISTRY_DISCOVER_DOCUMENTS',
-        });
-
-        return {
-          success: false,
-          error: errorMsg,
-          data: {
-            actionName: 'REGISTRY_DISCOVER_DOCUMENTS',
-            error: errorMsg,
-          },
-        };
-      }
-
-      // Call MCP tool to discover documents
+      // Call MCP tool to discover documents using resilient helper
+      // Provides: 30s timeout, 3 retries with exponential backoff, circuit breaker
       logger.info('[REGISTRY_DISCOVER_DOCUMENTS] Calling MCP tool: discover_documents');
-      const mcpResult = await (mcpService as any).callTool(
-        'registry-review',        // MCP server name
-        'discover_documents',      // Tool name
-        { session_id: sessionId }  // Parameters
-      );
 
-      logger.info('[REGISTRY_DISCOVER_DOCUMENTS] MCP tool returned result');
-
-      // Parse MCP result
       let discoveryData: any = {};
-      let rawData: string = '';
 
       try {
-        let resultContent = mcpResult;
+        discoveryData = await callRegistryMCP<any>(
+          runtime,
+          'discover_documents',
+          { session_id: sessionId },
+          { actionName: 'REGISTRY_DISCOVER_DOCUMENTS' }
+        );
 
-        if (typeof mcpResult === 'string') {
-          try {
-            resultContent = JSON.parse(mcpResult);
-          } catch {
-            rawData = mcpResult;
-          }
-        }
-
-        // Extract data from MCP standard format
-        if (resultContent.content && Array.isArray(resultContent.content)) {
-          const firstContent = resultContent.content[0];
-          if (firstContent.type === 'text' && firstContent.text) {
-            // Check for error messages
-            if (firstContent.text.includes('SessionNotFoundError') || firstContent.text.includes('Session not found')) {
-              const errorMsg = `Session \`${sessionId}\` not found. Please verify the session ID or create a new session first.`;
-              logger.error(`[REGISTRY_DISCOVER_DOCUMENTS] ${errorMsg}`);
-
-              await callback?.({
-                text: `❌ ${errorMsg}`,
-                action: 'REGISTRY_DISCOVER_DOCUMENTS',
-              });
-
-              return {
-                success: false,
-                error: errorMsg,
-                data: {
-                  actionName: 'REGISTRY_DISCOVER_DOCUMENTS',
-                  error: errorMsg,
-                },
-              };
-            }
-
-            try {
-              discoveryData = JSON.parse(firstContent.text);
-              rawData = firstContent.text;
-            } catch {
-              rawData = firstContent.text;
-            }
-          }
-        } else {
-          discoveryData = resultContent;
-          rawData = JSON.stringify(resultContent);
-        }
+        logger.info('[REGISTRY_DISCOVER_DOCUMENTS] MCP tool returned result');
 
         const newDocsFound = discoveryData.documents_found || discoveryData.total_count || 0;
         const duplicatesSkipped = discoveryData.duplicates_skipped || 0;
@@ -230,46 +170,65 @@ export const registryDiscoverAction: Action = {
         if (newDocsFound === 0 && duplicatesSkipped > 0) {
           logger.info('[REGISTRY_DISCOVER_DOCUMENTS] No new documents, loading session to get existing documents');
 
-          const sessionResult = await (mcpService as any).callTool(
-            'registry-review',
-            'load_session',
-            { session_id: sessionId }
-          );
+          try {
+            const sessionData = await callRegistryMCP<any>(
+              runtime,
+              'load_session',
+              { session_id: sessionId },
+              { actionName: 'REGISTRY_DISCOVER_DOCUMENTS' }
+            );
 
-          // Parse session result
-          let sessionData: any = {};
-          if (sessionResult.content && Array.isArray(sessionResult.content)) {
-            const firstContent = sessionResult.content[0];
-            if (firstContent.type === 'text' && firstContent.text) {
-              try {
-                sessionData = JSON.parse(firstContent.text);
-              } catch (e) {
-                logger.error('[REGISTRY_DISCOVER_DOCUMENTS] Error parsing session data:', e);
-              }
+            // Check if session already has discovered documents using statistics.documents_found
+            const discoveredCount = sessionData.statistics?.documents_found || 0;
+            if (discoveredCount > 0 && !discoveryData.documents) {
+              // Session has documents but we didn't get them from discover_documents
+              // This means documents were already discovered previously
+              discoveryData = {
+                documents: [],
+                total_count: discoveredCount,
+                classification_summary: sessionData.classification_summary || {},
+                already_discovered: true,
+                duplicates_skipped: duplicatesSkipped
+              };
+              logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Session has ${discoveredCount} previously discovered documents`);
             }
-          }
-
-          // Check if session already has discovered documents using statistics.documents_found
-          // Note: Documents are NOT in sessionData.documents - they're in a separate documents.json file
-          // or available via discover_documents result. We use statistics to check if discovery was done.
-          const discoveredCount = sessionData.statistics?.documents_found || 0;
-          if (discoveredCount > 0 && !discoveryData.documents) {
-            // Session has documents but we didn't get them from discover_documents
-            // This means documents were already discovered previously
-            discoveryData = {
-              documents: [],  // Would need separate call to get actual documents
-              total_count: discoveredCount,
-              classification_summary: sessionData.classification_summary || {},
-              already_discovered: true,
-              duplicates_skipped: duplicatesSkipped
-            };
-            logger.info(`[REGISTRY_DISCOVER_DOCUMENTS] Session has ${discoveredCount} previously discovered documents`);
+          } catch (loadError) {
+            logger.warn('[REGISTRY_DISCOVER_DOCUMENTS] Could not load session for document count:', loadError);
+            // Continue with discovery result anyway
           }
         }
+      } catch (error) {
+        if (error instanceof MCPSessionNotFoundError) {
+          const errorMsg = `Session \`${sessionId}\` not found. Please verify the session ID or create a new session first.`;
+          logger.error(`[REGISTRY_DISCOVER_DOCUMENTS] ${errorMsg}`);
 
-      } catch (parseError) {
-        logger.error('[REGISTRY_DISCOVER_DOCUMENTS] Error parsing MCP result:', parseError);
-        rawData = String(mcpResult);
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_DISCOVER_DOCUMENTS',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_DISCOVER_DOCUMENTS', error: errorMsg, errorCode: 'MCP_SESSION_NOT_FOUND' },
+          };
+        }
+        if (error instanceof MCPError) {
+          const errorMsg = formatMCPErrorForUser(error);
+          logger.error(`[REGISTRY_DISCOVER_DOCUMENTS] MCP error: ${error.code} - ${error.message}`);
+
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_DISCOVER_DOCUMENTS',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_DISCOVER_DOCUMENTS', error: errorMsg, errorCode: error.code },
+          };
+        }
+        throw error;
       }
 
       // Format output with proper markdown spacing
@@ -294,7 +253,7 @@ export const registryDiscoverAction: Action = {
         },
         data: {
           actionName: 'REGISTRY_DISCOVER_DOCUMENTS',
-          mcpResult,
+          discoveryData,
           outputLength: formattedOutput.length,
         },
       };

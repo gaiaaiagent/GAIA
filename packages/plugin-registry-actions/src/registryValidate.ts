@@ -9,6 +9,12 @@ import {
   logger,
 } from '@elizaos/core';
 import { getActiveSessionAsync, setActiveSessionAsync, resolveSessionId } from './registrySessionProvider.js';
+import {
+  callRegistryMCP,
+  formatMCPErrorForUser,
+  MCPError,
+  MCPSessionNotFoundError,
+} from './utils/mcpHelpers.js';
 
 /**
  * REGISTRY_VALIDATE Action
@@ -108,84 +114,58 @@ export const registryValidateAction: Action = {
 
       logger.info(`[REGISTRY_VALIDATE] Session ID: ${sessionId}`);
 
-      // Get MCP service
-      const mcpService = runtime.getService('mcp');
-      if (!mcpService) {
-        const errorMsg = 'MCP service not available.';
-        logger.error(`[REGISTRY_VALIDATE] ${errorMsg}`);
-
-        await callback?.({
-          text: `❌ ${errorMsg}`,
-          action: 'REGISTRY_VALIDATE',
-        });
-
-        return {
-          success: false,
-          error: errorMsg,
-          data: { actionName: 'REGISTRY_VALIDATE', error: errorMsg },
-        };
-      }
-
-      // Call MCP tool
+      // Call MCP tool with resilient helper (timeout, retry, circuit breaker)
       logger.info('[REGISTRY_VALIDATE] Calling MCP tool: validate_consistency');
-      const mcpResult = await (mcpService as any).callTool(
-        'registry-review',
-        'validate_consistency',
-        { session_id: sessionId }
-      );
 
-      logger.info('[REGISTRY_VALIDATE] MCP tool returned result');
-
-      // Parse MCP result
       let validationData: any = {};
       try {
-        let resultContent = mcpResult;
+        validationData = await callRegistryMCP<any>(
+          runtime,
+          'validate_consistency',
+          { session_id: sessionId },
+          { actionName: 'REGISTRY_VALIDATE' }
+        );
 
-        if (typeof mcpResult === 'string') {
-          try {
-            resultContent = JSON.parse(mcpResult);
-          } catch {
-            // Keep as string
-          }
-        }
+        logger.info('[REGISTRY_VALIDATE] MCP tool returned result');
+      } catch (error) {
+        if (error instanceof MCPSessionNotFoundError) {
+          const errorMsg = `Session \`${sessionId}\` not found. Please verify the session ID.`;
+          logger.error(`[REGISTRY_VALIDATE] ${errorMsg}`);
 
-        if (resultContent.content && Array.isArray(resultContent.content)) {
-          const firstContent = resultContent.content[0];
-          if (firstContent.type === 'text' && firstContent.text) {
-            // Check for errors
-            if (
-              firstContent.text.includes('SessionNotFoundError') ||
-              firstContent.text.includes('Session not found')
-            ) {
-              const errorMsg = `Session \`${sessionId}\` not found.`;
-              await callback?.({
-                text: `❌ ${errorMsg}`,
-                action: 'REGISTRY_VALIDATE',
-              });
-              return {
-                success: false,
-                error: errorMsg,
-                data: { actionName: 'REGISTRY_VALIDATE', error: errorMsg },
-              };
-            }
-            try {
-              validationData = JSON.parse(firstContent.text);
-            } catch {
-              validationData = { raw: firstContent.text };
-            }
-          }
-        } else {
-          validationData = resultContent;
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_VALIDATE',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_VALIDATE', error: errorMsg, errorCode: 'MCP_SESSION_NOT_FOUND' },
+          };
         }
-      } catch (parseError) {
-        logger.error('[REGISTRY_VALIDATE] Error parsing result:', parseError);
+        if (error instanceof MCPError) {
+          const errorMsg = formatMCPErrorForUser(error);
+          logger.error(`[REGISTRY_VALIDATE] MCP error: ${error.code} - ${error.message}`);
+
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_VALIDATE',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_VALIDATE', error: errorMsg, errorCode: error.code },
+          };
+        }
+        throw error;
       }
 
       // Update active session with database persistence
       if (roomId) {
         await setActiveSessionAsync(runtime, roomId, {
           sessionId,
-          projectName: activeSession?.projectName || 'Unknown',
+          projectName: projectName || 'Unknown',
           status: 'Validated',
           source: 'explicit',
         });

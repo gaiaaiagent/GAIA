@@ -9,6 +9,12 @@ import {
   logger,
 } from '@elizaos/core';
 import { getActiveSessionAsync, setActiveSessionAsync, resolveSessionId } from './registrySessionProvider.js';
+import {
+  callRegistryMCP,
+  formatMCPErrorForUser,
+  MCPError,
+  MCPSessionNotFoundError,
+} from './utils/mcpHelpers.js';
 
 /**
  * REGISTRY_MAP_REQUIREMENTS Action
@@ -108,58 +114,47 @@ export const registryMapRequirementsAction: Action = {
 
       logger.info(`[REGISTRY_MAP_REQUIREMENTS] Session ID: ${sessionId}`);
 
-      // Get MCP service
-      const mcpService = runtime.getService('mcp');
-      if (!mcpService) {
-        const errorMsg = 'MCP service not available. Ensure MCP plugin is loaded.';
-        logger.error(`[REGISTRY_MAP_REQUIREMENTS] ${errorMsg}`);
-
-        await callback?.({
-          text: `❌ ${errorMsg}`,
-          action: 'REGISTRY_MAP_REQUIREMENTS',
-        });
-
-        return {
-          success: false,
-          error: errorMsg,
-          data: { actionName: 'REGISTRY_MAP_REQUIREMENTS', error: errorMsg },
-        };
-      }
-
       // First, load the session to ensure it exists and has documents
+      // Uses resilient MCP helper with timeout, retry, and circuit breaker
       logger.info('[REGISTRY_MAP_REQUIREMENTS] Loading session to verify documents');
-      const loadResult = await (mcpService as any).callTool(
-        'registry-review',
-        'load_session',
-        { session_id: sessionId }
-      );
 
-      // Check for session errors
       let sessionData: any = {};
       try {
-        if (loadResult.content && Array.isArray(loadResult.content)) {
-          const firstContent = loadResult.content[0];
-          if (firstContent.type === 'text' && firstContent.text) {
-            if (
-              firstContent.text.includes('SessionNotFoundError') ||
-              firstContent.text.includes('Session not found')
-            ) {
-              const errorMsg = `Session \`${sessionId}\` not found. Please verify the session ID.`;
-              await callback?.({
-                text: `❌ ${errorMsg}`,
-                action: 'REGISTRY_MAP_REQUIREMENTS',
-              });
-              return {
-                success: false,
-                error: errorMsg,
-                data: { actionName: 'REGISTRY_MAP_REQUIREMENTS', error: errorMsg },
-              };
-            }
-            sessionData = JSON.parse(firstContent.text);
-          }
+        sessionData = await callRegistryMCP<any>(
+          runtime,
+          'load_session',
+          { session_id: sessionId },
+          { actionName: 'REGISTRY_MAP_REQUIREMENTS' }
+        );
+      } catch (error) {
+        if (error instanceof MCPSessionNotFoundError) {
+          const errorMsg = `Session \`${sessionId}\` not found. Please verify the session ID.`;
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_MAP_REQUIREMENTS',
+          });
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_MAP_REQUIREMENTS', error: errorMsg, errorCode: 'MCP_SESSION_NOT_FOUND' },
+          };
         }
-      } catch (e) {
-        logger.warn('[REGISTRY_MAP_REQUIREMENTS] Could not parse session data');
+        if (error instanceof MCPError) {
+          const errorMsg = formatMCPErrorForUser(error);
+          logger.error(`[REGISTRY_MAP_REQUIREMENTS] MCP error: ${error.code}`);
+
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_MAP_REQUIREMENTS',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_MAP_REQUIREMENTS', error: errorMsg, errorCode: error.code },
+          };
+        }
+        throw error;
       }
 
       // IMPORTANT: Check statistics.documents_found, NOT sessionData.documents
@@ -179,49 +174,58 @@ export const registryMapRequirementsAction: Action = {
       }
 
       // Call MCP tool to map requirements
+      // Uses resilient MCP helper with timeout, retry, and circuit breaker
       logger.info('[REGISTRY_MAP_REQUIREMENTS] Calling MCP tool: map_all_requirements');
-      const mcpResult = await (mcpService as any).callTool(
-        'registry-review',
-        'map_all_requirements',
-        { session_id: sessionId }
-      );
 
-      logger.info('[REGISTRY_MAP_REQUIREMENTS] MCP tool returned result');
-
-      // Parse MCP result
       let mappingData: any = {};
       try {
-        let resultContent = mcpResult;
+        mappingData = await callRegistryMCP<any>(
+          runtime,
+          'map_all_requirements',
+          { session_id: sessionId },
+          { actionName: 'REGISTRY_MAP_REQUIREMENTS' }
+        );
+        logger.info('[REGISTRY_MAP_REQUIREMENTS] MCP tool returned result');
+      } catch (error) {
+        if (error instanceof MCPError) {
+          const errorMsg = formatMCPErrorForUser(error);
+          logger.error(`[REGISTRY_MAP_REQUIREMENTS] MCP error mapping: ${error.code}`);
 
-        if (typeof mcpResult === 'string') {
-          try {
-            resultContent = JSON.parse(mcpResult);
-          } catch {
-            // Keep as string
-          }
-        }
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_MAP_REQUIREMENTS',
+          });
 
-        if (resultContent.content && Array.isArray(resultContent.content)) {
-          const firstContent = resultContent.content[0];
-          if (firstContent.type === 'text' && firstContent.text) {
-            try {
-              mappingData = JSON.parse(firstContent.text);
-            } catch {
-              mappingData = { raw: firstContent.text };
-            }
-          }
-        } else {
-          mappingData = resultContent;
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_MAP_REQUIREMENTS', error: errorMsg, errorCode: error.code },
+          };
         }
-      } catch (parseError) {
-        logger.error('[REGISTRY_MAP_REQUIREMENTS] Error parsing result:', parseError);
+        throw error;
+      }
+
+      // CRITICAL: Auto-confirm all mappings so evidence extraction can proceed
+      // The MCP server requires mappings to be confirmed before extract_evidence works
+      logger.info('[REGISTRY_MAP_REQUIREMENTS] Auto-confirming all mappings');
+      try {
+        await callRegistryMCP(
+          runtime,
+          'confirm_all_mappings',
+          { session_id: sessionId },
+          { actionName: 'REGISTRY_MAP_REQUIREMENTS' }
+        );
+        logger.info('[REGISTRY_MAP_REQUIREMENTS] Mappings confirmed successfully');
+      } catch (confirmError) {
+        logger.warn('[REGISTRY_MAP_REQUIREMENTS] Could not auto-confirm mappings:', confirmError);
+        // Continue anyway - manual confirmation may be needed
       }
 
       // Update active session
       if (roomId) {
         await setActiveSessionAsync(runtime, roomId, {
           sessionId,
-          projectName: sessionData.project_name || activeSession?.projectName || 'Unknown',
+          projectName: sessionData.project_name || projectName || 'Unknown',
           status: 'Requirements Mapped',
           source: 'mapping',
         });

@@ -10,6 +10,12 @@ import {
 } from '@elizaos/core';
 import { validateSemantically, REGISTRY_INTENTS } from './semanticValidation.js';
 import { clearActiveSessionAsync } from './registrySessionProvider.js';
+import {
+  callRegistryMCP,
+  formatMCPErrorForUser,
+  MCPError,
+  MCPSessionNotFoundError,
+} from './utils/mcpHelpers.js';
 
 interface SessionInfo {
   session_id: string;
@@ -147,24 +153,6 @@ export const registryDeleteAction: Action = {
       const text = message.content.text.toLowerCase();
       const roomId = message.roomId.toString();
 
-      // Get MCP service
-      const mcpService = runtime.getService('mcp');
-      if (!mcpService) {
-        const errorMsg = 'MCP service not available. Ensure MCP plugin is loaded.';
-        logger.error(`[REGISTRY_DELETE] ${errorMsg}`);
-
-        await callback?.({
-          text: `❌ ${errorMsg}`,
-          action: 'REGISTRY_DELETE',
-        });
-
-        return {
-          success: false,
-          error: errorMsg,
-          data: { actionName: 'REGISTRY_DELETE', error: errorMsg },
-        };
-      }
-
       // Extract specific session IDs from the message
       const sessionIdMatches = text.match(/session-[a-f0-9]+/gi) || [];
 
@@ -187,7 +175,7 @@ export const registryDeleteAction: Action = {
         }));
         logger.info(`[REGISTRY_DELETE] Deleting ${sessionsToDelete.length} specific session(s)`);
       } else if (deleteAll) {
-        // Get all sessions first
+        // Get all sessions first using resilient MCP helper
         logger.info('[REGISTRY_DELETE] Delete all requested, fetching session list...');
 
         await callback?.({
@@ -195,29 +183,38 @@ export const registryDeleteAction: Action = {
           action: 'REGISTRY_DELETE',
         });
 
-        const listResult = await (mcpService as any).callTool(
-          'registry-review',
-          'list_sessions',
-          {}
-        );
-
-        // Parse the list result
         let sessions: any[] = [];
         try {
-          let resultContent = listResult;
-          if (typeof listResult === 'string') {
-            resultContent = JSON.parse(listResult);
+          const result = await callRegistryMCP<any[] | { sessions?: any[] }>(
+            runtime,
+            'list_sessions',
+            {},
+            { actionName: 'REGISTRY_DELETE' }
+          );
+
+          // Handle both array and object response formats
+          if (Array.isArray(result)) {
+            sessions = result;
+          } else if (result && typeof result === 'object' && 'sessions' in result) {
+            sessions = result.sessions || [];
           }
-          if (resultContent.content && Array.isArray(resultContent.content)) {
-            const firstContent = resultContent.content[0];
-            if (firstContent.type === 'text' && firstContent.text) {
-              sessions = JSON.parse(firstContent.text);
-            }
-          } else if (Array.isArray(resultContent)) {
-            sessions = resultContent;
+        } catch (error) {
+          if (error instanceof MCPError) {
+            const errorMsg = formatMCPErrorForUser(error);
+            logger.error(`[REGISTRY_DELETE] MCP error listing sessions: ${error.code}`);
+
+            await callback?.({
+              text: `❌ ${errorMsg}`,
+              action: 'REGISTRY_DELETE',
+            });
+
+            return {
+              success: false,
+              error: errorMsg,
+              data: { actionName: 'REGISTRY_DELETE', error: errorMsg, errorCode: error.code },
+            };
           }
-        } catch (e) {
-          logger.error('[REGISTRY_DELETE] Error parsing session list:', e);
+          throw error;
         }
 
         if (sessions.length === 0) {
@@ -268,40 +265,53 @@ export const registryDeleteAction: Action = {
         try {
           logger.info(`[REGISTRY_DELETE] Deleting session: ${session.session_id}`);
 
-          const deleteResult = await (mcpService as any).callTool(
-            'registry-review',
+          // Use resilient MCP helper for deletion
+          await callRegistryMCP(
+            runtime,
             'delete_session',
-            { session_id: session.session_id }
+            { session_id: session.session_id },
+            { actionName: 'REGISTRY_DELETE' }
           );
 
-          // Check for errors in the result
-          let isError = false;
-          let errorMsg = '';
+          results.push({
+            session_id: session.session_id,
+            project_name: session.project_name,
+            success: true,
+          });
 
-          if (deleteResult?.isError) {
-            isError = true;
-            if (deleteResult.content?.[0]?.text) {
-              errorMsg = deleteResult.content[0].text;
-            }
+          logger.info(`[REGISTRY_DELETE] Session ${session.session_id}: SUCCESS`);
+        } catch (error) {
+          let errorMsg: string;
+
+          if (error instanceof MCPSessionNotFoundError) {
+            // Session already deleted or doesn't exist - treat as success
+            errorMsg = `Session not found (may already be deleted)`;
+            logger.warn(`[REGISTRY_DELETE] Session ${session.session_id}: NOT FOUND`);
+            results.push({
+              session_id: session.session_id,
+              project_name: session.project_name,
+              success: true, // Treat as success since end state is the same
+              error: errorMsg,
+            });
+          } else if (error instanceof MCPError) {
+            errorMsg = formatMCPErrorForUser(error);
+            logger.error(`[REGISTRY_DELETE] Session ${session.session_id}: FAILED - ${error.code}`);
+            results.push({
+              session_id: session.session_id,
+              project_name: session.project_name,
+              success: false,
+              error: errorMsg,
+            });
+          } else {
+            errorMsg = error instanceof Error ? error.message : String(error);
+            logger.error(`[REGISTRY_DELETE] Error deleting ${session.session_id}:`, error);
+            results.push({
+              session_id: session.session_id,
+              project_name: session.project_name,
+              success: false,
+              error: errorMsg,
+            });
           }
-
-          results.push({
-            session_id: session.session_id,
-            project_name: session.project_name,
-            success: !isError,
-            error: isError ? errorMsg : undefined,
-          });
-
-          logger.info(`[REGISTRY_DELETE] Session ${session.session_id}: ${isError ? 'FAILED' : 'SUCCESS'}`);
-        } catch (e) {
-          const errorMsg = e instanceof Error ? e.message : String(e);
-          logger.error(`[REGISTRY_DELETE] Error deleting ${session.session_id}:`, e);
-          results.push({
-            session_id: session.session_id,
-            project_name: session.project_name,
-            success: false,
-            error: errorMsg,
-          });
         }
       }
 

@@ -12,6 +12,11 @@ import {
   parseKeyValueXml,
 } from '@elizaos/core';
 import { setActiveSessionAsync } from './registrySessionProvider.js';
+import {
+  callRegistryMCP,
+  formatMCPErrorForUser,
+  MCPError,
+} from './utils/mcpHelpers.js';
 
 /**
  * Template for extracting project information from user messages
@@ -168,68 +173,40 @@ export const registryCreateSessionAction: Action = {
         `[REGISTRY_CREATE_SESSION] Extracted - Project: ${projectName}, Methodology: ${methodology}`
       );
 
-      // Get MCP service
-      const mcpService = runtime.getService('mcp');
-      if (!mcpService) {
-        const errorMsg = 'MCP service not available';
-        logger.error(`[REGISTRY_CREATE_SESSION] ${errorMsg}`);
-
-        await callback?.({
-          text: `❌ ${errorMsg}`,
-          action: 'REGISTRY_CREATE_SESSION',
-        });
-
-        return {
-          success: false,
-          error: errorMsg,
-          data: { actionName: 'REGISTRY_CREATE_SESSION', error: errorMsg },
-        };
-      }
-
       // Call create_session MCP tool (Stage 1: Initialize)
+      // Uses resilient helper with timeout, retry, and circuit breaker
       logger.info('[REGISTRY_CREATE_SESSION] Calling create_session MCP tool');
-      const mcpResult = await (mcpService as any).callTool(
-        'registry-review',
-        'create_session',
-        {
-          project_name: projectName,
-          methodology: methodology,
-        }
-      );
 
-      logger.info('[REGISTRY_CREATE_SESSION] Session created successfully');
-
-      // Parse MCP result
       let sessionData: any = {};
       try {
-        let resultContent = mcpResult;
-
-        if (typeof mcpResult === 'string') {
-          try {
-            resultContent = JSON.parse(mcpResult);
-          } catch {
-            // Keep as string
-          }
-        }
-
-        // Extract from MCP standard format
-        if (resultContent.content && Array.isArray(resultContent.content)) {
-          const firstContent = resultContent.content[0];
-          if (firstContent.type === 'text' && firstContent.text) {
-            try {
-              sessionData = JSON.parse(firstContent.text);
-            } catch {
-              sessionData = { raw: firstContent.text };
-            }
-          }
-        } else {
-          sessionData = resultContent;
-        }
-      } catch (parseError) {
-        logger.error(
-          '[REGISTRY_CREATE_SESSION] Error parsing result:',
-          parseError
+        sessionData = await callRegistryMCP<any>(
+          runtime,
+          'create_session',
+          {
+            project_name: projectName,
+            methodology: methodology,
+          },
+          { actionName: 'REGISTRY_CREATE_SESSION' }
         );
+
+        logger.info('[REGISTRY_CREATE_SESSION] Session created successfully');
+      } catch (error) {
+        if (error instanceof MCPError) {
+          const errorMsg = formatMCPErrorForUser(error);
+          logger.error(`[REGISTRY_CREATE_SESSION] MCP error: ${error.code} - ${error.message}`);
+
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_CREATE_SESSION',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_CREATE_SESSION', error: errorMsg, errorCode: error.code },
+          };
+        }
+        throw error;
       }
 
       const sessionId = sessionData.session_id || sessionData.sessionId;

@@ -9,6 +9,12 @@ import {
   logger,
 } from '@elizaos/core';
 import { getActiveSessionAsync, setActiveSessionAsync, resolveSessionId } from './registrySessionProvider.js';
+import {
+  callRegistryMCP,
+  formatMCPErrorForUser,
+  MCPError,
+  MCPSessionNotFoundError,
+} from './utils/mcpHelpers.js';
 
 /**
  * REGISTRY_EXTRACT_EVIDENCE Action
@@ -109,91 +115,62 @@ export const registryExtractEvidenceAction: Action = {
 
       logger.info(`[REGISTRY_EXTRACT_EVIDENCE] Session ID: ${sessionId}`);
 
-      // Get MCP service
-      const mcpService = runtime.getService('mcp');
-      if (!mcpService) {
-        const errorMsg = 'MCP service not available.';
-        logger.error(`[REGISTRY_EXTRACT_EVIDENCE] ${errorMsg}`);
-
-        await callback?.({
-          text: `❌ ${errorMsg}`,
-          action: 'REGISTRY_EXTRACT_EVIDENCE',
-        });
-
-        return {
-          success: false,
-          error: errorMsg,
-          data: { actionName: 'REGISTRY_EXTRACT_EVIDENCE', error: errorMsg },
-        };
-      }
-
       // Check for specific requirement ID in message
       const reqIdMatch = text.match(/REQ-\d{3}/i);
-      const toolName = reqIdMatch ? 'extract_evidence' : 'extract_all_evidence';
+      const toolName = 'extract_evidence';
       const toolParams = reqIdMatch
         ? { session_id: sessionId, requirement_id: reqIdMatch[0].toUpperCase() }
         : { session_id: sessionId };
 
-      // Call MCP tool
+      // Call MCP tool with resilient helper (timeout, retry, circuit breaker)
       logger.info(`[REGISTRY_EXTRACT_EVIDENCE] Calling MCP tool: ${toolName}`);
-      const mcpResult = await (mcpService as any).callTool(
-        'registry-review',
-        toolName,
-        toolParams
-      );
 
-      logger.info('[REGISTRY_EXTRACT_EVIDENCE] MCP tool returned result');
-
-      // Parse MCP result
       let evidenceData: any = {};
       try {
-        let resultContent = mcpResult;
+        evidenceData = await callRegistryMCP<any>(
+          runtime,
+          toolName,
+          toolParams,
+          { actionName: 'REGISTRY_EXTRACT_EVIDENCE' }
+        );
 
-        if (typeof mcpResult === 'string') {
-          try {
-            resultContent = JSON.parse(mcpResult);
-          } catch {
-            // Keep as string
-          }
+        logger.info('[REGISTRY_EXTRACT_EVIDENCE] MCP tool returned result');
+      } catch (error) {
+        if (error instanceof MCPSessionNotFoundError) {
+          const errorMsg = `Session \`${sessionId}\` not found. Use "list sessions" to see available sessions.`;
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_EXTRACT_EVIDENCE',
+          });
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_EXTRACT_EVIDENCE', error: errorMsg, errorCode: 'MCP_SESSION_NOT_FOUND' },
+          };
         }
+        if (error instanceof MCPError) {
+          const errorMsg = formatMCPErrorForUser(error);
+          logger.error(`[REGISTRY_EXTRACT_EVIDENCE] MCP error: ${error.code} - ${error.message}`);
 
-        if (resultContent.content && Array.isArray(resultContent.content)) {
-          const firstContent = resultContent.content[0];
-          if (firstContent.type === 'text' && firstContent.text) {
-            // Check for errors
-            if (
-              firstContent.text.includes('SessionNotFoundError') ||
-              firstContent.text.includes('Session not found')
-            ) {
-              const errorMsg = `Session \`${sessionId}\` not found.`;
-              await callback?.({
-                text: `❌ ${errorMsg}`,
-                action: 'REGISTRY_EXTRACT_EVIDENCE',
-              });
-              return {
-                success: false,
-                error: errorMsg,
-                data: { actionName: 'REGISTRY_EXTRACT_EVIDENCE', error: errorMsg },
-              };
-            }
-            try {
-              evidenceData = JSON.parse(firstContent.text);
-            } catch {
-              evidenceData = { raw: firstContent.text };
-            }
-          }
-        } else {
-          evidenceData = resultContent;
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_EXTRACT_EVIDENCE',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_EXTRACT_EVIDENCE', error: errorMsg, errorCode: error.code },
+          };
         }
-      } catch (parseError) {
-        logger.error('[REGISTRY_EXTRACT_EVIDENCE] Error parsing result:', parseError);
+        throw error;
       }
 
       // Update active session
       if (roomId) {
         await setActiveSessionAsync(runtime, roomId, {
           sessionId,
-          projectName: activeSession?.projectName || 'Unknown',
+          projectName: projectName || 'Unknown',
           status: 'Evidence Extracted',
           source: 'evidence',
         });
@@ -209,12 +186,23 @@ export const registryExtractEvidenceAction: Action = {
 
       logger.info('[REGISTRY_EXTRACT_EVIDENCE] Successfully completed evidence extraction');
 
+      // Calculate total evidence from requirements
+      const requirementsList = evidenceData.requirements || evidenceData.evidence || [];
+      let totalEvidenceCount = 0;
+      requirementsList.forEach((req: any) => {
+        const snippets = req.evidence_snippets || req.evidence || req.snippets || [];
+        totalEvidenceCount += snippets.length;
+      });
+
       return {
         success: true,
         text: 'Evidence extraction completed successfully',
         values: {
           sessionId,
-          evidenceCount: evidenceData.evidence_count || evidenceData.total_evidence || 0,
+          evidenceCount: totalEvidenceCount,
+          coveredCount: evidenceData.requirements_covered || 0,
+          partialCount: evidenceData.requirements_partial || 0,
+          missingCount: evidenceData.requirements_missing || 0,
           stage: 4,
         },
         data: {
@@ -289,6 +277,9 @@ export const registryExtractEvidenceAction: Action = {
 
 /**
  * Format evidence extraction result
+ *
+ * Note: MCP returns evidence in `evidence_snippets` field, not `evidence` or `snippets`.
+ * Also provides coverage stats via requirements_covered/partial/missing fields.
  */
 function formatEvidenceResult(
   data: any,
@@ -297,8 +288,23 @@ function formatEvidenceResult(
 ): string {
   const lines: string[] = [];
 
-  const totalEvidence = data.evidence_count || data.total_evidence || 0;
   const requirements = data.requirements || data.evidence || [];
+
+  // Calculate total evidence count from requirements (MCP doesn't provide evidence_count)
+  let totalEvidence = 0;
+  let reqsWithEvidence = 0;
+  requirements.forEach((req: any) => {
+    // FIX: Check evidence_snippets FIRST (MCP field name), then fallbacks
+    const evidenceItems = req.evidence_snippets || req.evidence || req.snippets || [];
+    totalEvidence += evidenceItems.length;
+    if (evidenceItems.length > 0) reqsWithEvidence++;
+  });
+
+  // Use MCP coverage stats if available
+  const coveredCount = data.requirements_covered ?? reqsWithEvidence;
+  const partialCount = data.requirements_partial ?? 0;
+  const missingCount = data.requirements_missing ?? (requirements.length - reqsWithEvidence);
+  const overallCoverage = data.overall_coverage ?? (requirements.length > 0 ? reqsWithEvidence / requirements.length : 0);
 
   lines.push(`📎 **Evidence Extraction Complete** (Stage 4)`);
   lines.push('');
@@ -308,11 +314,17 @@ function formatEvidenceResult(
   }
   lines.push('');
 
-  // Summary
+  // Summary with coverage stats
   lines.push('**📊 Extraction Summary:**');
   lines.push('');
   lines.push(`- Evidence items extracted: ${totalEvidence}`);
-  lines.push(`- Requirements with evidence: ${requirements.length}`);
+  lines.push(`- Requirements covered: ${coveredCount}/${requirements.length} (${Math.round(overallCoverage * 100)}%)`);
+  if (partialCount > 0) {
+    lines.push(`- Partial coverage: ${partialCount}`);
+  }
+  if (missingCount > 0) {
+    lines.push(`- Missing evidence: ${missingCount}`);
+  }
   lines.push('');
 
   // Evidence details
@@ -322,10 +334,12 @@ function formatEvidenceResult(
 
     requirements.slice(0, 8).forEach((req: any) => {
       const reqId = req.requirement_id || req.id || 'REQ';
-      const evidenceItems = req.evidence || req.snippets || [];
-      const status = evidenceItems.length > 0 ? '✅' : '⚠️';
+      // FIX: Check evidence_snippets FIRST (MCP field name)
+      const evidenceItems = req.evidence_snippets || req.evidence || req.snippets || [];
+      const reqStatus = req.status || (evidenceItems.length > 0 ? 'covered' : 'missing');
+      const statusIcon = reqStatus === 'covered' ? '✅' : reqStatus === 'partial' ? '🟡' : '⚠️';
 
-      lines.push(`${status} **${reqId}**: ${evidenceItems.length} evidence item(s)`);
+      lines.push(`${statusIcon} **${reqId}**: ${evidenceItems.length} evidence item(s)`);
 
       // Show first evidence snippet
       if (evidenceItems.length > 0) {
@@ -335,7 +349,11 @@ function formatEvidenceResult(
           const truncated = snippet.length > 100 ? snippet.slice(0, 100) + '...' : snippet;
           lines.push(`   > "${truncated}"`);
           if (firstEvidence.page) {
-            lines.push(`   *(Page ${firstEvidence.page}, ${firstEvidence.document || 'document'})*`);
+            lines.push(`   *(Page ${firstEvidence.page}, ${firstEvidence.document_name || firstEvidence.document || 'document'})*`);
+          }
+          // Show extracted value if available
+          if (firstEvidence.extracted_value) {
+            lines.push(`   📋 **Value:** ${firstEvidence.extracted_value}`);
           }
         }
       }

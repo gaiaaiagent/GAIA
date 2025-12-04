@@ -8,9 +8,14 @@ import {
   type State,
   logger,
 } from '@elizaos/core';
-import { setActiveSessionAsync } from './registrySessionProvider.js';
+import { getActiveSessionAsync, setActiveSessionAsync } from './registrySessionProvider.js';
 import { recordActionExecution } from './registryPerformanceEvaluator.js';
 import { validateSemantically, REGISTRY_INTENTS } from './semanticValidation.js';
+import {
+  callRegistryMCP,
+  formatMCPErrorForUser,
+  MCPError,
+} from './utils/mcpHelpers.js';
 
 /**
  * REGISTRY_LOAD_SESSION Action
@@ -152,47 +157,39 @@ export const registryLoadSessionAction: Action = {
         };
       }
 
-      // Get MCP service
-      const mcpService = runtime.getService('mcp');
-      if (!mcpService) {
-        const errorMsg = 'MCP service not available. Ensure MCP plugin is loaded.';
-        logger.error(`[REGISTRY_LOAD_SESSION] ${errorMsg}`);
-
-        await callback?.({
-          text: `❌ ${errorMsg}`,
-          action: 'REGISTRY_LOAD_SESSION',
-        });
-
-        return {
-          success: false,
-          error: errorMsg,
-          data: { actionName: 'REGISTRY_LOAD_SESSION', error: errorMsg },
-        };
-      }
-
-      // First, list all sessions
-      const listResult = await (mcpService as any).callTool(
-        'registry-review',
-        'list_sessions',
-        {}
-      );
-
+      // List all sessions using resilient MCP helper
       let sessions: any[] = [];
       try {
-        let resultContent = listResult;
-        if (typeof listResult === 'string') {
-          resultContent = JSON.parse(listResult);
+        const result = await callRegistryMCP<any[] | { sessions?: any[] }>(
+          runtime,
+          'list_sessions',
+          {},
+          { actionName: 'REGISTRY_LOAD_SESSION' }
+        );
+
+        // Handle both array and object response formats
+        if (Array.isArray(result)) {
+          sessions = result;
+        } else if (result && typeof result === 'object' && 'sessions' in result) {
+          sessions = result.sessions || [];
         }
-        if (resultContent.content && Array.isArray(resultContent.content)) {
-          const firstContent = resultContent.content[0];
-          if (firstContent.type === 'text' && firstContent.text) {
-            sessions = JSON.parse(firstContent.text);
-          }
-        } else if (Array.isArray(resultContent)) {
-          sessions = resultContent;
+      } catch (error) {
+        if (error instanceof MCPError) {
+          const errorMsg = formatMCPErrorForUser(error);
+          logger.error(`[REGISTRY_LOAD_SESSION] MCP error: ${error.code} - ${error.message}`);
+
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_LOAD_SESSION',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_LOAD_SESSION', error: errorMsg, errorCode: error.code },
+          };
         }
-      } catch (e) {
-        logger.error('[REGISTRY_LOAD_SESSION] Error parsing session list:', e);
+        throw error;
       }
 
       if (sessions.length === 0) {
@@ -554,8 +551,11 @@ function extractSearchTerm(text: string): string | null {
     .replace(/\b(get|load|open|find|show|retrieve|fetch|display|resume|continue|switch|use|select)\b\s*/gi, ' ')
     // Use word boundaries to avoid matching letters inside words
     .replace(/\b(session|project|review)\b/gi, ' ')
-    // Expanded filler words including "ok", "okay", "that", "this", "it", etc.
-    .replace(/\b(for|the|a|an|my|please|with|ok|okay|sure|alright|that|this|it)\b/gi, ' ')
+    // FIXED: Only strip "a" and "an" when they're followed by another word (acting as articles)
+    // This preserves single-letter identifiers like "TEST A", "Project B", etc.
+    .replace(/\b(for|the|my|please|with|ok|okay|sure|alright|that|this|it)\b/gi, ' ')
+    // Strip "a" and "an" only when followed by a space and another word (article usage)
+    .replace(/\b(a|an)\s+(?=\w{2,})/gi, ' ')
     .replace(/["'`]/g, '')
     // Remove trailing punctuation (period, comma, exclamation, question mark)
     .replace(/[.,!?]+$/g, '')
@@ -619,10 +619,32 @@ function fuzzyMatch(searchTerm: string, target: string): number {
 function formatSessionDetails(session: any): string {
   const lines: string[] = [];
 
+  // Derive actual status from workflow_progress if available
+  // MCP doesn't update `status` field - actual progress is in workflow_progress
+  let derivedStatus = session.status || 'initialized';
+  let completedStages: string[] = [];
+
+  if (session.workflow_progress && typeof session.workflow_progress === 'object') {
+    completedStages = Object.entries(session.workflow_progress)
+      .filter(([_, status]) => status === 'completed')
+      .map(([stage, _]) => stage);
+
+    // Derive status from last completed stage
+    if (completedStages.includes('evidence_extraction')) {
+      derivedStatus = 'Evidence Extracted';
+    } else if (completedStages.includes('requirement_mapping')) {
+      derivedStatus = 'Requirements Mapped';
+    } else if (completedStages.includes('document_discovery')) {
+      derivedStatus = 'Documents Discovered';
+    } else if (completedStages.includes('initialize')) {
+      derivedStatus = 'Initialized';
+    }
+  }
+
   lines.push(`📋 **Session: ${session.project_name}**`);
   lines.push('');
   lines.push(`**Session ID:** \`${session.session_id}\``);
-  lines.push(`**Status:** ${session.status || 'initialized'}`);
+  lines.push(`**Status:** ${derivedStatus}`);
   lines.push(`**Methodology:** ${session.methodology || 'soil-carbon-v1.2.2'}`);
   lines.push(`**Created:** ${new Date(session.created_at).toLocaleString()}`);
 
@@ -642,7 +664,14 @@ function formatSessionDetails(session: any): string {
     lines.push(`**📁 Documents:** ${session.documents_path}`);
   }
 
-  if (session.progress && session.progress.length > 0) {
+  // Show progress - check both workflow_progress (object) and progress (array)
+  if (completedStages.length > 0) {
+    lines.push('');
+    lines.push('**📈 Progress:**');
+    completedStages.forEach((step: string) => {
+      lines.push(`- ✅ ${step.replace(/_/g, ' ')}`);
+    });
+  } else if (session.progress && Array.isArray(session.progress) && session.progress.length > 0) {
     lines.push('');
     lines.push('**📈 Progress:**');
     session.progress.forEach((step: string) => {
@@ -650,11 +679,28 @@ function formatSessionDetails(session: any): string {
     });
   }
 
+  // Context-aware next actions based on completed stages
   lines.push('');
   lines.push('**💡 Available Actions:**');
-  lines.push('- "Discover documents" - Scan and classify documents');
-  lines.push('- "Map requirements" - Map requirements to documents');
-  lines.push('- "Extract evidence" - Extract evidence from documents');
+
+  if (completedStages.includes('evidence_extraction')) {
+    // Stage 4 done - suggest Stage 5 and 6
+    lines.push('- "Validate documents" - Cross-validate data consistency (Stage 5)');
+    lines.push('- "Generate report" - Create review summary report (Stage 6)');
+    lines.push('- "Extract evidence" - Re-extract or view evidence details');
+  } else if (completedStages.includes('requirement_mapping')) {
+    // Stage 3 done - suggest Stage 4
+    lines.push('- "Extract evidence" - Extract evidence from documents (Stage 4)');
+    lines.push('- "Map requirements" - Re-map or refine requirement mappings');
+  } else if (completedStages.includes('document_discovery')) {
+    // Stage 2 done - suggest Stage 3
+    lines.push('- "Map requirements" - Map requirements to documents (Stage 3)');
+    lines.push('- "Discover documents" - Re-scan or add more documents');
+  } else {
+    // Initial state - suggest Stage 2
+    lines.push('- "Discover documents" - Scan and classify documents (Stage 2)');
+    lines.push('- "Upload files" - Add documents to the session');
+  }
 
   return lines.join('\n');
 }

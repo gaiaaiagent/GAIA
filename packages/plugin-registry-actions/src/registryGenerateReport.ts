@@ -9,6 +9,12 @@ import {
   logger,
 } from '@elizaos/core';
 import { getActiveSessionAsync, setActiveSessionAsync, resolveSessionId } from './registrySessionProvider.js';
+import {
+  callRegistryMCP,
+  formatMCPErrorForUser,
+  MCPError,
+  MCPSessionNotFoundError,
+} from './utils/mcpHelpers.js';
 
 /**
  * REGISTRY_GENERATE_REPORT Action
@@ -107,84 +113,58 @@ export const registryGenerateReportAction: Action = {
 
       logger.info(`[REGISTRY_GENERATE_REPORT] Session ID: ${sessionId}`);
 
-      // Get MCP service
-      const mcpService = runtime.getService('mcp');
-      if (!mcpService) {
-        const errorMsg = 'MCP service not available.';
-        logger.error(`[REGISTRY_GENERATE_REPORT] ${errorMsg}`);
-
-        await callback?.({
-          text: `❌ ${errorMsg}`,
-          action: 'REGISTRY_GENERATE_REPORT',
-        });
-
-        return {
-          success: false,
-          error: errorMsg,
-          data: { actionName: 'REGISTRY_GENERATE_REPORT', error: errorMsg },
-        };
-      }
-
-      // Call MCP tool
+      // Call MCP tool with resilient helper (timeout, retry, circuit breaker)
       logger.info('[REGISTRY_GENERATE_REPORT] Calling MCP tool: generate_review_report');
-      const mcpResult = await (mcpService as any).callTool(
-        'registry-review',
-        'generate_review_report',
-        { session_id: sessionId }
-      );
 
-      logger.info('[REGISTRY_GENERATE_REPORT] MCP tool returned result');
-
-      // Parse MCP result
       let reportData: any = {};
       try {
-        let resultContent = mcpResult;
+        reportData = await callRegistryMCP<any>(
+          runtime,
+          'generate_review_report',
+          { session_id: sessionId },
+          { actionName: 'REGISTRY_GENERATE_REPORT' }
+        );
 
-        if (typeof mcpResult === 'string') {
-          try {
-            resultContent = JSON.parse(mcpResult);
-          } catch {
-            // Keep as string
-          }
-        }
+        logger.info('[REGISTRY_GENERATE_REPORT] MCP tool returned result');
+      } catch (error) {
+        if (error instanceof MCPSessionNotFoundError) {
+          const errorMsg = `Session \`${sessionId}\` not found. Please verify the session ID.`;
+          logger.error(`[REGISTRY_GENERATE_REPORT] ${errorMsg}`);
 
-        if (resultContent.content && Array.isArray(resultContent.content)) {
-          const firstContent = resultContent.content[0];
-          if (firstContent.type === 'text' && firstContent.text) {
-            // Check for errors
-            if (
-              firstContent.text.includes('SessionNotFoundError') ||
-              firstContent.text.includes('Session not found')
-            ) {
-              const errorMsg = `Session \`${sessionId}\` not found.`;
-              await callback?.({
-                text: `❌ ${errorMsg}`,
-                action: 'REGISTRY_GENERATE_REPORT',
-              });
-              return {
-                success: false,
-                error: errorMsg,
-                data: { actionName: 'REGISTRY_GENERATE_REPORT', error: errorMsg },
-              };
-            }
-            try {
-              reportData = JSON.parse(firstContent.text);
-            } catch {
-              reportData = { raw: firstContent.text };
-            }
-          }
-        } else {
-          reportData = resultContent;
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_GENERATE_REPORT',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_GENERATE_REPORT', error: errorMsg, errorCode: 'MCP_SESSION_NOT_FOUND' },
+          };
         }
-      } catch (parseError) {
-        logger.error('[REGISTRY_GENERATE_REPORT] Error parsing result:', parseError);
+        if (error instanceof MCPError) {
+          const errorMsg = formatMCPErrorForUser(error);
+          logger.error(`[REGISTRY_GENERATE_REPORT] MCP error: ${error.code} - ${error.message}`);
+
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_GENERATE_REPORT',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_GENERATE_REPORT', error: errorMsg, errorCode: error.code },
+          };
+        }
+        throw error;
       }
 
       // Update active session
       if (roomId) {
         await setActiveSessionAsync(runtime, roomId, {
           sessionId,
-          projectName: reportData.project_name || activeSession?.projectName || 'Unknown',
+          projectName: reportData.project_name || projectName || 'Unknown',
           status: 'Report Generated',
           source: 'report',
         });

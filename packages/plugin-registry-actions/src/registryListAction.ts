@@ -8,6 +8,11 @@ import {
   type State,
   logger,
 } from '@elizaos/core';
+import {
+  callRegistryMCP,
+  formatMCPErrorForUser,
+  MCPError,
+} from './utils/mcpHelpers.js';
 
 /**
  * REGISTRY_LIST Action
@@ -75,73 +80,51 @@ export const registryListAction: Action = {
                         text.includes('full json') ||
                         text.includes('raw');
 
-      // Get MCP service
-      const mcpService = runtime.getService('mcp');
-      if (!mcpService) {
-        const errorMsg = 'MCP service not available. Ensure MCP plugin is loaded.';
-        logger.error(`[REGISTRY_LIST] ${errorMsg}`);
-
-        await callback?.({
-          text: `❌ ${errorMsg}`,
-          action: 'REGISTRY_LIST',
-        });
-
-        return {
-          success: false,
-          error: errorMsg,
-          data: {
-            actionName: 'REGISTRY_LIST',
-            error: errorMsg,
-          },
-        };
-      }
-
-      // Call MCP tool to list sessions
+      // Call MCP tool to list sessions with resilient helper
+      // Provides: 30s timeout, 3 retries with exponential backoff, circuit breaker
       logger.info('[REGISTRY_LIST] Calling MCP tool: list_sessions');
-      const mcpResult = await (mcpService as any).callTool(
-        'registry-review',  // MCP server name
-        'list_sessions',     // Tool name
-        {}                   // No parameters needed for list
-      );
 
-      logger.info('[REGISTRY_LIST] MCP tool returned result');
-
-      // Parse MCP result and extract sessions array
       let sessions: any[] = [];
       let rawData: string = '';
 
       try {
-        let resultContent = mcpResult;
+        const result = await callRegistryMCP<any[] | { sessions?: any[] }>(
+          runtime,
+          'list_sessions',
+          {},
+          { actionName: 'REGISTRY_LIST' }
+        );
 
-        if (typeof mcpResult === 'string') {
-          try {
-            resultContent = JSON.parse(mcpResult);
-          } catch {
-            rawData = mcpResult;
-          }
+        // Handle both array and object response formats
+        if (Array.isArray(result)) {
+          sessions = result;
+        } else if (result && typeof result === 'object' && 'sessions' in result) {
+          sessions = result.sessions || [];
+        } else if (result && typeof result === 'object') {
+          // Fallback: result might be {raw: "..."} or the parsed content directly
+          sessions = Array.isArray(result) ? result : [];
         }
 
-        // Extract sessions from MCP standard format
-        if (resultContent.content && Array.isArray(resultContent.content)) {
-          const firstContent = resultContent.content[0];
-          if (firstContent.type === 'text' && firstContent.text) {
-            try {
-              sessions = JSON.parse(firstContent.text);
-              rawData = firstContent.text;
-            } catch {
-              rawData = firstContent.text;
-            }
-          }
-        } else if (Array.isArray(resultContent)) {
-          sessions = resultContent;
-          rawData = JSON.stringify(resultContent);
-        }
-
+        rawData = JSON.stringify(sessions);
         logger.info(`[REGISTRY_LIST] Found ${sessions.length} sessions`);
 
-      } catch (parseError) {
-        logger.error('[REGISTRY_LIST] Error parsing MCP result:', parseError);
-        rawData = String(mcpResult);
+      } catch (error) {
+        if (error instanceof MCPError) {
+          const errorMsg = formatMCPErrorForUser(error);
+          logger.error(`[REGISTRY_LIST] MCP error: ${error.code} - ${error.message}`);
+
+          await callback?.({
+            text: `❌ ${errorMsg}`,
+            action: 'REGISTRY_LIST',
+          });
+
+          return {
+            success: false,
+            error: errorMsg,
+            data: { actionName: 'REGISTRY_LIST', error: errorMsg, errorCode: error.code },
+          };
+        }
+        throw error; // Re-throw non-MCP errors
       }
 
       let formattedOutput: string;
@@ -206,7 +189,7 @@ export const registryListAction: Action = {
         },
         data: {
           actionName: 'REGISTRY_LIST',
-          mcpResult,
+          sessions,
           outputLength: formattedOutput.length,
         },
       };

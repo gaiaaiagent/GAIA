@@ -7,6 +7,11 @@ import type {
 } from '@elizaos/core';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import {
+    callRegistryMCP,
+    formatMCPErrorForUser,
+    MCPError,
+} from './utils/mcpHelpers.js';
 
 interface FileAttachment {
     id: string;
@@ -169,23 +174,37 @@ export const registryReviewUploadAction: Action = {
 
             console.log(`[REGISTRY_UPLOAD] Calling MCP tool with ${files.length} files`);
 
-            // Call the MCP tool
-            const mcpService = runtime.getService('mcp');
-            if (!mcpService) {
-                throw new Error('MCP service not available');
-            }
-
-            const mcpResult = await (mcpService as any).callTool(
-                'registry-review',
-                'start_review_from_uploads',
-                {
-                    project_name: projectName,
-                    files: files,
-                    methodology: 'soil-carbon-v1.2.2',
-                    auto_extract: true,
-                    deduplicate: true,
+            // Call the MCP tool with resilient helper (timeout, retry, circuit breaker)
+            let mcpResult: any;
+            try {
+                mcpResult = await callRegistryMCP(
+                    runtime,
+                    'start_review_from_uploads',
+                    {
+                        project_name: projectName,
+                        files: files,
+                        methodology: 'soil-carbon-v1.2.2',
+                        auto_extract: true,
+                        deduplicate: true,
+                    },
+                    { actionName: 'REGISTRY_REVIEW_UPLOAD' }
+                );
+            } catch (error) {
+                if (error instanceof MCPError) {
+                    const errorMsg = formatMCPErrorForUser(error);
+                    console.error(`[REGISTRY_UPLOAD] MCP error: ${error.code} - ${error.message}`);
+                    await callback({
+                        text: `❌ ${errorMsg}`,
+                        error: true,
+                    });
+                    return {
+                        success: false,
+                        error: errorMsg,
+                        data: { actionName: 'REGISTRY_REVIEW_UPLOAD', errorCode: error.code },
+                    };
                 }
-            );
+                throw error;
+            }
 
             console.log(`[REGISTRY_UPLOAD] MCP result:`, mcpResult);
 

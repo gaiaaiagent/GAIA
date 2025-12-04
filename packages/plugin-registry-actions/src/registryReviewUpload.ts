@@ -5,10 +5,16 @@ import type {
     Memory,
     State,
 } from '@elizaos/core';
-import { getUploadsAgentsDir } from '@elizaos/core';
+import { getUploadsAgentsDir, logger } from '@elizaos/core';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { getActiveSessionAsync, setActiveSessionAsync } from './registrySessionProvider.js';
+import {
+    callRegistryMCP,
+    formatMCPErrorForUser,
+    MCPError,
+    MCPSessionNotFoundError,
+} from './utils/mcpHelpers.js';
 
 interface FileAttachment {
     id: string;
@@ -219,19 +225,6 @@ export const registryReviewUploadAction: Action = {
                 };
             }
 
-            // Get MCP service
-            const mcpService = runtime.getService('mcp');
-            if (!mcpService) {
-                await callback({
-                    text: '❌ MCP service not available',
-                    error: true,
-                });
-                return {
-                    success: false,
-                    error: 'MCP service not available',
-                };
-            }
-
             // Check if there's an existing session to add files to
             // Smart session detection strategy (PRIORITY ORDER):
             // 0. Check session cache (set by REGISTRY_LOAD_SESSION) - HIGHEST PRIORITY
@@ -280,19 +273,21 @@ export const registryReviewUploadAction: Action = {
 
             // Validate the session exists and get its name
             if (existingSessionId) {
-                console.log(`[REGISTRY_UPLOAD] Validating session ${existingSessionId} exists...`);
+                logger.info(`[REGISTRY_UPLOAD] Validating session ${existingSessionId} exists...`);
                 try {
-                    const listResult = await (mcpService as any).callTool(
-                        'registry-review',
+                    const listResult = await callRegistryMCP<any[] | { sessions?: any[] }>(
+                        runtime,
                         'list_sessions',
-                        {}
+                        {},
+                        { actionName: 'REGISTRY_REVIEW_UPLOAD' }
                     );
 
+                    // Handle both array and object response formats
                     let sessions: any[] = [];
-                    if (listResult?.content?.[0]?.text) {
-                        sessions = JSON.parse(listResult.content[0].text);
-                    } else if (Array.isArray(listResult)) {
+                    if (Array.isArray(listResult)) {
                         sessions = listResult;
+                    } else if (listResult && typeof listResult === 'object' && 'sessions' in listResult) {
+                        sessions = listResult.sessions || [];
                     }
 
                     const matchingSession = sessions.find((s: any) =>
@@ -301,32 +296,34 @@ export const registryReviewUploadAction: Action = {
 
                     if (matchingSession) {
                         existingSessionName = matchingSession.project_name;
-                        console.log(`[REGISTRY_UPLOAD] Validated session: ${existingSessionId} (${existingSessionName})`);
+                        logger.info(`[REGISTRY_UPLOAD] Validated session: ${existingSessionId} (${existingSessionName})`);
                     } else {
-                        console.log(`[REGISTRY_UPLOAD] Session ${existingSessionId} not found, will create new session`);
+                        logger.info(`[REGISTRY_UPLOAD] Session ${existingSessionId} not found, will create new session`);
                         existingSessionId = null;
                     }
                 } catch (e) {
-                    console.log(`[REGISTRY_UPLOAD] Error validating session: ${e}`);
+                    logger.warn(`[REGISTRY_UPLOAD] Error validating session: ${e}`);
                     // Keep the session ID and try anyway
                 }
             }
 
             // If still no session from conversation, look for empty sessions as fallback
             if (!existingSessionId) {
-                console.log(`[REGISTRY_UPLOAD] No session in conversation context, checking for empty sessions...`);
+                logger.info(`[REGISTRY_UPLOAD] No session in conversation context, checking for empty sessions...`);
                 try {
-                    const listResult = await (mcpService as any).callTool(
-                        'registry-review',
+                    const listResult = await callRegistryMCP<any[] | { sessions?: any[] }>(
+                        runtime,
                         'list_sessions',
-                        {}
+                        {},
+                        { actionName: 'REGISTRY_REVIEW_UPLOAD' }
                     );
 
+                    // Handle both array and object response formats
                     let sessions: any[] = [];
-                    if (listResult?.content?.[0]?.text) {
-                        sessions = JSON.parse(listResult.content[0].text);
-                    } else if (Array.isArray(listResult)) {
+                    if (Array.isArray(listResult)) {
                         sessions = listResult;
+                    } else if (listResult && typeof listResult === 'object' && 'sessions' in listResult) {
+                        sessions = listResult.sessions || [];
                     }
 
                     // Find empty sessions (0 documents) - prefer most recently created
@@ -343,12 +340,12 @@ export const registryReviewUploadAction: Action = {
                         // Use the most recently created empty session
                         existingSessionId = emptySessions[0].session_id;
                         existingSessionName = emptySessions[0].project_name;
-                        console.log(`[REGISTRY_UPLOAD] Using most recent empty session: ${existingSessionId} (${existingSessionName})`);
+                        logger.info(`[REGISTRY_UPLOAD] Using most recent empty session: ${existingSessionId} (${existingSessionName})`);
                     } else {
-                        console.log(`[REGISTRY_UPLOAD] No empty sessions found, will create new session`);
+                        logger.info(`[REGISTRY_UPLOAD] No empty sessions found, will create new session`);
                     }
                 } catch (e) {
-                    console.log(`[REGISTRY_UPLOAD] Error checking for empty sessions: ${e}`);
+                    logger.warn(`[REGISTRY_UPLOAD] Error checking for empty sessions: ${e}`);
                 }
             }
 
@@ -370,33 +367,49 @@ export const registryReviewUploadAction: Action = {
 
                 // Use add_documents with source format expected by MCP server
                 // Format: source: {"type": "upload", "files": [{"filename": "...", "content_base64": "..."}]}
-                mcpResult = await (mcpService as any).callTool(
-                    'registry-review',
-                    'add_documents',
-                    {
-                        session_id: existingSessionId,
-                        source: {
-                            type: 'upload',
-                            files: files,
-                        }
+                try {
+                    mcpResult = await callRegistryMCP(
+                        runtime,
+                        'add_documents',
+                        {
+                            session_id: existingSessionId,
+                            source: {
+                                type: 'upload',
+                                files: files,
+                            }
+                        },
+                        { actionName: 'REGISTRY_REVIEW_UPLOAD' }
+                    );
+                } catch (error) {
+                    if (error instanceof MCPSessionNotFoundError) {
+                        const errorMsg = `Session \`${existingSessionId}\` not found. It may have been deleted.`;
+                        await callback({ text: `❌ ${errorMsg}`, error: true });
+                        return { success: false, error: errorMsg, data: { actionName: 'REGISTRY_REVIEW_UPLOAD', errorCode: 'MCP_SESSION_NOT_FOUND' } };
                     }
-                );
+                    if (error instanceof MCPError) {
+                        const errorMsg = formatMCPErrorForUser(error);
+                        await callback({ text: `❌ ${errorMsg}`, error: true });
+                        return { success: false, error: errorMsg, data: { actionName: 'REGISTRY_REVIEW_UPLOAD', errorCode: error.code } };
+                    }
+                    throw error;
+                }
 
                 // Automatically trigger document discovery after upload
-                console.log(`[REGISTRY_UPLOAD] Files uploaded, triggering automatic document discovery for ${existingSessionId}...`);
+                logger.info(`[REGISTRY_UPLOAD] Files uploaded, triggering automatic document discovery for ${existingSessionId}...`);
                 await callback({
                     text: `Files uploaded. Running document discovery...`,
                 });
 
                 try {
-                    discoveryResult = await (mcpService as any).callTool(
-                        'registry-review',
+                    discoveryResult = await callRegistryMCP(
+                        runtime,
                         'discover_documents',
-                        { session_id: existingSessionId }
+                        { session_id: existingSessionId },
+                        { actionName: 'REGISTRY_REVIEW_UPLOAD' }
                     );
-                    console.log(`[REGISTRY_UPLOAD] Document discovery completed for ${existingSessionId}`);
+                    logger.info(`[REGISTRY_UPLOAD] Document discovery completed for ${existingSessionId}`);
                 } catch (discoverError) {
-                    console.error(`[REGISTRY_UPLOAD] Error during document discovery:`, discoverError);
+                    logger.error(`[REGISTRY_UPLOAD] Error during document discovery:`, discoverError);
                     // Continue with the upload result even if discovery fails
                 }
             } else {
@@ -407,29 +420,36 @@ export const registryReviewUploadAction: Action = {
                     text: `Processing ${files.length} file(s) for registry review. Creating session for "${projectName}"...`,
                 });
 
-                mcpResult = await (mcpService as any).callTool(
-                    'registry-review',
-                    'start_review_from_uploads',
-                    {
-                        project_name: projectName,
-                        files: files,
-                        methodology: 'soil-carbon-v1.2.2',
-                        auto_extract: true,
-                        deduplicate: true,
+                try {
+                    mcpResult = await callRegistryMCP(
+                        runtime,
+                        'start_review_from_uploads',
+                        {
+                            project_name: projectName,
+                            files: files,
+                            methodology: 'soil-carbon-v1.2.2',
+                            auto_extract: true,
+                            deduplicate: true,
+                        },
+                        { actionName: 'REGISTRY_REVIEW_UPLOAD' }
+                    );
+                } catch (error) {
+                    if (error instanceof MCPError) {
+                        const errorMsg = formatMCPErrorForUser(error);
+                        await callback({ text: `❌ ${errorMsg}`, error: true });
+                        return { success: false, error: errorMsg, data: { actionName: 'REGISTRY_REVIEW_UPLOAD', errorCode: error.code } };
                     }
-                );
+                    throw error;
+                }
 
                 // Extract session ID from result for return value
                 try {
                     const parsed = typeof mcpResult === 'string' ? JSON.parse(mcpResult) : mcpResult;
-                    if (parsed?.content?.[0]?.text) {
-                        const innerData = JSON.parse(parsed.content[0].text);
-                        sessionId = innerData.session_id;
-                    } else if (parsed?.session_id) {
+                    if (parsed?.session_id) {
                         sessionId = parsed.session_id;
                     }
                 } catch (e) {
-                    console.log(`[REGISTRY_UPLOAD] Could not extract session ID from result`);
+                    logger.debug(`[REGISTRY_UPLOAD] Could not extract session ID from result`);
                 }
             }
 
