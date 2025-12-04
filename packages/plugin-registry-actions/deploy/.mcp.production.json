@@ -1,0 +1,40 @@
+{
+  "mcpServers": {
+    "registry-review": {
+      "command": "python",
+      "args": [
+        "/opt/projects/registry-review-api/mcp_server.py"
+      ],
+      "env": {
+        "REGISTRY_API_URL": "http://127.0.0.1:8080",
+        "PYTHONPATH": "/opt/projects/registry-review-api"
+      }
+    },
+    "regen-koi": {
+      "command": "python",
+      "args": [
+        "/opt/projects/regen-koi-mcp/koi_knowledge_mcp_stdio.py"
+      ],
+      "env": {
+        "FUSEKI_ENDPOINT": "http://127.0.0.1:3030",
+        "PYTHONPATH": "/opt/projects/regen-koi-mcp"
+      }
+    },
+    "regen-ledger": {
+      "command": "npx",
+      "args": [
+        "tsx",
+        "/opt/projects/regen-ledger-mcp/src/index.ts"
+      ],
+      "env": {
+        "REGEN_NODE_URL": "https://regen.stakesystems.io:2053"
+      }
+    },
+    "regen": {
+      "command": "bash",
+      "args": [
+        "/opt/projects/regen-registry-mcp/run-regen-mcp.sh"
+      ]
+    }
+  }
+}

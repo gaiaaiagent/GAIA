@@ -1,0 +1,44 @@
+[Unit]
+Description=Regen Registry Assistant (ElizaOS)
+Documentation=https://github.com/elizaos/eliza
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=shawn
+Group=gaia-devs
+WorkingDirectory=/opt/projects/registry-eliza
+
+# Environment
+Environment=NODE_ENV=production
+Environment=HOME=/home/shawn
+EnvironmentFile=/opt/projects/registry-eliza/.env
+
+# Start command using bun
+ExecStart=/home/shawn/.bun/bin/bun run packages/cli/dist/index.js start --character characters/regen-registry-assistant.json
+
+# Restart policy
+Restart=always
+RestartSec=10
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+# Resource limits
+MemoryMax=4G
+CPUQuota=200%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=registry-eliza
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/opt/projects/registry-eliza
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
