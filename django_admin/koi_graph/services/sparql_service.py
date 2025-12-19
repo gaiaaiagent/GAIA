@@ -285,33 +285,115 @@ class SPARQLService:
         try:
             # Basic validation - check for required keywords
             query_upper = query.upper()
-            
+
             if 'SELECT' not in query_upper and 'CONSTRUCT' not in query_upper and 'ASK' not in query_upper and 'DESCRIBE' not in query_upper:
                 return {
                     'valid': False,
                     'error': 'Query must contain SELECT, CONSTRUCT, ASK, or DESCRIBE'
                 }
-            
+
             if 'WHERE' not in query_upper:
                 return {
                     'valid': False,
                     'error': 'Query must contain a WHERE clause'
                 }
-            
+
             # Check for balanced braces
             if query.count('{') != query.count('}'):
                 return {
                     'valid': False,
                     'error': 'Unbalanced braces in query'
                 }
-            
+
             return {
                 'valid': True,
                 'message': 'Basic syntax validation passed'
             }
-            
+
         except Exception as e:
             return {
                 'valid': False,
                 'error': f'Validation error: {str(e)}'
             }
+
+    def enrich_results_with_rids(self, sparql_results: Dict[str, Any]) -> Dict[str, Any]:
+        """Enrich SPARQL results with RIDs from PostgreSQL entity_registry.
+
+        Looks up entities in the SPARQL results in the entity_registry table
+        by both URI and entity text/label, returning memory_rid values for provenance.
+        """
+        from django.db import connection
+
+        if not sparql_results.get('success') or not sparql_results.get('results'):
+            return {'uri_to_rid': {}, 'rid_count': 0, 'label_to_rid': {}}
+
+        try:
+            bindings = sparql_results['results'].get('results', {}).get('bindings', [])
+
+            # Extract URIs and literal values (labels/names) from bindings
+            uris = set()
+            labels = set()
+            for binding in bindings:
+                for var_name, var_data in binding.items():
+                    if var_data.get('type') == 'uri':
+                        uri = var_data.get('value', '')
+                        if uri and 'regen.network' in uri:
+                            uris.add(uri)
+                    elif var_data.get('type') == 'literal':
+                        label = var_data.get('value', '').strip()
+                        if label and len(label) > 2:  # Skip very short labels
+                            labels.add(label)
+
+            uri_to_rid = {}
+            label_to_rid = {}
+
+            with connection.cursor() as cursor:
+                # First try URI matching
+                if uris:
+                    placeholders = ','.join(['%s'] * len(uris))
+                    query = f"""
+                        SELECT fuseki_uri, entity_text, metadata->>'memory_rid' as memory_rid
+                        FROM entity_registry
+                        WHERE fuseki_uri IN ({placeholders})
+                        AND metadata->>'memory_rid' IS NOT NULL
+                    """
+                    cursor.execute(query, list(uris))
+                    for row in cursor.fetchall():
+                        fuseki_uri, entity_text, memory_rid = row
+                        if memory_rid:
+                            uri_to_rid[fuseki_uri] = {
+                                'rid': memory_rid,
+                                'entity_text': entity_text
+                            }
+
+                # Also try matching by entity_text (label matching)
+                if labels:
+                    placeholders = ','.join(['%s'] * len(labels))
+                    query = f"""
+                        SELECT DISTINCT ON (entity_text)
+                            entity_text, metadata->>'memory_rid' as memory_rid, fuseki_uri
+                        FROM entity_registry
+                        WHERE entity_text IN ({placeholders})
+                        AND metadata->>'memory_rid' IS NOT NULL
+                        ORDER BY entity_text, first_seen_at DESC
+                    """
+                    cursor.execute(query, list(labels))
+                    for row in cursor.fetchall():
+                        entity_text, memory_rid, fuseki_uri = row
+                        if memory_rid:
+                            label_to_rid[entity_text] = {
+                                'rid': memory_rid,
+                                'fuseki_uri': fuseki_uri
+                            }
+
+            total_matches = len(uri_to_rid) + len(label_to_rid)
+            logger.info(f"Enriched {len(uri_to_rid)} URIs and {len(label_to_rid)} labels with RIDs")
+            return {
+                'uri_to_rid': uri_to_rid,
+                'label_to_rid': label_to_rid,
+                'rid_count': total_matches
+            }
+
+        except Exception as e:
+            logger.error(f"Error enriching SPARQL results with RIDs: {str(e)}")
+            return {'uri_to_rid': {}, 'label_to_rid': {}, 'rid_count': 0, 'error': str(e)}

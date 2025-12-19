@@ -14,6 +14,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('regenai/', include('reporting.urls')),
     path('api/koi/', include('koi_graph.urls')),  # KOI Knowledge Graph API
+    path('koi/', include('koi_graph.urls')),  # KOI UI (for /koi/query)
     path('auth/check/', auth_check, name='auth_check'),
 ]
 

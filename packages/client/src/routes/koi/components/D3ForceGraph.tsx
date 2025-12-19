@@ -57,16 +57,23 @@ export default function D3ForceGraph({
 
     svg.call(zoom as any);
 
-    // Create force simulation with tighter clustering
+    // Create force simulation with proper spacing to prevent overlap
     const simulation = d3.forceSimulation(nodes as any)
       .force("link", d3.forceLink(edges)
         .id((d: any) => d.id)
-        .distance(50))  // Shorter links for tighter clustering
-      .force("charge", d3.forceManyBody().strength(-100))  // Weaker repulsion
+        .distance(120))  // Longer links to spread nodes out
+      .force("charge", d3.forceManyBody()
+        .strength(-300)  // Stronger repulsion to push nodes apart
+        .distanceMax(500))  // Limit repulsion range for performance
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide().radius(20))  // Smaller collision radius
-      .force("x", d3.forceX(width / 2).strength(0.1))  // Pull nodes toward center X
-      .force("y", d3.forceY(height / 2).strength(0.1));  // Pull nodes toward center Y
+      .force("collision", d3.forceCollide()
+        .radius((d: any) => (d.size || 8) + 25)  // Dynamic collision based on node size + padding
+        .strength(1)  // Strong collision detection
+        .iterations(3))  // Multiple iterations for better separation
+      .force("x", d3.forceX(width / 2).strength(0.03))  // Weaker pull toward center
+      .force("y", d3.forceY(height / 2).strength(0.03))
+      .alphaDecay(0.02)  // Slower decay for better layout
+      .velocityDecay(0.4);  // More friction for stability
 
     // Create arrow markers for directed edges
     svg.append("defs").selectAll("marker")
@@ -116,16 +123,19 @@ export default function D3ForceGraph({
       .attr("fill-opacity", 0.85)
       .style("cursor", "pointer");
 
-    // Create node labels
+    // Create node labels with dynamic offset based on node size
     const label = g.append("g")
       .selectAll("text")
       .data(nodes)
       .join("text")
-      .attr("font-size", 12)
-      .attr("dx", 12)
-      .attr("dy", 4)
-      .text((d: any) => d.label)
-      .style("pointer-events", "none");
+      .attr("font-size", 10)
+      .attr("fill", "#333")
+      .attr("dx", (d: any) => (d.size || 8) + 4)  // Offset based on node size
+      .attr("dy", 3)
+      .text((d: any) => d.label.length > 20 ? d.label.substring(0, 20) + '...' : d.label)
+      .style("pointer-events", "none")
+      .style("font-weight", (d: any) => (d.degree || 0) > 3 ? "600" : "400")  // Bold for high-degree nodes
+      .style("opacity", 0.9);
 
     // Add drag behavior to nodes
     const drag = d3.drag()

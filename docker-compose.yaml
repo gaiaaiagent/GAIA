@@ -12,8 +12,10 @@ services:
       - '443:443' # HTTPS access
     volumes:
       - ./Gaia-IRL:/opt/projects/GAIA/Gaia-IRL:ro
+      - ./graph:/opt/projects/GAIA/graph:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - django-static:/app/staticfiles:ro
+      - ./config/nginx-ssl.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       # - regen  # Disabled: agents run on host
       - django

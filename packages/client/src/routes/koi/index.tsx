@@ -45,11 +45,20 @@ export default function KOIPage() {
 
   // Update state when URL changes
   useEffect(() => {
+    if (urlTab === 'graph') {
+      window.location.assign('/graph/');
+      return;
+    }
     setActiveTab(urlTab);
     setSelectedRid(urlRid);
   }, [urlTab, urlRid]);
 
   const handleTabChange = (newTab: string) => {
+    if (newTab === 'graph') {
+      window.location.assign('/graph/');
+      return;
+    }
+
     setActiveTab(newTab);
     navigate(`/koi/${newTab}`);
   };

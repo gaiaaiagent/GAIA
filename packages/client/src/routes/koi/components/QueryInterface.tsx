@@ -28,7 +28,7 @@ import {
   Filter
 } from 'lucide-react';
 
-type SearchMode = 'knowledge' | 'code-graph' | 'github-docs';
+type SearchMode = 'knowledge' | 'code-graph' | 'github-docs' | 'sparql';
 
 type CodeGraphQueryType =
   | 'search_entities'
@@ -371,11 +371,38 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
 
       const queryResult = await response.json();
 
+      // Extract SPARQL bindings for display
+      const bindings = queryResult.result?.results?.results?.bindings || [];
+      const vars = queryResult.result?.results?.head?.vars || [];
+
+      // Transform SPARQL bindings to display format
+      const sparqlResults = bindings.map((binding: any, index: number) => {
+        const resultObj: any = { id: index };
+        vars.forEach((varName: string) => {
+          if (binding[varName]) {
+            // Extract just the value, simplify URIs
+            let value = binding[varName].value;
+            if (binding[varName].type === 'uri') {
+              // Shorten URI for display
+              value = value.replace('http://regen.network/koi#', 'koi:')
+                          .replace('http://regen.network/koi/entity/', 'entity:');
+            }
+            resultObj[varName] = value;
+          }
+        });
+        return resultObj;
+      });
+
+      setRawApiResults(sparqlResults);
+
       const formattedResult: QueryResult = {
         originalQuestion: 'Direct SPARQL Query',
         generatedSparql: query,
         isValidSparql: true,
-        executionResult: queryResult.result,
+        executionResult: {
+          ...queryResult.result,
+          total_results: bindings.length
+        },
         visualizationData: queryResult.visualizationData
       };
 
@@ -405,6 +432,9 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
       case 'github-docs':
         if (githubQuery.trim()) executeGithubSearch();
         break;
+      case 'sparql':
+        if (sparqlQuery.trim()) executeSparqlQuery(sparqlQuery.trim());
+        break;
     }
   };
 
@@ -430,7 +460,7 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
       {/* Search Mode Selector */}
       <div className="flex items-center gap-4 border-b pb-4">
         <Tabs value={searchMode} onValueChange={(v) => setSearchMode(v as SearchMode)} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="knowledge" className="gap-2">
               <Search className="h-4 w-4" />
               Knowledge
@@ -442,6 +472,10 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
             <TabsTrigger value="github-docs" className="gap-2">
               <FolderGit2 className="h-4 w-4" />
               GitHub Docs
+            </TabsTrigger>
+            <TabsTrigger value="sparql" className="gap-2">
+              <Database className="h-4 w-4" />
+              SPARQL
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -691,8 +725,230 @@ Examples:
         </div>
       )}
 
-      {/* SPARQL Editor (conditionally shown) */}
-      {showSparqlEditor && (
+      {/* SPARQL Query Mode */}
+      {searchMode === 'sparql' && (
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-medium">SPARQL Query Interface</h3>
+            <p className="text-sm text-muted-foreground">
+              Query the knowledge graph directly with SPARQL. 155,097 triples from 87,588 entities.
+            </p>
+          </div>
+
+          {/* Pre-built Queries */}
+          <Card>
+            <CardContent className="p-4">
+              <h4 className="font-medium mb-3 flex items-center gap-2">
+                <Layers className="h-4 w-4" />
+                Common Queries
+              </h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSparqlQuery(`PREFIX koi: <http://regen.network/koi#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# List all entity types with counts
+SELECT ?type (COUNT(?entity) AS ?count)
+WHERE {
+    ?entity rdf:type ?type .
+    FILTER(STRSTARTS(STR(?type), "http://regen.network/koi#"))
+}
+GROUP BY ?type
+ORDER BY DESC(?count)`)}
+                  className="text-xs justify-start"
+                >
+                  Entity Types
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSparqlQuery(`PREFIX koi: <http://regen.network/koi#>
+
+# List all relationship types with counts
+SELECT ?predicate (COUNT(*) AS ?count)
+WHERE {
+    ?s ?predicate ?o .
+    FILTER(STRSTARTS(STR(?predicate), "http://regen.network/koi#"))
+    FILTER(?predicate != koi:confidence)
+}
+GROUP BY ?predicate
+ORDER BY DESC(?count)
+LIMIT 50`)}
+                  className="text-xs justify-start"
+                >
+                  Relationships
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSparqlQuery(`PREFIX koi: <http://regen.network/koi#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# Search entities by name (modify "regen" below)
+SELECT ?entity ?label ?type
+WHERE {
+    ?entity rdfs:label ?label .
+    ?entity rdf:type ?type .
+    FILTER(CONTAINS(LCASE(?label), "regen"))
+}
+ORDER BY ?label
+LIMIT 100`)}
+                  className="text-xs justify-start"
+                >
+                  Search Entities
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSparqlQuery(`PREFIX koi: <http://regen.network/koi#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# Find organizations and people
+SELECT ?entity ?label ?type
+WHERE {
+    ?entity rdf:type ?type .
+    ?entity rdfs:label ?label .
+    FILTER(?type IN (koi:Organization, koi:Person, koi:Company))
+}
+ORDER BY ?type ?label
+LIMIT 200`)}
+                  className="text-xs justify-start"
+                >
+                  Orgs & People
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSparqlQuery(`PREFIX koi: <http://regen.network/koi#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Show relationships for an entity
+SELECT ?entity1Label ?predicate ?entity2Label
+WHERE {
+    ?entity1 ?predicate ?entity2 .
+    ?entity1 rdfs:label ?entity1Label .
+    ?entity2 rdfs:label ?entity2Label .
+    FILTER(STRSTARTS(STR(?predicate), "http://regen.network/koi#"))
+    FILTER(CONTAINS(LCASE(?entity1Label), "regen network"))
+}
+LIMIT 100`)}
+                  className="text-xs justify-start"
+                >
+                  Entity Network
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSparqlQuery(`PREFIX koi: <http://regen.network/koi#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# Find carbon/climate related entities
+SELECT ?entity ?label ?type
+WHERE {
+    ?entity rdfs:label ?label .
+    ?entity rdf:type ?type .
+    FILTER(
+        CONTAINS(LCASE(?label), "carbon") ||
+        CONTAINS(LCASE(?label), "climate") ||
+        CONTAINS(LCASE(?label), "credit")
+    )
+}
+ORDER BY ?type ?label
+LIMIT 200`)}
+                  className="text-xs justify-start"
+                >
+                  Carbon & Climate
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSparqlQuery(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# Count total triples and subjects
+SELECT
+    (COUNT(*) AS ?total_triples)
+    (COUNT(DISTINCT ?s) AS ?unique_subjects)
+WHERE {
+    ?s ?p ?o .
+}`)}
+                  className="text-xs justify-start"
+                >
+                  Count All
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSparqlQuery(`# View sample triples
+SELECT ?subject ?predicate ?object
+WHERE {
+    ?subject ?predicate ?object .
+}
+LIMIT 100`)}
+                  className="text-xs justify-start"
+                >
+                  Sample Data
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Schema Reference */}
+          <Card>
+            <CardContent className="p-4">
+              <h4 className="font-medium mb-2 flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Schema Prefixes
+              </h4>
+              <pre className="text-xs bg-muted p-2 rounded overflow-x-auto">
+{`PREFIX koi: <http://regen.network/koi#>
+PREFIX entity: <http://regen.network/koi/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>`}
+              </pre>
+            </CardContent>
+          </Card>
+
+          {/* SPARQL Editor */}
+          <Textarea
+            placeholder="Enter your SPARQL query here...
+
+Example:
+SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10"
+            value={sparqlQuery}
+            onChange={(e) => setSparqlQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                executeSparqlQuery(sparqlQuery.trim());
+              }
+            }}
+            rows={10}
+            className="font-mono text-sm"
+          />
+
+          <div className="flex justify-between items-center">
+            <div className="text-xs text-muted-foreground">
+              Press Ctrl+Enter to execute
+            </div>
+            <Button
+              onClick={() => executeSparqlQuery(sparqlQuery.trim())}
+              disabled={loading || !sparqlQuery.trim()}
+              className="gap-2"
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />}
+              Execute SPARQL
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* SPARQL Editor (conditionally shown for other modes) */}
+      {showSparqlEditor && searchMode !== 'sparql' && (
         <Card>
           <CardContent className="p-4 space-y-3">
             <h4 className="font-medium flex items-center gap-2">
@@ -769,7 +1025,7 @@ Examples:
               <h4 className="font-medium">Query Results</h4>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-xs">
-                  {searchMode === 'knowledge' ? 'Knowledge' : searchMode === 'code-graph' ? 'Code Graph' : 'GitHub Docs'}
+                  {searchMode === 'knowledge' ? 'Knowledge' : searchMode === 'code-graph' ? 'Code Graph' : searchMode === 'sparql' ? 'SPARQL' : 'GitHub Docs'}
                 </Badge>
                 {result.executionResult.success ? (
                   <Badge variant="default" className="gap-2">
@@ -785,64 +1041,13 @@ Examples:
               </div>
             </div>
 
-            <Tabs defaultValue="summary" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="summary">Summary</TabsTrigger>
+            <Tabs defaultValue="results" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="results">Results</TabsTrigger>
                 <TabsTrigger value="provenance">
                   {searchMode === 'code-graph' ? 'Details' : 'Provenance'}
                 </TabsTrigger>
               </TabsList>
-
-              <TabsContent value="summary" className="space-y-3">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">
-                      {formatResultCount(result)}
-                    </div>
-                    <div className="text-xs text-muted-foreground">Results</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">
-                      {result.executionResult.executionTime?.toFixed(2) || '--'}s
-                    </div>
-                    <div className="text-xs text-muted-foreground">Execution Time</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">
-                      {searchMode === 'code-graph' ? '26,768' : '15,000+'}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {searchMode === 'code-graph' ? 'Total Entities' : 'Documents'}
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">
-                      {searchMode === 'code-graph' ? '11,331' : '12'}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {searchMode === 'code-graph' ? 'CALLS Edges' : 'Active Sensors'}
-                    </div>
-                  </div>
-                </div>
-
-                {result.originalQuestion !== 'Direct SPARQL Query' && (
-                  <div>
-                    <strong>Query:</strong>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      "{result.originalQuestion}"
-                    </p>
-                  </div>
-                )}
-
-                {result.validationMessage && (
-                  <Alert>
-                    <AlertDescription>
-                      <strong>Status:</strong> {result.validationMessage}
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </TabsContent>
 
               <TabsContent value="results">
                 <div className="space-y-3">
@@ -851,7 +1056,7 @@ Examples:
                   </div>
 
                   {/* Knowledge/GitHub Docs Results */}
-                  {searchMode !== 'code-graph' && rawApiResults.length > 0 && (
+                  {searchMode !== 'code-graph' && searchMode !== 'sparql' && rawApiResults.length > 0 && (
                     <div className="space-y-2 max-h-96 overflow-y-auto">
                       {rawApiResults.map((item: any, index: number) => (
                         <div key={index} className="bg-muted p-3 rounded">
@@ -878,6 +1083,34 @@ Examples:
                           )}
                         </div>
                       ))}
+                    </div>
+                  )}
+
+                  {/* SPARQL Results - Table Format */}
+                  {searchMode === 'sparql' && rawApiResults.length > 0 && (
+                    <div className="overflow-x-auto max-h-96">
+                      <table className="w-full text-sm">
+                        <thead className="bg-muted sticky top-0">
+                          <tr>
+                            {Object.keys(rawApiResults[0] || {}).filter(k => k !== 'id').map((key) => (
+                              <th key={key} className="px-3 py-2 text-left font-medium">
+                                {key}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {rawApiResults.map((row: any, index: number) => (
+                            <tr key={index} className="border-b border-muted hover:bg-muted/50">
+                              {Object.entries(row).filter(([k]) => k !== 'id').map(([key, value]) => (
+                                <td key={key} className="px-3 py-2 font-mono text-xs">
+                                  {String(value)}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   )}
 
@@ -919,8 +1152,9 @@ Examples:
                     </div>
                   )}
 
-                  {((searchMode !== 'code-graph' && rawApiResults.length === 0) ||
-                    (searchMode === 'code-graph' && graphResults.length === 0)) && (
+                  {((searchMode !== 'code-graph' && searchMode !== 'sparql' && rawApiResults.length === 0) ||
+                    (searchMode === 'code-graph' && graphResults.length === 0) ||
+                    (searchMode === 'sparql' && rawApiResults.length === 0)) && (
                     <Alert>
                       <AlertDescription>
                         No results found. Try adjusting your search criteria.
@@ -937,6 +1171,47 @@ Examples:
                       <div className="text-sm font-medium">Entity Details</div>
                       <div className="bg-muted p-3 rounded font-mono text-xs overflow-x-auto">
                         <pre>{JSON.stringify(graphResults.slice(0, 5), null, 2)}</pre>
+                      </div>
+                    </>
+                  ) : searchMode === 'sparql' ? (
+                    <>
+                      <div className="text-sm font-medium">SPARQL Query Provenance</div>
+                      <div className="text-xs text-muted-foreground mb-3">
+                        Query executed against Apache Jena Fuseki (155,097 triples)
+                      </div>
+
+                      {/* Show executed query */}
+                      <div className="bg-muted p-3 rounded">
+                        <div className="text-xs font-medium mb-2">Executed Query:</div>
+                        <pre className="font-mono text-xs overflow-x-auto whitespace-pre-wrap">
+                          {result?.generatedSparql || sparqlQuery}
+                        </pre>
+                      </div>
+
+                      {/* Show entity URIs from results if available */}
+                      {rawApiResults.length > 0 && rawApiResults.some((item: any) =>
+                        Object.values(item).some((v: any) => typeof v === 'string' && v.startsWith('entity:'))
+                      ) && (
+                        <div className="mt-3">
+                          <div className="text-xs font-medium mb-2">Entity References:</div>
+                          <div className="space-y-1 max-h-48 overflow-y-auto">
+                            {rawApiResults.slice(0, 20).map((item: any, index: number) => {
+                              const entityUri = Object.values(item).find((v: any) =>
+                                typeof v === 'string' && v.startsWith('entity:')
+                              );
+                              if (!entityUri) return null;
+                              return (
+                                <div key={index} className="bg-muted/50 p-2 rounded text-xs font-mono">
+                                  {String(entityUri)}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        <strong>Data Sources:</strong> Forum posts, Notion docs, GitHub repos, Web pages
                       </div>
                     </>
                   ) : (

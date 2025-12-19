@@ -1,7 +1,7 @@
 # Regen AI Infrastructure & Systems Guide
 
-**Last Updated**: December 9, 2025
-**Version**: 2.1
+**Last Updated**: December 10, 2025
+**Version**: 2.2
 **Status**: Production (All Critical Services Supervised)
 
 ---
@@ -569,53 +569,99 @@ Primary database storing all agent memories, embeddings, and system data.
 ### 11. Nginx Reverse Proxy (Ports 80, 443)
 
 **What It Is:**
-HTTPS reverse proxy routing external traffic to internal services.
+HTTPS reverse proxy routing external traffic to internal services. Currently manages 27 location blocks across 4 server blocks.
 
-**Routes Configured:**
-| Path | Destination | Purpose |
-|------|-------------|---------|
-| / | localhost:3000 | GAIA agents web UI |
-| /digests | localhost:8400 | Content dashboard |
-| /admin | localhost:8000 | Django admin |
-| /api/koi/* | Various | KOI API endpoints |
-| /koi | localhost:3000 | KOI visualization |
-| /registry-agent | localhost:3001 | Registry agent UI |
+**Primary Routes (Main Domain):**
+| Endpoint Group | Backend Port | Auth | Count | Purpose |
+|----------------|--------------|------|-------|---------|
+| **Digests Dashboard** | 8400 | No | 4 | Content dashboard + WebSocket |
+| **KOI Pipeline** | 8005-8200 | No | 4 | Coordinator, Event Bridge, BGE, MCP |
+| **KOI Metadata** | 8002, 8007 | No | 4 | Pipeline graph, content, transformations, RIDs |
+| **MCP Knowledge** | 8301, 3030 | Yes | 5 | RAG search, stats, health, SPARQL, code graph |
+| **External APIs** | 8003, 3007 | No | 2 | Registry review (ChatGPT), grant submissions |
+| **Static Content** | File | No | 1 | IRL grant application |
+| **GAIA Agents** | 3000 | Yes | 1 | Main web UI (catch-all) |
+| **TOTAL** | - | - | **21** | Main domain endpoints |
+
+**Admin Subdomains** (admin.regen.gaiaai.xyz, dashboard.regen.gaiaai.xyz):
+| Path | Backend | Purpose |
+|------|---------|---------|
+| /static/ | Django | Admin CSS/JS (cached 30d) |
+| /media/ | Django | User uploads (cached 30d) |
+| / | Django:8000 | Admin interface |
+
+**Critical Endpoints (MCP-Required):**
+- `/api/koi/query` → Port 8301 (Hybrid RAG search, 49,169 docs)
+- `/api/koi/stats` → Port 8301 (Knowledge base statistics)
+- `/api/koi/health` → Port 8301 (Service health check)
+- `/api/koi/fuseki/` → Port 3030 (SPARQL triplestore)
+- `/api/koi/graph` → Port 8301 (Apache AGE code graph, 28,489 entities)
+
+**Note:** These endpoints MUST use `^~` priority modifier and appear BEFORE catch-all `location /`
 
 **How It Works:**
 1. Listens on ports 80 (HTTP) and 443 (HTTPS)
 2. HTTP auto-redirects to HTTPS
 3. SSL/TLS certificates via Let's Encrypt
 4. Basic authentication for protected routes
-5. Proxies requests to backend services
+5. Proxies requests to backend services on localhost
+6. Priority routing (`^~`) prevents catch-all interception
+7. CORS enabled for browser/ChatGPT access
+8. WebSocket support for real-time features
 
 **Technology:**
-- Server: Nginx 1.29.3
+- Server: Nginx 1.29.3 (Alpine-based)
 - Container: gaia-nginx (custom image)
-- SSL: Let's Encrypt (auto-renewal)
-- Auth: Basic Auth (.htpasswd)
+- SSL: Let's Encrypt (auto-renewal via certbot)
+- Auth: HTTP Basic Auth (.htpasswd)
 
 **Requirements:**
-- Valid SSL certificates
-- Certificates mounted from host
+- Valid SSL certificates (Let's Encrypt)
+- Certificates mounted from host at `/etc/letsencrypt`
 - Docker network access to services
-- Ports 80/443 available
+- Ports 80/443 available (system nginx must be disabled)
 
-**Supports:**
-- HTTPS/TLS 1.2+
-- WebSocket proxying
-- Static file serving
-- Gzip compression
-- Rate limiting
+**Special Features:**
+- **CORS Support**: `/api/koi/graph/`, `/api/registry/`
+- **WebSocket Support**: `/`, `/digests/`, `/digests/socket.io`
+- **Path Stripping**: `/api/koi/fuseki/` → Fuseki expects `/koi/sparql`
+- **Static Caching**: 30-day cache for CSS/JS/images
+- **Extended Timeouts**: 120s for Registry API, 86400s for WebSockets
 
 **Managed By:**
-- Docker Compose
-- Auto-restart: ✅ Yes
+- Docker Compose (container lifecycle)
+- Auto-restart: ✅ Yes (restart: always)
 - Auto-start on boot: ✅ Yes
+- Config mounted as volume: ✅ Yes
 - Logs: `docker logs nginx`
 
 **Configuration:**
-- File: `/opt/projects/GAIA/nginx-ssl.conf`
-- Rebuild required after config changes
+- **Primary File**: `/opt/projects/GAIA/config/nginx-ssl.conf`
+- **Mounted In Container**: `/etc/nginx/nginx.conf`
+- **Volume Mount**: `./config/nginx-ssl.conf:/etc/nginx/nginx.conf:ro`
+- **Update Method**: `docker cp` + `nginx -s reload` (no rebuild needed)
+- **Complete Reference**: See [API_ROUTING_REFERENCE.md](API_ROUTING_REFERENCE.md)
+
+**Common Issues:**
+- Missing `^~` modifier causes routes to fall through to catch-all (ElizaOS)
+- Location blocks must be BEFORE `location /` or they won't match
+- CORS requires `always` flag to send headers on error responses
+- WebSocket needs `proxy_http_version 1.1` and upgrade headers
+
+**Testing:**
+```bash
+# Test all MCP endpoints
+bash /tmp/test_all_mcp.sh
+
+# Test code graph API
+bash /tmp/test_graph_api.sh
+
+# Validate config
+docker exec nginx nginx -t
+
+# Reload after changes
+docker exec nginx nginx -s reload
+```
 
 ---
 
@@ -1409,6 +1455,60 @@ sudo supervisorctl restart all
 4. Old manual processes can persist for weeks if not cleaned up
 5. Automated setup needs comprehensive cleanup procedures
 
+#### Incident #3: MCP Endpoint Outage (Dec 10, 2025)
+
+**Impact:** Complete MCP Knowledge Server non-functional, all 4 critical endpoints returning 404 errors
+
+**Timeline:**
+- **Dec 10, Early AM**: MCP endpoints discovered broken
+- **Hour 0-1**: Launched 5 parallel agents for investigation
+- **Hour 1-2**: Root cause identified (missing nginx location blocks)
+- **Hour 2-3**: 3 fix attempts (first 2 failed, third succeeded)
+- **Hour 3**: All endpoints verified working
+
+**Root Causes:**
+1. Docker nginx config missing location blocks for `/api/koi/query`, `/api/koi/stats`, `/api/koi/health`, `/api/koi/fuseki/`
+2. Catch-all `location /` routing requests to ElizaOS (port 3000) instead of correct backends
+3. Config embedded at Docker build time, not mounted as volume
+4. No automated endpoint testing or monitoring
+5. Configuration drift between services and routing
+
+**Affected Services:**
+- MCP Knowledge Server (port 8200): Unable to reach backend
+- Hybrid RAG API (port 8301): Inaccessible via HTTPS
+- Apache Jena Fuseki (port 3030): SPARQL endpoint broken
+- All 5 AI Agents: No knowledge retrieval, no source citations
+- 49,169 documents: Completely inaccessible
+
+**Resolution:**
+1. Added 4 priority location blocks (`^~` modifier) to nginx config
+2. Used `docker cp` to update running container config
+3. Reloaded nginx with `nginx -s reload`
+4. Updated docker-compose.yaml to mount config as volume
+5. Set restart policy to "always"
+6. Created comprehensive test script for all endpoints
+
+**Preventive Measures:**
+- ✅ Config mounted as volume (persists across restarts)
+- ✅ Created automated test script (`/tmp/test_all_mcp.sh`)
+- ✅ Documented nginx location block requirements
+- ✅ Added inline comments explaining routing
+- 📝 Need: Automated endpoint monitoring
+- 📝 Need: Pre-deployment validation
+- 📝 Need: Deployment checklist
+
+**Lessons Learned:**
+1. Always mount configs as volumes, not embedded at build time
+2. Nginx location block order and priority (`^~`) is critical
+3. Test config in running container before reloading
+4. Path stripping requires trailing slash in `proxy_pass`
+5. Automated testing prevents silent failures
+6. Configuration should be self-documenting with comments
+7. Multiple validation gates catch errors before production
+8. Fast feedback loops (parallel investigation) save time
+
+**Complete Incident Report:** See [INCIDENT_003_MCP_ENDPOINT_OUTAGE.md](INCIDENT_003_MCP_ENDPOINT_OUTAGE.md)
+
 ---
 
 ### Performance Metrics
@@ -1624,12 +1724,20 @@ docker exec -it gaia-postgres-1 psql -U postgres -d eliza
 
 ---
 
-**Document Version:** 2.1
-**Last Updated:** December 9, 2025 (Supervisor setup completed, port conflicts resolved)
+**Document Version:** 2.2
+**Last Updated:** December 10, 2025 (MCP endpoint outage resolved, nginx config persistence)
 **Authors:** Infrastructure Team
-**Next Review:** January 9, 2026
+**Next Review:** January 10, 2026
 
-**Recent Changes (v2.1):**
+**Recent Changes (v2.2):**
+- Added Incident #3 (MCP endpoint outage)
+- Updated nginx configuration to mount as volume
+- Added automated MCP endpoint testing script
+- Documented nginx location block requirements
+- Lessons learned from 5-agent parallel investigation
+- Preventive measures for configuration management
+
+**Previous Changes (v2.1):**
 - Updated all 6 services to supervised management
 - Added Incident #2 (port conflicts resolution)
 - Documented utility scripts and automation tools

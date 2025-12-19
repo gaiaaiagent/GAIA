@@ -248,42 +248,49 @@ class NaturalLanguageQueryView(View):
             }, status=500)
 
 
-@method_decorator(csrf_exempt, name='dispatch') 
+@method_decorator(csrf_exempt, name='dispatch')
 class ExecuteSPARQLView(View):
     """Execute raw SPARQL query"""
-    
+
     def post(self, request):
         try:
             data = json.loads(request.body)
             sparql_query = data.get('query', '').strip()
-            
+            enrich_with_rids = data.get('enrich_with_rids', True)  # Default to true
+
             if not sparql_query:
                 return JsonResponse({
                     'success': False,
                     'error': 'No SPARQL query provided'
                 }, status=400)
-            
+
             # Validate query first
             sparql_service = SPARQLService()
             validation = sparql_service.validate_sparql_syntax(sparql_query)
-            
+
             if not validation['valid']:
                 return JsonResponse({
                     'success': False,
                     'error': f"Invalid SPARQL syntax: {validation['error']}",
                     'query': sparql_query
                 }, status=400)
-            
+
             # Execute query
             result = sparql_service.execute_query(sparql_query)
-            
+
             # Format for visualization
             visualization_data = format_for_visualization(result)
-            
+
+            # Enrich with RIDs from PostgreSQL entity_registry
+            rid_data = {}
+            if enrich_with_rids and result.get('success'):
+                rid_data = sparql_service.enrich_results_with_rids(result)
+
             return JsonResponse({
                 'query': sparql_query,
                 'result': result,
-                'visualization_data': visualization_data
+                'visualization_data': visualization_data,
+                'provenance': rid_data
             })
             
         except json.JSONDecodeError:
