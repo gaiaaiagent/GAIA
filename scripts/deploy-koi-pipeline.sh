@@ -416,7 +416,11 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         # Check if services are responding
         echo
         echo "Checking service status..."
-        curl -s "http://localhost:$KOI_COORDINATOR_PORT/events/poll?node_id=test" > /dev/null 2>&1 && echo -e "${GREEN}✓ KOI Coordinator responding${NC}" || echo -e "${RED}✗ KOI Coordinator not responding${NC}"
+        curl -s -X POST "http://localhost:$KOI_COORDINATOR_PORT/events/poll" \
+          -H "Content-Type: application/json" \
+          -d '{"type":"poll_events","node_id":"test","limit":1}' > /dev/null 2>&1 \
+          && echo -e "${GREEN}✓ KOI Coordinator responding${NC}" \
+          || echo -e "${RED}✗ KOI Coordinator not responding${NC}"
         curl -s http://localhost:8100/health > /dev/null 2>&1 && echo -e "${GREEN}✓ Event Bridge responding${NC}" || echo -e "${RED}✗ Event Bridge not responding${NC}"
         curl -s http://localhost:8888/health > /dev/null 2>&1 && echo -e "${GREEN}✓ BGE Server responding${NC}" || echo -e "${YELLOW}! BGE Server might be on port 8090${NC}"
     fi
@@ -428,7 +432,7 @@ echo
 echo "Quick commands:"
 echo "  Check status:  systemctl status koi-*"
 echo "  View logs:     sudo journalctl -u koi-coordinator -f"
-echo "  Test pipeline: curl 'http://localhost:8200/events/poll?node_id=test'"
+echo "  Test pipeline: curl -X POST 'http://localhost:8200/events/poll' -H 'Content-Type: application/json' -d '{\"type\":\"poll_events\",\"node_id\":\"test\",\"limit\":1}'"
 echo
 echo "For detailed documentation, see:"
 echo "  $PROJECT_DIR/GAIA/docs/KOI-PIPELINE-INTEGRATION.md"

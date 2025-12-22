@@ -186,7 +186,7 @@ echo
 echo -e "${GREEN}=== KOI Pipeline Started Successfully ===${NC}"
 echo
 echo "Service Status:"
-echo "  Coordinator: http://localhost:$KOI_COORDINATOR_PORT/events/poll?node_id=test"
+echo "  Coordinator: curl -X POST 'http://localhost:$KOI_COORDINATOR_PORT/events/poll' -H 'Content-Type: application/json' -d '{\"type\":\"poll_events\",\"node_id\":\"test\",\"limit\":1}'"
 echo "  Event Bridge: http://localhost:$KOI_EVENT_BRIDGE_PORT/health"
 echo "  BGE Server: http://localhost:$BGE_SERVER_PORT/health"
 echo "  Logs: $LOG_DIR/"

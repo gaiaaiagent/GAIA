@@ -1496,8 +1496,10 @@ curl http://localhost:8888/health    # BGE Server
 # Check database
 psql -U postgres -d eliza -c "SELECT COUNT(*) FROM memories WHERE type='koi_document';"
 
-# Monitor event flow
-curl http://localhost:8200/events/poll
+# Monitor event flow (POST polling per KOI-net protocol)
+curl -X POST http://localhost:8200/events/poll \
+  -H "Content-Type: application/json" \
+  -d '{"type":"poll_events","node_id":"monitor","limit":10}'
 ```
 
 ### Auto-restart Configuration
@@ -1598,7 +1600,9 @@ curl -s http://localhost:8888/health
 ```bash
 # Quick health check for all services
 echo "KOI Coordinator (8200):"
-curl -s "http://localhost:8200/events/poll?node_id=test" | head -c 50
+curl -s -X POST http://localhost:8200/events/poll \
+  -H "Content-Type: application/json" \
+  -d '{"type":"poll_events","node_id":"test","limit":1}' | head -c 100
 
 echo "Event Bridge (8100):"
 curl -s http://localhost:8100/health
@@ -1646,8 +1650,10 @@ systemctl status koi-* --no-pager
 # Or check screen sessions
 screen -ls
 
-# Test pipeline (coordinator on port 8200)
-curl "http://localhost:8200/events/poll?node_id=test"
+# Test pipeline (coordinator on port 8200, POST polling per KOI-net)
+curl -X POST http://localhost:8200/events/poll \
+  -H "Content-Type: application/json" \
+  -d '{"type":"poll_events","node_id":"test","limit":5}'
 
 # Check logs for any errors
 journalctl -u koi-* --since "10 minutes ago" --no-pager

@@ -74,10 +74,15 @@ router.get('/coordinator/health', async (req, res) => {
  */
 router.get('/coordinator/status', async (req, res) => {
   try {
-    const response = await fetch(`${KOI_SERVICES.coordinator.url}/events/poll?node_id=monitor`, {
-      method: 'GET',
+    const response = await fetch(`${KOI_SERVICES.coordinator.url}/events/poll`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      timeout: 5000
+      timeout: 5000,
+      body: JSON.stringify({
+        type: 'poll_events',
+        node_id: 'monitor',
+        limit: 1
+      })
     });
     
     if (response.ok) {
@@ -562,17 +567,28 @@ router.get('/metrics', async (req, res) => {
  */
 async function checkAllServices() {
   const serviceChecks = [
-    { name: 'coordinator', url: `${KOI_SERVICES.coordinator.url}/events/poll?node_id=health` },
-    { name: 'eventBridge', url: `${KOI_SERVICES.eventBridge.url}/` },
-    { name: 'bgeServer', url: `${KOI_SERVICES.bgeServer.url}/health` }
+    {
+      name: 'coordinator',
+      url: `${KOI_SERVICES.coordinator.url}/events/poll`,
+      method: 'POST',
+      body: {
+        type: 'poll_events',
+        node_id: 'health',
+        limit: 1
+      }
+    },
+    { name: 'eventBridge', url: `${KOI_SERVICES.eventBridge.url}/`, method: 'GET' },
+    { name: 'bgeServer', url: `${KOI_SERVICES.bgeServer.url}/health`, method: 'GET' }
   ];
   
   const results = await Promise.all(
     serviceChecks.map(async (service) => {
       try {
         const response = await fetch(service.url, {
-          method: 'GET',
-          timeout: 3000
+          method: service.method || 'GET',
+          timeout: 3000,
+          headers: { 'Content-Type': 'application/json' },
+          body: service.body ? JSON.stringify(service.body) : undefined
         });
         
         return {

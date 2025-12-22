@@ -27,9 +27,15 @@ router.get('/health', (req, res) => {
 // Coordinator status
 router.get('/coordinator/status', async (req, res) => {
   try {
-    const response = await axios.get(`${KOI_SERVICES.coordinator.url}/events/poll?node_id=monitor`, {
-      timeout: 2000
-    });
+    const response = await axios.post(
+      `${KOI_SERVICES.coordinator.url}/events/poll`,
+      {
+        type: 'poll_events',
+        node_id: 'monitor',
+        limit: 1
+      },
+      { timeout: 2000 }
+    );
     res.json({ status: 'ok', data: response.data });
   } catch (error) {
     res.status(503).json({ status: 'error', message: 'Coordinator unavailable' });
