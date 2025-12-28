@@ -1,11 +1,12 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAgentPanels, useAgent, type AgentPanel } from '@/hooks/use-query-hooks';
 import type { UUID, Agent } from '@elizaos/core';
-import { Columns3, Database, Eye, Code, InfoIcon, Loader2 } from 'lucide-react';
+import { Columns3, Database, Eye, Code, InfoIcon, Loader2, Network } from 'lucide-react';
 import { JSX, useMemo } from 'react';
 import { AgentActionViewer } from './agent-action-viewer';
 import { AgentLogViewer } from './agent-log-viewer';
 import { AgentMemoryViewer } from './agent-memory-viewer';
+import { GraphContextViewer } from './graph-context-viewer';
 import { Skeleton } from './ui/skeleton';
 import AgentSettings from '@/components/agent-settings';
 import { useAgentTabState } from '@/hooks/use-agent-tab-state';
@@ -16,7 +17,7 @@ type AgentSidebarProps = {
   channelId?: UUID;
 };
 
-type FixedTabValue = 'details' | 'actions' | 'logs' | 'memories';
+type FixedTabValue = 'details' | 'actions' | 'logs' | 'memories' | 'graph';
 type TabValue = FixedTabValue | string;
 
 export function AgentSidebar({ agentId, agentName, channelId }: AgentSidebarProps) {
@@ -43,6 +44,7 @@ export function AgentSidebar({ agentId, agentName, channelId }: AgentSidebarProp
       { value: 'actions', label: 'Model Calls', icon: <Eye className="h-4 w-4" /> },
       { value: 'memories', label: 'Memories', icon: <Database className="h-4 w-4" /> },
       { value: 'logs', label: 'Logs', icon: <Code className="h-4 w-4" /> },
+      { value: 'graph', label: 'Graph Context', icon: <Network className="h-4 w-4" /> },
     ];
 
     const dynamicTabs = agentPanels.map((panel: AgentPanel) => ({
@@ -156,6 +158,19 @@ export function AgentSidebar({ agentId, agentName, channelId }: AgentSidebarProp
         )}
         {detailsTab === 'memories' && !agentId && (
           <div className="p-4 text-muted-foreground">Select an agent to see their memories.</div>
+        )}
+      </TabsContent>
+      <TabsContent
+        value="graph"
+        className="overflow-y-auto overflow-x-hidden flex-1 w-full max-w-full min-h-0"
+      >
+        {detailsTab === 'graph' && agentId && (
+          <div className="w-full max-w-full h-full">
+            <GraphContextViewer agentId={agentId} channelId={channelId} />
+          </div>
+        )}
+        {detailsTab === 'graph' && !agentId && (
+          <div className="p-4 text-muted-foreground">Select an agent to see graph context.</div>
         )}
       </TabsContent>
       {agentPanels.map((panel: AgentPanel) => (
