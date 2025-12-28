@@ -5,20 +5,18 @@ import { Badge } from '@/components/ui/badge';
 import { Database, Zap, Network, Brain, Activity, Eye, GitBranch, Twitter, FileText, MessageSquare, Radio, BookOpen, Gitlab, Monitor } from 'lucide-react';
 import { notionPages } from '../data/notionPages';
 
-interface GraphNode {
+type NodeStatus = 'active' | 'idle' | 'offline';
+
+interface GraphNode extends d3.SimulationNodeDatum {
   id: string;
   type: 'sensor' | 'source' | 'processor' | 'storage' | 'service';
   label: string;
-  status?: 'active' | 'idle' | 'offline';
+  status?: NodeStatus;
   icon?: string;
   children?: GraphNode[];
   expanded?: boolean;
   monitoring?: any[];
   metadata?: any;
-  x?: number;
-  y?: number;
-  fx?: number;
-  fy?: number;
 }
 
 interface GraphEdge {
@@ -359,13 +357,13 @@ const PipelineFlowGraphEnhanced: React.FC = () => {
           if (d.type === 'monitoring') return 60;
           return 120;
         }))
-      .force('charge', d3.forceManyBody().strength(d => {
+      .force('charge', d3.forceManyBody<GraphNode>().strength(d => {
         if (d.type === 'source') return -50;
         if (d.type === 'sensor') return -200;
         return -150;
       }))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(30));
+      .force('collision', d3.forceCollide<GraphNode>().radius(30));
 
     simulationRef.current = simulation;
 

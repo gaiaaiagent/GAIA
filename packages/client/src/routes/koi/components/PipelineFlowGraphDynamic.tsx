@@ -7,20 +7,18 @@ import { fetchCoordinatorData, fetchProcessedSources } from '../api/coordinator-
 import { notionPages } from '../data/notionPages';
 import { safeFetch } from '@/utils/fetch';
 
-interface GraphNode {
+type NodeStatus = 'active' | 'idle' | 'offline';
+
+interface GraphNode extends d3.SimulationNodeDatum {
   id: string;
   type: 'sensor' | 'source' | 'page' | 'processor' | 'storage' | 'service';
   label: string;
-  status?: 'active' | 'idle' | 'offline';
+  status?: NodeStatus;
   icon?: string;
   children?: GraphNode[];
   expanded?: boolean;
   monitoring?: any[];
   metadata?: any;
-  x?: number;
-  y?: number;
-  fx?: number;
-  fy?: number;
 }
 
 interface GraphEdge {
@@ -32,7 +30,17 @@ interface GraphEdge {
   reverseLabel?: string;
 }
 
-const PipelineFlowGraphDynamic: React.FC = () => {
+interface ServiceStatus {
+  id: string;
+  name: string;
+  status: NodeStatus;
+}
+
+interface PipelineFlowGraphDynamicProps {
+  showNodeStatus?: boolean;
+}
+
+const PipelineFlowGraphDynamic: React.FC<PipelineFlowGraphDynamicProps> = ({ showNodeStatus = true }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [nodes, setNodes] = useState<GraphNode[]>([]);
   const [edges, setEdges] = useState<GraphEdge[]>([]);
@@ -120,8 +128,8 @@ const PipelineFlowGraphDynamic: React.FC = () => {
   };
 
   // Fetch service status using the same logic as PipelineMonitor
-  const fetchServiceStatus = async () => {
-    const services = [];
+  const fetchServiceStatus = async (): Promise<ServiceStatus[]> => {
+    const services: ServiceStatus[] = [];
 
     // KOI Coordinator
     try {
@@ -792,7 +800,7 @@ const PipelineFlowGraphDynamic: React.FC = () => {
             const lastPart = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2];
             if (lastPart) {
               label = lastPart.replace(/-/g, ' ').replace(/_/g, ' ')
-                .split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                .split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
               // Truncate if too long
               if (label.length > 50) {
                 label = label.substring(0, 47) + '...';
@@ -937,15 +945,15 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           return 150;
         })
         .strength(0.5))
-      .force('charge', d3.forceManyBody()
-        .strength((d: GraphNode) => {
+      .force('charge', d3.forceManyBody<GraphNode>()
+        .strength((d) => {
           if (d.type === 'page') return -30;
           if (d.type === 'source') return -80;
           if (d.type === 'sensor') return -300;
           return -200;
         }))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius((d: GraphNode) => {
+      .force('collision', d3.forceCollide<GraphNode>().radius((d) => {
         if (d.type === 'page') return 15;
         if (d.type === 'source') return 25;
         if (d.type === 'sensor') return 35;
@@ -1158,7 +1166,7 @@ const PipelineFlowGraphDynamic: React.FC = () => {
         .style('font-weight', '500');
 
       // Add each line as a tspan
-      lines.forEach((line, i) => {
+      lines.forEach((line: string, i: number) => {
         text.append('tspan')
           .attr('x', 0)
           .attr('dy', i === 0 ? '0' : '1.2em')
@@ -1200,41 +1208,45 @@ const PipelineFlowGraphDynamic: React.FC = () => {
           d.fy = undefined;
         }));
 
-    // Add status ring for active nodes (outer ring)
-    nodeGroups.append('circle')
-      .attr('class', 'status-ring')
-      .attr('r', (d: GraphNode) => {
-        const baseRadius = d.type === 'page' ? 6 :
-                          d.type === 'source' ? 10 :
-                          d.type === 'sensor' ? 20 : 15;
-        return baseRadius + 4;
-      })
-      .attr('fill', 'none')
-      .attr('stroke', (d: GraphNode) => {
-        if (d.status === 'active') return '#10b981';
-        if (d.status === 'idle') return '#f59e0b';
-        if (d.status === 'offline') return '#ef4444';
-        return 'transparent';
-      })
-      .attr('stroke-width', (d: GraphNode) => d.status === 'active' ? 3 : 2)
-      .attr('stroke-dasharray', (d: GraphNode) => d.status === 'active' ? '0' : '5,5')
-      .style('opacity', (d: GraphNode) => d.status === 'active' ? 0.8 : 0.5);
+    if (showNodeStatus) {
+      // Add status ring for active nodes (outer ring)
+      nodeGroups.append('circle')
+        .attr('class', 'status-ring')
+        .attr('r', (d: GraphNode) => {
+          const baseRadius = d.type === 'page' ? 6 :
+                            d.type === 'source' ? 10 :
+                            d.type === 'sensor' ? 20 : 15;
+          return baseRadius + 4;
+        })
+        .attr('fill', 'none')
+        .attr('stroke', (d: GraphNode) => {
+          if (d.status === 'active') return '#10b981';
+          if (d.status === 'idle') return '#f59e0b';
+          if (d.status === 'offline') return '#ef4444';
+          return 'transparent';
+        })
+        .attr('stroke-width', (d: GraphNode) => d.status === 'active' ? 3 : 2)
+        .attr('stroke-dasharray', (d: GraphNode) => d.status === 'active' ? '0' : '5,5')
+        .style('opacity', (d: GraphNode) => d.status === 'active' ? 0.8 : 0.5);
 
-    // Add pulsing animation for active nodes
-    nodeGroups.selectAll('.status-ring')
-      .filter((d: any) => d.status === 'active')
-      .append('animate')
-      .attr('attributeName', 'r')
-      .attr('values', (d: GraphNode) => {
-        const baseRadius = d.type === 'page' ? 6 :
-                          d.type === 'source' ? 10 :
-                          d.type === 'sensor' ? 20 : 15;
-        const minR = baseRadius + 4;
-        const maxR = baseRadius + 8;
-        return `${minR};${maxR};${minR}`;
-      })
-      .attr('dur', '2s')
-      .attr('repeatCount', 'indefinite');
+      // Add pulsing animation for active nodes
+      const statusRings = nodeGroups.selectAll<SVGCircleElement, GraphNode>('.status-ring');
+
+      statusRings
+        .filter((d) => d.status === 'active')
+        .append('animate')
+        .attr('attributeName', 'r')
+        .attr('values', (d) => {
+          const baseRadius = d.type === 'page' ? 6 :
+                            d.type === 'source' ? 10 :
+                            d.type === 'sensor' ? 20 : 15;
+          const minR = baseRadius + 4;
+          const maxR = baseRadius + 8;
+          return `${minR};${maxR};${minR}`;
+        })
+        .attr('dur', '2s')
+        .attr('repeatCount', 'indefinite');
+    }
 
     // Add main node circles with dynamic sizing and colors
     nodeGroups.append('circle')

@@ -38,13 +38,16 @@ interface ServiceStatus {
   details?: any;
 }
 
+type SensorStatus = 'active' | 'idle' | 'error' | 'offline';
+type MonitoringItem = string | { title?: string; url?: string };
+
 interface SensorNode {
   id: string;
   name: string;
   type: string;
-  status: 'active' | 'idle' | 'error';
+  status: SensorStatus;
   lastActivity?: string;
-  monitoring?: string[];
+  monitoring?: MonitoringItem[];
   eventsProcessed?: number;
 }
 
@@ -736,24 +739,26 @@ export default function PipelineMonitor() {
                           <div className="max-h-96 overflow-y-auto border rounded-md p-2 bg-muted/30">
                             <div className="space-y-1">
                               {sensor.monitoring.map((item, idx) => {
-                              // Handle both string and object formats
-                              const isObject = typeof item === 'object' && item !== null;
-                              const title = isObject ? item.title : item;
-                              const url = isObject ? item.url : (typeof item === 'string' && item.startsWith('https://') ? item : null);
+                                // Handle both string and object formats
+                                const isObject = typeof item === 'object' && item !== null;
+                                const meta = isObject ? (item as { title?: string; url?: string }) : null;
+                                const title = meta?.title ?? (isObject ? undefined : item);
+                                const url = meta?.url ?? (typeof item === 'string' && item.startsWith('https://') ? item : null);
+                                const label = title ?? (typeof item === 'string' ? item : meta?.url ?? 'Unknown');
 
-                              return (
-                                <div key={idx} className="flex items-start gap-2 text-sm py-1">
-                                  <FileText className="h-3 w-3 text-blue-500 mt-0.5 flex-shrink-0" />
-                                  {url ? (
-                                    <a href={url} target="_blank" rel="noopener noreferrer"
-                                       className="text-blue-500 hover:underline break-words">
-                                      {title || (typeof url === 'string' ? url.replace('https://www.notion.so/', '') : url)}
-                                    </a>
-                                  ) : (
-                                    <span className="break-words">{title || item}</span>
-                                  )}
-                                </div>
-                              );
+                                return (
+                                  <div key={idx} className="flex items-start gap-2 text-sm py-1">
+                                    <FileText className="h-3 w-3 text-blue-500 mt-0.5 flex-shrink-0" />
+                                    {url ? (
+                                      <a href={url} target="_blank" rel="noopener noreferrer"
+                                         className="text-blue-500 hover:underline break-words">
+                                        {title || (typeof url === 'string' ? url.replace('https://www.notion.so/', '') : url)}
+                                      </a>
+                                    ) : (
+                                      <span className="break-words">{label}</span>
+                                    )}
+                                  </div>
+                                );
                               })}
                             </div>
                           </div>
@@ -774,12 +779,17 @@ export default function PipelineMonitor() {
                           'websites'
                         }:</p>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                          {sensor.monitoring.map((site) => (
-                            <div key={site} className="flex items-center gap-2 text-sm">
-                              <Wifi className="h-3 w-3 text-green-500" />
-                              <span className="truncate">{site}</span>
-                            </div>
-                          ))}
+                          {sensor.monitoring.map((site, idx) => {
+                            const siteLabel = typeof site === 'string' ? site : site.title ?? site.url ?? 'Unknown';
+                            const siteKey = typeof site === 'string' ? site : site.url ?? site.title ?? String(idx);
+
+                            return (
+                              <div key={siteKey} className="flex items-center gap-2 text-sm">
+                                <Wifi className="h-3 w-3 text-green-500" />
+                                <span className="truncate">{siteLabel}</span>
+                              </div>
+                            );
+                          })}
                         </div>
                       </>
                     )}
