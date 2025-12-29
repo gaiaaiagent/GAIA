@@ -196,7 +196,7 @@ export default function ProfileOverlay({ isOpen, onClose, agentId }: ProfileOver
               <p className="font-medium text-sm mb-2">Plugins</p>
               <div className="flex flex-wrap gap-2">
                 {agent?.plugins && agent.plugins.length > 0 ? (
-                  agent.plugins.map((plugin, index) => {
+                  agent.plugins.map((plugin: string, index: number) => {
                     // Extract plugin name by removing the prefix
                     const pluginName = plugin
                       .replace('@elizaos/plugin-', '')

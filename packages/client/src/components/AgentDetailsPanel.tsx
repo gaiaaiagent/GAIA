@@ -5,12 +5,22 @@ import { Separator } from '@/components/ui/separator';
 import type { Agent } from '@elizaos/core';
 import { AgentStatus } from '@elizaos/core';
 
+type AgentSettings = Record<string, unknown>;
+type MessageExample = {
+  name: string;
+  content: {
+    text: string;
+  };
+};
+
 interface AgentDetailsPanelProps {
   agent: Agent;
 }
 
 export default function AgentDetailsPanel({ agent }: AgentDetailsPanelProps) {
   const isActive = agent.status === AgentStatus.ACTIVE;
+  const settings = agent.settings as AgentSettings | undefined;
+  const messageExamples = agent.messageExamples as MessageExample[][] | undefined;
   // Extract avatar as string, handling various types
   const avatarUrl =
     typeof agent.settings?.avatar === 'string' ? agent.settings.avatar : '/elizaos-icon.png';
@@ -60,7 +70,7 @@ export default function AgentDetailsPanel({ agent }: AgentDetailsPanelProps) {
               <div>
                 <h4 className="font-medium text-sm mb-2">Topics</h4>
                 <div className="flex flex-wrap gap-1">
-                  {agent.topics.map((topic, idx) => (
+                  {agent.topics.map((topic: string, idx: number) => (
                     <Badge key={idx} variant="outline" className="text-xs">
                       {topic}
                     </Badge>
@@ -74,7 +84,7 @@ export default function AgentDetailsPanel({ agent }: AgentDetailsPanelProps) {
               <div>
                 <h4 className="font-medium text-sm mb-2">Personality Traits</h4>
                 <div className="flex flex-wrap gap-1">
-                  {agent.adjectives.map((adj, idx) => (
+                  {agent.adjectives.map((adj: string, idx: number) => (
                     <Badge key={idx} variant="secondary" className="text-xs">
                       {adj}
                     </Badge>
@@ -88,7 +98,7 @@ export default function AgentDetailsPanel({ agent }: AgentDetailsPanelProps) {
               <div>
                 <h4 className="font-medium text-sm mb-2">Enabled Plugins</h4>
                 <div className="space-y-1">
-                  {agent.plugins.map((plugin, idx) => (
+                  {agent.plugins.map((plugin: string, idx: number) => (
                     <div key={idx} className="text-xs text-muted-foreground">
                       • {plugin}
                     </div>
@@ -98,11 +108,11 @@ export default function AgentDetailsPanel({ agent }: AgentDetailsPanelProps) {
             )}
 
             {/* Settings */}
-            {agent.settings && Object.keys(agent.settings).length > 0 && (
+            {settings && Object.keys(settings).length > 0 && (
               <div>
                 <h4 className="font-medium text-sm mb-2">Settings</h4>
                 <div className="space-y-1">
-                  {Object.entries(agent.settings)
+                  {Object.entries(settings)
                     .filter(([key]) => key !== 'avatar' && key !== 'secrets')
                     .map(([key, value]) => (
                       <div key={key} className="text-xs">
@@ -117,11 +127,11 @@ export default function AgentDetailsPanel({ agent }: AgentDetailsPanelProps) {
             )}
 
             {/* Message Examples */}
-            {agent.messageExamples && agent.messageExamples.length > 0 && (
+            {messageExamples && messageExamples.length > 0 && (
               <div>
                 <h4 className="font-medium text-sm mb-2">Example Messages</h4>
                 <div className="space-y-2">
-                  {agent.messageExamples.slice(0, 3).map((examples, idx) => {
+                  {messageExamples.slice(0, 3).map((examples: MessageExample[], idx: number) => {
                     // messageExamples is an array of arrays, so we need to handle nested structure
                     if (Array.isArray(examples) && examples.length > 0) {
                       const firstExample = examples[0];

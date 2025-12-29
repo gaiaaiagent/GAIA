@@ -159,7 +159,7 @@ export function MessageContent({
 
             const mediaInfos = parseMediaFromText(message.text);
             const attachmentUrls = new Set(
-              message.attachments?.map((att) => att.url).filter(Boolean) || []
+              message.attachments?.map((att: Media) => att.url).filter(Boolean) || []
             );
             const uniqueMediaInfos = mediaInfos.filter((media) => !attachmentUrls.has(media.url));
             const textWithoutUrls = removeMediaUrlsFromText(message.text, mediaInfos);
@@ -200,7 +200,7 @@ export function MessageContent({
         </div>
 
         {message.attachments
-          ?.filter((attachment) => attachment.url && attachment.url.trim() !== '')
+          ?.filter((attachment: Media) => attachment.url && attachment.url.trim() !== '')
           .map((attachment: Media) => (
             <MediaContent
               key={`${attachment.url}-${attachment.title}`}
@@ -902,7 +902,7 @@ export default function Chat({
         if (failed.length > 0)
           updateMessage(tempMessageId, {
             attachments: optimisticUiMessage.attachments?.filter(
-              (att) => !failed.some((f) => f.file.id === att.id)
+              (att: Media) => !failed.some((f) => f.file.id === att.id)
             ),
           });
         cleanupBlobUrls(blobUrls);
