@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphRAG 3D Embedding View - YonEarth Knowledge Graph</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1a2e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            overflow: hidden;
+            color: #e0e0e0;
+        }
+
+        #graph-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* SVG Container for 2D modes */
+        #svg-container-2d {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
+
+        #svg-container-2d.active {
+            display: block;
+        }
+
+        #graph-container.hidden {
+            display: none;
+        }
+
+        #webgl-warning {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(520px, calc(100vw - 40px));
+            padding: 18px 20px;
+            background: rgba(20, 20, 35, 0.95);
+            border: 1px solid rgba(255, 120, 120, 0.35);
+            border-radius: 10px;
+            color: #f5dede;
+            z-index: 2500;
+            display: none;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+        }
+
+        #webgl-warning.visible {
+            display: block;
+        }
+
+        .warning-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ff9d9d;
+            margin-bottom: 6px;
+        }
+
+        .warning-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #ffdede;
+        }
+
+        .warning-details {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #ffbaba;
+        }
+
+        .warning-actions {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #ffcccc;
+        }
+
+        /* Tooltip for 2D organic views */
+        .organic-tooltip {
+            position: absolute;
+            pointer-events: none;
+            padding: 10px 14px;
+            background: rgba(15, 20, 35, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 12px;
+            line-height: 1.4;
+            z-index: 1500;
+            display: none;
+            max-width: 320px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .organic-tooltip.visible {
+            display: block;
+        }
+
+        .organic-tooltip-title {
+            font-weight: 600;
+            color: #00ffff;
+            margin-bottom: 4px;
+        }
+
+        .organic-tooltip-content {
+            color: #a8b6d8;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 26, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            backdrop-filter: blur(10px);
+        }
+
+        #loading-screen.hidden {
+            display: none;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-title {
+            font-size: 32px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(100, 200, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #00ffff;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        .loading-status {
+            color: #00ffff;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Info Panel */
+        #info-panel {
+            position: absolute;
+            top: 60px; /* FIX-018b: Account for fixed header height */
+            right: 0;
+            max-width: 380px;
+            max-height: calc(100vh - 60px); /* Adjust for header */
+            padding: 20px;
+            background: rgba(15, 20, 35, 0.95);
+            border-left: 1px solid rgba(100, 200, 255, 0.3);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        }
+
+        #info-panel.collapsed {
+            max-width: 60px;
+            max-height: 60px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .toggle-btn {
+            background: rgba(100, 200, 255, 0.2);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            color: #00ffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(100, 200, 255, 0.3);
+        }
+
+        .entity-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .entity-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #00ffff;
+            margin-bottom: 8px;
+        }
+
+        .entity-type {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 12px;
+            color: #a0a0ff;
+            margin-bottom: 10px;
+        }
+
+        .entity-description {
+            color: #b0b0b0;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .entity-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            background: rgba(100, 200, 255, 0.1);
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #808080;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #00ffff;
+            margin-top: 4px;
+        }
+
+        .hierarchy-block {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(100, 200, 255, 0.05);
+            border: 1px solid rgba(100, 200, 255, 0.15);
+            border-radius: 10px;
+        }
+
+        .hierarchy-title {
+            font-size: 12px;
+            color: #a0a0a0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hierarchy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .hierarchy-pill {
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(10, 14, 26, 0.6);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .hierarchy-level {
+            font-size: 12px;
+            font-weight: 700;
+            color: #00ffff;
+            letter-spacing: 0.5px;
+        }
+
+        .hierarchy-desc {
+            font-size: 11px;
+            color: #8aa0c2;
+        }
+
+        .hierarchy-count {
+            font-size: 14px;
+            font-weight: 700;
+            color: #e0e0e0;
+            margin-top: 2px;
+        }
+
+        .hierarchy-note {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #7a8ca8;
+        }
+
+        /* Controls Panel */
+        #controls-panel {
+            position: absolute;
+            top: 60px; /* FIX-018b: Account for fixed header height */
+            left: 0;
+            max-width: 320px;
+            max-height: calc(100vh - 60px); /* Adjust for header */
+            padding: 20px;
+            background: rgba(15, 20, 35, 0.95);
+            border-right: 1px solid rgba(100, 200, 255, 0.3);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        }
+
+        .control-section {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            font-size: 13px;
+            color: #a0a0a0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+        }
+
+        .mode-btn {
+            padding: 10px;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 6px;
+            color: #a0a0a0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .mode-btn:hover:not(.active) {
+            background: rgba(100, 200, 255, 0.2);
+        }
+        .mode-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .mode-btn .mode-title {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+            color: inherit;
+        }
+
+        .mode-btn .mode-subtitle {
+            display: block;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .mode-btn:not(.active) .mode-subtitle {
+            color: #7d8ab8;
+        }
+
+        /* Color Legend */
+        .color-legend {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(100, 200, 255, 0.05);
+            border: 1px solid rgba(100, 200, 255, 0.15);
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #e0e0e0;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            display: inline-block;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: rgba(100, 200, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        .filter-checkbox {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .filter-label {
+            flex: 1;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .filter-count {
+            font-size: 12px;
+            color: #606060;
+        }
+
+        /* Multi-Lens Selector */
+        .multi-lens-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(15, 20, 35, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .multi-lens-select:hover {
+            border-color: rgba(100, 200, 255, 0.5);
+            background: rgba(20, 25, 40, 0.98);
+        }
+
+        .multi-lens-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .multi-lens-select optgroup {
+            font-weight: 700;
+            color: #00ffff;
+            background: rgba(10, 14, 26, 0.95);
+            padding: 8px 0;
+        }
+
+        .multi-lens-select option {
+            padding: 10px 16px;
+            background: rgba(15, 20, 35, 0.95);
+            color: #e0e0e0;
+            font-weight: 400;
+        }
+
+        .multi-lens-select option:hover {
+            background: rgba(100, 200, 255, 0.2);
+        }
+
+        /* Search (moved to controls panel) */
+        #search-container {
+            position: relative;
+            z-index: 1000;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(15, 20, 35, 0.9);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        #search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        #search-input::placeholder {
+            color: #606060;
+        }
+
+        /* Autocomplete Dropdown */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(15, 20, 35, 0.98);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 8px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+            display: none;
+            z-index: 2000;
+        }
+
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            transition: background 0.2s ease;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.selected {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .autocomplete-item-name {
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .autocomplete-item-type {
+            color: #808080;
+            font-size: 12px;
+        }
+
+        .autocomplete-no-results {
+            padding: 20px;
+            text-align: center;
+            color: #808080;
+            font-size: 14px;
+        }
+
+        /* FIX-018: Canonical match styling */
+        .autocomplete-item.canonical-match {
+            background: rgba(0, 200, 100, 0.15);
+            border-left: 3px solid #00c864;
+        }
+
+        .autocomplete-item.canonical-match:hover,
+        .autocomplete-item.canonical-match.selected {
+            background: rgba(0, 200, 100, 0.25);
+        }
+
+        .canonical-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            margin-left: 8px;
+            background: linear-gradient(135deg, #00c864 0%, #00a854 100%);
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+
+        /* Sources Section */
+        .sources-select {
+            width: 100%;
+            padding: 8px 10px;
+            background: rgba(15, 20, 35, 0.9);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+
+        .sources-select:hover {
+            border-color: rgba(100, 200, 255, 0.4);
+        }
+
+        .sources-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .sources-note {
+            font-size: 11px;
+            color: #7a8ca8;
+            margin-top: 8px;
+        }
+
+        /* Cluster Search & Focus */
+        .cluster-search-container {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .cluster-search-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(15, 20, 35, 0.9);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .cluster-search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .cluster-autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(15, 20, 35, 0.98);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 8px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+            display: none;
+            z-index: 2000;
+        }
+
+        .cluster-autocomplete-dropdown.show {
+            display: block;
+        }
+
+        .cluster-group {
+            margin-top: 8px;
+        }
+
+        .cluster-group:first-child {
+            margin-top: 0;
+        }
+
+        .cluster-group-header {
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.15);
+            color: #667eea;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+        }
+
+        .cluster-autocomplete-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.05);
+            transition: background 0.2s ease;
+        }
+
+        .cluster-autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .cluster-autocomplete-item:hover,
+        .cluster-autocomplete-item.selected {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .cluster-item-name {
+            color: #e0e0e0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .cluster-item-stats {
+            color: #808080;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .clear-focus-btn {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            border-radius: 6px;
+            color: #f44336;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+
+        .clear-focus-btn:hover {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: #f44336;
+        }
+
+        .cluster-focus-info {
+            padding: 10px 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .focus-info-title {
+            font-size: 10px;
+            color: #808080;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .focused-cluster-name {
+            font-size: 13px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        /* Keyboard Shortcuts - hidden */
+        #shortcuts-hint {
+            display: none;
+        }
+
+        .shortcut-key {
+            display: inline-block;
+            padding: 2px 6px;
+            background: rgba(100, 200, 255, 0.2);
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 11px;
+            margin: 0 2px;
+        }
+
+        /* Stats Overlay */
+        #stats-overlay {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 16px;
+            background: rgba(15, 20, 35, 0.9);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #808080;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            font-family: monospace;
+        }
+
+        /* Mobile tweaks */
+        @media (max-width: 768px) {
+            #controls-panel {
+                display: none;
+            }
+            #info-panel {
+                top: auto;
+                bottom: 20px;
+                left: 10px;
+                right: 10px;
+                width: calc(100vw - 20px);
+                max-width: none;
+                max-height: 50vh;
+                overflow: auto;
+            }
+            #panel-content .hierarchy-block {
+                display: none;
+            }
+            #search-container {
+                top: 10px;
+                left: 10px;
+                transform: none;
+                width: calc(100vw - 20px);
+            }
+            #shortcuts-hint {
+                display: none;
+            }
+            #stats-overlay {
+                bottom: 10px;
+                right: 10px;
+                font-size: 11px;
+                padding: 8px 10px;
+            }
+        }
+
+        /* Banner Header */
+        .kg-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: rgba(2, 10, 25, 0.95);
+            border-bottom: 1px solid rgba(0, 200, 255, 0.25);
+            backdrop-filter: blur(8px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+            color: #e0f7ff;
+        }
+
+        .kg-title-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .kg-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kg-subtitle {
+            font-size: 0.85rem;
+            color: #9ecfff;
+        }
+
+        .kg-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .kg-nav a {
+            padding: 6px 12px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            color: #e0f7ff;
+            border: 1px solid rgba(0, 200, 255, 0.4);
+            background: rgba(0, 30, 60, 0.7);
+            transition: background 0.2s;
+        }
+
+        .kg-nav a:hover {
+            background: rgba(0, 200, 255, 0.15);
+        }
+
+        /* Adjust for header - add padding-top to account for fixed header */
+        body {
+            padding-top: 60px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Banner Header -->
+    <header class="kg-header">
+        <div class="kg-title-block">
+            <div class="kg-title">Regen Knowledge Graph</div>
+            <div class="kg-subtitle">Interactive GraphRAG visualization</div>
+        </div>
+        <nav class="kg-nav">
+            <a href="/">Dashboard</a>
+            <a href="/koi">KOI Pipeline</a>
+        </nav>
+    </header>
+
+    <!-- Graph Container (3D) -->
+    <div id="graph-container"></div>
+
+    <!-- SVG Container (2D) -->
+    <svg id="svg-container-2d"></svg>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-title">Loading Knowledge Graph</div>
+            <div class="loading-spinner"></div>
+            <div class="loading-status" id="loading-status">Initializing...</div>
+        </div>
+    </div>
+
+    <!-- WebGL Warning -->
+    <div id="webgl-warning">
+        <div class="warning-title">⚠️ WebGL Not Available</div>
+        <div class="warning-text">
+            Your browser has WebGL disabled or running in a restricted mode. The 3D network views (Semantic, Contextual, Structural) require WebGL hardware acceleration.
+        </div>
+        <div class="warning-details" id="webgl-warning-details"></div>
+        <div class="warning-actions">
+            <strong>✅ Good News:</strong> Circle Pack and Voronoi modes work without WebGL!<br>
+            The page has automatically switched to Circle Pack mode. You can explore the full hierarchy visualization using the Multi-Lens dropdown.<br><br>
+            <strong>To enable 3D modes:</strong>
+            <ul style="margin: 8px 0; padding-left: 20px; text-align: left;">
+                <li>Enable hardware acceleration in browser settings</li>
+                <li>Try Chrome, Firefox, or Safari</li>
+                <li>Check GPU drivers are up to date</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div id="info-panel">
+        <div class="panel-header">
+            <div class="panel-title">Knowledge Graph</div>
+            <button class="toggle-btn" id="panel-toggle">−</button>
+        </div>
+        <div id="panel-content">
+            <div class="entity-info" id="entity-info">
+                <div class="entity-name" id="entity-name">Select a node</div>
+                <div class="entity-type" id="entity-type"></div>
+                <div class="entity-description" id="entity-description">Click a node to view details here.</div>
+                <div class="entity-stats">
+                    <div class="stat-item">
+                        <div class="stat-label" id="stat-label-connections">Connections</div>
+                        <div class="stat-value" id="entity-connections">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label" id="stat-label-centrality">Centrality</div>
+                        <div class="stat-value" id="entity-centrality">0.00</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label" id="stat-label-degree">Degree</div>
+                        <div class="stat-value" id="entity-degree">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label" id="stat-label-weighted">Weighted</div>
+                        <div class="stat-value" id="entity-weighted-degree">0</div>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <div class="stat-label" id="neighbors-title">Top neighbors</div>
+                    <ul id="entity-neighbors" style="margin-top: 6px; padding-left: 18px; color: #c0d8ff; line-height: 1.3;"></ul>
+                </div>
+                <div style="margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <div class="stat-label" id="incoming-title">Incoming</div>
+                        <ul id="entity-incoming" style="margin-top: 6px; padding-left: 16px; color: #c0d8ff; line-height: 1.3;"></ul>
+                    </div>
+                    <div>
+                        <div class="stat-label" id="outgoing-title">Outgoing</div>
+                        <ul id="entity-outgoing" style="margin-top: 6px; padding-left: 16px; color: #c0d8ff; line-height: 1.3;"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voronoi cluster info (hidden by default, shown when clicking clusters in voronoi view) -->
+            <div id="voronoi-cluster-info" style="display: none;"></div>
+
+            <div class="hierarchy-block" style="margin-top: 16px;">
+                <div class="hierarchy-title">Graph overview</div>
+                <div style="margin-top: 6px; font-size: 13px; color: #808080;">
+                    39,054 entities from 172 podcast episodes
+                </div>
+                <div style="margin-top: 6px; font-size: 13px; color: #808080;">
+                    Hover to preview connections • Click to explore neighborhood
+                </div>
+                <div class="hierarchy-grid" style="margin-top: 12px;">
+                    <div class="hierarchy-pill">
+                        <div class="hierarchy-level">L2</div>
+                        <div class="hierarchy-desc">coarse communities</div>
+                        <div class="hierarchy-count" id="hierarchy-count-l2">–</div>
+                    </div>
+                    <div class="hierarchy-pill">
+                        <div class="hierarchy-level">L1</div>
+                        <div class="hierarchy-desc">fine clusters</div>
+                        <div class="hierarchy-count" id="hierarchy-count-l1">–</div>
+                    </div>
+                    <div class="hierarchy-pill">
+                        <div class="hierarchy-level">L0</div>
+                        <div class="hierarchy-desc">entities</div>
+                        <div class="hierarchy-count" id="hierarchy-count-l0">–</div>
+                    </div>
+                    <div class="hierarchy-pill" id="hierarchy-pill-l3" style="display: none;">
+                        <div class="hierarchy-level">L3</div>
+                        <div class="hierarchy-desc">legacy superclusters</div>
+                        <div class="hierarchy-count" id="hierarchy-count-l3">–</div>
+                    </div>
+                </div>
+                <div class="hierarchy-note" id="hierarchy-key-note">Detecting hierarchy keys…</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls Panel -->
+    <div id="controls-panel">
+        <!-- Search Section -->
+        <div class="control-section">
+            <label class="control-label">Search Entities</label>
+            <div id="search-container">
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search entities (Ctrl+K)..."
+                    autocomplete="off"
+                />
+                <div id="autocomplete-dropdown" class="autocomplete-dropdown"></div>
+            </div>
+        </div>
+
+        <!-- Sources Section -->
+        <div class="control-section">
+            <label class="control-label">Sources</label>
+            <select id="episode-filter" class="sources-select">
+                <option value="">All episodes</option>
+            </select>
+            <select id="book-filter" class="sources-select">
+                <option value="">All books</option>
+            </select>
+            <div class="sources-note">
+                Filter entities by episode or book source
+            </div>
+        </div>
+
+        <div class="control-section">
+            <label class="control-label">Multi-Lens Visualization</label>
+            <select id="multi-lens-selector" class="multi-lens-select">
+                <optgroup label="───── NETWORK LAYOUTS ─────">
+                    <option value="semantic" selected>Semantic (Text UMAP)</option>
+                    <option value="contextual">Contextual (GraphSAGE)</option>
+                    <option value="structural">Structural (Force Graph)</option>
+                    <option value="holographic">Holographic Elevator (Legacy 3D)</option>
+                </optgroup>
+                <optgroup label="──── HIERARCHY LAYOUTS ────">
+                    <option value="circle-pack">Circle Pack (Zoomable Hierarchy)</option>
+                    <option value="voronoi">Voronoi (Cellular Organic)</option>
+                    <option value="voronoi-2">Voronoi 2 (Semantic Landscape)</option>
+                    <option value="voronoi-3">Voronoi 3 (Constrained Cells)</option>
+                    <option value="voronoi4">Voronoi 4 (Progressive Disclosure)</option>
+                    <option value="voronoi5">Voronoi 5 (Subset, 1k nodes)</option>
+                    <option value="hierarchical">Hierarchical (L3→L2→L1→Entities)</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="control-section">
+            <label class="control-label">Color Mode</label>
+            <div class="mode-selector">
+                <div class="mode-btn active" data-color-mode="type">By Type</div>
+                <div class="mode-btn" data-color-mode="centrality">By Centrality</div>
+                <div class="mode-btn" data-color-mode="l3cluster">By Cluster</div>
+            </div>
+            <!-- Color Legend for "By Type" -->
+            <div id="color-legend-type" class="color-legend">
+                <div class="legend-item"><span class="legend-color" style="background: #4CAF50;"></span> PERSON</div>
+                <div class="legend-item"><span class="legend-color" style="background: #2196F3;"></span> ORGANIZATION</div>
+                <div class="legend-item"><span class="legend-color" style="background: #9C27B0;"></span> CONCEPT</div>
+                <div class="legend-item"><span class="legend-color" style="background: #FF9800;"></span> PRACTICE</div>
+                <div class="legend-item"><span class="legend-color" style="background: #F44336;"></span> PRODUCT</div>
+                <div class="legend-item"><span class="legend-color" style="background: #00BCD4;"></span> PLACE</div>
+                <div class="legend-item"><span class="legend-color" style="background: #FFEB3B;"></span> EVENT</div>
+                <div class="legend-item"><span class="legend-color" style="background: #795548;"></span> WORK</div>
+                <div class="legend-item"><span class="legend-color" style="background: #E91E63;"></span> CLAIM</div>
+            </div>
+            <!-- Color Legend for "By Centrality" -->
+            <div id="color-legend-centrality" class="color-legend" style="display: none;">
+                <div class="legend-item"><span class="legend-color" style="background: #00FF88;"></span> Low Centrality</div>
+                <div class="legend-item"><span class="legend-color" style="background: #00DDFF;"></span> Medium Centrality</div>
+                <div class="legend-item"><span class="legend-color" style="background: #0088FF;"></span> High Centrality</div>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <label class="control-label">Node Size</label>
+            <div class="filter-item" style="justify-content: space-between; gap: 8px;">
+                <span class="filter-label">Sizing mode</span>
+                <select id="size-mode" style="flex: 1; padding: 6px 8px; background: rgba(15,20,35,0.9); border: 1px solid rgba(100,200,255,0.2); color: #e0e0e0; border-radius: 6px;">
+                    <option value="connectivity">Connectivity</option>
+                    <option value="betweenness" selected>Betweenness</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <label class="control-label">Entity Types</label>
+            <div class="filter-controls" id="entity-type-filters"></div>
+        </div>
+
+        <div class="control-section">
+            <label class="control-label">Display</label>
+            <div class="filter-item">
+                <input type="checkbox" id="show-clusters-l3" class="filter-checkbox" checked>
+                <label for="show-clusters-l3" class="filter-label">Cluster Membranes (L3 coarse)</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="show-clusters-l2" class="filter-checkbox" checked>
+                <label for="show-clusters-l2" class="filter-label">Cluster Membranes (L2 medium)</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="show-clusters-l1" class="filter-checkbox">
+                <label for="show-clusters-l1" class="filter-label">Cluster Membranes (L1 fine)</label>
+            </div>
+            <div class="filter-item">
+                <input type="checkbox" id="show-labels" class="filter-checkbox" checked>
+                <label for="show-labels" class="filter-label">Entity Labels</label>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <label class="control-label">🔍 Omni-Search</label>
+            <div class="cluster-search-container">
+                <input type="text" id="cluster-search" class="cluster-search-input" placeholder="Search themes, communities, entities...">
+                <div id="cluster-autocomplete-dropdown" class="cluster-autocomplete-dropdown"></div>
+            </div>
+            <button id="clear-cluster-focus" class="clear-focus-btn" style="display: none;">Clear Focus</button>
+            <div id="cluster-focus-info" class="cluster-focus-info" style="display: none;">
+                <div class="focus-info-title">Focused:</div>
+                <div id="focused-cluster-name" class="focused-cluster-name"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Keyboard Shortcuts Hint -->
+    <div id="shortcuts-hint">
+        <span class="shortcut-key">E</span> Semantic
+        <span class="shortcut-key">C</span> Contextual
+        <span class="shortcut-key">S</span> Structural
+        <span class="shortcut-key">ESC</span> Deselect
+        <span class="shortcut-key">Ctrl+K</span> Search
+    </div>
+
+    <!-- Stats Overlay -->
+    <div id="stats-overlay">
+        <div>FPS: <span id="fps-counter">60</span></div>
+        <div>Visible: <span id="visible-count">0</span> / <span id="total-count">0</span></div>
+    </div>
+
+    <!-- Tooltip for 2D modes -->
+    <div id="organic-tooltip" class="organic-tooltip">
+        <div class="organic-tooltip-title" id="organic-tooltip-title"></div>
+        <div class="organic-tooltip-content" id="organic-tooltip-content"></div>
+    </div>
+
+    <!-- Dependencies -->
+    <!-- D3.js for 2D visualizations -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/d3-delaunay@6"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.159.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.159.0/examples/jsm/",
+                "d3-force-3d": "https://esm.sh/d3-force-3d@3.0.5"
+            }
+        }
+    </script>
+    <script type="module">
+        // Import Three.js modules
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Make available globally
+        window.THREE = THREE;
+        window.OrbitControls = OrbitControls;
+
+        // Load main script after dependencies (cache-busting v=70 - FIX-018 canonical search + header overlap fix)
+        import('./GraphRAG3D_EmbeddingView.js?v=70').then(() => {
+            const viewer = new GraphRAG3DEmbeddingView('graph-container');
+            window.viewer = viewer; // debug handle for inspections
+            viewer.init();
+        });
+    </script>
+</body>
+</html>
