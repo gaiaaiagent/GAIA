@@ -1221,8 +1221,8 @@
         window.THREE = THREE;
         window.OrbitControls = OrbitControls;
 
-        // Load main script after dependencies (cache-busting v=70 - FIX-018 canonical search + header overlap fix)
-        import('./GraphRAG3D_EmbeddingView.js?v=70').then(() => {
+        // Load main script after dependencies (cache-busting v=72 - FIX-021 show predicate edge types)
+        import('./GraphRAG3D_EmbeddingView.js?v=72').then(() => {
             const viewer = new GraphRAG3DEmbeddingView('graph-container');
             window.viewer = viewer; // debug handle for inspections
             viewer.init();

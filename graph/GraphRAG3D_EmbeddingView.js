@@ -485,21 +485,41 @@ class GraphRAG3DEmbeddingView {
      * Process loaded data into usable structures
      */
     processData() {
-        // Handle test data format
+        // Handle test data format (but still support full position data for view switching)
         if (this.data.test_mode) {
-            console.log('Using test data format');
+            console.log('Using test data format with full position support');
             for (const [entityId, entityData] of Object.entries(this.data.entities)) {
+                const basePosition = Array.isArray(entityData.umap_position)
+                    ? [...entityData.umap_position]
+                    : [0, 0, 0];
+                const forceCoords = this.forceLayout[entityId];
+                const sageCoords = this.graphsageLayout[entityId];
+                const forcePosition = Array.isArray(forceCoords) ? [...forceCoords] : null;
+                const contextualPosition = Array.isArray(sageCoords) ? [...sageCoords] : null;
+
                 this.entities.set(entityId, {
                     id: entityId,
                     type: entityData.type,
                     description: entityData.description || '',
-                    position: entityData.umap_position || [0, 0, 0],
+                    sources: entityData.sources || [],
+                    position: [...basePosition],
+                    rawUmapPosition: [...basePosition],
+                    rawSagePosition: contextualPosition ? [...contextualPosition] : null,
+                    rawForcePosition: forcePosition ? [...forcePosition] : null,
+                    umapPosition: null,  // Will be computed by normalizePositions()
+                    sagePosition: contextualPosition ? [...contextualPosition] : null,
+                    forcePosition: forcePosition ? [...forcePosition] : null,
                     betweenness: entityData.betweenness || 0,
                     relationshipStrengths: entityData.relationship_strengths || {}
                 });
             }
             this.relationships = this.data.relationships || [];
             this.computeConnectivityStats();
+
+            // Build L3 cluster mapping and normalize positions (same as full data path)
+            this.buildL3ClusterMapping();
+            this.normalizePositions();
+
             document.getElementById('total-count').textContent = this.entities.size;
             this.updateHierarchyLabels();
             return;
@@ -3633,11 +3653,13 @@ class GraphRAG3DEmbeddingView {
         const incoming = [];
         const outgoing = [];
         for (const rel of this.relationships || []) {
+            // Use predicate (from data) or type (legacy) or fallback to 'related'
+            const edgeType = rel.predicate || rel.type || 'related';
             if (rel.target === entityId) {
                 incoming.push({
                     source: rel.source,
                     target: rel.target,
-                    type: rel.type || 'related',
+                    type: edgeType,
                     strength: this.getRelationshipStrength(rel)
                 });
             }
@@ -3645,7 +3667,7 @@ class GraphRAG3DEmbeddingView {
                 outgoing.push({
                     source: rel.source,
                     target: rel.target,
-                    type: rel.type || 'related',
+                    type: edgeType,
                     strength: this.getRelationshipStrength(rel)
                 });
             }
