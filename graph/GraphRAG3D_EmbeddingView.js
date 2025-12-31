@@ -132,16 +132,33 @@ class GraphRAG3DEmbeddingView {
 
         // Entity type colors
         this.typeColors = {
+            // Core types (visible by default)
             'PERSON': 0x4CAF50,
             'ORGANIZATION': 0x2196F3,
             'CONCEPT': 0x9C27B0,
-            'PRACTICE': 0xFF9800,
-            'PRODUCT': 0xF44336,
-            'PLACE': 0x00BCD4,
+            'TECHNOLOGY': 0x00BCD4,
+            'PROJECT': 0xFF5722,
+            'PROCESS': 0xFF9800,
+            'LOCATION': 0x009688,
             'EVENT': 0xFFEB3B,
-            'WORK': 0x795548,
-            'CLAIM': 0xE91E63
+            'STANDARD': 0x607D8B,
+            'VALIDATOR': 0x3F51B5,
+            'GOVERNANCE_PROPOSAL': 0x8BC34A,
+            'CREDIT_CLASS': 0xCDDC39,
+            'MATERIAL': 0x795548,
+            'LICENSE': 0x9E9E9E,
+            'CLAIM': 0xE91E63,
+            'EVIDENCE': 0x673AB7,
+            'QUESTION': 0xFFC107,
+            // Code-specific types (hidden by default)
+            'KEEPER': 0x546E7A,
+            'FUNCTION': 0x78909C,
+            'API_MESSAGE': 0x90A4AE,
+            'MODULE': 0xB0BEC5
         };
+
+        // Code-specific types to hide by default
+        this.codeEntityTypes = new Set(['KEEPER', 'FUNCTION', 'API_MESSAGE', 'MODULE']);
 
         // Track which hierarchy key names were detected (Leiden vs. legacy)
         this.hierarchyKeyMap = {
@@ -151,10 +168,10 @@ class GraphRAG3DEmbeddingView {
             L3: null
         };
 
-        // Entity type visibility
+        // Entity type visibility (code types hidden by default)
         this.typeVisibility = {};
         Object.keys(this.typeColors).forEach(type => {
-            this.typeVisibility[type] = true;
+            this.typeVisibility[type] = !this.codeEntityTypes.has(type);
         });
 
         // Node size mode options
@@ -1162,7 +1179,7 @@ class GraphRAG3DEmbeddingView {
             const filterItem = document.createElement('div');
             filterItem.className = 'filter-item';
             filterItem.innerHTML = `
-                <input type="checkbox" id="filter-${type}" class="filter-checkbox" checked>
+                <input type="checkbox" id="filter-${type}" class="filter-checkbox" ${this.typeVisibility[type] ? "checked" : ""}>
                 <label for="filter-${type}" class="filter-label">${type}</label>
                 <span class="filter-count">${count}</span>
             `;
