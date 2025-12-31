@@ -27,6 +27,7 @@ import {
   Layers,
   Filter
 } from 'lucide-react';
+import { extractKoiErrorMessage, unwrapKoiEnvelope } from '@/lib/koi-envelope';
 
 type SearchMode = 'knowledge' | 'code-graph' | 'github-docs' | 'sparql';
 
@@ -164,10 +165,11 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || 'API not available');
+        throw new Error(extractKoiErrorMessage(errData, 'API not available'));
       }
 
-      const apiResult = await response.json();
+      const raw = await response.json();
+      const apiResult = unwrapKoiEnvelope<any>(raw);
       // API returns 'results' array with items having content, score, source, rid, metadata
       setRawApiResults(apiResult.results || []);
 
@@ -245,10 +247,11 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || `Graph query failed: ${response.status}`);
+        throw new Error(extractKoiErrorMessage(errData, `Graph query failed: ${response.status}`));
       }
 
-      const apiResult = await response.json();
+      const raw = await response.json();
+      const apiResult = unwrapKoiEnvelope<any>(raw);
       setGraphResults(apiResult.results || []);
 
       const queryResult: QueryResult = {
@@ -318,10 +321,11 @@ export default function QueryInterface({ onVisualizationData, onNavigateToProven
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || 'GitHub docs search failed');
+        throw new Error(extractKoiErrorMessage(errData, 'GitHub docs search failed'));
       }
 
-      const apiResult = await response.json();
+      const raw = await response.json();
+      const apiResult = unwrapKoiEnvelope<any>(raw);
       setRawApiResults(apiResult.results || []);
 
       const queryResult: QueryResult = {

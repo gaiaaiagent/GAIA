@@ -4,6 +4,7 @@ import { useChannelMessages } from '@/hooks/use-query-hooks';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Loader2, Network, ArrowRight, ArrowLeft, ExternalLink, AlertTriangle, RefreshCw } from 'lucide-react';
+import { extractKoiErrorMessage, unwrapKoiEnvelope } from '@/lib/koi-envelope';
 
 type GraphContextViewerProps = {
   agentId: UUID;
@@ -96,10 +97,11 @@ export function GraphContextViewer({ agentId, channelId }: GraphContextViewerPro
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || `API error: ${response.status}`);
+        throw new Error(extractKoiErrorMessage(errData, `API error: ${response.status}`));
       }
 
-      const data: QueryResponse = await response.json();
+      const raw = await response.json();
+      const data: QueryResponse = unwrapKoiEnvelope<QueryResponse>(raw);
       setGraphContext(data.graph_context || null);
       setResolvedEntity(data.resolved_entity || null);
     } catch (err) {
