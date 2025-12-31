@@ -1215,15 +1215,18 @@ class GraphRAG3DEmbeddingView {
             // Don't trigger shortcuts when typing in input fields
             const isInputFocused = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
 
+            // Don't intercept keyboard shortcuts with modifier keys (Ctrl/Cmd)
+            const hasModifier = e.ctrlKey || e.metaKey || e.altKey;
+
             switch(e.key.toLowerCase()) {
                 case 'e':
-                    if (!isInputFocused) this.setMode('semantic').catch(console.error);
+                    if (!isInputFocused && !hasModifier) this.setMode('semantic').catch(console.error);
                     break;
                 case 'c':
-                    if (!isInputFocused) this.setMode('contextual').catch(console.error);
+                    if (!isInputFocused && !hasModifier) this.setMode('contextual').catch(console.error);
                     break;
                 case 's':
-                    if (!isInputFocused) this.setMode('structural').catch(console.error);
+                    if (!isInputFocused && !hasModifier) this.setMode('structural').catch(console.error);
                     break;
                 case 'escape':
                     this.deselectEntity();
